@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A3 Web performance fundamentals · EDS Academy</title>
+<meta name="description" content="Module A3: Core Web Vitals, the Lighthouse 100 target, three-phase loading, why EDS uses no framework and no build, and payload budgets.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="A3">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Define LCP, CLS and INP and quote the Good thresholds for each.</li>
+    <li>Explain why EDS projects hold a Lighthouse 100 mobile score and how pull requests enforce it.</li>
+    <li>Sort any resource into the eager, lazy or delayed phase and justify the choice.</li>
+    <li>Explain the performance case for vanilla JavaScript, ES modules and no build step.</li>
+    <li>Apply the 100 KB-before-LCP rule of thumb and spot what breaks it.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="a3-ready" data-title="Ready for performance?">
+    <script type="application/json">{"questions":[
+      {"q":"Where does EDS do most of the work to turn a block table into a component?","options":["In the browser, with the block's JS and CSS","On the publish tier","In the CDN"],"answer":0,"explain":"Covered in A2: decoration happens client-side."},
+      {"q":"Which panel in browser DevTools lists every file a page downloads?","options":["Network","Elements","Sources"],"answer":0,"explain":"You will use the Network and Performance panels in this module's lab."},
+      {"q":"Which is a third-party script?","options":["Your blocks/cards/cards.js","A tag manager loaded from another company's host","styles.css"],"answer":1,"explain":"Third parties load from someone else's servers."}
+    ]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="core-web-vitals" data-level="1">
+  <h2>Core Web Vitals: LCP, CLS, INP</h2>
+  <div data-part="why"><p>A mortgage calculator whose button jumps as you tap it, or whose answer appears half a second late, loses applications. Core Web Vitals put numbers on those frustrations, and Google uses them as a page-experience signal in search.</p></div>
+  <div data-part="concept">
+    <p>Core Web Vitals are three user-experience metrics. Largest Contentful Paint (LCP) measures loading: when the biggest image or text block in view appears. Cumulative Layout Shift (CLS) measures visual stability: how much content moves unexpectedly. Interaction to Next Paint (INP) measures responsiveness: how long the page takes to visibly react after a tap, click or key press.</p>
+    <p>Google rates each one Good, Needs improvement or Poor, and assesses them at the 75th percentile of real page loads. A page passes only when all three are Good.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    NAV["Visitor opens the page"] --> LCP["LCP: biggest element painted"]
+    LCP --> USE["Visitor taps or types"]
+    USE --> INP["INP: time until the screen responds"]
+    NAV -.-> CLS["CLS: unexpected movement, measured across the whole visit"]</pre>
+      <figcaption><b>What to notice:</b> LCP is about the start, INP about interactions, and CLS runs for the whole visit.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The visitor opens the page, then LCP marks when the biggest element is painted. Later the visitor taps or types, and INP measures how long until the screen responds. CLS, unexpected movement, is measured across the whole visit.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Metric</th><th>Measures</th><th class="num">Good</th><th class="num">Poor</th><th>Common EDS cause when poor</th></tr></thead>
+      <tbody>
+        <tr><th>LCP</th><td>Loading</td><td class="num">≤ 2.5 s</td><td class="num">&gt; 4 s</td><td>Too much payload before the hero image; third parties loaded early</td></tr>
+        <tr><th>CLS</th><td>Visual stability</td><td class="num">≤ 0.1</td><td class="num">&gt; 0.25</td><td>Images without dimensions; web fonts without fallbacks; late banners</td></tr>
+        <tr><th>INP</th><td>Responsiveness</td><td class="num">≤ 200 ms</td><td class="num">&gt; 500 ms</td><td>Heavy scripts on the main thread, often from third parties</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="font-size:15px">Values between Good and Poor are rated Needs improvement. Try them in the <a href="#signature">simulator</a>.</p>
+  </div>
+  <div data-part="try">
+    <div data-component="match"><script type="application/json">{"prompt":"Match the complaint to the metric","pairs":[["The hero took ages to appear","LCP"],["The Apply button moved as I tapped it","CLS"],["I tapped Calculate and nothing happened for a moment","INP"]],"explain":"Loading, stability, responsiveness: one metric each."}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Great lab score, poor field data</td><td>Real devices and third parties differ from the lab</td><td>Watch real-user data too (module D7).</td></tr>
+      <tr><td>CLS jumps when a cookie banner appears</td><td>Banner pushes content down</td><td>Overlay the banner or reserve its space.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="lighthouse-100" data-level="1">
+  <h2>Lighthouse 100</h2>
+  <div data-part="why"><p>"Fast enough" drifts. A clear, automated bar stops the slow creep of one more tag and one more font that makes enterprise sites sluggish within a year of launch.</p></div>
+  <div data-part="concept">
+    <p>aem.live states that every Edge Delivery Services site can and should achieve a Lighthouse score of 100. The bar is the mobile score, because it is harder to reach than desktop. The boilerplate starts at 100 on both.</p>
+    <p>The bar is enforced where code changes: the AEM GitHub bot runs Google PageSpeed Insights against your pull request and fails it if the score is below 100, with a small buffer for measurement volatility. Lighthouse is a lab test; keep an eye on real-user Core Web Vitals as well.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    PR["Developer opens a pull request"] --> BR["Branch URL is live on .aem.page"]
+    BR --> PSI["AEM GitHub bot runs PageSpeed Insights (mobile)"]
+    PSI -->|score 100, within buffer| OK["Check passes: ready for review"]
+    PSI -->|below 100| FAIL["Check fails: fix before merge"]
+    FAIL --> PR</pre>
+      <figcaption><b>What to notice:</b> performance is checked before code reaches main, not after a slow page goes live.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A developer opens a pull request. Its branch URL is live on .aem.page. The AEM GitHub bot runs PageSpeed Insights on mobile. A score of 100 (within buffer) passes and is ready for review; below 100 fails, and the developer fixes it before merging.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div data-component="hotspots" data-title="Read a pull request check">
+      <div class="hs-stage">
+        <div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span class="url">github.com/acme/bank-web/pull/42</span></div><div class="mock-body" style="display:grid;gap:10px">
+          <div data-hotspot="Pull request title" data-text="One focused change per pull request makes a failed performance check easy to trace."><b>Add rate table block</b> <span class="muted">#42 · rates-table → main</span></div>
+          <div style="border:1px solid var(--line);border-radius:8px;padding:10px;display:grid;gap:8px">
+            <div data-hotspot="Preview link" data-text="The branch URL ({branch}--{site}--{org}.aem.page) is what reviewers and the bot test."><span class="muted">Test URL:</span> <code>rates-table--bank-web--acme.aem.page</code></div>
+            <div data-hotspot="Performance check" data-text="Fails when the mobile PageSpeed Insights score drops below 100, allowing a small buffer for volatility."><span class="tag status-planned" style="color:var(--bad);background:var(--bad-soft)">✗ Failed</span> PageSpeed Insights · Performance 91 (mobile)</div>
+            <div data-hotspot="Other checks" data-text="Linting and other checks run alongside. All must pass before merge."><span class="tag status-built">✓ Passed</span> Lint · Accessibility 100 · Best practices 100 · SEO 100</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a3-t2"><script type="application/json">{"questions":[{"q":"Your PR scores 100 on desktop and 93 on mobile. What happens?","options":["It passes; desktop is what counts","It fails; the bar is the mobile score","It passes if accessibility is 100"],"answer":1,"explain":"The check uses the mobile score, which is harder to achieve."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Team re-runs the check until it passes</td><td>Treating the score as noise</td><td>Find the regression in the PSI report; the buffer already covers volatility.</td></tr>
+      <tr><td>Score drops only after launch</td><td>Tags added through a tag manager, outside code review</td><td>Govern third-party tags (module C9) and keep them in the delayed phase.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="three-phase-loading" data-level="2">
+  <h2>Three-phase loading: eager, lazy, delayed</h2>
+  <div data-part="why"><p>Marketing needs analytics, consent, chat and personalization. Performance needs a tiny critical path. Three-phase loading is how EDS gives both, by deciding <em>when</em> each thing loads.</p></div>
+  <div data-part="concept">
+    <p>aem.live divides a page's payload and execution into three phases. <b>Eager</b> contains everything needed to reach LCP: decorating the DOM, the first section and the LCP candidate. <b>Lazy</b> contains everything the project controls and serves mostly from the same origin: later sections, remaining images, header and footer, non-blocking libraries and fonts. <b>Delayed</b> contains everything else, such as third-party tags, consent and analytics, which are not material to the first experience.</p>
+    <p>aem.live advises that the delayed phase should start at least three seconds after LCP. Recent boilerplate versions no longer enforce that with a hard-coded timer, so add one yourself if your project needs the minimum.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    subgraph E["Eager"]
+      E1["Decorate DOM"] --> E2["First section"] --> E3["LCP image or text"]
+    end
+    subgraph L["Lazy"]
+      L1["Remaining sections and blocks"] --> L2["Header and footer"] --> L3["lazy-styles.css and fonts"]
+    end
+    subgraph D["Delayed: 3 s or more after LCP"]
+      D1["delayed.js"] --> D2["Analytics, consent, chat, tags"]
+    end
+    E --> LCP(("LCP")) --> L --> D</pre>
+      <figcaption><b>What to notice:</b> LCP sits between eager and lazy. Anything in eager that is not needed for LCP delays it.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Eager: decorate the DOM, then the first section, then the LCP image or text. Then LCP happens. Lazy: remaining sections and blocks, header and footer, lazy-styles.css and fonts. Delayed, at least three seconds after LCP: delayed.js loads analytics, consent, chat and tags.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="scripts/scripts.js (structure based on aem-boilerplate, simplified)" data-lang="javascript" data-lines="1-8">
+      <script type="text/plain">
+      async function loadEager(doc) {
+        decorateTemplateAndTheme();
+        const main = doc.querySelector('main');
+        if (main) {
+          decorateMain(main);
+          await loadSection(main.querySelector('.section'), waitForFirstImage);
+        }
+      }
+
+      async function loadLazy(doc) {
+        const main = doc.querySelector('main');
+        await loadSections(main);
+        loadHeader(doc.querySelector('header'));
+        loadFooter(doc.querySelector('footer'));
+        loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+        loadFonts();
+      }
+
+      function loadDelayed() {
+        // aem.live: start the delayed phase at least 3 s after LCP.
+        // Newer boilerplate versions do not hard-code this; add a timer if you need it.
+        window.setTimeout(() => import('./delayed.js'), 3000);
+      }
+
+      async function loadPage() {
+        await loadEager(document);
+        await loadLazy(document);
+        loadDelayed();
+      }
+
+      loadPage();
+      </script>
+      <ol class="code-explain">
+        <li data-line="5">Turns sections and blocks into decorated, loadable units.</li>
+        <li data-line="6">Loads only the first section and waits for its first image: that is the LCP candidate.</li>
+        <li data-line="12">Everything below the fold loads after LCP.</li>
+        <li data-line="15">Non-critical CSS is split out so it never blocks LCP.</li>
+        <li data-line="22">Third-party code lives in delayed.js and starts well after LCP.</li>
+      </ol>
+      <figcaption><b>Expected result:</b> you can point to the exact function where any resource loads. Your project's file may differ in detail; the three-phase shape is what matters.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="match"><script type="application/json">{"prompt":"Which phase should load it?","pairs":[["The hero image at the top of the page","Eager"],["The site footer","Lazy"],["A tag manager","Delayed"],["The cards block in section 4","Lazy"],["A chat widget","Delayed"]],"explain":"Eager is only what LCP needs; project-owned rest is lazy; third parties are delayed."}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>LCP worsens after adding a tag in <code>head.html</code></td><td>Third party in the eager path</td><td>Move it to <code>delayed.js</code>.</td></tr>
+      <tr><td>Analytics misses short visits</td><td>Delayed phase starts after some visitors leave</td><td>Accept it, or capture only essential events earlier with a tiny, first-party snippet; review with privacy.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="why-no-framework-no-build" data-level="2">
+  <h2>Why no framework, no build</h2>
+  <div data-part="why"><p>Developers will ask why they cannot use React and a bundler like on other projects. The answer shapes hiring, training and code reviews, so it needs to be understood rather than just enforced.</p></div>
+  <div data-part="concept">
+    <p>Every kilobyte of JavaScript before LCP competes with the hero image on a mobile connection, and frameworks bring a runtime before your first component even renders. EDS projects use vanilla JavaScript and CSS, loaded as native ES modules, and only for blocks actually on the page: a page without a carousel never downloads carousel code.</p>
+    <p>No build step means the code you push is the code that runs. Every branch is reviewable seconds after a push, there is no bundler configuration to maintain, and debugging happens on the real files. Frameworks are not banned, but they belong in isolated blocks, loaded lazily or delayed, never on the critical path.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="exhibit">
+      <div style="display:grid;gap:14px;font-size:14.5px">
+        <div><b>Typical framework app</b> <span class="muted">(illustrative)</span>
+          <div style="display:flex;height:26px;border-radius:6px;overflow:hidden;margin-top:6px;border:1px solid var(--line)">
+            <span style="flex:4;background:var(--bad-soft);display:grid;place-items:center;color:var(--bad);font:600 12px var(--f-mono)">framework runtime</span>
+            <span style="flex:3;background:var(--warn-soft);display:grid;place-items:center;color:var(--warn);font:600 12px var(--f-mono)">all components</span>
+            <span style="flex:1.5;background:var(--surface-3);display:grid;place-items:center;font:600 12px var(--f-mono)">CSS</span>
+            <span style="flex:2;background:var(--good-soft);display:grid;place-items:center;color:var(--good);font:600 12px var(--f-mono)">hero</span>
+          </div></div>
+        <div><b>EDS page</b> <span class="muted">(illustrative)</span>
+          <div style="display:flex;height:26px;border-radius:6px;overflow:hidden;margin-top:6px;border:1px solid var(--line);width:45%">
+            <span style="flex:1;background:var(--surface-3);display:grid;place-items:center;font:600 12px var(--f-mono)">core</span>
+            <span style="flex:1;background:var(--accent-soft);display:grid;place-items:center;font:600 12px var(--f-mono)">1st block</span>
+            <span style="flex:2;background:var(--good-soft);display:grid;place-items:center;color:var(--good);font:600 12px var(--f-mono)">hero</span>
+          </div></div>
+      </div>
+      <figcaption><b>What to notice:</b> bytes before LCP, not total bytes, decide how fast the hero appears. EDS sends only core scripts and the first section's block before the hero.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Two horizontal bars showing bytes before LCP. The framework app bar is long: framework runtime, all components, CSS, then the hero. The EDS bar is under half as long: core scripts, the first block, then the hero. Proportions are illustrative.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div data-component="tabs" data-label="Same feature, two approaches">
+      <div data-tab="Framework habit">
+        <figure class="code" data-file="head.html (avoid)" data-lang="xml" data-lines="1-2">
+          <textarea class="src" hidden><script src="https://cdn.example.com/framework.min.js"></script>
+<script src="/dist/app.bundle.js"></script>
+<link rel="preconnect" href="https://tags.example.com"></textarea>
+          <figcaption><b>Problem:</b> render-blocking bundles from several hosts load before the hero, and preconnect spends early bandwidth on another host.</figcaption>
+        </figure>
+      </div>
+      <div data-tab="EDS approach">
+        <figure class="code" data-file="blocks/rate-table/rate-table.js" data-lang="javascript" data-lines="1">
+          <script type="text/plain">
+          export default function decorate(block) {
+            // Loaded only on pages that contain a Rate table block.
+            const rows = [...block.children];
+            const table = document.createElement('table');
+            rows.forEach((row) => {
+              const tr = document.createElement('tr');
+              [...row.children].forEach((cell) => {
+                const td = document.createElement('td');
+                td.append(...cell.childNodes);
+                tr.append(td);
+              });
+              table.append(tr);
+            });
+            block.replaceChildren(table);
+          }
+          </script>
+          <figcaption><b>Expected result:</b> a small ES module that runs only where its block exists. No framework, no build.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a3-t4"><script type="application/json">{"questions":[{"q":"A team wants a complex, interactive loan comparison widget built in a framework. What is the EDS-friendly way?","options":["Load the framework in head.html for every page","Wrap it in one block and load it lazily, only where that block appears","Refuse; frameworks are forbidden"],"answer":1,"explain":"Isolate heavy code in a block, off the critical path."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>A <code>dist/</code> folder appears in the repo</td><td>Bundler introduced out of habit</td><td>Remove it; ship ES modules directly.</td></tr>
+      <tr><td><code>preload</code> or <code>preconnect</code> added to "speed things up"</td><td>Common advice elsewhere</td><td>aem.live says these do not help LCP here and consume bandwidth; remove them.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="payload-budgets" data-level="2">
+  <h2>Payload budgets</h2>
+  <div data-part="why"><p>"Keep it fast" is not reviewable. A number is. A payload budget lets an author, a developer and a reviewer all check the same thing.</p></div>
+  <div data-part="concept">
+    <p>aem.live gives a rule of thumb: keep the aggregate payload before LCP below 100 KB. That usually produces an LCP quicker than 1560 ms and a PageSpeed Insights score of 100. It also advises that, before LCP, only a single host should carry network payload; extra hosts mean extra connections that compete for the same bandwidth.</p>
+    <p>Fonts are a special case: it is largely impossible to load web fonts before LCP, so the boilerplate loads them right after and uses size-matched fallback fonts so text does not shift when they arrive. Preloading fonts is discouraged.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="exhibit">
+      <div style="font-size:14px;display:grid;gap:8px">
+        <div style="position:relative;height:34px;border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex">
+          <span style="width:12%;background:var(--surface-3);display:grid;place-items:center;font:600 11.5px var(--f-mono)">HTML</span>
+          <span style="width:14%;background:var(--accent-soft);display:grid;place-items:center;font:600 11.5px var(--f-mono)">CSS + JS</span>
+          <span style="width:30%;background:var(--good-soft);display:grid;place-items:center;font:600 11.5px var(--f-mono);color:var(--good)">LCP image</span>
+          <span style="width:44%;display:grid;place-items:center;font:600 11.5px var(--f-mono);color:var(--muted)">headroom</span>
+          <i style="position:absolute;left:100%;top:0;bottom:0"></i>
+        </div>
+        <div style="display:flex;justify-content:space-between;color:var(--muted);font:600 12px var(--f-mono)"><span>0 KB</span><span>100 KB: rule of thumb before LCP</span></div>
+      </div>
+      <figcaption><b>What to notice:</b> the LCP image is often the biggest item in the budget, so its rendition size matters more than anything else.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A bar representing 100 KB before LCP. About 12 percent is HTML, 14 percent CSS and JavaScript, 30 percent the LCP image, and 44 percent unused headroom. Proportions are illustrative.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="styles/styles.css (fallback font pattern)" data-lang="css" data-lines="1-5">
+      <script type="text/plain">
+      @font-face {
+        font-family: roboto-fallback;
+        size-adjust: 99.529%;
+        src: local('Arial');
+      }
+
+      :root {
+        --body-font-family: roboto, roboto-fallback, sans-serif;
+      }
+
+      body {
+        font-family: var(--body-font-family);
+      }
+      </script>
+      <ol class="code-explain">
+        <li data-line="2">A local font renamed as the fallback for the web font.</li>
+        <li data-line="3">Scales Arial to match the web font's width, so swapping fonts does not move text (no CLS).</li>
+        <li data-line="8">The web font is listed first; until it loads after LCP, the adjusted fallback is used.</li>
+      </ol>
+      <figcaption><b>Expected result:</b> text renders immediately in the fallback and does not shift when the web font arrives. Tune the percentage for your font.</figcaption>
+    </figure>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Budget item</th><th>Rule of thumb (aem.live)</th><th>How to check</th></tr></thead>
+      <tbody>
+        <tr><td>Payload before LCP</td><td>Below 100 KB</td><td>DevTools Performance panel: sum requests before the LCP marker</td></tr>
+        <tr><td>Hosts before LCP</td><td>One host carrying payload</td><td>Network panel, filter by domain</td></tr>
+        <tr><td>Fonts</td><td>After LCP, with size-adjusted fallbacks; no preload</td><td>Check font requests start after LCP</td></tr>
+        <tr><td>Third parties</td><td>Delayed phase</td><td>None in the Network panel before LCP</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a3-t5"><script type="application/json">{"questions":[{"q":"Before LCP your page loads 40 KB of first-party code, a 70 KB hero image and a 30 KB font. What should change first?","options":["Preload the font so it arrives sooner","Move the font after LCP with a fallback, and serve a smaller hero rendition","Nothing, 140 KB is fine"],"answer":1,"explain":"Fonts belong after LCP, and the hero rendition is the biggest lever."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Text jumps when the web font loads</td><td>No size-adjusted fallback</td><td>Add a fallback <code>@font-face</code> with <code>size-adjust</code>.</td></tr>
+      <tr><td>Budget blown by a huge hero</td><td>Author uploaded a very large image</td><td>Rely on optimized renditions; guide authors on crops (module B5).</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactives">
+  <h2>Signature interactives</h2>
+  <p>First, feel what each Core Web Vital means. Then rearrange a real-looking page's resources across the three phases and watch the payload before LCP.</p>
+  <div data-component="cwv-sim"></div>
+  <div data-component="phases" data-title="Fix this campaign page"><script type="application/json">{"budget":100,"resources":[
+    {"name":"HTML","kb":14,"phase":"eager"},
+    {"name":"aem.js + scripts.js","kb":12,"phase":"eager"},
+    {"name":"styles.css","kb":9,"phase":"eager"},
+    {"name":"hero block JS + CSS","kb":4,"phase":"eager"},
+    {"name":"Hero image (rendition)","kb":42,"phase":"eager","lcp":true},
+    {"name":"Web fonts","kb":38,"phase":"eager"},
+    {"name":"Tag manager","kb":85,"phase":"eager","third":true},
+    {"name":"Cards block JS + CSS","kb":6,"phase":"eager"},
+    {"name":"Header and footer","kb":10,"phase":"lazy"},
+    {"name":"lazy-styles.css","kb":5,"phase":"lazy"},
+    {"name":"Chat widget","kb":120,"phase":"lazy","third":true},
+    {"name":"Consent manager","kb":60,"phase":"delayed","third":true}
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: audit a page against the EDS performance bar</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Measure one of your current pages, find what breaks the budget, and model a fix.</p></div>
+    <div><h4>You need</h4><p>Chrome DevTools and access to PageSpeed Insights.</p></div>
+    <div><h4>Time</h4><p>About 60 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Run PageSpeed Insights</b> on one of your production pages, mobile view. Record the Performance score, LCP, CLS and INP (field data if shown).</div></li>
+    <li><div><b>Find the LCP element.</b> In the PSI report or DevTools Performance panel, note which element is LCP and when it painted.</div></li>
+    <li><div><b>Sum the payload before LCP.</b> Record a Performance trace with mobile throttling. Add up transfer sizes of requests that finished before the LCP marker.</div></li>
+    <li><div><b>Count hosts and third parties before LCP.</b> Filter the Network panel by domain.</div></li>
+    <li><div><b>Model it.</b> Recreate the main resources in the <a href="#signature">phase visualizer</a> and move them until the page is within budget.</div></li>
+    <li><div><b>Compare.</b> Run PSI on an aem.live page and note the differences.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A one-page audit: scores, LCP element, KB before LCP, hosts, and three recommended moves.</p></div>
+    <div><h4>How to verify</h4><p>Your recommendations move every third party out of eager and bring modelled payload under 100 KB.</p></div>
+    <div><h4>Stretch</h4><p>Repeat on a page with a cookie banner and measure its CLS impact.</p></div>
+  </div>
+  <ul class="checklist" data-id="a3-lab">
+    <li>Recorded PSI scores and Core Web Vitals</li>
+    <li>Identified the LCP element</li>
+    <li>Summed the payload before LCP</li>
+    <li>Counted hosts and third parties before LCP</li>
+    <li>Modelled a fix in the visualizer</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>LCP over 2.5 s on mobile</td><td>Too much before LCP, or third parties in eager</td><td>Trim eager to the first section; move tags to delayed.</td></tr>
+      <tr><td>CLS above 0.1</td><td>Missing image dimensions, font swap, late banners</td><td>Set dimensions, use fallback fonts, reserve banner space.</td></tr>
+      <tr><td>INP above 200 ms</td><td>Long tasks from scripts</td><td>Profile in DevTools; defer or split heavy work; audit third parties.</td></tr>
+      <tr><td>PR check fails but page "looks fast"</td><td>Desktop testing on a fast network</td><td>Test mobile with throttling, as PSI does.</td></tr>
+      <tr><td>Score drops weeks after launch</td><td>Tags added outside code review</td><td>Govern the tag manager; keep it delayed.</td></tr>
+      <tr><td>Fonts flash or text jumps</td><td>No size-adjusted fallback</td><td>Add fallback <code>@font-face</code> with <code>size-adjust</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Governance.</b> Make Lighthouse 100 (mobile) and the delayed-phase rule part of your definition of done and of vendor contracts.</p></aside>
+    <aside class="callout warning" data-label="Security and privacy"><p>Consent managers and analytics in the delayed phase still need privacy review; delaying them must not mean collecting before consent.</p></aside>
+    <aside class="callout accessibility"><p>Performance is accessibility: slow, shifting pages are hardest for people on older devices or using assistive technology.</p></aside>
+    <aside class="callout performance"><p>Budget per page: under 100 KB before LCP, one host, no third parties before LCP, fonts after LCP.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Responsibility</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Image choice and crops</td><td>Responsible</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Phase placement of code</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Third-party tag approval</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Field monitoring of Core Web Vitals</td><td>Informed</td><td>Consulted</td><td>Responsible</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="a3-check"><script type="application/json">{"questions":[
+    {"q":"What is the Good threshold for LCP?","options":["2.5 seconds or less","4 seconds or less","1 second or less"],"answer":0,"explain":"Good LCP is 2.5 s or less; over 4 s is Poor."},
+    {"q":"Which metric measures responsiveness to taps and clicks?","options":["CLS","INP","LCP"],"answer":1,"explain":"Interaction to Next Paint."},
+    {"q":"Which Lighthouse score does the EDS pull-request check use?","options":["Desktop","Mobile","The average of both"],"answer":1,"explain":"Mobile, because it is harder to achieve."},
+    {"q":"What belongs in the eager phase?","options":["Everything needed to reach LCP","Analytics and consent","The footer"],"answer":0,"explain":"Eager is only what LCP needs."},
+    {"q":"According to aem.live, when should the delayed phase start?","options":["Immediately","At least three seconds after LCP","After the user scrolls"],"answer":1,"explain":"And newer boilerplates do not enforce it with a timer, so add one if needed."},
+    {"q":"Which statements match aem.live guidance? Choose all that apply.","options":["Keep payload before LCP below 100 KB","Preload web fonts","Only one host should carry payload before LCP","Preconnect to tag hosts early"],"answer":[0,2],"explain":"Preload and preconnect do not help LCP here and consume bandwidth."},
+    {"q":"Why do EDS projects avoid a build step?","options":["Builds are illegal in GitHub","Code runs as pushed, branches are reviewable instantly, and nothing extra lands before LCP","Browsers cannot run bundles"],"answer":1,"explain":"Simplicity and speed, not prohibition."},
+    {"q":"Marketing asks to add a chat widget, a heat-map tool and a new tag manager before the RRSP campaign. What do you do?","options":["Add them to head.html so they never miss a visit","Load them in delayed.js, verify the PR still scores 100, and get privacy sign-off","Refuse all third parties"],"answer":1,"explain":"Delayed phase, performance check, privacy review.","scenario":true}
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="a3-cards"><script type="application/json">{"cards":[
+    ["LCP","Largest Contentful Paint: loading. Good ≤ 2.5 s."],
+    ["CLS","Cumulative Layout Shift: stability. Good ≤ 0.1."],
+    ["INP","Interaction to Next Paint: responsiveness. Good ≤ 200 ms."],
+    ["75th percentile","Core Web Vitals are assessed on the 75th percentile of real page loads."],
+    ["Lighthouse 100","The EDS bar, measured on mobile and enforced on pull requests."],
+    ["Eager phase","Everything needed to reach LCP."],
+    ["Lazy phase","Project-owned, same-origin resources after LCP."],
+    ["Delayed phase","Third parties and non-essential scripts, 3 s or more after LCP."],
+    ["100 KB","Rule-of-thumb payload limit before LCP."],
+    ["Single host","Before LCP, only one host should carry payload."],
+    ["size-adjust","CSS descriptor that sizes a fallback font to match a web font, preventing CLS."]
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>A3 · Web performance fundamentals</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Core Web Vitals (Good)</h4><ul><li>LCP ≤ 2.5 s</li><li>CLS ≤ 0.1</li><li>INP ≤ 200 ms</li></ul></div>
+      <div><h4>Lighthouse</h4><ul><li>100 on mobile</li><li>PSI check on every PR</li><li>Lab plus field data</li></ul></div>
+      <div><h4>Phases</h4><ul><li>Eager: up to LCP</li><li>Lazy: rest of page, fonts</li><li>Delayed: third parties, 3 s+ after LCP</li></ul></div>
+      <div><h4>Budget</h4><ul><li>&lt; 100 KB before LCP</li><li>One host before LCP</li><li>No preload, preconnect, early hints</li></ul></div>
+      <div><h4>Code style</h4><ul><li>Vanilla JS, ES modules</li><li>Per-block loading</li><li>No build step</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/keeping-it-100" rel="noopener" target="_blank">aem.live: Keeping it 100</a> — phases, payload, fonts, PR checks</li>
+    <li><a href="https://www.aem.live/docs/faq" rel="noopener" target="_blank">aem.live: FAQ</a> — Lighthouse 100 statement</li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-edge-delivery/using/build/keeping-it-100" rel="noopener" target="_blank">Experience League: Keeping it 100</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/tools/commerce-storefront/get-started/performance/" rel="noopener" target="_blank">Experience League: Storefront performance best practices</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

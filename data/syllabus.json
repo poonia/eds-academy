@@ -1,0 +1,2231 @@
+{
+ "asOf": "2026-10-30",
+ "categories": [
+  {
+   "id": "A",
+   "name": "Foundations & Architecture"
+  },
+  {
+   "id": "B",
+   "name": "Content Authoring & Management"
+  },
+  {
+   "id": "C",
+   "name": "Development"
+  },
+  {
+   "id": "D",
+   "name": "Implementation, Operations & Governance"
+  },
+  {
+   "id": "E",
+   "name": "Advanced & Expert"
+  }
+ ],
+ "tracks": {
+  "au": {
+   "name": "Authoring",
+   "short": "Auth"
+  },
+  "dev": {
+   "name": "Development",
+   "short": "Dev"
+  },
+  "imp": {
+   "name": "Implementation",
+   "short": "Impl"
+  }
+ },
+ "levels": {
+  "1": "Beginner",
+  "2": "Intermediate",
+  "3": "Advanced",
+  "4": "Expert"
+ },
+ "modules": [
+  {
+   "id": "A1",
+   "cat": "A",
+   "name": "What EDS is and where it fits",
+   "slug": "a1-what-eds-is",
+   "page": "modules/a1-what-eds-is.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    1,
+    2
+   ],
+   "pre": [],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "origins-and-naming",
+     "name": "Origins and naming: Helix, Franklin, AEM EDS, EDS",
+     "level": 1
+    },
+    {
+     "id": "eds-vs-traditional-aem-sites",
+     "name": "EDS vs traditional AEM Sites",
+     "level": 1
+    },
+    {
+     "id": "eds-vs-headless",
+     "name": "EDS vs headless",
+     "level": 2
+    },
+    {
+     "id": "fit-assessment",
+     "name": "Fit assessment",
+     "level": 2
+    },
+    {
+     "id": "licensing-and-product-packaging",
+     "name": "Licensing and product packaging",
+     "level": 2
+    },
+    {
+     "id": "feature-lifecycle",
+     "name": "Feature lifecycle: early access vs GA",
+     "level": 2
+    }
+   ],
+   "signature": "EDS fit scorer and naming timeline",
+   "built": true
+  },
+  {
+   "id": "A2",
+   "cat": "A",
+   "name": "Core architecture",
+   "slug": "a2-core-architecture",
+   "page": "modules/a2-core-architecture.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    1,
+    3
+   ],
+   "pre": [
+    "A1"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "content-sources",
+     "name": "Content sources",
+     "level": 1
+    },
+    {
+     "id": "storage-buses",
+     "name": "Content Bus, Code Bus, Media Bus",
+     "level": 2
+    },
+    {
+     "id": "rendering-pipeline",
+     "name": "Rendering pipeline",
+     "level": 2
+    },
+    {
+     "id": "preview-vs-live",
+     "name": "Preview vs live, aem.page and aem.live, branch URLs",
+     "level": 1
+    },
+    {
+     "id": "admin-service-and-admin-api",
+     "name": "Admin service and Admin API",
+     "level": 2
+    },
+    {
+     "id": "delivery-and-cdn",
+     "name": "Delivery and CDN",
+     "level": 2
+    },
+    {
+     "id": "caching-and-invalidation",
+     "name": "Caching model and push invalidation",
+     "level": 3
+    }
+   ],
+   "signature": "Click-through architecture explorer and publish sequence",
+   "built": true
+  },
+  {
+   "id": "A3",
+   "cat": "A",
+   "name": "Web performance fundamentals",
+   "slug": "a3-web-performance",
+   "page": "modules/a3-web-performance.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    1,
+    2
+   ],
+   "pre": [
+    "A1"
+   ],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "core-web-vitals",
+     "name": "Core Web Vitals: LCP, CLS, INP",
+     "level": 1
+    },
+    {
+     "id": "lighthouse-100",
+     "name": "Lighthouse 100",
+     "level": 1
+    },
+    {
+     "id": "three-phase-loading",
+     "name": "Three-phase loading: eager, lazy, delayed",
+     "level": 2
+    },
+    {
+     "id": "why-no-framework-no-build",
+     "name": "Why no framework, no build",
+     "level": 2
+    },
+    {
+     "id": "payload-budgets",
+     "name": "Payload budgets",
+     "level": 2
+    }
+   ],
+   "signature": "Core Web Vitals simulator and loading-phase visualizer",
+   "built": true
+  },
+  {
+   "id": "A4",
+   "cat": "A",
+   "name": "Authoring options landscape",
+   "slug": "a4-authoring-options",
+   "page": "modules/a4-authoring-options.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    1,
+    3
+   ],
+   "pre": [
+    "A2"
+   ],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "document-based-authoring",
+     "name": "Document-based authoring",
+     "level": 1
+    },
+    {
+     "id": "document-authoring-da-live",
+     "name": "Document Authoring (da.live)",
+     "level": 1
+    },
+    {
+     "id": "universal-editor-with-aem-sites",
+     "name": "Universal Editor with AEM Sites",
+     "level": 1
+    },
+    {
+     "id": "content-fragments-to-eds",
+     "name": "Content Fragments to EDS",
+     "level": 2
+    },
+    {
+     "id": "choosing-an-option",
+     "name": "Choosing an option",
+     "level": 2
+    },
+    {
+     "id": "repoless",
+     "name": "Repoless",
+     "level": 3
+    }
+   ],
+   "signature": "Authoring option decision tree",
+   "built": true
+  },
+  {
+   "id": "B1",
+   "cat": "B",
+   "name": "Page structure fundamentals",
+   "slug": "b1-page-structure",
+   "page": "modules/b1-page-structure.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    1,
+    2
+   ],
+   "pre": [
+    "A4"
+   ],
+   "hours": 5,
+   "topics": [
+    {
+     "id": "default-content",
+     "name": "Default content",
+     "level": 1
+    },
+    {
+     "id": "sections",
+     "name": "Sections",
+     "level": 1
+    },
+    {
+     "id": "blocks",
+     "name": "Blocks",
+     "level": 1
+    },
+    {
+     "id": "block-variants",
+     "name": "Block variants",
+     "level": 1
+    },
+    {
+     "id": "section-metadata",
+     "name": "Section Metadata",
+     "level": 1
+    },
+    {
+     "id": "page-metadata-block",
+     "name": "Page Metadata block",
+     "level": 1
+    },
+    {
+     "id": "auto-blocking",
+     "name": "Auto-blocking",
+     "level": 2
+    },
+    {
+     "id": "folder-and-url-mapping",
+     "name": "Folder and URL mapping",
+     "level": 1
+    }
+   ],
+   "signature": "Document-to-HTML simulator",
+   "built": false
+  },
+  {
+   "id": "B2",
+   "cat": "B",
+   "name": "AEM Sidekick",
+   "slug": "b2-sidekick",
+   "page": "modules/b2-sidekick.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    1,
+    2
+   ],
+   "pre": [
+    "B1"
+   ],
+   "hours": 3,
+   "topics": [
+    {
+     "id": "install-and-add-a-project",
+     "name": "Install and add a project",
+     "level": 1
+    },
+    {
+     "id": "preview-publish-unpublish-delete",
+     "name": "Preview, publish, unpublish, delete",
+     "level": 1
+    },
+    {
+     "id": "bulk-operations",
+     "name": "Bulk operations",
+     "level": 2
+    },
+    {
+     "id": "block-library",
+     "name": "Block library",
+     "level": 2
+    },
+    {
+     "id": "sign-in-and-permissions",
+     "name": "Sign-in and permissions",
+     "level": 2
+    }
+   ],
+   "signature": "Sidekick mockup with lifecycle state diagram",
+   "built": false
+  },
+  {
+   "id": "B3",
+   "cat": "B",
+   "name": "Spreadsheets and structured content",
+   "slug": "b3-spreadsheets",
+   "page": "modules/b3-spreadsheets.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "B2"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "spreadsheets-as-json",
+     "name": "Spreadsheets as JSON",
+     "level": 2
+    },
+    {
+     "id": "bulk-metadata",
+     "name": "Bulk metadata",
+     "level": 2
+    },
+    {
+     "id": "redirects",
+     "name": "Redirects",
+     "level": 2
+    },
+    {
+     "id": "placeholders",
+     "name": "Placeholders",
+     "level": 2
+    },
+    {
+     "id": "query-index",
+     "name": "Query index",
+     "level": 2
+    },
+    {
+     "id": "sitemaps",
+     "name": "Sitemaps",
+     "level": 2
+    },
+    {
+     "id": "taxonomy-and-tags",
+     "name": "Taxonomy and tags",
+     "level": 3
+    }
+   ],
+   "signature": "Spreadsheet-to-JSON converter and redirects tester",
+   "built": false
+  },
+  {
+   "id": "B4",
+   "cat": "B",
+   "name": "Shared and reusable content",
+   "slug": "b4-reusable-content",
+   "page": "modules/b4-reusable-content.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    1,
+    2
+   ],
+   "pre": [
+    "B1"
+   ],
+   "hours": 3,
+   "topics": [
+    {
+     "id": "navigation-and-footer",
+     "name": "Navigation and footer",
+     "level": 1
+    },
+    {
+     "id": "fragments",
+     "name": "Fragments",
+     "level": 2
+    },
+    {
+     "id": "templates",
+     "name": "Templates",
+     "level": 2
+    }
+   ],
+   "signature": "Nav document builder with live preview",
+   "built": false
+  },
+  {
+   "id": "B5",
+   "cat": "B",
+   "name": "Images, media and assets",
+   "slug": "b5-images-media",
+   "page": "modules/b5-images-media.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    1,
+    3
+   ],
+   "pre": [
+    "B1"
+   ],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "images-in-content",
+     "name": "Images in content",
+     "level": 1
+    },
+    {
+     "id": "video-and-embeds",
+     "name": "Video and embeds",
+     "level": 2
+    },
+    {
+     "id": "icons-and-svgs",
+     "name": "Icons and SVGs",
+     "level": 2
+    },
+    {
+     "id": "aem-assets-integration",
+     "name": "AEM Assets integration",
+     "level": 3
+    }
+   ],
+   "signature": "Responsive image explorer",
+   "built": false
+  },
+  {
+   "id": "B6",
+   "cat": "B",
+   "name": "Document Authoring (da.live)",
+   "slug": "b6-document-authoring",
+   "page": "modules/b6-document-authoring.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "B2",
+    "A4"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "editor-basics",
+     "name": "Editor basics",
+     "level": 2
+    },
+    {
+     "id": "versions-and-restore",
+     "name": "Versions and restore",
+     "level": 2
+    },
+    {
+     "id": "library-and-templates",
+     "name": "Library and templates",
+     "level": 2
+    },
+    {
+     "id": "bulk-and-translation-tools",
+     "name": "Bulk and translation tools",
+     "level": 3
+    },
+    {
+     "id": "da-with-universal-editor",
+     "name": "DA with Universal Editor",
+     "level": 3
+    },
+    {
+     "id": "support-model",
+     "name": "Support model",
+     "level": 2
+    }
+   ],
+   "signature": "Document Authoring editor tour",
+   "built": false
+  },
+  {
+   "id": "B7",
+   "cat": "B",
+   "name": "Universal Editor with AEM Sites",
+   "slug": "b7-universal-editor",
+   "page": "modules/b7-universal-editor.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "B1",
+    "A4"
+   ],
+   "hours": 8,
+   "topics": [
+    {
+     "id": "editor-interface",
+     "name": "Editor interface",
+     "level": 2
+    },
+    {
+     "id": "sites-console-for-eds",
+     "name": "Sites console for EDS",
+     "level": 2
+    },
+    {
+     "id": "components-and-filters",
+     "name": "Components and filters",
+     "level": 2
+    },
+    {
+     "id": "publishing-to-eds",
+     "name": "Publishing to EDS",
+     "level": 2
+    },
+    {
+     "id": "content-fragments-in-ue",
+     "name": "Content Fragments in UE",
+     "level": 3
+    },
+    {
+     "id": "msm-language-copies-launches",
+     "name": "MSM, language copies, launches",
+     "level": 3
+    },
+    {
+     "id": "workflows-and-tagging",
+     "name": "Workflows and tagging",
+     "level": 3
+    }
+   ],
+   "signature": "Universal Editor tour and filter sandbox",
+   "built": false
+  },
+  {
+   "id": "B8",
+   "cat": "B",
+   "name": "Publishing workflow and quality",
+   "slug": "b8-publishing-quality",
+   "page": "modules/b8-publishing-quality.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    1,
+    3
+   ],
+   "pre": [
+    "B2"
+   ],
+   "hours": 5,
+   "topics": [
+    {
+     "id": "preview-review-publish",
+     "name": "Preview, review, publish",
+     "level": 1
+    },
+    {
+     "id": "seo-authoring",
+     "name": "SEO authoring",
+     "level": 2
+    },
+    {
+     "id": "accessibility-authoring",
+     "name": "Accessibility authoring",
+     "level": 2
+    },
+    {
+     "id": "scheduled-and-approved-publishing",
+     "name": "Scheduled and approved publishing",
+     "level": 3
+    },
+    {
+     "id": "content-qa-checklist",
+     "name": "Content QA checklist",
+     "level": 2
+    }
+   ],
+   "signature": "Pre-publish QA checker",
+   "built": false
+  },
+  {
+   "id": "B9",
+   "cat": "B",
+   "name": "Localization and multi-site content",
+   "slug": "b9-localization",
+   "page": "modules/b9-localization.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "B3",
+    "B4"
+   ],
+   "hours": 5,
+   "topics": [
+    {
+     "id": "locale-folder-strategy",
+     "name": "Locale folder strategy",
+     "level": 2
+    },
+    {
+     "id": "translation-workflows",
+     "name": "Translation workflows",
+     "level": 3
+    },
+    {
+     "id": "multi-site-authoring",
+     "name": "Multi-site authoring",
+     "level": 3
+    }
+   ],
+   "signature": "Locale tree explorer and hreflang builder",
+   "built": false
+  },
+  {
+   "id": "B10",
+   "cat": "B",
+   "name": "Forms and experimentation for authors",
+   "slug": "b10-forms-experiments",
+   "page": "modules/b10-forms-experiments.html",
+   "tracks": [
+    "au"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "B3"
+   ],
+   "hours": 5,
+   "topics": [
+    {
+     "id": "spreadsheet-based-forms",
+     "name": "Spreadsheet-based forms",
+     "level": 2
+    },
+    {
+     "id": "aem-forms-on-eds",
+     "name": "AEM Forms on EDS",
+     "level": 3
+    },
+    {
+     "id": "experiments",
+     "name": "Experiments",
+     "level": 3
+    },
+    {
+     "id": "audiences-and-campaigns",
+     "name": "Audiences and campaigns",
+     "level": 3
+    }
+   ],
+   "signature": "Form sheet to form preview and traffic-split visual",
+   "built": false
+  },
+  {
+   "id": "C1",
+   "cat": "C",
+   "name": "Environment setup",
+   "slug": "c1-environment-setup",
+   "page": "modules/c1-environment-setup.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    1,
+    1
+   ],
+   "pre": [
+    "A2"
+   ],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "boilerplates",
+     "name": "Boilerplates",
+     "level": 1
+    },
+    {
+     "id": "aem-code-sync-github-app",
+     "name": "AEM Code Sync GitHub App",
+     "level": 1
+    },
+    {
+     "id": "aem-cli-and-local-preview",
+     "name": "AEM CLI and local preview",
+     "level": 1
+    },
+    {
+     "id": "linting-and-editor",
+     "name": "Linting and editor",
+     "level": 1
+    },
+    {
+     "id": "branch-previews",
+     "name": "Branch previews",
+     "level": 1
+    }
+   ],
+   "signature": "Terminal replay of project setup",
+   "built": false
+  },
+  {
+   "id": "C2",
+   "cat": "C",
+   "name": "Project anatomy",
+   "slug": "c2-project-anatomy",
+   "page": "modules/c2-project-anatomy.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    1,
+    2
+   ],
+   "pre": [
+    "C1"
+   ],
+   "hours": 3,
+   "topics": [
+    {
+     "id": "folder-layout",
+     "name": "Folder layout",
+     "level": 1
+    },
+    {
+     "id": "core-scripts",
+     "name": "Core scripts: aem.js, scripts.js, delayed.js",
+     "level": 1
+    },
+    {
+     "id": "styles",
+     "name": "Styles",
+     "level": 1
+    },
+    {
+     "id": "ue-model-files",
+     "name": "UE model files",
+     "level": 2
+    }
+   ],
+   "signature": "Project file-tree explorer",
+   "built": false
+  },
+  {
+   "id": "C3",
+   "cat": "C",
+   "name": "Rendering and decoration",
+   "slug": "c3-rendering-decoration",
+   "page": "modules/c3-rendering-decoration.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    1,
+    2
+   ],
+   "pre": [
+    "C2",
+    "B1"
+   ],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "delivered-markup",
+     "name": "Delivered markup",
+     "level": 1
+    },
+    {
+     "id": "decoration-pipeline",
+     "name": "Decoration pipeline",
+     "level": 2
+    },
+    {
+     "id": "block-loading",
+     "name": "Block loading",
+     "level": 2
+    },
+    {
+     "id": "auto-blocking-in-code",
+     "name": "Auto-blocking in code",
+     "level": 2
+    }
+   ],
+   "signature": "Decoration pipeline step-through",
+   "built": false
+  },
+  {
+   "id": "C4",
+   "cat": "C",
+   "name": "Building blocks",
+   "slug": "c4-building-blocks",
+   "page": "modules/c4-building-blocks.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    1,
+    4
+   ],
+   "pre": [
+    "C3"
+   ],
+   "hours": 12,
+   "topics": [
+    {
+     "id": "block-contract",
+     "name": "Block contract",
+     "level": 1
+    },
+    {
+     "id": "reading-content",
+     "name": "Reading content",
+     "level": 1
+    },
+    {
+     "id": "variants",
+     "name": "Variants",
+     "level": 1
+    },
+    {
+     "id": "config-blocks",
+     "name": "Config blocks",
+     "level": 2
+    },
+    {
+     "id": "common-patterns",
+     "name": "Common patterns",
+     "level": 2
+    },
+    {
+     "id": "async-and-data-blocks",
+     "name": "Async and data blocks",
+     "level": 2
+    },
+    {
+     "id": "block-collection-reuse",
+     "name": "Block Collection reuse",
+     "level": 2
+    },
+    {
+     "id": "accessible-blocks",
+     "name": "Accessible blocks",
+     "level": 2
+    },
+    {
+     "id": "web-components-in-blocks",
+     "name": "Web components in blocks",
+     "level": 4
+    }
+   ],
+   "signature": "Block builder playground",
+   "built": false
+  },
+  {
+   "id": "C5",
+   "cat": "C",
+   "name": "Styling",
+   "slug": "c5-styling",
+   "page": "modules/c5-styling.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    1,
+    3
+   ],
+   "pre": [
+    "C2"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "design-tokens",
+     "name": "Design tokens",
+     "level": 1
+    },
+    {
+     "id": "block-scoped-css",
+     "name": "Block-scoped CSS",
+     "level": 1
+    },
+    {
+     "id": "section-styles",
+     "name": "Section styles",
+     "level": 1
+    },
+    {
+     "id": "fonts-without-cls",
+     "name": "Fonts without CLS",
+     "level": 2
+    },
+    {
+     "id": "design-system-mapping",
+     "name": "Design system mapping",
+     "level": 3
+    }
+   ],
+   "signature": "Design token editor and fallback-font CLS demo",
+   "built": false
+  },
+  {
+   "id": "C6",
+   "cat": "C",
+   "name": "Performance engineering",
+   "slug": "c6-performance-engineering",
+   "page": "modules/c6-performance-engineering.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    2,
+    4
+   ],
+   "pre": [
+    "C4",
+    "A3"
+   ],
+   "hours": 8,
+   "topics": [
+    {
+     "id": "eager-lazy-delayed-in-code",
+     "name": "Eager, lazy, delayed in code",
+     "level": 2
+    },
+    {
+     "id": "lcp-optimization",
+     "name": "LCP optimization",
+     "level": 2
+    },
+    {
+     "id": "image-handling",
+     "name": "Image handling",
+     "level": 2
+    },
+    {
+     "id": "third-party-governance",
+     "name": "Third-party governance",
+     "level": 3
+    },
+    {
+     "id": "pr-performance-gates",
+     "name": "PR performance gates",
+     "level": 3
+    },
+    {
+     "id": "rum-driven-tuning",
+     "name": "RUM-driven tuning",
+     "level": 4
+    }
+   ],
+   "signature": "Loading waterfall visualizer",
+   "built": false
+  },
+  {
+   "id": "C7",
+   "cat": "C",
+   "name": "Universal Editor development",
+   "slug": "c7-ue-development",
+   "page": "modules/c7-ue-development.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    2,
+    4
+   ],
+   "pre": [
+    "C4",
+    "B7"
+   ],
+   "hours": 10,
+   "topics": [
+    {
+     "id": "component-definitions",
+     "name": "Component definitions",
+     "level": 2
+    },
+    {
+     "id": "models-and-field-types",
+     "name": "Models and field types",
+     "level": 2
+    },
+    {
+     "id": "filters",
+     "name": "Filters",
+     "level": 2
+    },
+    {
+     "id": "per-block-model-files",
+     "name": "Per-block model files",
+     "level": 3
+    },
+    {
+     "id": "container-blocks",
+     "name": "Container blocks",
+     "level": 3
+    },
+    {
+     "id": "instrumentation",
+     "name": "Instrumentation",
+     "level": 3
+    },
+    {
+     "id": "ue-extensions",
+     "name": "UE extensions",
+     "level": 4
+    }
+   ],
+   "signature": "Model JSON to properties-panel preview",
+   "built": false
+  },
+  {
+   "id": "C8",
+   "cat": "C",
+   "name": "Data-driven development",
+   "slug": "c8-data-driven",
+   "page": "modules/c8-data-driven.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    2,
+    4
+   ],
+   "pre": [
+    "C4",
+    "B3"
+   ],
+   "hours": 8,
+   "topics": [
+    {
+     "id": "spreadsheet-json",
+     "name": "Spreadsheet JSON",
+     "level": 2
+    },
+    {
+     "id": "query-index",
+     "name": "Query index",
+     "level": 2
+    },
+    {
+     "id": "placeholders-in-code",
+     "name": "Placeholders in code",
+     "level": 2
+    },
+    {
+     "id": "json2html-overlay",
+     "name": "JSON2HTML overlay",
+     "level": 3
+    },
+    {
+     "id": "byom-content-source",
+     "name": "BYOM content source",
+     "level": 4
+    }
+   ],
+   "signature": "Query-index playground",
+   "built": false
+  },
+  {
+   "id": "C9",
+   "cat": "C",
+   "name": "Integrations",
+   "slug": "c9-integrations",
+   "page": "modules/c9-integrations.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    3,
+    4
+   ],
+   "pre": [
+    "C6"
+   ],
+   "hours": 8,
+   "topics": [
+    {
+     "id": "analytics-and-tags",
+     "name": "Analytics and tags",
+     "level": 3
+    },
+    {
+     "id": "consent-management",
+     "name": "Consent management",
+     "level": 3
+    },
+    {
+     "id": "external-apis",
+     "name": "External APIs",
+     "level": 3
+    },
+    {
+     "id": "adobe-target",
+     "name": "Adobe Target",
+     "level": 4
+    }
+   ],
+   "signature": "Martech timeline and consent state diagram",
+   "built": false
+  },
+  {
+   "id": "C10",
+   "cat": "C",
+   "name": "Testing and code quality",
+   "slug": "c10-testing-quality",
+   "page": "modules/c10-testing-quality.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    1,
+    3
+   ],
+   "pre": [
+    "C4"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "pr-workflow",
+     "name": "PR workflow",
+     "level": 1
+    },
+    {
+     "id": "linting-standards",
+     "name": "Linting standards",
+     "level": 1
+    },
+    {
+     "id": "unit-and-e2e-tests",
+     "name": "Unit and E2E tests",
+     "level": 3
+    },
+    {
+     "id": "accessibility-testing",
+     "name": "Accessibility testing",
+     "level": 2
+    },
+    {
+     "id": "visual-regression",
+     "name": "Visual regression",
+     "level": 3
+    }
+   ],
+   "signature": "PR workflow and accessibility fix-it exercise",
+   "built": false
+  },
+  {
+   "id": "C11",
+   "cat": "C",
+   "name": "Advanced developer tooling",
+   "slug": "c11-advanced-tooling",
+   "page": "modules/c11-advanced-tooling.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    3,
+    4
+   ],
+   "pre": [
+    "C8",
+    "D2"
+   ],
+   "hours": 10,
+   "topics": [
+    {
+     "id": "sidekick-customization",
+     "name": "Sidekick customization",
+     "level": 3
+    },
+    {
+     "id": "admin-api-scripting",
+     "name": "Admin API scripting",
+     "level": 3
+    },
+    {
+     "id": "da-apps-and-plugins",
+     "name": "DA apps and plugins",
+     "level": 4
+    },
+    {
+     "id": "edge-workers",
+     "name": "Edge workers",
+     "level": 4
+    },
+    {
+     "id": "shared-code-across-sites",
+     "name": "Shared code across sites",
+     "level": 4
+    }
+   ],
+   "signature": "Admin API request builder",
+   "built": false
+  },
+  {
+   "id": "D1",
+   "cat": "D",
+   "name": "Project setup and onboarding",
+   "slug": "d1-project-setup",
+   "page": "modules/d1-project-setup.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    1,
+    2
+   ],
+   "pre": [
+    "A2"
+   ],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "creating-a-site",
+     "name": "Creating a site",
+     "level": 1
+    },
+    {
+     "id": "cloud-manager-eds-sites",
+     "name": "Cloud Manager EDS sites",
+     "level": 2
+    },
+    {
+     "id": "org-and-site-naming",
+     "name": "Org and site naming",
+     "level": 1
+    },
+    {
+     "id": "team-onboarding",
+     "name": "Team onboarding",
+     "level": 2
+    }
+   ],
+   "signature": "Onboarding checklist and setup sequence",
+   "built": false
+  },
+  {
+   "id": "D2",
+   "cat": "D",
+   "name": "Configuration service",
+   "slug": "d2-configuration-service",
+   "page": "modules/d2-configuration-service.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "D1"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "site-and-org-config",
+     "name": "Site and org config",
+     "level": 2
+    },
+    {
+     "id": "legacy-to-config-service",
+     "name": "Legacy to config service",
+     "level": 2
+    },
+    {
+     "id": "api-keys-and-tokens",
+     "name": "API keys and tokens",
+     "level": 3
+    },
+    {
+     "id": "profiles-and-repoless-config",
+     "name": "Profiles and repoless config",
+     "level": 3
+    }
+   ],
+   "signature": "Configuration explorer",
+   "built": false
+  },
+  {
+   "id": "D3",
+   "cat": "D",
+   "name": "Domains, CDN and go-live",
+   "slug": "d3-cdn-go-live",
+   "page": "modules/d3-cdn-go-live.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "D2",
+    "A2"
+   ],
+   "hours": 10,
+   "topics": [
+    {
+     "id": "adobe-managed-cdn",
+     "name": "Adobe-managed CDN",
+     "level": 2
+    },
+    {
+     "id": "byo-cdn",
+     "name": "BYO CDN",
+     "level": 3
+    },
+    {
+     "id": "push-invalidation",
+     "name": "Push invalidation",
+     "level": 3
+    },
+    {
+     "id": "dns-ssl-apex-domains",
+     "name": "DNS, SSL, apex domains",
+     "level": 3
+    },
+    {
+     "id": "edge-redirects",
+     "name": "Edge redirects",
+     "level": 3
+    },
+    {
+     "id": "go-live-checklist",
+     "name": "Go-live checklist",
+     "level": 3
+    }
+   ],
+   "signature": "CDN request simulator and go-live checklist",
+   "built": false
+  },
+  {
+   "id": "D4",
+   "cat": "D",
+   "name": "Security and access",
+   "slug": "d4-security-access",
+   "page": "modules/d4-security-access.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    3,
+    3
+   ],
+   "pre": [
+    "D2"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "site-authentication",
+     "name": "Site authentication",
+     "level": 3
+    },
+    {
+     "id": "roles-and-permissions",
+     "name": "Roles and permissions",
+     "level": 3
+    },
+    {
+     "id": "content-security-policy",
+     "name": "Content Security Policy",
+     "level": 3
+    },
+    {
+     "id": "sidekick-and-ims-sign-in",
+     "name": "Sidekick and IMS sign-in",
+     "level": 3
+    },
+    {
+     "id": "secrets-handling",
+     "name": "Secrets handling",
+     "level": 3
+    }
+   ],
+   "signature": "CSP header builder",
+   "built": false
+  },
+  {
+   "id": "D5",
+   "cat": "D",
+   "name": "Environments and release management",
+   "slug": "d5-environments-releases",
+   "page": "modules/d5-environments-releases.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "D1",
+    "C10"
+   ],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "branch-based-environments",
+     "name": "Branch-based environments",
+     "level": 2
+    },
+    {
+     "id": "stage-and-prod-with-repoless",
+     "name": "Stage and prod with repoless",
+     "level": 3
+    },
+    {
+     "id": "content-release-coordination",
+     "name": "Content release coordination",
+     "level": 3
+    },
+    {
+     "id": "rollback",
+     "name": "Rollback",
+     "level": 2
+    }
+   ],
+   "signature": "Branch-to-environment diagram and release swimlane",
+   "built": false
+  },
+  {
+   "id": "D6",
+   "cat": "D",
+   "name": "Migration to EDS",
+   "slug": "d6-migration",
+   "page": "modules/d6-migration.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    3,
+    4
+   ],
+   "pre": [
+    "D3",
+    "C4",
+    "B1"
+   ],
+   "hours": 14,
+   "topics": [
+    {
+     "id": "discovery-and-inventory",
+     "name": "Discovery and inventory",
+     "level": 3
+    },
+    {
+     "id": "component-to-block-mapping",
+     "name": "Component-to-block mapping",
+     "level": 3
+    },
+    {
+     "id": "content-import",
+     "name": "Content import",
+     "level": 3
+    },
+    {
+     "id": "url-and-seo-preservation",
+     "name": "URL and SEO preservation",
+     "level": 3
+    },
+    {
+     "id": "parity-qa-and-cutover",
+     "name": "Parity QA and cutover",
+     "level": 4
+    },
+    {
+     "id": "aem-sites-to-eds-with-ue",
+     "name": "AEM Sites to EDS with UE",
+     "level": 4
+    }
+   ],
+   "signature": "Component-to-block mapping and redirect validator",
+   "built": false
+  },
+  {
+   "id": "D7",
+   "cat": "D",
+   "name": "Monitoring and observability",
+   "slug": "d7-monitoring",
+   "page": "modules/d7-monitoring.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "D1",
+    "A3"
+   ],
+   "hours": 5,
+   "topics": [
+    {
+     "id": "operational-telemetry-rum",
+     "name": "Operational Telemetry (RUM)",
+     "level": 2
+    },
+    {
+     "id": "cwv-dashboards",
+     "name": "CWV dashboards",
+     "level": 2
+    },
+    {
+     "id": "404-and-error-monitoring",
+     "name": "404 and error monitoring",
+     "level": 2
+    },
+    {
+     "id": "admin-logs-and-status",
+     "name": "Admin logs and status",
+     "level": 3
+    },
+    {
+     "id": "alerting",
+     "name": "Alerting",
+     "level": 3
+    }
+   ],
+   "signature": "RUM dashboard mock",
+   "built": false
+  },
+  {
+   "id": "D8",
+   "cat": "D",
+   "name": "SEO and discoverability operations",
+   "slug": "d8-seo-operations",
+   "page": "modules/d8-seo-operations.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    2,
+    3
+   ],
+   "pre": [
+    "B3",
+    "D1"
+   ],
+   "hours": 4,
+   "topics": [
+    {
+     "id": "robots-txt-and-sitemaps",
+     "name": "robots.txt and sitemaps",
+     "level": 2
+    },
+    {
+     "id": "metadata-at-scale",
+     "name": "Metadata at scale",
+     "level": 2
+    },
+    {
+     "id": "multi-language-seo",
+     "name": "Multi-language SEO",
+     "level": 3
+    }
+   ],
+   "signature": "robots.txt and sitemap builder",
+   "built": false
+  },
+  {
+   "id": "D9",
+   "cat": "D",
+   "name": "Governance and operating model",
+   "slug": "d9-governance",
+   "page": "modules/d9-governance.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    3,
+    4
+   ],
+   "pre": [
+    "D5",
+    "B8"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "block-catalog-governance",
+     "name": "Block catalog governance",
+     "level": 3
+    },
+    {
+     "id": "authoring-governance",
+     "name": "Authoring governance",
+     "level": 3
+    },
+    {
+     "id": "accessibility-compliance",
+     "name": "Accessibility compliance: WCAG 2.2 AA, AODA",
+     "level": 3
+    },
+    {
+     "id": "code-standards",
+     "name": "Code standards",
+     "level": 3
+    },
+    {
+     "id": "raci-and-support-model",
+     "name": "RACI and support model",
+     "level": 4
+    }
+   ],
+   "signature": "Interactive RACI matrix",
+   "built": false
+  },
+  {
+   "id": "D10",
+   "cat": "D",
+   "name": "Enterprise architecture",
+   "slug": "d10-enterprise-architecture",
+   "page": "modules/d10-enterprise-architecture.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    4,
+    4
+   ],
+   "pre": [
+    "D9",
+    "D6",
+    "D3"
+   ],
+   "hours": 10,
+   "topics": [
+    {
+     "id": "multi-brand-and-multi-site",
+     "name": "Multi-brand and multi-site",
+     "level": 4
+    },
+    {
+     "id": "hybrid-with-aem-sites",
+     "name": "Hybrid with AEM Sites",
+     "level": 4
+    },
+    {
+     "id": "headless-plus-eds",
+     "name": "Headless plus EDS",
+     "level": 4
+    },
+    {
+     "id": "scaling-teams",
+     "name": "Scaling teams",
+     "level": 4
+    },
+    {
+     "id": "choosing-authoring-per-business-unit",
+     "name": "Choosing authoring per business unit",
+     "level": 4
+    }
+   ],
+   "signature": "Multi-brand architecture and hybrid routing simulator",
+   "built": false
+  },
+  {
+   "id": "E1",
+   "cat": "E",
+   "name": "Experimentation",
+   "slug": "e1-experimentation",
+   "page": "modules/e1-experimentation.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    3,
+    3
+   ],
+   "pre": [
+    "B10",
+    "C6"
+   ],
+   "hours": 5,
+   "topics": [
+    {
+     "id": "experimentation-plugin",
+     "name": "Experimentation plugin",
+     "level": 3
+    },
+    {
+     "id": "measuring-results",
+     "name": "Measuring results",
+     "level": 3
+    }
+   ],
+   "signature": "Experiment results explorer",
+   "built": false
+  },
+  {
+   "id": "E2",
+   "cat": "E",
+   "name": "Personalization",
+   "slug": "e2-personalization",
+   "page": "modules/e2-personalization.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    3,
+    4
+   ],
+   "pre": [
+    "E1",
+    "C9"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "audiences-and-campaigns",
+     "name": "Audiences and campaigns",
+     "level": 3
+    },
+    {
+     "id": "adobe-target-and-edge-personalization",
+     "name": "Adobe Target and edge personalization",
+     "level": 4
+    }
+   ],
+   "signature": "Personalization flow and flicker timeline",
+   "built": false
+  },
+  {
+   "id": "E3",
+   "cat": "E",
+   "name": "Commerce",
+   "slug": "e3-commerce",
+   "page": "modules/e3-commerce.html",
+   "tracks": [
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    4,
+    4
+   ],
+   "pre": [
+    "C8",
+    "C9"
+   ],
+   "hours": 14,
+   "topics": [
+    {
+     "id": "commerce-storefront-on-eds",
+     "name": "Commerce storefront on EDS",
+     "level": 4
+    },
+    {
+     "id": "commerce-architecture",
+     "name": "Commerce architecture",
+     "level": 4
+    }
+   ],
+   "signature": "Commerce storefront architecture explorer",
+   "built": false
+  },
+  {
+   "id": "E4",
+   "cat": "E",
+   "name": "Forms",
+   "slug": "e4-forms",
+   "page": "modules/e4-forms.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    3,
+    4
+   ],
+   "pre": [
+    "B10",
+    "C4"
+   ],
+   "hours": 8,
+   "topics": [
+    {
+     "id": "aem-forms-on-eds",
+     "name": "AEM Forms on EDS",
+     "level": 3
+    },
+    {
+     "id": "enterprise-forms",
+     "name": "Enterprise forms",
+     "level": 4
+    }
+   ],
+   "signature": "Form rules builder",
+   "built": false
+  },
+  {
+   "id": "E5",
+   "cat": "E",
+   "name": "Structured content",
+   "slug": "e5-structured-content",
+   "page": "modules/e5-structured-content.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    3,
+    4
+   ],
+   "pre": [
+    "C8",
+    "B7"
+   ],
+   "hours": 6,
+   "topics": [
+    {
+     "id": "content-fragments-as-html",
+     "name": "Content Fragments as HTML",
+     "level": 3
+    },
+    {
+     "id": "json-driven-pages-at-scale",
+     "name": "JSON-driven pages at scale",
+     "level": 4
+    }
+   ],
+   "signature": "Content Fragment JSON to HTML simulator",
+   "built": false
+  },
+  {
+   "id": "E6",
+   "cat": "E",
+   "name": "AI and automation",
+   "slug": "e6-ai-automation",
+   "page": "modules/e6-ai-automation.html",
+   "tracks": [
+    "au",
+    "dev",
+    "imp"
+   ],
+   "levels": [
+    3,
+    4
+   ],
+   "pre": [
+    "C11"
+   ],
+   "hours": 8,
+   "topics": [
+    {
+     "id": "aem-mcp-servers",
+     "name": "AEM MCP servers",
+     "level": 4
+    },
+    {
+     "id": "ai-assisted-development",
+     "name": "AI-assisted development",
+     "level": 3
+    },
+    {
+     "id": "content-automation",
+     "name": "Content automation",
+     "level": 4
+    }
+   ],
+   "signature": "AI automation pipeline and MCP sequence",
+   "built": false
+  },
+  {
+   "id": "E7",
+   "cat": "E",
+   "name": "Expert accessibility",
+   "slug": "e7-expert-accessibility",
+   "page": "modules/e7-expert-accessibility.html",
+   "tracks": [
+    "au",
+    "dev"
+   ],
+   "levels": [
+    3,
+    3
+   ],
+   "pre": [
+    "C4",
+    "B8"
+   ],
+   "hours": 5,
+   "topics": [
+    {
+     "id": "accessible-complex-blocks",
+     "name": "Accessible complex blocks",
+     "level": 3
+    }
+   ],
+   "signature": "Accessible tabs, accordion and carousel demos",
+   "built": false
+  },
+  {
+   "id": "E8",
+   "cat": "E",
+   "name": "Authoring tool extensions",
+   "slug": "e8-tool-extensions",
+   "page": "modules/e8-tool-extensions.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    4,
+    4
+   ],
+   "pre": [
+    "C11"
+   ],
+   "hours": 8,
+   "topics": [
+    {
+     "id": "sidekick-da-and-ue-extensions",
+     "name": "Sidekick, DA and UE extensions",
+     "level": 4
+    }
+   ],
+   "signature": "Extension points map",
+   "built": false
+  },
+  {
+   "id": "E9",
+   "cat": "E",
+   "name": "Performance at scale",
+   "slug": "e9-performance-at-scale",
+   "page": "modules/e9-performance-at-scale.html",
+   "tracks": [
+    "imp"
+   ],
+   "levels": [
+    4,
+    4
+   ],
+   "pre": [
+    "C6",
+    "D7"
+   ],
+   "hours": 5,
+   "topics": [
+    {
+     "id": "portfolio-performance-program",
+     "name": "Portfolio performance program",
+     "level": 4
+    }
+   ],
+   "signature": "Portfolio performance dashboard",
+   "built": false
+  },
+  {
+   "id": "E10",
+   "cat": "E",
+   "name": "Community and contribution",
+   "slug": "e10-community",
+   "page": "modules/e10-community.html",
+   "tracks": [
+    "dev"
+   ],
+   "levels": [
+    4,
+    4
+   ],
+   "pre": [
+    "C4"
+   ],
+   "hours": 3,
+   "topics": [
+    {
+     "id": "block-collection-and-open-source",
+     "name": "Block Collection and open source",
+     "level": 4
+    }
+   ],
+   "signature": "Contribution flow",
+   "built": false
+  }
+ ],
+ "gates": [
+  {
+   "level": 1,
+   "title": "Personal microsite",
+   "page": "capstones/gate-1.html",
+   "built": false,
+   "brief": "An aem.live site with nav, footer, 5 pages and a custom block scoring 100 on mobile Lighthouse."
+  },
+  {
+   "level": 2,
+   "title": "Multi-locale blog",
+   "page": "capstones/gate-2.html",
+   "built": false,
+   "brief": "Query-index listing, tags, placeholders, two locales and a block library for authors."
+  },
+  {
+   "level": 3,
+   "title": "Migrated section",
+   "page": "capstones/gate-3.html",
+   "built": false,
+   "brief": "A real or sample site section moved to EDS with redirects, analytics in the delayed phase, CSP and a go-live checklist."
+  },
+  {
+   "level": 4,
+   "title": "Enterprise reference architecture",
+   "page": "capstones/gate-4.html",
+   "built": false,
+   "brief": "Multi-brand platform design, governance model, block catalog, migration plan and operating runbook."
+  }
+ ],
+ "paths": [
+  {
+   "id": "author",
+   "name": "Author",
+   "who": "Authors, publishers, content leads",
+   "page": "paths/author.html",
+   "phases": [
+    [
+     "A1",
+     "A2",
+     "A3",
+     "A4",
+     "B1",
+     "B2",
+     "B4",
+     "B5",
+     "B8"
+    ],
+    [
+     "B3",
+     "B6",
+     "B7",
+     "B9",
+     "B10",
+     "D8"
+    ],
+    [
+     "E1",
+     "E2",
+     "E4",
+     "E5",
+     "E7"
+    ],
+    [
+     "D9",
+     "E6",
+     "D10"
+    ]
+   ]
+  },
+  {
+   "id": "developer",
+   "name": "Developer",
+   "who": "Front-end and full-stack developers",
+   "page": "paths/developer.html",
+   "phases": [
+    [
+     "A1",
+     "A2",
+     "A3",
+     "A4",
+     "B1",
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C10"
+    ],
+    [
+     "B3",
+     "B7",
+     "C6",
+     "C7",
+     "C8",
+     "D1",
+     "D5"
+    ],
+    [
+     "C9",
+     "C11",
+     "E1",
+     "E4",
+     "E5",
+     "E7"
+    ],
+    [
+     "E2",
+     "E3",
+     "E6",
+     "E8",
+     "E10"
+    ]
+   ]
+  },
+  {
+   "id": "lead",
+   "name": "Implementation lead",
+   "who": "Tech leads, architects, platform owners",
+   "page": "paths/implementation-lead.html",
+   "phases": [
+    [
+     "A1",
+     "A2",
+     "A3",
+     "A4",
+     "B1",
+     "B2",
+     "C1",
+     "D1"
+    ],
+    [
+     "D2",
+     "D3",
+     "D5",
+     "D7",
+     "D8",
+     "B6",
+     "B7"
+    ],
+    [
+     "D4",
+     "D6",
+     "D9",
+     "C6",
+     "E1"
+    ],
+    [
+     "D10",
+     "E3",
+     "E9",
+     "E6",
+     "E2"
+    ]
+   ]
+  }
+ ]
+}

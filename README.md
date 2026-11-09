@@ -1,0 +1,110 @@
+# EDS Academy
+
+A self-paced, interactive course on Adobe Edge Delivery Services (EDS), covering authoring,
+development and implementation from beginner (L1) to expert (L4). It is a static site with
+no build step: plain HTML, CSS and ES modules, which mirrors how EDS projects are built.
+
+Content is as of **30 October 2026**. Build status and open items are listed in `BUILD-LOG.md`.
+
+## Open it locally
+
+ES modules and `fetch()` do not work from `file://`, so serve the folder:
+
+```bash
+cd eds-academy
+python3 -m http.server 8000      # or: npx serve .
+# open http://localhost:8000
+```
+
+## Publish on GitHub Pages
+
+1. Push this folder to the root of the `main` branch.
+2. In **Settings → Pages**, choose **Deploy from a branch**, then select `main` and `/ (root)`.
+3. The site is published at `https://poonia.github.io/eds-academy/`.
+
+There is no build step on Pages: `.nojekyll` turns Jekyll off, so files are served as they are.
+All paths are relative, so the site also works under another repository name or a custom domain.
+Pages is case-sensitive, so file names and links must match exactly. After changing module
+content, run `python3 tools/build-search-index.py` and commit the regenerated index.
+
+## Folder layout
+
+| Path | What it holds |
+| --- | --- |
+| `index.html` | Home: continue card, course map, learning paths, capstones, progress |
+| `start-here.html` | How the course works, tracks, levels, tool setup |
+| `modules/<id>-<slug>.html` | One page per module (content only) |
+| `reference/components.html` | Live showcase of every component and its markup |
+| `assets/css/academy.css` | Design tokens, light and dark themes, all component styles |
+| `assets/js/academy.js` | Shared runtime: chrome, module layout, progress, code, diagrams, glossary, search |
+| `assets/js/components/*.js` | One ES module per interactive component, loaded only when used |
+| `data/syllabus.json` | Modules, topics, levels, tracks, prerequisites, hours, paths, gates |
+| `data/glossary.json` | Terms auto-linked on first use in topic text |
+| `data/search-index.json` | Generated search index |
+| `tools/build-search-index.py` | Regenerates the index and validates pages |
+
+## Writing a module page
+
+Copy an existing module page and keep its structure. The runtime builds the header,
+sidebar, topic headings, badges, "Mark done" buttons, part labels and next steps from
+`data/syllabus.json`, so a page only holds content:
+
+```html
+<body data-page="module" data-module="B1">
+<main id="main">
+  <section class="intro" id="overview"> outcomes + Ready? quiz </section>
+  <section class="topic" id="default-content" data-level="1">   <!-- id = topic id in syllabus.json -->
+    <h2>Default content</h2>
+    <div data-part="why">…</div>
+    <div data-part="concept">…</div>
+    <div data-part="visual"><figure class="diagram"><pre class="mermaid">…</pre>
+      <figcaption>…</figcaption><details class="describe">…</details></figure></div>
+    <div data-part="show">…</div>
+    <div data-part="try">…</div>
+    <div data-part="pitfalls">…</div>
+  </section>
+  <section class="mpart" id="signature" data-toc="…">…</section>
+  … lab, troubleshooting, enterprise, knowledge-check, flashcards, cheat-sheet, further-reading …
+  <section class="mpart" id="next-steps"><div data-auto="next-steps"></div></section>
+</main>
+```
+
+Then set `"built": true` for the module in `data/syllabus.json` and run
+`python3 tools/build-search-index.py`. It fails if any syllabus topic has no section or any
+JSON block does not parse.
+
+## Components
+
+All are driven by markup and inline JSON (`<script type="application/json">`). See
+`reference/components.html` for working examples.
+
+| `data-component` | Purpose | Data |
+| --- | --- | --- |
+| `quiz` | Single, multiple and scenario questions with feedback; `data-variant` of check, ready or inline | `questions[]` with `q`, `options`, `answer` (index or array), `explain`, `scenario` |
+| `flashcards` | Flip cards, shuffle, mark known | `cards[]` as `[term, definition]` |
+| `stepper` | Next/Back through `.step` children | Child elements with `data-label` |
+| `hotspots` | Tour of a mockup | Elements with `data-hotspot` and `data-text` |
+| `order` | Drag or arrow-button ordering | `items[]` in the correct order |
+| `match` | Match prompts to answers with selects | `pairs[]` |
+| `decision-tree` | Questions leading to a recommendation | `start`, `nodes{}` |
+| `scorer` | Weighted questions with a live verdict and reasons | `questions[]`, `bands[]` |
+| `explorer` | Click-through architecture with arrows | `columns[].nodes[]` with `to[]` |
+| `cwv-sim` | Core Web Vitals simulator | none |
+| `phases` | Eager, lazy, delayed visualizer with payload budget | `budget`, `resources[]` |
+| `tabs` | Before/after or option tabs | Children with `data-tab` |
+| `course-map`, `dashboard`, `progress-panel` | Home page widgets | Read the syllabus and progress |
+
+Other enhancements: `figure.code` (highlighting, file label, `data-lines` highlights, copy,
+`ol.code-explain` notes), `.callout.{tip|warning|enterprise|performance|accessibility|verify|update}`,
+`ul.checklist[data-id]` (saved), and glossary auto-linking.
+
+## Libraries
+
+Only two CDNs, pinned: Mermaid 11.4.1 and highlight.js 11.9.0 (both from jsDelivr), plus
+Google Fonts. If a CDN is unreachable, diagrams fall back to their source with the text
+description open, and code shows unhighlighted.
+
+## Progress
+
+Stored in `localStorage` under `eds-academy-v1` (topics, modules, quiz scores, labs,
+checklists, flashcards). Export, import and reset are on the home and Start here pages.

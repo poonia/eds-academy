@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Components · EDS Academy</title>
+<meta name="description" content="Showcase of every interactive component used in EDS Academy, with the markup that drives it.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="components">
+<main id="main">
+  <section class="page-hero"><div class="wrap">
+    <div class="eyebrow">Reference</div>
+    <h1 style="margin-top:10px">Component showcase</h1>
+    <p class="lead">Every interactive building block used in the course, running on sample data. Module pages use the same markup, so this page doubles as the authoring guide for future modules.</p>
+  </div></section>
+
+  <div class="wrap" style="max-width:900px">
+    <section class="band" id="callouts"><h2 style="margin-bottom:14px">Callouts</h2>
+      <aside class="callout tip"><p>Tip callout: a practical shortcut.</p></aside>
+      <aside class="callout warning"><p>Warning callout: something that can break production.</p></aside>
+      <aside class="callout enterprise"><p>Enterprise note: governance or organizational context.</p></aside>
+      <aside class="callout performance"><p>Performance note: impact on Core Web Vitals.</p></aside>
+      <aside class="callout accessibility"><p>Accessibility note: WCAG 2.2 AA and AODA considerations.</p></aside>
+      <aside class="callout verify"><p>Verify: a detail to confirm on aem.live.</p></aside>
+      <figure class="code" data-file="Markup" data-lang="xml"><script type="text/plain"><aside class="callout tip"><p>Your text</p></aside></script></figure>
+    </section>
+
+    <section class="band" id="code"><h2 style="margin-bottom:14px">Code block with explanations and before/after tabs</h2>
+      <div data-component="tabs" data-label="Before and after">
+        <div data-tab="Before">
+          <figure class="code" data-file="blocks/hello/hello.js" data-lang="javascript">
+            <script type="text/plain">
+            export default function decorate(block) {
+              block.innerHTML = '<p>Hello</p>';
+            }
+            </script>
+            <figcaption><b>Problem:</b> replaces authored content.</figcaption>
+          </figure>
+        </div>
+        <div data-tab="After">
+          <figure class="code" data-file="blocks/hello/hello.js" data-lang="javascript" data-lines="2-3">
+            <script type="text/plain">
+            export default function decorate(block) {
+              const greeting = block.querySelector('p');
+              greeting.classList.add('hello-text');
+            }
+            </script>
+            <ol class="code-explain">
+              <li data-line="2">Reuse the authored element instead of replacing it.</li>
+              <li data-line="3">Add a class for styling.</li>
+            </ol>
+            <figcaption><b>Expected result:</b> authored text is kept and styled.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="diagram"><h2 style="margin-bottom:14px">Diagram</h2>
+      <figure class="diagram">
+        <pre class="mermaid">flowchart LR
+    A["Author"] --> B["Preview"] --> C["Publish"]</pre>
+        <figcaption><b>What to notice:</b> one sentence on what the reader should take away.</figcaption>
+        <details class="describe"><summary>Describe this diagram</summary><p>Author, then Preview, then Publish.</p></details>
+      </figure>
+    </section>
+
+    <section class="band" id="quiz"><h2 style="margin-bottom:14px">Quiz</h2>
+      <div data-component="quiz" data-id="demo-quiz" data-title="Sample check"><script type="application/json">{"questions":[
+        {"q":"Single choice example: what is 2 + 2?","options":["3","4","5"],"answer":1,"explain":"Basic arithmetic."},
+        {"q":"Multiple choice example: which are Core Web Vitals?","options":["LCP","CLS","FTP","INP"],"answer":[0,1,3],"explain":"LCP, CLS and INP."},
+        {"q":"Scenario example: a page fails Core Web Vitals on CLS only. What do you check first?","options":["Image dimensions and late banners","Server CPU","Font licensing"],"answer":0,"explain":"Unreserved space is the usual cause.","scenario":true}
+      ]}</script></div>
+    </section>
+
+    <section class="band" id="flashcards"><h2 style="margin-bottom:14px">Flashcards</h2>
+      <div data-component="flashcards" data-id="demo-cards"><script type="application/json">{"cards":[["Block","A component authored as a table."],["Section","A part of a page split by ---."],["Sidekick","Browser extension to preview and publish."]]}</script></div>
+    </section>
+
+    <section class="band" id="stepper"><h2 style="margin-bottom:14px">Step-through player</h2>
+      <div data-component="stepper" data-title="Sample flow">
+        <div class="step" data-label="1. Edit"><p>Edit the document.</p></div>
+        <div class="step" data-label="2. Preview"><p>Preview with Sidekick.</p></div>
+        <div class="step" data-label="3. Publish"><p>Publish when approved.</p></div>
+      </div>
+    </section>
+
+    <section class="band" id="hotspots"><h2 style="margin-bottom:14px">Hotspot tour</h2>
+      <div data-component="hotspots" data-title="Sample mockup">
+        <div class="hs-stage"><div style="display:flex;gap:12px;flex-wrap:wrap">
+          <span class="btn" data-hotspot="Preview button" data-text="Updates the .aem.page version.">Preview</span>
+          <span class="btn primary" data-hotspot="Publish button" data-text="Makes the previewed version live.">Publish</span>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="band" id="order"><h2 style="margin-bottom:14px">Drag to order</h2>
+      <div data-component="order"><script type="application/json">{"prompt":"Order the loading phases","items":["Eager","Lazy","Delayed"],"explain":"E, L, D."}</script></div>
+    </section>
+
+    <section class="band" id="match"><h2 style="margin-bottom:14px">Match</h2>
+      <div data-component="match"><script type="application/json">{"prompt":"Match domain to state","pairs":[["aem.page","Preview"],["aem.live","Live"]],"explain":"Preview, then live."}</script></div>
+    </section>
+
+    <section class="band" id="decision"><h2 style="margin-bottom:14px">Decision tree</h2>
+      <div data-component="decision-tree" data-title="Sample"><script type="application/json">{"start":"q","nodes":{"q":{"q":"Need approvals?","options":[{"label":"Yes","next":"a"},{"label":"No","next":"b"}]},"a":{"result":"Universal Editor","why":"AEM workflows."},"b":{"result":"Documents","why":"Fastest to adopt."}}}</script></div>
+    </section>
+
+    <section class="band" id="scorer"><h2 style="margin-bottom:14px">Scorer</h2>
+      <div data-component="scorer" data-title="Sample scorer"><script type="application/json">{"questions":[{"q":"Public site?","options":[{"label":"Yes","score":2,"note":"Public pages suit EDS."},{"label":"No","score":0,"note":"Logged-in sites fit less well."}]}],"bands":[{"min":0,"verdict":"Weak fit"},{"min":2,"verdict":"Strong fit"}]}</script></div>
+    </section>
+
+    <section class="band" id="explorer"><h2 style="margin-bottom:14px">Click-through architecture</h2>
+      <div data-component="explorer" data-title="Sample"><script type="application/json">{"start":"b","columns":[{"name":"In","nodes":[{"id":"a","label":"Source","detail":"Where content starts.","to":["b"]}]},{"name":"Middle","nodes":[{"id":"b","label":"Service","detail":"Processes content.","to":["c"]}]},{"name":"Out","nodes":[{"id":"c","label":"Visitor","detail":"Sees the page."}]}]}</script></div>
+    </section>
+
+    <section class="band" id="sims"><h2 style="margin-bottom:14px">Simulators</h2>
+      <div data-component="cwv-sim"></div>
+      <div data-component="phases" data-title="Sample page"><script type="application/json">{"budget":100,"resources":[{"name":"HTML","kb":12,"phase":"eager"},{"name":"Hero image","kb":40,"phase":"eager","lcp":true},{"name":"Analytics","kb":50,"phase":"eager","third":true}]}</script></div>
+    </section>
+
+    <section class="band" id="checklist"><h2 style="margin-bottom:14px">Checklist</h2>
+      <ul class="checklist" data-id="demo-checklist"><li>First item</li><li>Second item</li></ul>
+    </section>
+
+    <section class="band" id="tables"><h2 style="margin-bottom:14px">Comparison table with a Choose when row</h2>
+      <div class="table-wrap"><table class="t"><thead><tr><th></th><th>Option A</th><th>Option B</th></tr></thead><tbody><tr><th>Speed</th><td class="yes">Fast</td><td class="part">Medium</td></tr><tr class="choose"><th>Choose when</th><td>Speed matters</td><td>Control matters</td></tr></tbody></table></div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

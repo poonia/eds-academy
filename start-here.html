@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Start here · EDS Academy</title>
+<meta name="description" content="How EDS Academy works: tracks, levels, module anatomy, tool setup and how to keep your progress.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="assets/js/academy.js"></script>
+</head>
+<body data-page="start">
+<main id="main">
+  <section class="page-hero"><div class="wrap">
+    <div class="eyebrow">Start here</div>
+    <h1 style="margin-top:10px">How EDS Academy works</h1>
+    <p class="lead">Pick a track, set up a few free tools, and work through modules in order. Each module teaches every topic with a visual, an example and a quick check, then ends with a lab, a quiz and a cheat sheet.</p>
+  </div></section>
+
+  <section class="band"><div class="wrap">
+    <div class="sec-head"><h2>Tracks and levels</h2><p>Every topic is tagged with a level and one or more tracks. Follow one track, or all three.</p></div>
+    <div class="grid-2">
+      <div class="table-wrap"><table class="t">
+        <thead><tr><th>Track</th><th>For</th><th>You will</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag au">Auth</span> Authoring</td><td>Authors, publishers, content leads</td><td>Create, structure, publish and govern content in any authoring option</td></tr>
+          <tr><td><span class="tag dev">Dev</span> Development</td><td>Front-end developers</td><td>Build blocks, styles and integrations that keep Lighthouse at 100</td></tr>
+          <tr><td><span class="tag imp">Impl</span> Implementation</td><td>Leads, architects, platform owners</td><td>Configure, secure, launch, migrate and operate EDS at scale</td></tr>
+        </tbody>
+      </table></div>
+      <div class="table-wrap"><table class="t">
+        <thead><tr><th>Level</th><th>Label</th><th>You can</th></tr></thead>
+        <tbody>
+          <tr><td><span class="lvl" data-l="1">L1</span></td><td>Beginner</td><td>Explain EDS, author a page, run a project locally, build a simple block</td></tr>
+          <tr><td><span class="lvl" data-l="2">L2</span></td><td>Intermediate</td><td>Use spreadsheets, Sidekick, Universal Editor or DA; build data-driven blocks</td></tr>
+          <tr><td><span class="lvl" data-l="3">L3</span></td><td>Advanced</td><td>Launch on a production CDN, secure it, migrate content, run experiments</td></tr>
+          <tr><td><span class="lvl" data-l="4">L4</span></td><td>Expert</td><td>Architect multi-site platforms, commerce and forms, governance and automation</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div></section>
+
+  <section class="band"><div class="wrap">
+    <div class="sec-head"><h2>Anatomy of a module page</h2><p>Every module follows the same shape so you always know where you are.</p></div>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    H["Header: outcomes, prerequisites, Ready? check"] --> T["One section per topic"]
+    T --> P["Signature interactive"] --> L["Hands-on lab"] --> R["Troubleshooting and enterprise lens"] --> K["Knowledge check, flashcards, cheat sheet"] --> N["Next steps"]
+    T -.- PARTS["Each topic: Why it matters, Concept, Visual, Show it, Try it, Pitfalls"]</pre>
+      <figcaption><b>What to notice:</b> topics teach, the signature interactive and lab apply, and the end of the page checks and summarizes.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The header with outcomes, prerequisites and a Ready? check leads to one section per topic, then the signature interactive, the hands-on lab, troubleshooting and enterprise lens, the knowledge check, flashcards and cheat sheet, and next steps. Each topic contains Why it matters, Concept, Visual, Show it, Try it and Pitfalls.</p></details>
+    </figure>
+    <div class="grid-3">
+      <aside class="callout tip"><p>Mark each topic <b>Done</b> as you go. The sidebar, the home page and the header ring all track it.</p></aside>
+      <aside class="callout verify"><p><b>Verify</b> callouts flag details that change often or that could not be confirmed. Check them on aem.live before relying on them.</p></aside>
+      <aside class="callout enterprise"><p>Examples use a fictional bank and credit union. Swap in your own organization's sites when you do the labs.</p></aside>
+    </div>
+  </div></section>
+
+  <section class="band"><div class="wrap">
+    <div class="sec-head"><h2>Set up your tools</h2><p>All free. You need the first three for Category A labs and the rest from module C1 onwards.</p></div>
+    <ul class="checklist" data-id="setup">
+      <li>A desktop browser with DevTools (Chrome or Edge recommended)</li>
+      <li>Access to PageSpeed Insights (pagespeed.web.dev)</li>
+      <li>A terminal with <code>curl</code></li>
+      <li>A GitHub account</li>
+      <li>Node.js (current LTS) and npm</li>
+      <li>VS Code or another code editor</li>
+      <li>The AEM CLI (<code>npm install -g @adobe/aem-cli</code>), used in module C1</li>
+      <li>The AEM Sidekick browser extension, used in module B2</li>
+      <li>A Google Drive or SharePoint folder you can share with the AEM service, used in the developer tutorial</li>
+    </ul>
+  </div></section>
+
+  <section class="band"><div class="wrap">
+    <div class="sec-head"><h2>Keyboard shortcuts</h2></div>
+    <div class="table-wrap" style="max-width:640px"><table class="t">
+      <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>/</kbd> or <kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Open search</td></tr>
+        <tr><td><kbd>Space</kbd> or <kbd>Enter</kbd> on a flashcard</td><td>Flip the card</td></tr>
+        <tr><td><kbd>←</kbd> <kbd>→</kbd> in flashcards, steppers and tabs</td><td>Previous or next</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Close search, the mobile contents panel or a glossary tooltip</td></tr>
+      </tbody>
+    </table></div>
+  </div></section>
+
+  <section class="band"><div class="wrap">
+    <div class="sec-head"><h2>Accuracy and dates</h2></div>
+    <p style="max-width:72ch">Content is as of 30 October 2026 and was checked against aem.live and Experience League where those pages were reachable while the course was built. Edge Delivery Services changes continuously, so treat aem.live as the source of truth. Unconfirmed details carry a Verify callout and are listed in the build log.</p>
+  </div></section>
+
+  <section class="band" id="progress"><div class="wrap">
+    <div class="sec-head"><h2>Your progress</h2><p>Saved in this browser. Export to back it up or move devices.</p></div>
+    <div data-component="progress-panel"></div>
+  </div></section>
+</main>
+</body>
+</html>

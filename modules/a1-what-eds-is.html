@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A1 What EDS is and where it fits · EDS Academy</title>
+<meta name="description" content="Module A1: what Adobe Edge Delivery Services is, how it differs from traditional AEM Sites and headless, when it fits, how it is licensed and how its features mature.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="A1">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Explain in two sentences what Edge Delivery Services (EDS) is and decode the older names you will meet in docs and URLs.</li>
+    <li>Compare EDS with traditional AEM Sites delivery and with a headless architecture, and say when each wins.</li>
+    <li>Score a real site for EDS fit and name the two or three factors that drive the score.</li>
+    <li>Describe how EDS is licensed and how a site is created through Cloud Manager.</li>
+    <li>Read Adobe's feature lifecycle and decide whether a feature is safe to build on.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="a1-ready" data-title="Three quick questions">
+    <script type="application/json">{"questions":[
+      {"q":"In traditional AEM, what usually sits between the publish tier and the CDN?","options":["The Dispatcher","The Sites console","A Content Fragment model"],"answer":0,"explain":"The Dispatcher caches and protects the AEM publish tier. Keep it in mind: EDS removes this layer."},
+      {"q":"What does a headless CMS deliver to the front end?","options":["Finished HTML pages","Structured content, usually JSON, through an API","Only images"],"answer":1,"explain":"Headless systems hand over data and leave rendering to a separate app."},
+      {"q":"Which metric family does Google use to judge real-user page experience?","options":["Core Web Vitals","Lighthouse categories only","Bounce rate"],"answer":0,"explain":"Core Web Vitals (LCP, CLS, INP). Module A3 covers them in depth."}
+    ]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="origins-and-naming" data-level="1">
+  <h2>Origins and naming</h2>
+  <div data-part="why"><p>You will search for help and land on posts about <em>Franklin</em>, URLs ending in <code>hlx.page</code>, and repos with an <code>fstab.yaml</code> file. If you cannot map those to today's names, you will follow outdated instructions or think two products exist where there is one.</p></div>
+  <div data-part="concept">
+    <p>Edge Delivery Services is Adobe's publishing and delivery service that turns authored content into fast, semantic HTML at the edge of a CDN. It began as an internal Adobe project called Helix, later nicknamed Franklin. In October 2023 Adobe gave it a product name, AEM Edge Delivery Services, and by 2025 Adobe was calling it simply Edge Delivery Services.</p>
+    <p>The old names live on in technical places. The Admin API still sits at <code>admin.hlx.page</code>, and the old preview and live domains <code>hlx.page</code> and <code>hlx.live</code> became <code>aem.page</code> and <code>aem.live</code>. Think of it like a bank that rebranded: the sign on the building changed, but some forms still carry the old logo.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">timeline
+    title From internal project to product name
+    Helix : Internal project : hlx.page and hlx.live domains
+    Franklin : Later internal name : Public label "AEM Franklin"
+    Oct 2023 : Renamed AEM Edge Delivery Services : Domains move to aem.page and aem.live
+    2025 : Called Edge Delivery Services : Configuration service replaces fstab.yaml
+    2026 : Document Authoring becomes Experience Workspace</pre>
+      <figcaption><b>What to notice:</b> the product changed names three times, but the technology and core ideas (documents in, fast HTML out) stayed the same.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A left-to-right timeline. Helix: internal project with hlx.page and hlx.live domains. Franklin: a later internal name, publicly called AEM Franklin. October 2023: renamed AEM Edge Delivery Services and domains move to aem.page and aem.live. 2025: called Edge Delivery Services and the configuration service replaces fstab.yaml. 2026: Document Authoring is presented as Experience Workspace.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>You see</th><th>It means today</th><th>Where you meet it</th></tr></thead>
+      <tbody>
+        <tr><td>Helix, Franklin, AEM Franklin</td><td>Edge Delivery Services</td><td>Blog posts, conference talks, GitHub repo names such as <code>helix-*</code></td></tr>
+        <tr><td><code>hlx.page</code> / <code>hlx.live</code></td><td><code>aem.page</code> (preview) / <code>aem.live</code> (live)</td><td>Old tutorials and bookmarks</td></tr>
+        <tr><td><code>admin.hlx.page</code></td><td>The current Admin API host (unchanged)</td><td>Scripts and API docs</td></tr>
+        <tr><td><code>fstab.yaml</code></td><td>Older file mapping a site to its content; no longer required with the configuration service</td><td>Older repositories</td></tr>
+        <tr><td>Document Authoring, da.live</td><td>Now presented as Experience Workspace</td><td>Authoring docs from 2024–2026</td></tr>
+        <tr><td>Next-Gen Composability</td><td>An early marketing label for the same direction</td><td>2023 partner articles</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="order"><script type="application/json">{"prompt":"Put the names in the order they were used","items":["Helix","Franklin","AEM Edge Delivery Services","Edge Delivery Services"],"explain":"Helix came first, Franklin second, the October 2023 rename gave AEM Edge Delivery Services, and Adobe now says Edge Delivery Services."}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>A tutorial tells you to edit <code>fstab.yaml</code> but your site ignores it</td><td>The site uses the configuration service</td><td>Check site config through the Admin API or your admin tools instead (module D2).</td></tr>
+      <tr><td>A stakeholder asks to compare "Franklin" with EDS</td><td>Older names treated as separate products</td><td>Show the naming table: they are the same service.</td></tr>
+      <tr><td>Bookmarked <code>hlx.page</code> links behave unexpectedly</td><td>Domains moved to <code>aem.page</code> / <code>aem.live</code></td><td>Update links to the current domains.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="eds-vs-traditional-aem-sites" data-level="1">
+  <h2>EDS vs traditional AEM Sites</h2>
+  <div data-part="why"><p>Your organization already runs AEM Sites with an author tier, publish tier, Dispatcher and Java components. Leaders will ask what changes with EDS: who builds what, how releases work, and whether existing components carry over. You need a crisp, side-by-side answer.</p></div>
+  <div data-part="concept">
+    <p>Traditional AEM renders pages on a publish server from Java and HTL components, caches them in the Dispatcher, and puts a CDN in front. Code ships through Maven builds and Cloud Manager pipelines, which take time.</p>
+    <p>EDS keeps authoring where you want it (documents, Document Authoring, or AEM with the Universal Editor) but moves delivery to an edge service. Content is stored as clean, semantic HTML and served from a CDN. Code is plain JavaScript and CSS in GitHub, organized into blocks; every branch you push is instantly its own preview environment. There is no publish tier or Dispatcher to tune.</p>
+    <p>An analogy: traditional AEM is a restaurant that cooks every dish in its own kitchen. EDS is a central kitchen that sends ready, well-packed meals to many small counters near customers.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    subgraph T["Traditional AEM Sites"]
+      direction LR
+      A1["Author tier"] --> P1["Publish tier: Java and HTL render pages"] --> D1["Dispatcher cache"] --> C1["CDN"] --> V1["Visitor"]
+    end
+    subgraph E["Edge Delivery Services"]
+      direction LR
+      S2["Content source: documents or AEM with Universal Editor"] --> B2["Preview and publish into the Content Bus"] --> C2["Edge delivery and CDN"] --> V2["Visitor: JS and CSS decorate blocks"]
+      G2["GitHub: blocks in plain JS and CSS"] -.-> C2
+    end</pre>
+      <figcaption><b>What to notice:</b> EDS removes the publish tier and Dispatcher, and code reaches the edge straight from GitHub rather than through a build pipeline.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Two flows. Traditional AEM Sites: author tier to publish tier (Java and HTL render pages) to Dispatcher cache to CDN to visitor. Edge Delivery Services: content source (documents or AEM with Universal Editor) to preview and publish into the Content Bus, to edge delivery and CDN, to the visitor's browser where JavaScript and CSS decorate blocks. GitHub code with blocks in plain JS and CSS feeds the edge delivery step.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Aspect</th><th>Traditional AEM Sites</th><th>Edge Delivery Services</th></tr></thead>
+      <tbody>
+        <tr><th>Rendering</th><td>Server-side on the publish tier</td><td>Semantic HTML from the edge, decorated in the browser by blocks</td></tr>
+        <tr><th>Component code</th><td>Java, HTL, Sling Models, clientlibs</td><td>Vanilla JavaScript and CSS per block, no framework</td></tr>
+        <tr><th>Deploying code</th><td>Maven build and Cloud Manager pipeline</td><td>Push to GitHub; AEM Code Sync updates the site</td></tr>
+        <tr><th>Environments</th><td>Dev, stage, prod programs</td><td>Every branch has its own <code>.aem.page</code> URL</td></tr>
+        <tr><th>Caching</th><td>Dispatcher rules plus CDN</td><td>CDN with push invalidation on publish</td></tr>
+        <tr><th>Authoring</th><td>Page editor or Universal Editor in AEM</td><td>Documents, Document Authoring, or Universal Editor in AEM</td></tr>
+        <tr><th>Team skills</th><td>Java, AEM back-end, front-end</td><td>Front-end (HTML, CSS, JS) and content modelling</td></tr>
+        <tr class="choose"><th>Choose when</th><td>You rely on server-side logic or features not yet on EDS</td><td>Speed, Core Web Vitals and fast iteration matter most</td></tr>
+      </tbody>
+    </table></div>
+    <aside class="callout enterprise"><p>Existing AEM components do <strong>not</strong> carry over as-is. Migration means mapping components to a smaller set of blocks (module D6). Plan design-system work early: a Figma system maps to CSS tokens and blocks (module C5).</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="match"><script type="application/json">{"prompt":"Match each job to where it happens","pairs":[["Render page HTML for visitors","Edge delivery (EDS) or publish tier (traditional)"],["Ship new component code in EDS","Push a branch to GitHub"],["Cache traditional AEM pages","Dispatcher"],["Style and behaviour of an EDS block","Block JavaScript and CSS in the browser"]],"explain":"EDS swaps server-side Java rendering and Dispatcher rules for edge-served HTML plus small per-block JS and CSS."}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Plan assumes HTL components will "just work" on EDS</td><td>Different rendering model</td><td>Budget a component-to-block mapping exercise.</td></tr>
+      <tr><td>Team waits for a pipeline to test a CSS change</td><td>Traditional release habits</td><td>Push a feature branch and review its <code>.aem.page</code> URL.</td></tr>
+      <tr><td>Someone requests Dispatcher rules for EDS</td><td>Carrying over old architecture</td><td>Explain CDN caching with push invalidation (module A2).</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="eds-vs-headless" data-level="2">
+  <h2>EDS vs headless</h2>
+  <div data-part="why"><p>An architect proposes a headless CMS plus a React app for a new product site. You need to explain when EDS gives the same flexibility with better SEO and less code, and when headless really is the better tool.</p></div>
+  <div data-part="concept">
+    <p>Headless systems store structured content and deliver JSON through GraphQL or REST. A separate front end, often a JavaScript framework, turns that JSON into pages. That is powerful for apps and multiple channels, but it puts rendering, routing, SEO and performance on your team.</p>
+    <p>EDS delivers finished, semantic HTML pages that search engines and assistive technology read directly, then adds behaviour with small block scripts. It can still serve data: spreadsheets become JSON endpoints, AEM Content Fragments can be published to EDS as semantic HTML, and the JSON2HTML overlay renders EDS-friendly pages from JSON at any endpoint. In practice many enterprises use both: EDS for the public web, headless APIs for apps.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    subgraph H["Headless"]
+      CMS["CMS"] -->|JSON over API| APP["Your front-end app renders HTML"] --> U1["Visitor"]
+    end
+    subgraph X["Edge Delivery Services"]
+      SRC["Content source"] -->|semantic HTML| EDGE["Edge delivery"] --> U2["Visitor"]
+      SHEET["Spreadsheet"] -->|JSON endpoint| EDGE
+      CF["Content Fragment"] -->|published as HTML| EDGE
+    end</pre>
+      <figcaption><b>What to notice:</b> in headless, your app owns rendering. In EDS, HTML arrives ready and JSON is available when a block needs data.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Headless: CMS sends JSON over an API to your front-end app, which renders HTML for the visitor. Edge Delivery Services: the content source sends semantic HTML to edge delivery, which serves the visitor; a spreadsheet provides a JSON endpoint and a Content Fragment can be published as HTML to the same edge delivery.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <p>A spreadsheet published in EDS is available as JSON. This is the shape a block receives (values are fictional):</p>
+    <figure class="code" data-file="/rates.json (published spreadsheet)" data-lang="json" data-lines="2-4">
+      <script type="text/plain">
+      {
+        "total": 2,
+        "offset": 0,
+        "limit": 2,
+        "data": [
+          { "Product": "5-year fixed", "Rate": "4.29%" },
+          { "Product": "Variable", "Rate": "4.95%" }
+        ],
+        ":type": "sheet"
+      }
+      </script>
+      <ol class="code-explain">
+        <li data-line="2">Total rows in the sheet.</li>
+        <li data-line="3">Paging starts here; request more with query parameters (module C8).</li>
+        <li data-line="5">Each row becomes an object keyed by the column headers.</li>
+        <li data-line="9">Marks a single-sheet response; multi-sheet files are shaped differently.</li>
+      </ol>
+      <figcaption><b>Expected result:</b> a block can fetch this JSON and render a rate table without a separate CMS or API layer.</figcaption>
+    </figure>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th></th><th>Headless + framework app</th><th>EDS</th></tr></thead>
+      <tbody>
+        <tr><th>Output</th><td>JSON; your app renders HTML</td><td>HTML first; JSON where needed</td></tr>
+        <tr><th>SEO and accessibility</th><td>Depends on your rendering setup</td><td>Semantic HTML by default</td></tr>
+        <tr><th>Performance work</th><td>Yours: bundling, hydration, caching</td><td>Built around a Lighthouse 100 target</td></tr>
+        <tr><th>Channels</th><td>Web, apps, kiosks, email</td><td>Web first; JSON endpoints for light reuse</td></tr>
+        <tr class="choose"><th>Choose when</th><td>App-like experiences or many non-web channels</td><td>Content-led websites, campaigns, marketing and product pages</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a1-t3"><script type="application/json">{"questions":[{"q":"A team needs the same product data in a mobile app and on public product pages that must rank well in search. What is a sensible split?","options":["Headless only, render everything in a framework","EDS for the public pages, a headless API for the app","EDS only; the app scrapes the HTML"],"answer":1,"explain":"Use each tool for what it does best: EDS for fast, crawlable pages; APIs for app data."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>A React app is proposed inside EDS pages for simple content</td><td>Framework habit</td><td>Use blocks; load a framework only for an isolated widget, in the lazy or delayed phase.</td></tr>
+      <tr><td>Product data is copied by hand into many pages</td><td>No structured source</td><td>Use a spreadsheet or Content Fragments as the data source (modules B3, E5).</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="fit-assessment" data-level="2">
+  <h2>Fit assessment</h2>
+  <div data-part="why"><p>Before your organization commits, someone has to say which sites move first. A wrong first pick, such as an authenticated portal full of server logic, can sour the whole programme. A good first pick, such as a campaign microsite, builds momentum.</p></div>
+  <div data-part="concept">
+    <p>Assess fit along a few dimensions: how content-led the site is, how much server-side logic or authentication it needs, how important search and speed are, which authoring workflow the team needs, and whether it depends on AEM features that are only partly available on EDS. Strong fits are marketing sites, campaign and product pages, blogs, documentation and commerce storefronts (Adobe's commerce storefront is built on EDS). Weaker fits are app-like, logged-in experiences with heavy server rendering.</p>
+    <p>Fit is rarely all or nothing. A hybrid, where public pages move to EDS and logged-in areas stay where they are, is common (module D10).</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+    Q1{"Mostly public, content-led pages?"} -->|Yes| Q2{"Needs heavy server-side logic per request?"}
+    Q1 -->|No, app-like and logged in| W["Weak fit: keep current platform or go hybrid"]
+    Q2 -->|No| Q3{"Depends on AEM features only partly on EDS?"}
+    Q2 -->|Yes| H["Hybrid: EDS for public pages, existing stack for logic"]
+    Q3 -->|No| S["Strong fit: good first candidate"]
+    Q3 -->|Yes| V["Possible fit: verify those features first"]</pre>
+      <figcaption><b>What to notice:</b> three questions sort most sites. The signature scorer below goes deeper with eight.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A decision flow. If the site is not mostly public and content-led (app-like and logged in), it is a weak fit: keep the current platform or go hybrid. If it is content-led but needs heavy server-side logic per request, go hybrid. If it does not need heavy logic and does not depend on AEM features only partly on EDS, it is a strong fit; if it does depend on such features, it is a possible fit to verify first.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Site (fictional bank)</th><th>Signals</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Spring RRSP campaign microsite</td><td>Public, time-boxed, speed matters, small block set</td><td class="yes">Strong fit, ideal pilot</td></tr>
+        <tr><td>Mortgage product pages</td><td>Public, SEO-critical, rate data from a sheet</td><td class="yes">Strong fit</td></tr>
+        <tr><td>Advisor finder</td><td>Public, needs a search API</td><td class="part">Fit with an API-backed block</td></tr>
+        <tr><td>Client portal (logged in)</td><td>Authenticated, per-user server logic</td><td class="no">Weak fit, keep or go hybrid</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="font-size:15px">Use the <a href="#signature">EDS fit scorer</a> to score one of your own sites.</p>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a1-t4"><script type="application/json">{"questions":[{"q":"Which site is the best first pilot for EDS?","options":["The logged-in client portal","A public campaign microsite launching next quarter","The internal HR intranet with single sign-on everywhere"],"answer":1,"explain":"Public, content-led, time-boxed and speed-sensitive: low risk and visible results."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Pilot stalls on authentication and user-specific data</td><td>Started with an app-like site</td><td>Pick a public, content-led pilot first.</td></tr>
+      <tr><td>Late discovery that a needed AEM feature behaves differently on EDS</td><td>Feature availability not checked</td><td>Check aem.live feature status during assessment (topic 6).</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="licensing-and-product-packaging" data-level="2">
+  <h2>Licensing and product packaging</h2>
+  <div data-part="why"><p>Budget owners will ask what EDS costs and what you need to buy. Knowing the packaging lets you start learning for free today and frame the right questions for your Adobe account team.</p></div>
+  <div data-part="concept">
+    <p>According to aem.live, Edge Delivery Services is part of AEM Sites and requires an AEM Sites licence; your Adobe account team estimates licensing from your sites' needs and traffic. Development access does not need a separate licence: anyone can build a project for free by following the developer tutorial on aem.live.</p>
+    <p>For enterprise programmes, sites are created and managed with Cloud Manager. Since Cloud Manager 2026.4.0 you can create an Edge Delivery site there and choose document-based authoring or AEM Author-based authoring.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    L["AEM Sites licence"] --> CM["Cloud Manager program"] --> NEW["Create Edge Delivery site"]
+    NEW --> DOC["Document-based authoring"]
+    NEW --> AUTH["AEM Author with Universal Editor"]
+    FREE["Free developer tutorial on aem.live"] -.->|learn and prototype| NEW</pre>
+      <figcaption><b>What to notice:</b> learning is free; production sites come with an AEM Sites licence and are set up in Cloud Manager.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An AEM Sites licence leads to a Cloud Manager program, where you create an Edge Delivery site with either document-based authoring or AEM Author with the Universal Editor. Separately, the free developer tutorial on aem.live lets you learn and prototype.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Goal</th><th>What you need</th></tr></thead>
+      <tbody>
+        <tr><td>Learn and prototype</td><td>GitHub account, the boilerplate, and Google Drive or SharePoint access. No licence.</td></tr>
+        <tr><td>Production site</td><td>AEM Sites licence; site created in Cloud Manager; domain and CDN setup (module D3)</td></tr>
+        <tr><td>AEM authoring with Universal Editor</td><td>AEM as a Cloud Service author environment plus EDS</td></tr>
+        <tr><td>Licence estimate</td><td>Your Adobe account team, with expected sites and traffic</td></tr>
+      </tbody>
+    </table></div>
+    <aside class="callout verify"><p>Contract terms differ between customers and change over time. Confirm entitlements, traffic tiers and support levels with your Adobe account team before you commit to a plan.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a1-t5"><script type="application/json">{"questions":[{"q":"You want to learn EDS this weekend with no purchase order. What can you do?","options":["Nothing until a licence is signed","Follow the free developer tutorial on aem.live with a GitHub account","Request a Cloud Manager program from Adobe Support"],"answer":1,"explain":"Development access is free; licensing applies to production sites."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Team delays learning until procurement finishes</td><td>Belief that any use needs a licence</td><td>Start with the free tutorial and a sandbox repo.</td></tr>
+      <tr><td>Budget surprise at go-live</td><td>Traffic and site count not shared early</td><td>Give the account team traffic estimates during planning.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="feature-lifecycle" data-level="2">
+  <h2>Feature lifecycle: early access vs GA</h2>
+  <div data-part="why"><p>An enterprise roadmap cannot rest on a feature that might change next month. Knowing where a feature sits in Adobe's lifecycle tells you whether to build on it, pilot it, or wait.</p></div>
+  <div data-part="concept">
+    <p>Adobe says Edge Delivery Services follows a feature lifecycle rather than a traditional roadmap: when existing features do not meet a need, Adobe works with customers to build a solution, then productizes what proves useful. aem.live describes an "adoption arc" with seven stages, from Interest (an unmet need, nothing built) through Repeatable and Increasing use (young, may change) to Mainstream (fully productized), and finally Decreasing use, Discouraged and Removed.</p>
+    <p>In everyday terms, "early access" features sit in the young stages and "generally available" ones are Mainstream. aem.live also keeps a list of deprecations and removals, and a "Map of Interest" of AEM Sites features that are not yet, or only partly, available when you author with the Universal Editor.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">stateDiagram-v2
+    direction LR
+    Interest --> Repeatable : solved with customers
+    Repeatable --> IncreasingUse : first product version
+    IncreasingUse --> Mainstream : proven in real use
+    Mainstream --> DecreasingUse : past its peak
+    DecreasingUse --> Discouraged : replaced or abandoned
+    Discouraged --> Removed : end of service
+    IncreasingUse : Increasing use
+    DecreasingUse : Decreasing use</pre>
+      <figcaption><b>What to notice:</b> build enterprise commitments on Mainstream features; pilot features in Repeatable or Increasing use; plan exits from Discouraged ones.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Seven states left to right: Interest, Repeatable (solved with customers), Increasing use (first product version), Mainstream (proven in real use), Decreasing use (past its peak), Discouraged (replaced or abandoned), Removed (end of service).</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Stage (aem.live)</th><th>Plain meaning</th><th>Enterprise stance</th></tr></thead>
+      <tbody>
+        <tr><td>Interest</td><td>A need; nothing built</td><td>Share your use case with Adobe</td></tr>
+        <tr><td>Repeatable</td><td>Works for a few customers, project-level</td><td>Pilot only, with an exit plan</td></tr>
+        <tr><td>Increasing use</td><td>First product version, may change significantly</td><td>Pilot; avoid hard dependencies</td></tr>
+        <tr><td>Mainstream</td><td>Fully productized and proven</td><td>Build on it</td></tr>
+        <tr><td>Decreasing use</td><td>Past its peak; being investigated</td><td>Watch closely</td></tr>
+        <tr><td>Discouraged</td><td>Not recommended for new projects</td><td>Do not start new work; plan migration</td></tr>
+        <tr><td>Removed</td><td>No longer available or supported</td><td>Must be replaced</td></tr>
+      </tbody>
+    </table></div>
+    <aside class="callout update"><p>Document Authoring was described as early access and community-supported in 2025–early 2026, and is now presented as Experience Workspace. Check its current support terms before you plan around it (module A4).</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a1-t6"><script type="application/json">{"questions":[{"q":"A feature you like is listed as being in its first product version and may change significantly. What is the right enterprise stance?","options":["Build all new sites on it immediately","Pilot it with an exit plan and avoid hard dependencies","Ignore it until it is removed"],"answer":1,"explain":"Young features can change. Pilot them, but keep critical paths on Mainstream features."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>A pilot feature changes and breaks your authoring flow</td><td>Hard dependency on a young feature</td><td>Isolate it behind configuration and keep a fallback.</td></tr>
+      <tr><td>Support ticket rejected for a community tool</td><td>Feature had no Adobe SLA</td><td>Record each feature's support model in your architecture decisions.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- Module-level parts -->
+<section class="mpart" id="signature" data-toc="Signature interactive: EDS fit scorer">
+  <h2>Signature interactive: EDS fit scorer</h2>
+  <p>Answer eight questions about one real site. The verdict updates as you go and lists the reasons behind it. Use it to shortlist pilots.</p>
+  <div data-component="scorer" data-title="How well does this site fit EDS?"><script type="application/json">{
+    "intro":"Think of one specific site, such as a campaign microsite or a product section.",
+    "questions":[
+      {"q":"Who uses the site?","options":[{"label":"Public visitors","score":3,"note":"Public, crawlable pages are the core EDS use case."},{"label":"Mixed public and logged-in","score":1,"note":"Mixed audiences often suit a hybrid: EDS for public pages."},{"label":"Logged-in users only","score":-2,"note":"Logged-in, per-user experiences are a weaker fit."}]},
+      {"q":"How content-led is it?","options":[{"label":"Mostly articles, product and campaign pages","score":3,"note":"Content-led pages map naturally to sections and blocks."},{"label":"Some interactive tools","score":1,"note":"Interactive tools work as isolated blocks or embedded apps."},{"label":"Mostly an application","score":-2,"note":"App-like sites gain less from EDS."}]},
+      {"q":"How much server-side logic runs per request?","options":[{"label":"Little or none","score":2,"note":"Little per-request logic means pages can be cached at the edge."},{"label":"Some, through APIs a block can call","score":1,"note":"API calls from blocks are fine when kept off the critical path."},{"label":"Heavy, per-user rendering","score":-2,"note":"Heavy server rendering is better kept on its current stack."}]},
+      {"q":"How important are search ranking and page speed?","options":[{"label":"Critical","score":3,"note":"EDS is built around Lighthouse 100 and semantic HTML."},{"label":"Nice to have","score":1,"note":"Speed is a bonus rather than the driver."},{"label":"Not important","score":0,"note":"Speed alone will not justify a move."}]},
+      {"q":"How do authors want to work?","options":[{"label":"Documents or a simple editor","score":2,"note":"Document-based authoring is fast to learn."},{"label":"Structured forms in AEM","score":2,"note":"Universal Editor with AEM keeps structured, governed authoring."},{"label":"Unsure","score":1,"note":"Run module A4's decision tree with the authoring team."}]},
+      {"q":"Does it rely on MSM, launches or complex AEM workflows?","options":[{"label":"No","score":2,"note":"Fewer platform dependencies means a simpler move."},{"label":"Yes, and they are well understood","score":0,"note":"Check aem.live feature status for each dependency."},{"label":"Yes, heavily and customized","score":-1,"note":"Heavy customization raises migration risk; verify first."}]},
+      {"q":"What front-end skills does the team have?","options":[{"label":"Strong HTML, CSS and JavaScript","score":2,"note":"EDS development is front-end work."},{"label":"Mostly Java and AEM back-end","score":0,"note":"Plan training: EDS blocks are vanilla JS and CSS."},{"label":"No in-house developers","score":0,"note":"A partner or the Block Collection can fill gaps."}]},
+      {"q":"How many distinct page types or components?","options":[{"label":"Under 20","score":2,"note":"A small block set is quick to build and govern."},{"label":"20 to 60","score":1,"note":"Consolidate components into fewer, flexible blocks."},{"label":"More than 60","score":-1,"note":"Large component sets need rationalization before moving."}]}
+    ],
+    "bands":[
+      {"min":-20,"verdict":"Weak fit","text":"Keep the current platform, or move only public sections in a hybrid."},
+      {"min":6,"verdict":"Possible fit","text":"Promising, with risks to resolve. Verify feature dependencies and skills first."},
+      {"min":12,"verdict":"Strong fit","text":"A good candidate. Consider it for an early pilot."}
+    ]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: inspect a live EDS site and write a fit memo</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>See EDS output with your own eyes and produce a one-page fit memo for one of your sites.</p></div>
+    <div><h4>You need</h4><p>A desktop browser with DevTools. No accounts or installs.</p></div>
+    <div><h4>Time</h4><p>About 45 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open a page on aem.live.</b> The official documentation site runs on Edge Delivery Services. Open <a href="https://www.aem.live/docs/" rel="noopener" target="_blank">aem.live/docs</a>.</div></li>
+    <li><div><b>View the delivered HTML.</b> Use View Source (not the Elements panel). Find <code>&lt;main&gt;</code> and notice plain <code>&lt;div&gt;</code> sections, headings and paragraphs: semantic HTML before any JavaScript runs.</div></li>
+    <li><div><b>Compare with the decorated DOM.</b> Open DevTools Elements. Blocks now carry extra classes and wrappers added by block scripts. Write down two differences.</div></li>
+    <li><div><b>Find the content-only view.</b> Add <code>.plain.html</code> to a page path (for example <code>/docs/architecture.plain.html</code>). This returns just the content sections, which is how fragments are loaded.</div></li>
+    <li><div><b>Measure it.</b> Run PageSpeed Insights on the page, mobile view. Note the Performance score and LCP.</div></li>
+    <li><div><b>Score your own site.</b> Use the <a href="#signature">fit scorer</a> for one site you publish today.</div></li>
+    <li><div><b>Write the memo.</b> One page: site name, verdict, top three reasons, risks to verify, and a suggested pilot scope.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>Notes on source vs decorated DOM, a PSI result, and a fit memo.</p></div>
+    <div><h4>How to verify</h4><p>Your memo cites at least two scorer reasons and one feature to check against aem.live.</p></div>
+    <div><h4>Stretch</h4><p>Repeat steps 2–5 on one of your current AEM pages and compare.</p></div>
+  </div>
+  <aside class="callout verify"><p>The <code>.plain.html</code> convention is used by the boilerplate's fragment block. If it does not respond on a given site, the site may restrict it; try another page.</p></aside>
+  <ul class="checklist" data-id="a1-lab">
+    <li>Viewed source and found semantic sections inside <code>&lt;main&gt;</code></li>
+    <li>Compared source with the decorated DOM</li>
+    <li>Loaded a <code>.plain.html</code> view</li>
+    <li>Ran PageSpeed Insights (mobile)</li>
+    <li>Scored a site and wrote the fit memo</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Instructions mention Franklin or <code>hlx.page</code></td><td>Older documentation</td><td>Translate names with the table in topic 1; prefer aem.live.</td></tr>
+      <tr><td>View Source looks different from the Elements panel</td><td>Block scripts decorate the DOM after load</td><td>Expected. Source is what crawlers see first; Elements is after decoration.</td></tr>
+      <tr><td>Leadership expects existing components to migrate unchanged</td><td>Different rendering model</td><td>Share the comparison table and plan block mapping.</td></tr>
+      <tr><td>Fit scorer says "weak" for a high-profile site</td><td>Logged-in or app-like requirements</td><td>Consider a hybrid: move public pages only.</td></tr>
+      <tr><td>Procurement blocks experimentation</td><td>Assumed licence needed to learn</td><td>Use free developer access and a personal GitHub repo.</td></tr>
+      <tr><td>A feature you planned on is marked Discouraged</td><td>Lifecycle moved on</td><td>Check deprecations on aem.live and plan the replacement.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Governance.</b> Record an architecture decision for each site: fit verdict, authoring option, feature dependencies and their lifecycle stage.</p></aside>
+    <aside class="callout warning" data-label="Security"><p>Public delivery is the default. Anything that needs authentication or per-user data needs explicit design (module D4) or should stay on its current stack.</p></aside>
+    <aside class="callout accessibility"><p>Semantic HTML gives you a head start on WCAG 2.2 AA and AODA, but accessibility still depends on authored headings, alt text and accessible blocks.</p></aside>
+    <aside class="callout performance"><p>Adopt Lighthouse 100 on mobile as a non-negotiable bar from day one; it is far easier to keep than to recover.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Which sites move first</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Authoring option per site</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Feature dependency checks</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Licence and Cloud Manager setup</td><td>Informed</td><td>Informed</td><td>Responsible</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="a1-check"><script type="application/json">{"questions":[
+    {"q":"Which statement best describes Edge Delivery Services?","options":["A headless CMS that only returns JSON","An edge publishing and delivery service that serves semantic HTML from a CDN","A new name for the Dispatcher"],"answer":1,"explain":"EDS turns authored content into semantic HTML served at the edge."},
+    {"q":"What did hlx.live become?","options":["aem.live","adobe.live","edge.page"],"answer":0,"explain":"hlx.page and hlx.live became aem.page and aem.live."},
+    {"q":"How does new block code reach an EDS site?","options":["Through a Maven build and Cloud Manager pipeline","By pushing to GitHub, synced by AEM Code Sync","By uploading a package in CRX"],"answer":1,"explain":"Code lives in GitHub; each push updates the matching branch environment."},
+    {"q":"Which ways can EDS expose data to a block? Choose all that apply.","options":["Spreadsheets published as JSON","Content Fragments published as semantic HTML","The JSON2HTML overlay","Only by scraping other pages"],"answer":[0,1,2],"explain":"Sheets, Content Fragments and JSON2HTML all bring structured data into EDS."},
+    {"q":"What licence does a production EDS site need, according to aem.live?","options":["None","An AEM Sites licence","A separate Edge licence unrelated to AEM"],"answer":1,"explain":"EDS is part of AEM Sites; development access is free."},
+    {"q":"Which adoption-arc stage means a feature is fully productized and proven?","options":["Increasing use","Mainstream","Repeatable"],"answer":1,"explain":"Mainstream is where every feature should end up."},
+    {"q":"Which of these is the weakest EDS fit?","options":["Public mortgage product pages","A spring campaign microsite","A logged-in portal with per-user server rendering"],"answer":2,"explain":"Per-user, logged-in server logic gains least from edge delivery."},
+    {"q":"Your VP wants to move the entire public site plus the client portal to EDS in one release. What do you recommend?","options":["Agree: move everything at once","Start with a public pilot, keep the portal on its stack or plan a hybrid, and check feature dependencies","Refuse EDS entirely"],"answer":1,"explain":"Reduce risk with a public, content-led pilot and a hybrid for logged-in areas.","scenario":true}
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="a1-cards"><script type="application/json">{"cards":[
+    ["Edge Delivery Services","Adobe's edge publishing and delivery service, part of AEM Sites, that serves semantic HTML from a CDN."],
+    ["Helix / Franklin","Internal project names for what became Edge Delivery Services."],
+    ["aem.page","Preview domain (formerly hlx.page)."],
+    ["aem.live","Live domain (formerly hlx.live)."],
+    ["Block","A component authored as a table and decorated by its own JS and CSS."],
+    ["Branch environment","Every pushed GitHub branch gets its own preview URL."],
+    ["Headless","Content delivered as JSON through APIs; a separate app renders it."],
+    ["JSON2HTML","Overlay that renders EDS-friendly HTML from JSON at any endpoint."],
+    ["Adoption arc","aem.live's seven-stage feature lifecycle, from Interest to Removed."],
+    ["Mainstream","Lifecycle stage for fully productized, proven features."],
+    ["Hybrid","Public pages on EDS while app-like or logged-in areas stay on another stack."]
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>A1 · What EDS is and where it fits</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Names</h4><ul><li>Helix → Franklin → AEM EDS (Oct 2023) → EDS</li><li>hlx.page/live → aem.page/live</li><li>Admin API: admin.hlx.page</li></ul></div>
+      <div><h4>Versus traditional AEM</h4><ul><li>No publish tier or Dispatcher</li><li>Blocks in vanilla JS and CSS</li><li>Push to GitHub = deploy</li></ul></div>
+      <div><h4>Versus headless</h4><ul><li>HTML first, JSON when needed</li><li>Sheets, CFs, JSON2HTML for data</li><li>Use both: EDS web, APIs apps</li></ul></div>
+      <div><h4>Fit and licence</h4><ul><li>Strong: public, content-led, speed-critical</li><li>Weak: logged-in, per-user logic</li><li>Needs AEM Sites licence; dev is free</li></ul></div>
+      <div><h4>Lifecycle</h4><ul><li>Build on Mainstream</li><li>Pilot young features with an exit plan</li><li>Check deprecations regularly</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/faq" rel="noopener" target="_blank">aem.live: General questions (FAQ)</a> — naming, licensing, content sources</li>
+    <li><a href="https://www.aem.live/docs/architecture" rel="noopener" target="_blank">aem.live: Architecture</a></li>
+    <li><a href="https://www.aem.live/docs/lifecycle" rel="noopener" target="_blank">aem.live: Feature lifecycle</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/release-notes/cloud-manager/2026/2026-4-0" rel="noopener" target="_blank">Experience League: Cloud Manager 2026.4.0 release notes</a> — creating Edge Delivery sites</li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/edge-delivery-services/overview" rel="noopener" target="_blank">Experience League: Edge Delivery Services overview</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

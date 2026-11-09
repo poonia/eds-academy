@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A2 Core architecture · EDS Academy</title>
+<meta name="description" content="Module A2: content sources, the storage buses, the rendering pipeline, preview and live, the Admin API, delivery and CDN, and caching with push invalidation.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="A2">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Name the supported content sources and say which teams typically use each.</li>
+    <li>Explain what the Source, Content, Media, Code and Config buses store.</li>
+    <li>Trace a page from an authored document to decorated HTML in the browser.</li>
+    <li>Build preview, live and branch URLs for any site, and call the Admin API for status.</li>
+    <li>Explain how the CDN, push invalidation and content-addressed media keep pages fast and fresh.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="a2-ready" data-title="Ready for architecture?">
+    <script type="application/json">{"questions":[
+      {"q":"What does EDS serve to visitors first?","options":["JSON for a framework app","Semantic HTML","A PDF"],"answer":1,"explain":"Covered in A1: semantic HTML first, decorated by blocks."},
+      {"q":"Where does EDS code live?","options":["In a GitHub repository","In the AEM author repository","On the CDN only"],"answer":0,"explain":"Code lives in GitHub and syncs to the site on push."},
+      {"q":"What is a CDN for?","options":["Editing content","Caching and serving content close to visitors","Storing Java components"],"answer":1,"explain":"A content delivery network serves cached copies from edge locations."}
+    ]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="content-sources" data-level="1">
+  <h2>Content sources</h2>
+  <div data-part="why"><p>Business units at the same company often want different authoring tools: marketing likes documents, compliance wants governed forms in AEM. Knowing the supported sources lets you offer each team a fit without building a second platform.</p></div>
+  <div data-part="concept">
+    <p>EDS is decoupled from where content is written. aem.live lists these content sources: AEM authoring with the Universal Editor (and Document Authoring), Microsoft SharePoint (Word and Excel), Google Drive (Docs and Sheets), and bring-your-own-markup (BYOM), where your own service supplies HTML. AEM Content Fragments can also be published to EDS.</p>
+    <p>Whatever the source, EDS normalizes content during preview, so the same blocks and code render it. Markdown files in GitHub are no longer supported as a content source.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    UE["AEM with Universal Editor"] --> N
+    DA["Document Authoring / Experience Workspace"] --> N
+    SP["SharePoint: Word and Excel"] --> N
+    GD["Google Drive: Docs and Sheets"] --> N
+    BY["BYOM: your own HTML service"] --> N
+    N(["Preview normalizes content"]) --> SAME["Same blocks and code render every source"]</pre>
+      <figcaption><b>What to notice:</b> sources differ for authors, but they converge before delivery, so developers build blocks once.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Five sources (AEM with Universal Editor; Document Authoring or Experience Workspace; SharePoint Word and Excel; Google Drive Docs and Sheets; BYOM) all feed a step where preview normalizes content, after which the same blocks and code render every source.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Source</th><th>Authors work in</th><th>Typical fit</th></tr></thead>
+      <tbody>
+        <tr><td>AEM with Universal Editor</td><td>WYSIWYG editor with forms, content stored in AEM</td><td>Governed, multi-site, workflow-heavy teams</td></tr>
+        <tr><td>Document Authoring / Experience Workspace</td><td>Browser-based document editor built for EDS</td><td>Fast-moving marketing teams</td></tr>
+        <tr><td>SharePoint</td><td>Word and Excel in Microsoft 365</td><td>Organizations standardized on Microsoft 365</td></tr>
+        <tr><td>Google Drive</td><td>Google Docs and Sheets</td><td>Teams on Google Workspace; quick prototypes</td></tr>
+        <tr><td>BYOM</td><td>Any system that can produce HTML</td><td>Integrating an existing CMS or data service</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a2-t1"><script type="application/json">{"questions":[{"q":"Your compliance team needs approval workflows and structured fields. Which source suits them best?","options":["Google Drive","AEM with Universal Editor","Markdown files in GitHub"],"answer":1,"explain":"AEM brings workflows and structured, governed authoring. GitHub markdown is no longer a supported source."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Two business units demand two separate platforms</td><td>Assumed one source per company</td><td>Offer different sources per site with shared code (repoless, module A4).</td></tr>
+      <tr><td>Team stores content as markdown in the repo</td><td>Old tutorials</td><td>Move content to a supported source.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="storage-buses" data-level="2">
+  <h2>Content Bus, Code Bus, Media Bus</h2>
+  <div data-part="why"><p>When a page shows old text, a stale image or the wrong CSS, you need to know which storage holds what. The buses are where you look first when debugging.</p></div>
+  <div data-part="concept">
+    <p>aem.live describes a storage layer organized into containers it calls buses:</p>
+    <ul>
+      <li><b>Source Bus</b>: documents and spreadsheets in their authored form. Only the API service reads it.</li>
+      <li><b>Content Bus</b>: previewed and published text, PDFs, SVGs, redirects and similar files, with preview and publish states.</li>
+      <li><b>Media Bus</b>: images and media in content-addressable storage. Each asset is stored once under a hash with a <code>media_</code> prefix, so it never changes and can be cached permanently.</li>
+      <li><b>Code Bus</b>: JavaScript, CSS and other code, kept per branch so each branch is its own environment.</li>
+      <li><b>Config Bus</b>: site and organization configuration, which can inherit from a profile.</li>
+    </ul>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    SRC["Content source"] -->|preview pulls| SB[("Source Bus: authored form")]
+    SB --> CB[("Content Bus: preview and publish states")]
+    SB --> MB[("Media Bus: media_ hash, immutable")]
+    GH["GitHub branches"] -->|AEM Code Sync| KB[("Code Bus: per branch")]
+    CFG["Admin API config"] --> FB[("Config Bus: site, org, profile")]
+    CB --> DEL["Edge delivery"]
+    MB --> DEL
+    KB --> DEL
+    FB --> DEL</pre>
+      <figcaption><b>What to notice:</b> content, media, code and config travel separately and meet only at delivery. A stale page can come from any one of them.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The content source feeds the Source Bus when preview pulls content. From the Source Bus, content goes to the Content Bus (with preview and publish states) and media to the Media Bus (immutable, hashed with a media_ prefix). GitHub branches feed the Code Bus through AEM Code Sync. Admin API configuration feeds the Config Bus. All four buses feed edge delivery.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <p>An image in a published page points to the Media Bus by its hash. The boilerplate adds width and format parameters for responsive renditions:</p>
+    <figure class="code" data-file="Delivered image markup (simplified)" data-lang="xml" data-lines="2">
+      <script type="text/plain">
+      <picture>
+        <source type="image/webp" srcset="./media_1a2b3c4d5e.jpg?width=750&amp;format=webply&amp;optimize=medium">
+        <img loading="lazy" alt="Couple reviewing a mortgage offer" src="./media_1a2b3c4d5e.jpg?width=750&amp;format=jpg&amp;optimize=medium" width="1600" height="900">
+      </picture>
+      </script>
+      <ol class="code-explain">
+        <li data-line="2">The hash in the file name comes from the image's bytes. A changed image gets a new name, so old copies can stay cached forever.</li>
+        <li data-line="3">Width and height let the browser reserve space, which prevents layout shift.</li>
+      </ol>
+      <figcaption><b>Expected result:</b> you can tell from any image URL that it is served from the Media Bus and is safe to cache permanently.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="match"><script type="application/json">{"prompt":"Which bus holds it?","pairs":[["Your updated cards.css on a feature branch","Code Bus"],["A hero image named media_8f3a…","Media Bus"],["The published text of /mortgages","Content Bus"],["A shared profile with headers and indexes","Config Bus"],["The Word document as the author wrote it","Source Bus"]],"explain":"Each kind of thing has its own bus; delivery combines them."}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>New CSS shows on a branch but not on main</td><td>Code Bus is per branch</td><td>Merge to main; check the main branch URL.</td></tr>
+      <tr><td>Author replaced an image but the page shows the old one</td><td>Page not previewed and published again</td><td>Preview and publish the page so it references the new media hash.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="rendering-pipeline" data-level="2">
+  <h2>Rendering pipeline</h2>
+  <div data-part="why"><p>Authors ask why a table in their document became a carousel, and developers ask where their block's HTML comes from. Both answers live in the rendering pipeline.</p></div>
+  <div data-part="concept">
+    <p>When an author previews, the API service pulls the document, converts it to a normalized format and stores it in the Content Bus. When a visitor requests the page, edge delivery renders plain semantic HTML: page metadata becomes <code>&lt;meta&gt;</code> tags, each section becomes a <code>&lt;div&gt;</code> inside <code>&lt;main&gt;</code>, and each block table becomes nested <code>&lt;div&gt;</code>s with the block name as a class.</p>
+    <p>In the browser, the project's scripts take over. They decorate sections, build auto-blocks, then load each block's JavaScript and CSS, which turns the plain rows and cells into the finished component. That split, simple HTML from the edge and enhancement in the browser, is why pages are both crawlable and fast.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    DOC["Authored table named Cards"] --> NORM["Preview: normalized and stored"] --> HTML["Edge renders div.cards with rows and cells"] --> JS["Browser: scripts.js decorates, loads blocks/cards"] --> UI["Finished cards component"]</pre>
+      <figcaption><b>What to notice:</b> the block name in the authored table becomes a CSS class, and that class decides which block code loads.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An authored table named Cards is normalized and stored at preview, rendered at the edge as a div with class cards containing rows and cells, then decorated in the browser by scripts.js, which loads the cards block code to produce the finished component.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div data-component="tabs" data-label="Pipeline stages">
+      <div data-tab="1. Authored">
+        <div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span class="url">Mortgages.docx</span></div><div class="mock-body"><div class="doc-page">
+          <h5>Fixed-rate mortgages</h5><p>Lock in your rate for up to ten years.</p>
+          <table class="blocktable"><tr><th colspan="2">Cards</th></tr><tr><td>5-year fixed</td><td>Stable payments</td></tr><tr><td>10-year fixed</td><td>Longest certainty</td></tr></table>
+        </div></div></div>
+      </div>
+      <div data-tab="2. Delivered HTML">
+        <figure class="code" data-file="View Source: /mortgages" data-lang="xml" data-lines="6">
+          <script type="text/plain">
+          <main>
+            <div>
+              <h1 id="fixed-rate-mortgages">Fixed-rate mortgages</h1>
+              <p>Lock in your rate for up to ten years.</p>
+              <div class="cards">
+                <div><div>5-year fixed</div><div>Stable payments</div></div>
+                <div><div>10-year fixed</div><div>Longest certainty</div></div>
+              </div>
+            </div>
+          </main>
+          </script>
+          <figcaption><b>Expected result:</b> one section div, default content, and a <code>div.cards</code> whose children are the table's rows and cells.</figcaption>
+        </figure>
+      </div>
+      <div data-tab="3. Decorated DOM">
+        <figure class="code" data-file="DevTools Elements after decoration (simplified)" data-lang="xml" data-lines="3-4">
+          <script type="text/plain">
+          <main>
+            <div class="section cards-container" data-section-status="loaded">
+              <div class="cards-wrapper">
+                <div class="cards block" data-block-name="cards" data-block-status="loaded">
+                  <ul>
+                    <li><div class="cards-card-body">5-year fixed …</div></li>
+                    <li><div class="cards-card-body">10-year fixed …</div></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </main>
+          </script>
+          <figcaption><b>Expected result:</b> wrapper elements and status attributes were added in the browser, and the block's own code rebuilt rows into a list.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a2-t3"><script type="application/json">{"questions":[{"q":"An author renames a block table from 'Cards' to 'Card'. What happens on the page?","options":["Nothing changes","The class becomes 'card', so the cards block code no longer loads","The CDN rejects the page"],"answer":1,"explain":"The block name maps to the class and to blocks/<name>/. A different name looks for different code."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Block shows as plain text rows</td><td>Block name does not match a folder in <code>blocks/</code>, or its JS failed</td><td>Check the name and the console; see C3.</td></tr>
+      <tr><td>SEO audit sees different content than the browser</td><td>Content injected only by JavaScript</td><td>Keep meaningful content in the authored HTML; decorate, do not replace.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="preview-vs-live" data-level="1">
+  <h2>Preview vs live, aem.page and aem.live, branch URLs</h2>
+  <div data-part="why"><p>Reviewers, legal and developers each need a different URL: legal approves on preview, developers test on a branch, the public sees live. Sending the wrong link causes premature approvals or "it works on my branch" confusion.</p></div>
+  <div data-part="concept">
+    <p>Every site has two content states. <b>Preview</b> lives on <code>.aem.page</code> and shows what an author last previewed. <b>Live</b> lives on <code>.aem.live</code> and shows what was last published; your production domain serves live content through the CDN.</p>
+    <p>Every code branch also gets its own host, built as <code>{branch}--{site}--{org}</code>. So the <code>main</code> branch of site <code>bank-web</code> in org <code>acme</code> is <code>main--bank-web--acme.aem.page</code> for preview and <code>main--bank-web--acme.aem.live</code> for live. A feature branch shows new code against the same content.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">stateDiagram-v2
+    direction LR
+    [*] --> Edited : author saves
+    Edited --> Previewed : Preview
+    Previewed --> Live : Publish
+    Live --> Previewed : Unpublish
+    Previewed --> [*] : Delete preview
+    Edited : Edited in source
+    Previewed : Previewed (.aem.page)
+    Live : Live (.aem.live and production)</pre>
+      <figcaption><b>What to notice:</b> nothing reaches live without passing through preview, which is your natural review gate.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A page starts edited in the source. Preview moves it to Previewed on .aem.page. Publish moves it to Live on .aem.live and production. Unpublish takes it back to Previewed. Deleting the preview removes it.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Who</th><th>URL pattern</th><th>Example (fictional)</th></tr></thead>
+      <tbody>
+        <tr><td>Reviewer or legal</td><td><code>main--{site}--{org}.aem.page/{path}</code></td><td><code>main--bank-web--acme.aem.page/mortgages</code></td></tr>
+        <tr><td>Developer testing a branch</td><td><code>{branch}--{site}--{org}.aem.page/{path}</code></td><td><code>rates-table--bank-web--acme.aem.page/mortgages</code></td></tr>
+        <tr><td>QA on published content</td><td><code>main--{site}--{org}.aem.live/{path}</code></td><td><code>main--bank-web--acme.aem.live/mortgages</code></td></tr>
+        <tr><td>The public</td><td>Your production domain via the CDN</td><td><code>www.acme-bank.example/mortgages</code></td></tr>
+      </tbody>
+    </table></div>
+    <aside class="callout tip"><p>Keep branch names short, lowercase and hyphenated. The whole <code>{branch}--{site}--{org}</code> label must fit in one DNS label, which is limited to 63 characters.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a2-t4"><script type="application/json">{"questions":[{"q":"Developer Priya pushed branch 'hero-fix' to site 'bank-web' in org 'acme'. Which URL shows her code with previewed content?","options":["hero-fix--bank-web--acme.aem.page","acme--bank-web--hero-fix.aem.live","bank-web.aem.page/hero-fix"],"answer":0,"explain":"The pattern is {branch}--{site}--{org}, and .aem.page shows preview content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Legal approves text that never went live</td><td>Approved on preview, never published</td><td>Add "published" to your sign-off checklist.</td></tr>
+      <tr><td>Branch URL does not resolve</td><td>Branch name too long or has unsupported characters</td><td>Rename to a short, lowercase, hyphenated branch.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="admin-service-and-admin-api" data-level="2">
+  <h2>Admin service and Admin API</h2>
+  <div data-part="why"><p>Sidekick buttons are fine for one page. For 400 pages after a migration, a nightly status report, or a scripted re-index, you need the API behind those buttons.</p></div>
+  <div data-part="concept">
+    <p>The service that previews and publishes content (aem.live's architecture page calls it the API service) is exposed as the Admin API at <code>https://admin.hlx.page</code>. Sidekick and AEM call it for you. Its main endpoint families take an organization, site, branch (ref) and path:</p>
+    <ul>
+      <li><code>/preview/{org}/{site}/{ref}/{path}</code>: GET status, POST to preview, DELETE to remove the preview</li>
+      <li><code>/live/{org}/{site}/{ref}/{path}</code>: GET status, POST to publish, DELETE to unpublish</li>
+      <li><code>/status</code>, <code>/code</code>, <code>/cache</code>, <code>/index</code>, <code>/log</code>, <code>/sitemap</code>, <code>/job</code> and <code>/config/{org}.json</code> for configuration</li>
+    </ul>
+    <p>Bulk variants accept <code>/*</code> as the path with a POST body, and run as jobs you can poll.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+    participant S as Script or Sidekick
+    participant A as Admin API
+    participant C as Content source
+    participant B as Content Bus
+    S->>A: POST /preview/acme/bank-web/main/mortgages
+    A->>C: Fetch authored document
+    A->>B: Store normalized content (preview)
+    A-->>S: 200 with preview URL
+    S->>A: POST /live/acme/bank-web/main/mortgages
+    A->>B: Promote to live
+    A-->>S: 200 with live URL</pre>
+      <figcaption><b>What to notice:</b> publish copies what was previewed. If the document changed after preview, preview again before you publish.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A script or Sidekick sends POST /preview for a path. The Admin API fetches the authored document from the content source, stores normalized content as preview in the Content Bus, and returns 200 with the preview URL. The script then sends POST /live; the Admin API promotes the content to live and returns 200 with the live URL.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="terminal" data-lang="bash" data-lines="5,9">
+      <script type="text/plain">
+      # Values in {braces} and $AEM_TOKEN are placeholders for your own.
+      ORG=acme; SITE=bank-web; REF=main
+
+      # 1. Check the status of one page (preview, live and source dates)
+      curl -s "https://admin.hlx.page/status/$ORG/$SITE/$REF/mortgages" \
+        -H "x-auth-token: $AEM_TOKEN"
+
+      # 2. Preview, then publish the same page
+      curl -s -X POST "https://admin.hlx.page/preview/$ORG/$SITE/$REF/mortgages" \
+        -H "x-auth-token: $AEM_TOKEN"
+      curl -s -X POST "https://admin.hlx.page/live/$ORG/$SITE/$REF/mortgages" \
+        -H "x-auth-token: $AEM_TOKEN"
+      </script>
+      <ol class="code-explain">
+        <li data-line="2">Org and site come from your site's configuration; ref is the branch, usually main.</li>
+        <li data-line="5">GET /status returns JSON describing the page in preview, live and the source.</li>
+        <li data-line="9">POST /preview pulls the latest document. Publish (POST /live) only after it succeeds.</li>
+      </ol>
+      <figcaption><b>Expected result:</b> JSON responses with HTTP 200 and the page's preview and live URLs.</figcaption>
+    </figure>
+    <aside class="callout verify"><p>aem.live's configuration examples authenticate with an <code>x-auth-token</code> header. How you obtain a token and which roles it carries are set per organization: check the authentication section of the Admin API reference before running these commands. Module C11 covers scripting in depth.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="match"><script type="application/json">{"prompt":"Pick the request for each job","pairs":[["Unpublish a page","DELETE /live/{org}/{site}/{ref}/{path}"],["Preview a page","POST /preview/{org}/{site}/{ref}/{path}"],["See whether a page is published","GET /status/{org}/{site}/{ref}/{path}"],["Read the organization configuration","GET /config/{org}.json"]],"explain":"Preview and live share the same path shape; the HTTP method decides the action."}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>401 or 403 from the API</td><td>Missing or under-privileged credentials</td><td>Use a token with the right role for that site (module D4).</td></tr>
+      <tr><td>Publish shows old text</td><td>Published without a fresh preview</td><td>Always preview, then publish.</td></tr>
+      <tr><td>Bulk script hammers the API</td><td>One request per page in a tight loop</td><td>Use the bulk <code>/*</code> endpoints and poll the job.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="delivery-and-cdn" data-level="2">
+  <h2>Delivery and CDN</h2>
+  <div data-part="why"><p>Your security and network teams will ask who owns the CDN, DNS and certificates, and what happens if one part fails. The delivery layers answer both.</p></div>
+  <div data-part="concept">
+    <p>aem.live describes delivery in layers. At the front is web infrastructure (CDN, DNS and TLS certificates), run either by Adobe or by you. Behind it is the edge delivery layer, which runs as two fully redundant, separate implementations in parallel. Behind that is the storage layer of buses.</p>
+    <p>You can use the Adobe-managed CDN or bring your own: aem.live lists Akamai, Fastly, Cloudflare and CloudFront, each with a setup guide and push invalidation support. Your CDN forwards requests to the site's <code>.aem.live</code> origin.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    V["Visitor"] --> CDN["Production CDN: Adobe-managed or yours"]
+    CDN --> E1["Edge delivery implementation A"]
+    CDN --> E2["Edge delivery implementation B"]
+    E1 --> ST[("Storage buses")]
+    E2 --> ST</pre>
+      <figcaption><b>What to notice:</b> two independent delivery implementations sit behind the CDN, so one failing does not take the site down.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The visitor reaches the production CDN (Adobe-managed or your own). The CDN forwards to either of two edge delivery implementations, A and B, both reading from the storage buses.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th></th><th>Adobe-managed CDN</th><th>Bring your own CDN</th></tr></thead>
+      <tbody>
+        <tr><th>Who operates it</th><td>Adobe</td><td>Your network team</td></tr>
+        <tr><th>Options</th><td>Included with AEM as a Cloud Service setups</td><td>Akamai, Fastly, Cloudflare, CloudFront</td></tr>
+        <tr><th>Custom edge logic</th><td>Within Adobe's configuration options</td><td>Full control in your CDN (workers, rules)</td></tr>
+        <tr><th>Push invalidation</th><td>Supported</td><td>Supported, configured per vendor</td></tr>
+        <tr class="choose"><th>Choose when</th><td>You want less to operate</td><td>You already run an enterprise CDN with security policies</td></tr>
+      </tbody>
+    </table></div>
+    <aside class="callout warning" data-label="Load testing"><p>Edge Delivery Services rate-limits a single client to 200 requests per second per <code>aem.page</code> or <code>aem.live</code> host name. Point load tests at your production CDN, not at those hosts.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a2-t6"><script type="application/json">{"questions":[{"q":"Your bank already runs Akamai with WAF rules for every public site. What is the likely setup?","options":["BYO CDN: Akamai in front of the .aem.live origin, with push invalidation","No CDN; visitors hit .aem.live directly","Two CDNs chained for redundancy"],"answer":0,"explain":"Bring your own CDN keeps existing security policy while EDS remains the origin."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Production shows stale pages after publish</td><td>BYO CDN without push invalidation</td><td>Configure push invalidation for your vendor (module D3).</td></tr>
+      <tr><td>Load test results are throttled</td><td>Test aimed at aem.live hosts</td><td>Target the production CDN.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="caching-and-invalidation" data-level="3">
+  <h2>Caching model and push invalidation</h2>
+  <div data-part="why"><p>A rate change on a mortgage page must appear within minutes, yet the site must survive a traffic spike from a TV ad. Caching for a long time and still showing fresh content sounds contradictory until you see push invalidation.</p></div>
+  <div data-part="concept">
+    <p>EDS lets the CDN keep pages for a long time and then removes them precisely when they change. Publishing triggers a push invalidation that purges every caching layer for the affected paths. Merging code into <code>main</code> purges the affected code resources. Media is different: because its URL contains a hash of the bytes, it never changes and can be cached permanently.</p>
+    <p>The result: high cache hit rates (fast, cheap, resilient) with freshness controlled by publishing rather than by short time-to-live settings.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+    P["Author publishes /mortgages"] --> INV["Push invalidation"]
+    INV --> L1["Purge CDN cache for /mortgages"]
+    INV --> L2["Purge delivery caches"]
+    M["Developer merges to main"] --> PC["Purge affected code files"]
+    IMG["New image uploaded"] --> NH["New media_ hash: new URL"]
+    NH --> FOREVER["Old and new URLs both cacheable forever"]</pre>
+      <figcaption><b>What to notice:</b> content and code are purged on change; media never needs purging because a change means a new URL.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Publishing /mortgages triggers push invalidation, which purges the CDN cache and delivery caches for that path. Merging to main purges affected code files. Uploading a new image creates a new media hash and so a new URL; old and new URLs can both be cached forever.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Change</th><th>What gets purged</th><th>Who triggers it</th></tr></thead>
+      <tbody>
+        <tr><td>Publish or unpublish a page</td><td>That page in every caching layer</td><td>Author (Sidekick, AEM, Admin API)</td></tr>
+        <tr><td>Merge to <code>main</code></td><td>Affected code resources</td><td>Developer, through AEM Code Sync</td></tr>
+        <tr><td>Replace an image</td><td>Nothing: the new image has a new URL</td><td>Author, then preview and publish the page</td></tr>
+        <tr><td>Emergency purge</td><td>Specific paths</td><td>Admin API <code>/cache</code> endpoint</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="order"><script type="application/json">{"prompt":"Order what happens when a rate changes","items":["Author updates the rate in the document","Author previews and checks .aem.page","Author publishes","Push invalidation purges the CDN for that page","Next visitor gets the new rate from the origin, which is cached again"],"explain":"Publishing, not a timer, is what refreshes the cache."}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Team sets very short cache TTLs "to be safe"</td><td>Distrust of invalidation</td><td>Rely on push invalidation; short TTLs lose speed and resilience.</td></tr>
+      <tr><td>A shared fragment changed but pages using it look old</td><td>Only the fragment was published</td><td>Publish the fragment; check whether dependent pages need republishing in your setup (module B4).</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive: architecture explorer">
+  <h2>Signature interactive: click-through architecture</h2>
+  <p>Select any component to see its role and what it connects to. Then step through a publish from start to finish.</p>
+  <div data-component="explorer" data-title="Edge Delivery Services, end to end"><script type="application/json">{
+    "start":"api",
+    "columns":[
+      {"name":"Authoring","nodes":[
+        {"id":"ue","label":"AEM + Universal Editor","sub":"structured","detail":"Content stored in AEM as a Cloud Service. AEM renders semantic HTML for EDS ingestion and publishes it.","to":["api"]},
+        {"id":"docs","label":"Documents","sub":"SharePoint, Google Drive, DA","detail":"Authors write in Word, Google Docs or Document Authoring and use Sidekick to preview and publish.","to":["api"]},
+        {"id":"gh","label":"GitHub repository","sub":"blocks, scripts, styles","detail":"Holds all code. Every branch is synced and becomes its own environment.","to":["sync"]}]},
+      {"name":"Services","nodes":[
+        {"id":"api","label":"API service","sub":"Admin API at admin.hlx.page","detail":"Previews and publishes: pulls from the source, stores normalized content, promotes to live and triggers push invalidation.","to":["source","content","media","inv"]},
+        {"id":"sync","label":"AEM Code Sync","sub":"GitHub app","detail":"Pulls all active branches into the Code Bus when you push. Merges to main purge affected code.","to":["code"]},
+        {"id":"inv","label":"Push invalidation","sub":"on publish","detail":"Purges every caching layer for changed paths, so the CDN can cache aggressively.","to":["cdn"]}]},
+      {"name":"Storage","nodes":[
+        {"id":"source","label":"Source Bus","sub":"authored form","detail":"Documents and spreadsheets as authored. Only the API service can access it.","to":[]},
+        {"id":"content","label":"Content Bus","sub":"preview and live","detail":"Previewed and published text, PDFs, SVGs and redirects, with preview and publish states.","to":["edge"]},
+        {"id":"media","label":"Media Bus","sub":"media_ hash","detail":"Content-addressed media stored once per hash. Immutable, so cacheable forever.","to":["edge"]},
+        {"id":"code","label":"Code Bus","sub":"per branch","detail":"JS, CSS and other code per branch, served on {branch}--{site}--{org} hosts.","to":["edge"]},
+        {"id":"config","label":"Config Bus","sub":"site, org, profile","detail":"Site and organization configuration, inheriting from a profile; applies to all branch environments.","to":["edge"]}]},
+      {"name":"Delivery","nodes":[
+        {"id":"edge","label":"Edge delivery","sub":"two redundant implementations","detail":"Renders semantic HTML from the buses. Runs as two separate implementations in parallel.","to":["cdn"]},
+        {"id":"cdn","label":"Production CDN","sub":"Adobe-managed or BYO","detail":"Caches pages near visitors. Adobe-managed, or your Akamai, Fastly, Cloudflare or CloudFront.","to":["browser"]}]},
+      {"name":"Visitor","nodes":[
+        {"id":"browser","label":"Browser","sub":"decorates blocks","detail":"Receives semantic HTML, then scripts.js decorates sections and loads each block's JS and CSS in eager, lazy and delayed phases.","to":[]}]}
+    ]}</script></div>
+  <div data-component="stepper" data-title="One publish, step by step">
+    <div class="step" data-label="1. Author edits"><p>Maya, a publisher, updates the 5-year fixed rate in <em>Mortgages.docx</em>. Nothing on the site changes yet.</p></div>
+    <div class="step" data-label="2. Preview"><p>She selects <b>Preview</b> in Sidekick. The API service fetches the document into the Source Bus and stores normalized content in the Content Bus (preview state).</p></div>
+    <div class="step" data-label="3. Review"><p>Compliance reviews <code>main--bank-web--acme.aem.page/mortgages</code>. The live site still shows the old rate.</p></div>
+    <div class="step" data-label="4. Publish"><p>Maya selects <b>Publish</b>. The previewed content is promoted to the live state.</p></div>
+    <div class="step" data-label="5. Push invalidation"><p>Every caching layer for <code>/mortgages</code> is purged, including the production CDN.</p></div>
+    <div class="step" data-label="6. Next visitor"><p>The next request misses the cache, is rendered from the Content Bus, and is cached again. Visitors now see the new rate.</p></div>
+  </div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: trace a page through the architecture</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Observe preview, live, media and status for a real EDS site and map each to a bus.</p></div>
+    <div><h4>You need</h4><p>Browser DevTools and a terminal with <code>curl</code>.</p></div>
+    <div><h4>Time</h4><p>About 45 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Pick a page.</b> Use any page on aem.live, or your own tutorial site if you have built one.</div></li>
+    <li><div><b>Find its branch URLs.</b> The aem.live site's code is in the <code>adobe/helix-website</code> repository, so its main branch preview host is <code>main--helix-website--adobe.aem.page</code>. Open the same path on <code>.aem.page</code> and <code>.aem.live</code>.</div></li>
+    <li><div><b>Inspect an image.</b> In DevTools, find an image URL starting with <code>media_</code>. Note the hash and the width and format parameters.</div></li>
+    <li><div><b>Read the response headers.</b> In the Network panel, select the HTML document and note cache-related headers. Compare with an image request.</div></li>
+    <li><div><b>Ask the Admin API for status.</b> Run <code>curl -s https://admin.hlx.page/status/adobe/helix-website/main/docs/architecture</code> and read the preview and live sections of the JSON.</div></li>
+    <li><div><b>Draw it.</b> Sketch the flow from source to browser and label which bus each observation came from.</div></li>
+  </ol>
+  <aside class="callout verify"><p>Public sites may restrict status requests without authentication, and the repository name for aem.live may change. If a step returns 401 or 404, run it against your own tutorial site instead.</p></aside>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>Matching preview and live pages, a hashed media URL, and a status JSON with preview and live dates.</p></div>
+    <div><h4>How to verify</h4><p>Your sketch shows Content, Media and Code buses meeting at edge delivery, with the CDN in front.</p></div>
+    <div><h4>Stretch</h4><p>Create a branch in your own repo, push a CSS change, and open its branch URL.</p></div>
+  </div>
+  <ul class="checklist" data-id="a2-lab">
+    <li>Opened the same path on .aem.page and .aem.live</li>
+    <li>Found a media_ image URL and its parameters</li>
+    <li>Compared document and image response headers</li>
+    <li>Read a status response from the Admin API</li>
+    <li>Drew the flow and labelled the buses</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Preview shows the change, live does not</td><td>Not published</td><td>Publish, then check live.</td></tr>
+      <tr><td>Live correct, production domain stale</td><td>BYO CDN without push invalidation</td><td>Configure push invalidation; purge the path once.</td></tr>
+      <tr><td>Branch URL shows old code</td><td>Push not synced, or wrong branch name in URL</td><td>Check the push reached GitHub and the URL uses the exact branch.</td></tr>
+      <tr><td>Image unchanged after replacing it</td><td>Page not previewed and published again</td><td>Preview and publish the page.</td></tr>
+      <tr><td>Admin API returns 401/403</td><td>Missing or insufficient credentials</td><td>Use a token with the right role; see D4.</td></tr>
+      <tr><td>Block renders as plain rows</td><td>Name mismatch or JS error</td><td>Check block name and console (C3).</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Governance.</b> Decide per site which source is authoritative, who may publish, and who may call the Admin API. Log bulk operations.</p></aside>
+    <aside class="callout warning" data-label="Security"><p>Treat Admin API tokens like passwords: store them in a secrets manager, scope them by role, rotate them, and never put them in client code.</p></aside>
+    <aside class="callout accessibility"><p>The rendering pipeline preserves semantic structure; protect it by keeping headings and lists in content rather than generating them in JavaScript.</p></aside>
+    <aside class="callout performance"><p>Long CDN caching plus push invalidation is the performance model. Avoid short TTLs and query-string cache busting on pages.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Responsibility</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Preview and publish content</td><td>Responsible</td><td>Informed</td><td>Accountable</td></tr>
+      <tr><td>Branches and code sync</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>CDN, DNS, TLS, push invalidation</td><td>Informed</td><td>Consulted</td><td>Responsible</td></tr>
+      <tr><td>Admin API tokens</td><td>Informed</td><td>Consulted</td><td>Responsible</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="a2-check"><script type="application/json">{"questions":[
+    {"q":"Which bus stores images under a content hash with a media_ prefix?","options":["Content Bus","Media Bus","Code Bus"],"answer":1,"explain":"The Media Bus is content-addressed, so assets are immutable."},
+    {"q":"Which bus can only the API service read?","options":["Source Bus","Config Bus","Code Bus"],"answer":0,"explain":"The Source Bus holds authored originals and is not read by delivery."},
+    {"q":"What is the preview host for branch 'promo' of site 'rates' in org 'acme'?","options":["promo--rates--acme.aem.page","acme--rates--promo.aem.page","rates.acme.aem.page/promo"],"answer":0,"explain":"{branch}--{site}--{org}.aem.page."},
+    {"q":"Which request unpublishes a page?","options":["POST /preview/...","DELETE /live/...","GET /status/..."],"answer":1,"explain":"DELETE on the live resource removes it from live."},
+    {"q":"Why can media be cached permanently?","options":["Media never changes once uploaded under its hash URL","The CDN ignores media","Images are small"],"answer":0,"explain":"A changed file gets a new hash and URL."},
+    {"q":"Which are true about EDS delivery? Choose all that apply.","options":["Two redundant delivery implementations run in parallel","You can bring Akamai, Fastly, Cloudflare or CloudFront","Every page is rebuilt on every request with no caching","Publishing triggers push invalidation"],"answer":[0,1,3],"explain":"Caching is aggressive and refreshed by push invalidation, not disabled."},
+    {"q":"In the browser, what turns div.cards into a finished component?","options":["The CDN","The cards block's JavaScript and CSS, loaded by scripts.js","The Source Bus"],"answer":1,"explain":"Decoration happens client-side, block by block."},
+    {"q":"After a TV ad, traffic spikes 20x and marketing must change a rate at the same time. What protects the site and keeps the rate fresh?","options":["Disable the CDN during the campaign","High CDN cache hit rates plus publish-triggered push invalidation","Ask visitors to refresh"],"answer":1,"explain":"Caching absorbs the spike; publishing purges just the changed page.","scenario":true}
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="a2-cards"><script type="application/json">{"cards":[
+    ["Source Bus","Authored documents and sheets; only the API service reads it."],
+    ["Content Bus","Previewed and published content with preview and publish states."],
+    ["Media Bus","Content-addressed media under media_ hashes; immutable and cacheable forever."],
+    ["Code Bus","JS and CSS per branch; each branch is an environment."],
+    ["Config Bus","Site and org configuration, inheriting from a profile."],
+    ["API service","Previews and publishes content; exposed as the Admin API at admin.hlx.page."],
+    ["{branch}--{site}--{org}","Host pattern for branch environments on aem.page and aem.live."],
+    ["Push invalidation","Publish purges every caching layer for changed paths."],
+    ["BYO CDN","Your Akamai, Fastly, Cloudflare or CloudFront in front of the .aem.live origin."],
+    ["Decoration","Browser-side step where scripts turn plain block divs into components."],
+    ["Rate limit","200 requests per second per client per aem.page or aem.live host."]
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>A2 · Core architecture</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Sources</h4><ul><li>AEM + Universal Editor (and DA)</li><li>SharePoint, Google Drive</li><li>BYOM; not GitHub markdown</li></ul></div>
+      <div><h4>Buses</h4><ul><li>Source → Content / Media</li><li>Code per branch</li><li>Config with profiles</li></ul></div>
+      <div><h4>URLs</h4><ul><li>{branch}--{site}--{org}.aem.page</li><li>… .aem.live for live</li><li>Production via CDN</li></ul></div>
+      <div><h4>Admin API</h4><ul><li>admin.hlx.page</li><li>POST /preview, POST /live</li><li>DELETE /live = unpublish; GET /status</li></ul></div>
+      <div><h4>Caching</h4><ul><li>Publish → push invalidation</li><li>Merge to main → code purge</li><li>media_ URLs cached forever</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/architecture" rel="noopener" target="_blank">aem.live: Architecture</a></li>
+    <li><a href="https://www.aem.live/docs/admin.html" rel="noopener" target="_blank">aem.live: Admin API reference</a></li>
+    <li><a href="https://www.aem.live/developer/markup-sections-blocks" rel="noopener" target="_blank">aem.live: Markup, sections, blocks and auto blocking</a></li>
+    <li><a href="https://www.aem.live/docs/faq" rel="noopener" target="_blank">aem.live: FAQ</a> — CDN options and content sources</li>
+    <li><a href="https://aem.live/docs/authoring-guide" rel="noopener" target="_blank">aem.live: Where to author your site</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

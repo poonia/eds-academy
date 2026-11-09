@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A4 Authoring options landscape · EDS Academy</title>
+<meta name="description" content="Module A4: document-based authoring, Document Authoring (now Experience Workspace), Universal Editor with AEM Sites, Content Fragments, choosing an option, and repoless sites.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="A4">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Describe how authors work in each EDS authoring option and what each is best at.</li>
+    <li>Explain the move from Document Authoring to Experience Workspace and its support implications.</li>
+    <li>Explain how the Universal Editor and AEM publish to EDS, and where Content Fragments fit.</li>
+    <li>Recommend an authoring option for a business unit using explicit criteria.</li>
+    <li>Explain repoless and when one codebase should serve many sites.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="a4-ready" data-title="Ready for authoring options?">
+    <script type="application/json">{"questions":[
+      {"q":"Which content sources does EDS support? Choose the one that is NOT supported.","options":["SharePoint","Google Drive","Markdown files in GitHub"],"answer":2,"explain":"Covered in A2: GitHub markdown is no longer a supported source."},
+      {"q":"What does Preview do?","options":["Publishes straight to production","Pulls the latest content into the preview state on .aem.page","Deletes the page"],"answer":1,"explain":"Preview is the review gate before publish."},
+      {"q":"Where does block code live regardless of authoring option?","options":["In GitHub","In each document","In the CDN settings"],"answer":0,"explain":"Code is shared; authoring options only change where content is written."}
+    ]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="document-based-authoring" data-level="1">
+  <h2>Document-based authoring</h2>
+  <div data-part="why"><p>A campaign team needs a landing page live by Friday and has never used a CMS. If they can write it in Word or Google Docs, they can publish it themselves.</p></div>
+  <div data-part="concept">
+    <p>With document-based authoring, authors write pages in Google Docs or Microsoft Word (in SharePoint) and data in Google Sheets or Excel. Normal formatting carries meaning: a Heading 1 becomes an <code>&lt;h1&gt;</code>, a bulleted list becomes a list. A horizontal rule (<code>---</code>) starts a new section, and a table whose first row holds a name, such as <em>Cards</em>, becomes a block. A <em>Metadata</em> table at the end sets the title, description and image.</p>
+    <p>Authors use the AEM Sidekick browser extension to preview and publish. Folders become URL paths. Training takes minutes, which is the main strength; the trade-off is less structure and fewer built-in workflows than a CMS.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    W["Word or Google Doc in the site folder"] --> SK["Sidekick: Preview"]
+    SK --> PV[".aem.page review"]
+    PV --> PB["Sidekick: Publish"]
+    PB --> LV[".aem.live and production"]</pre>
+      <figcaption><b>What to notice:</b> the author never leaves their document tool except to review the preview page.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A Word or Google Doc in the site folder is previewed with Sidekick, reviewed on .aem.page, published with Sidekick, and appears on .aem.live and production.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div data-component="hotspots" data-title="Anatomy of an authored page">
+      <div class="hs-stage">
+        <div class="doc-page">
+          <h5 data-hotspot="Heading 1" data-text="Becomes the page's h1. Use one per page; it is often the LCP text.">Save sooner with a TFSA</h5>
+          <p data-hotspot="Default content" data-text="Paragraphs, lists and links outside a table are default content and need no developer.">Grow your savings tax-free. Contribute any time and withdraw when you need to.</p>
+          <table class="blocktable" data-hotspot="Block table" data-text="The first row names the block. Rows and cells become nested divs that the block's code decorates."><tr><th colspan="2">Cards</th></tr><tr><td>Flexible</td><td>Withdraw any time</td></tr><tr><td>Tax-free growth</td><td>No tax on gains</td></tr></table>
+          <div class="doc-hr" data-hotspot="Section break" data-text="Three dashes start a new section. Sections group content and can be styled with Section Metadata.">---</div>
+          <table class="blocktable" data-hotspot="Metadata table" data-text="Sets page title, description, image and other metadata. It does not render as visible content."><tr><th colspan="2">Metadata</th></tr><tr><td>Title</td><td>TFSA savings | Acme Bank</td></tr><tr><td>Description</td><td>Grow savings tax-free.</td></tr></table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a4-t1"><script type="application/json">{"questions":[{"q":"An author wants a second, differently styled part of the page. What do they add first?","options":["A section break (---)","A new document","A Heading 6"],"answer":0,"explain":"Sections divide a page; Section Metadata then styles them (module B1)."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Text looks like a heading but is not one</td><td>Bold large text instead of a heading style</td><td>Use real heading styles; it matters for SEO and accessibility.</td></tr>
+      <tr><td>Block shows as a plain table</td><td>Block name misspelled in the first row</td><td>Use the block library to copy correct tables (module B2).</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="document-authoring-da-live" data-level="1">
+  <h2>Document Authoring (da.live)</h2>
+  <div data-part="why"><p>Teams like documents but want CMS basics: versions, bulk publishing, translation. Document Authoring was built for exactly that gap, and its evolution into Experience Workspace affects whether an enterprise should build on it.</p></div>
+  <div data-part="concept">
+    <p>Document Authoring (DA), at <code>da.live</code>, is a browser-based, document-style editor built specifically for EDS. It combines document simplicity with CMS features such as versions, bulk operations and automated translation, and it stores content in EDS's own document-based repository rather than in Google Drive or SharePoint.</p>
+    <p>aem.live now presents DA as <b>Experience Workspace</b>: an authoring surface you enable on an existing DA project. It adds a visual canvas with layout mode, real-time collaboration between people and AI, an AI assistant, AEM Assets access, MCP connections to other tools, and CMS operations such as scheduling and workflows. Existing DA content and integrations keep working. Experience Workspace only works with the document-based repository, so teams on AEM Author would have to move content to use it.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    subgraph DA["Document Authoring (da.live)"]
+      ED["Document editor"] --- VR["Versions"]
+      ED --- BK["Bulk operations"]
+      ED --- TR["Translation"]
+    end
+    DA -->|enable on an existing project| EW
+    subgraph EW["Experience Workspace"]
+      CV["Visual canvas and layout mode"] --- AI["AI assistant and collaboration"]
+      CV --- AS["AEM Assets in the editor"]
+      CV --- MC["MCP and REST APIs"]
+    end
+    EW --> REPO[("EDS document-based repository")]</pre>
+      <figcaption><b>What to notice:</b> Experience Workspace builds on DA rather than replacing it, and both use the EDS document-based repository.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Document Authoring offers a document editor with versions, bulk operations and translation. Enabling Experience Workspace on an existing project adds a visual canvas and layout mode, an AI assistant and collaboration, AEM Assets in the editor, and MCP and REST APIs. Both store content in the EDS document-based repository.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th></th><th>Google Docs / Word</th><th>Document Authoring</th><th>Experience Workspace</th></tr></thead>
+      <tbody>
+        <tr><th>Where you edit</th><td>Your office suite</td><td>da.live in the browser</td><td>Visual canvas on top of DA</td></tr>
+        <tr><th>Content stored in</th><td>Drive or SharePoint</td><td>EDS document-based repository</td><td>EDS document-based repository</td></tr>
+        <tr><th>Versions, bulk, translation</th><td>Suite features only</td><td>Built in</td><td>Built in, plus scheduling and workflows</td></tr>
+        <tr><th>AI and integrations</th><td>Suite add-ons</td><td>Apps and plugins</td><td>AI assistant, MCP and REST APIs</td></tr>
+        <tr class="choose"><th>Choose when</th><td>Teams live in Microsoft 365 or Google</td><td>You want a light CMS made for EDS</td><td>You want visual and AI-assisted authoring on documents</td></tr>
+      </tbody>
+    </table></div>
+    <aside class="callout verify"><p>In 2025 and early 2026, DA was described as early access and community-supported without an Adobe SLA. The Experience Workspace announcement does not state its support level. Confirm support terms with Adobe before an enterprise commitment.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a4-t2"><script type="application/json">{"questions":[{"q":"A business unit authors in AEM with the Universal Editor and wants Experience Workspace's AI canvas. What must happen?","options":["Nothing; it works on AEM content directly","Content would need to move to the EDS document-based repository","They need a new GitHub repo"],"answer":1,"explain":"aem.live says Experience Workspace only works with the document-based repository."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Production issue on DA with no support path</td><td>Support model not checked</td><td>Record the support model per tool; get Adobe's terms in writing.</td></tr>
+      <tr><td>Docs and screenshots disagree with what you see</td><td>Rename and rapid change</td><td>Prefer aem.live and da.live docs; note the as-of date.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="universal-editor-with-aem-sites" data-level="1">
+  <h2>Universal Editor with AEM Sites</h2>
+  <div data-part="why"><p>Your organization already governs content in AEM: approvals, multi-site structures, translation, audits. The Universal Editor keeps that governance while delivery moves to EDS.</p></div>
+  <div data-part="concept">
+    <p>The Universal Editor is AEM's WYSIWYG editor: authors see a live preview and edit in place, guided by a properties panel with defined fields. It is structure-first: developers define component models and filters that control which fields exist and which blocks can go where.</p>
+    <p>Content is stored in AEM as a Cloud Service and managed in the Sites console. When it is published, AEM renders the semantic HTML that EDS ingests and publishes it to Edge Delivery Services. While editing, AEM renders the page but pulls scripts, styles and icons from EDS, so authors see the real site. aem.live says AEM features such as workflows, MSM, translation and launches are available; its feature-lifecycle pages track any that are not yet, or only partly, available on the edge.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+    participant A as Author
+    participant UE as Universal Editor
+    participant AEM as AEM as a Cloud Service
+    participant EDS as Edge Delivery Services
+    A->>UE: Edit text and block fields in place
+    UE->>AEM: Persist changes
+    UE-->>EDS: Load scripts, styles and icons for the preview
+    A->>AEM: Publish
+    AEM->>EDS: Render semantic HTML and publish
+    EDS-->>A: Live on the edge</pre>
+      <figcaption><b>What to notice:</b> AEM stays the system of record; EDS supplies the code while editing and does the delivery after publish.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The author edits text and block fields in the Universal Editor, which persists changes to AEM as a Cloud Service and loads scripts, styles and icons from EDS for the preview. When the author publishes, AEM renders semantic HTML and publishes it to Edge Delivery Services, which makes it live on the edge.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div data-component="hotspots" data-title="Universal Editor at a glance (simplified mockup)">
+      <div class="hs-stage">
+        <div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span class="url">Universal Editor · /content/acme/en/mortgages</span></div>
+          <div class="mock-body" style="display:grid;grid-template-columns:150px minmax(0,1fr) 170px;gap:10px;min-height:200px">
+            <div style="border:1px solid var(--line);border-radius:6px;padding:8px;font-size:13px" data-hotspot="Content tree" data-text="Shows sections and blocks on the page. Filters decide which blocks can be added where."><b>Content tree</b><br>Section 1<br>&nbsp;&nbsp;Hero<br>Section 2<br>&nbsp;&nbsp;Cards</div>
+            <div style="border:1px solid var(--line);border-radius:6px;padding:10px" data-hotspot="Canvas" data-text="A live preview using EDS scripts and styles. Authors edit text directly in place."><b style="font-size:18px">Fixed-rate mortgages</b><p style="font-size:13px;margin:6px 0">Lock in your rate…</p><div style="display:flex;gap:6px"><span class="btn small">5-year</span><span class="btn small">10-year</span></div></div>
+            <div style="border:1px solid var(--line);border-radius:6px;padding:8px;font-size:13px" data-hotspot="Properties panel" data-text="Fields come from the block's component model: text, rich text, references, selects and more (module C7)."><b>Properties</b><br>Title<br><span style="display:block;border:1px solid var(--line);border-radius:4px;padding:2px 4px;margin:2px 0">5-year fixed</span>Style<br><span style="display:block;border:1px solid var(--line);border-radius:4px;padding:2px 4px">Highlighted</span></div>
+          </div>
+          <div style="padding:0 14px 12px"><span class="btn small primary" data-hotspot="Publish" data-text="Publishes to EDS. AEM renders semantic HTML for ingestion; caches are invalidated as in module A2.">Publish</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a4-t3"><script type="application/json">{"questions":[{"q":"Where is content stored when authors use the Universal Editor for an EDS site?","options":["In Google Drive","In AEM as a Cloud Service","Only in the CDN"],"answer":1,"explain":"AEM is the system of record; EDS delivers what AEM publishes."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Authors can drop any block anywhere</td><td>No component filters defined</td><td>Define filters per section and container (module C7).</td></tr>
+      <tr><td>A planned AEM feature behaves differently on EDS</td><td>Feature only partly available on the edge</td><td>Check aem.live's feature-lifecycle pages during design.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="content-fragments-to-eds" data-level="2">
+  <h2>Content Fragments to EDS</h2>
+  <div data-part="why"><p>Product details, rates, advisor bios and disclaimers are reused across pages and channels. Typing them into each page invites mistakes; structured fragments keep one source of truth.</p></div>
+  <div data-part="concept">
+    <p>Content Fragments are structured content in AEM, defined by a model (fields such as product name, rate, disclaimer). aem.live lists the Content Fragment Editor as an authoring choice designed for headless needs, generating JSON for Edge Delivery Services among other uses. Content Fragments can also be published to EDS as semantic HTML, which makes them crawlable and fast.</p>
+    <p>A related capability, JSON2HTML, renders EDS-friendly HTML pages from Content Fragments or any JSON endpoint. Together they let you generate many similar pages, such as product or location pages, from structured data.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    M["Content Fragment model: Product"] --> F1["Fragment: 5-year fixed"]
+    M --> F2["Fragment: Variable"]
+    F1 --> HTML["Published to EDS as semantic HTML"]
+    F2 --> HTML
+    F1 --> JSON["JSON for apps and blocks"]
+    API["Any JSON endpoint"] --> J2H["JSON2HTML overlay"] --> PAGES["EDS-friendly HTML pages"]</pre>
+      <figcaption><b>What to notice:</b> one structured source can feed pages, blocks and apps.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A Content Fragment model called Product defines fragments such as 5-year fixed and Variable. Fragments can be published to EDS as semantic HTML and also provide JSON for apps and blocks. Separately, any JSON endpoint can feed the JSON2HTML overlay, which produces EDS-friendly HTML pages.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div data-component="tabs" data-label="Fragment to page">
+      <div data-tab="Fragment data">
+        <figure class="code" data-file="Content Fragment (JSON view, fictional)" data-lang="json">
+          <script type="text/plain">
+          {
+            "productName": "5-year fixed mortgage",
+            "rate": "4.29%",
+            "termYears": 5,
+            "disclaimer": "Rates subject to change. OAC."
+          }
+          </script>
+        </figure>
+      </div>
+      <div data-tab="Rendered as HTML">
+        <figure class="code" data-file="Semantic HTML on EDS (illustrative)" data-lang="xml">
+          <script type="text/plain">
+          <main>
+            <div>
+              <h1>5-year fixed mortgage</h1>
+              <p><strong>4.29%</strong> for 5 years</p>
+              <p><small>Rates subject to change. OAC.</small></p>
+            </div>
+          </main>
+          </script>
+          <figcaption><b>Expected result:</b> crawlable, fast HTML generated from structured data. The exact markup depends on your mapping.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a4-t4"><script type="application/json">{"questions":[{"q":"You need 300 branch-location pages that share a layout and pull hours from a system of record. What fits best?","options":["300 hand-written documents","Structured data rendered to EDS pages (Content Fragments or JSON2HTML)","A PDF per branch"],"answer":1,"explain":"Generate repetitive pages from structured data (module E5)."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Same disclaimer edited in 40 places</td><td>No structured source</td><td>Model it once as a fragment or placeholder.</td></tr>
+      <tr><td>Generated pages rank poorly</td><td>Rendered only in client-side JavaScript</td><td>Publish as semantic HTML or use JSON2HTML.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="choosing-an-option" data-level="2">
+  <h2>Choosing an option</h2>
+  <div data-part="why"><p>The wrong authoring choice is expensive to undo: content has to move and authors retrain. A short, criteria-based decision, recorded per site, avoids months of rework.</p></div>
+  <div data-part="concept">
+    <p>Choose per site or business unit, not per company. The main criteria are: governance needs (approvals, audit trails), multi-site and translation needs, how structured the content is, the authors' existing tools and skills, support requirements, and whether you already run AEM as a Cloud Service. Code can be shared across sites with different sources, so one business unit's choice does not lock in another's.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">quadrantChart
+    x-axis Slower to set up --> Faster for authors
+    y-axis Lighter governance --> Heavier governance
+    quadrant-1 Governed and fast
+    quadrant-2 Governed, more setup
+    quadrant-3 Light, more setup
+    quadrant-4 Light and fast
+    Universal Editor with AEM: [0.3, 0.85]
+    Experience Workspace: [0.68, 0.55]
+    Document Authoring: [0.72, 0.34]
+    Google Docs or Word: [0.88, 0.22]</pre>
+      <figcaption><b>Governance needed vs speed of authoring.</b> Positions are a teaching aid, not measurements. The trade-off is governance and structure versus speed and simplicity.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An illustrative 2 by 2 chart. Horizontal axis: slower to set up on the left, faster for authors on the right. Vertical axis: lighter governance at the bottom, heavier at the top. Universal Editor with AEM sits top-left (heavy governance, more setup). Experience Workspace sits slightly right of centre and above middle. Document Authoring sits right of centre, just below middle. Google Docs or Word sits bottom-right (light governance, fastest).</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Criterion</th><th>Documents</th><th>DA / Experience Workspace</th><th>Universal Editor + AEM</th></tr></thead>
+      <tbody>
+        <tr><th>Author training</th><td class="yes">Minimal</td><td class="yes">Low</td><td class="part">Moderate</td></tr>
+        <tr><th>Structured fields</th><td class="no">Limited</td><td class="part">Some</td><td class="yes">Strong (models)</td></tr>
+        <tr><th>Approval workflows</th><td class="no">Outside the tool</td><td class="part">Available, verify fit</td><td class="yes">AEM workflows</td></tr>
+        <tr><th>Multi-site, translation</th><td class="part">Folder conventions</td><td class="part">Translation tools</td><td class="yes">MSM, translation</td></tr>
+        <tr><th>Support model</th><td>Adobe (EDS)</td><td class="part">Verify current terms</td><td>Adobe (AEM + EDS)</td></tr>
+        <tr class="choose"><th>Choose when</th><td>Speed, small teams, campaigns</td><td>Light CMS on documents, AI-assisted authoring</td><td>Regulated content, many sites, existing AEM</td></tr>
+      </tbody>
+    </table></div>
+    <aside class="callout enterprise"><p>For regulated financial content, the deciding factors are usually approvals and audit trails. Map them explicitly before choosing a lighter option.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a4-t5"><script type="application/json">{"questions":[{"q":"Wealth management publishes regulated product pages in four languages with legal approval on every change. Which option fits best?","options":["Google Docs","Universal Editor with AEM","Whichever the developers prefer"],"answer":1,"explain":"Approvals, translation and multi-site governance point to AEM."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>One option forced on every business unit</td><td>Company-wide decision</td><td>Decide per site; share code with repoless.</td></tr>
+      <tr><td>Approval process lives in email threads</td><td>Light tool chosen for regulated content</td><td>Re-evaluate against governance criteria.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="repoless" data-level="3">
+  <h2>Repoless</h2>
+  <div data-part="why"><p>Your company has a dozen brand and regional sites that look and behave alike. Copying the same repository twelve times means twelve places to fix every bug. Repoless means one.</p></div>
+  <div data-part="concept">
+    <p>Repoless lets several sites run from one codebase. The first site, the canonical site, links a GitHub repository through AEM Code Sync. Every other site is created through the configuration service and points to that same code; only the first needs its own repository. Pushes to the repository apply to every site using it.</p>
+    <p>The configuration service organizes this into an <b>organization</b> (named like the GitHub org), <b>profiles</b> (shared settings such as headers, indexes and metadata), <b>sites</b> (content plus code plus configuration; one profile each) and <b>content sources</b>. Sites can use different content sources while sharing code. Repoless also supports separate stage and production sites, and multi-site management with AEM authoring.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    GH["GitHub repo: acme/bank-web"] -->|AEM Code Sync| CAN["Canonical site: bank-web"]
+    CFG["Configuration service: org acme"] --> P["Profile: shared headers, indexes, metadata"]
+    P --> CAN
+    P --> S2["Site: bank-web-fr (content: French folder)"]
+    P --> S3["Site: wealth (content: AEM)"]
+    GH -.->|same code| S2
+    GH -.->|same code| S3</pre>
+      <figcaption><b>What to notice:</b> one repository, many sites; each site has its own content source but inherits shared settings from a profile.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The GitHub repository acme/bank-web syncs to the canonical site bank-web. The configuration service for org acme holds a profile with shared headers, indexes and metadata, which applies to bank-web, bank-web-fr (French content folder) and wealth (content in AEM). bank-web-fr and wealth use the same code from the repository.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="terminal: create a repoless site (based on aem.live examples)" data-lang="bash" data-lines="1">
+      <script type="text/plain">
+      curl -X PUT https://admin.hlx.page/config/acme/sites/bank-web-fr.json \
+        -H 'content-type: application/json' \
+        -H 'x-auth-token: {your-auth-token}' \
+        --data '{
+        "code": {
+          "owner": "acme",
+          "repo": "bank-web"
+        },
+        "content": {
+          "source": {
+            "url": "https://content.da.live/acme/bank-web-fr/",
+            "type": "markup"
+          }
+        }
+      }'
+      </script>
+      <ol class="code-explain">
+        <li data-line="1">PUT creates the site bank-web-fr in organization acme.</li>
+        <li data-line="5">code points at the canonical repository; no new repo is created.</li>
+        <li data-line="10">content gives this site its own source, here a Document Authoring folder.</li>
+      </ol>
+      <figcaption><b>Expected result:</b> a new site served from the shared code. It may show a 404 until its content is previewed.</figcaption>
+    </figure>
+    <figure class="code" data-file="terminal: develop locally against the new site" data-lang="bash">
+      <script type="text/plain">
+      aem up --url https://main--bank-web-fr--acme.aem.page
+      </script>
+      <figcaption><b>Expected result:</b> the local AEM CLI proxy serves your local code with that site's content.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="a4-t6"><script type="application/json">{"questions":[{"q":"How many GitHub repositories do five repoless sites sharing one codebase need?","options":["Five","One, for the canonical site","None"],"answer":1,"explain":"Only the first site needs its own repository; the rest point to it through configuration."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>New repoless site shows 404</td><td>No content previewed yet</td><td>Preview its home page and navigation.</td></tr>
+      <tr><td>A change for one brand breaks another</td><td>Brand logic hard-coded in shared blocks</td><td>Use tokens, profiles and variants for brand differences (module D10).</td></tr>
+      <tr><td>Local dev shows the wrong site's content</td><td><code>aem up</code> without <code>--url</code></td><td>Pass the target site's URL.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive: decision tree">
+  <h2>Signature interactive: which authoring option?</h2>
+  <p>Answer a few questions for one site or business unit. The tree recommends an option and explains why. Run it with the authoring team in the room.</p>
+  <div data-component="decision-tree" data-title="Choose an authoring option"><script type="application/json">{
+    "start":"q1",
+    "nodes":{
+      "q1":{"q":"Does this content need formal approvals, audit trails or regulated sign-off?","options":[{"label":"Yes, on most changes","hint":"Legal or compliance review","next":"q2"},{"label":"Sometimes, or lightly","next":"q3"},{"label":"No","next":"q4"}]},
+      "q2":{"q":"Does your organization already run AEM as a Cloud Service authoring?","options":[{"label":"Yes","next":"rUE"},{"label":"No, and no plans to","next":"q2b"}]},
+      "q2b":{"q":"Could approvals happen in a document workflow or scheduling tool you trust?","options":[{"label":"Yes, if it is supported","next":"rEWverify"},{"label":"No","next":"rUEnew"}]},
+      "q3":{"q":"Do authors need structured fields (for example product data) rather than free text?","options":[{"label":"Yes, a lot","next":"rUE"},{"label":"Some","next":"q5"},{"label":"Rarely","next":"q4"}]},
+      "q4":{"q":"Where do the authors work today?","options":[{"label":"Microsoft 365 or Google Workspace","next":"rDocs"},{"label":"They want a simple editor made for the web","next":"q5"}]},
+      "q5":{"q":"Do they want visual layout editing or AI-assisted authoring on top of documents?","options":[{"label":"Yes","next":"rEW"},{"label":"No, a clean document editor is enough","next":"rDA"}]},
+      "rUE":{"result":"Universal Editor with AEM Sites","why":"Approvals, structured fields, multi-site and translation come from AEM, while EDS delivers the pages. Define component models and filters early.","link":"#universal-editor-with-aem-sites","linkText":"Review topic 3"},
+      "rUEnew":{"result":"Universal Editor with AEM (plan the AEM investment)","why":"Your governance needs point to AEM. Weigh licence and setup effort against regulatory risk with your platform team.","link":"#choosing-an-option","linkText":"Review the criteria"},
+      "rEWverify":{"result":"Experience Workspace, after verifying support and workflow fit","why":"It adds scheduling and workflows on document-based content. Confirm Adobe's support terms and that its approval flow meets your compliance needs.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
+      "rEW":{"result":"Experience Workspace","why":"Visual canvas, AI assistant and collaboration on the EDS document repository. Check current support terms before committing.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
+      "rDA":{"result":"Document Authoring (da.live)","why":"A light, document-style CMS made for EDS, with versions, bulk operations and translation.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
+      "rDocs":{"result":"Document-based authoring (Word or Google Docs)","why":"Authors keep their tools and publish with Sidekick. Fastest to adopt; add governance through process.","link":"#document-based-authoring","linkText":"Review topic 1"}
+    }}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: recommend authoring options for three business units</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Produce a recorded, criteria-based authoring decision for three real or fictional teams.</p></div>
+    <div><h4>You need</h4><p>This page, a spreadsheet, and 20 minutes with one author from each team if possible.</p></div>
+    <div><h4>Time</h4><p>About 60 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Pick three teams</b>, for example a campaign team, a regulated product team and a regional team.</div></li>
+    <li><div><b>Run the decision tree</b> for each and note the path of answers.</div></li>
+    <li><div><b>Score each team</b> against the criteria table in topic 5 (training, structure, approvals, multi-site, support).</div></li>
+    <li><div><b>Check support terms</b> for any early-access or community-supported option you recommend, and record what you found and when.</div></li>
+    <li><div><b>Decide code sharing.</b> Mark which teams can share one repoless codebase and which need separate code.</div></li>
+    <li><div><b>Write one architecture decision record</b> per team: context, decision, consequences, review date.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>Three decision records and a one-page code-sharing sketch.</p></div>
+    <div><h4>How to verify</h4><p>Each decision cites at least two criteria and names its support model.</p></div>
+    <div><h4>Stretch</h4><p>Follow the aem.live developer tutorial to create a site with document-based authoring, then create a second, repoless site pointing at the same code.</p></div>
+  </div>
+  <ul class="checklist" data-id="a4-lab">
+    <li>Ran the decision tree for three teams</li>
+    <li>Scored each against the criteria</li>
+    <li>Checked and recorded support terms</li>
+    <li>Sketched repoless code sharing</li>
+    <li>Wrote three decision records</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Authors cannot find Sidekick actions</td><td>Extension not installed or project not added</td><td>Install Sidekick and add the project (module B2).</td></tr>
+      <tr><td>Universal Editor preview looks unstyled</td><td>EDS code not reachable from the editor</td><td>Check the site's code configuration and branch.</td></tr>
+      <tr><td>Experience Workspace not available for an AEM-authored site</td><td>It only works with the document-based repository</td><td>Keep the Universal Editor, or plan a content move.</td></tr>
+      <tr><td>Repoless site serves wrong content</td><td>Content source URL in the site config is wrong</td><td>Inspect and fix the site configuration.</td></tr>
+      <tr><td>Fragment changes not on the page</td><td>Fragment not republished</td><td>Publish the fragment and the pages that depend on it as your setup requires.</td></tr>
+      <tr><td>Teams argue about one tool for everyone</td><td>Company-wide framing</td><td>Decide per site with the criteria table.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Governance.</b> Keep an inventory: site, authoring option, content source, support model, owner, review date.</p></aside>
+    <aside class="callout warning" data-label="Security"><p>Document sources inherit your Microsoft 365 or Google sharing settings. Restrict site folders to authors; anyone with edit access can change what gets published.</p></aside>
+    <aside class="callout accessibility"><p>Whatever the tool, accessible output depends on authors: real headings, alt text, meaningful links. Train authors per option (module B8).</p></aside>
+    <aside class="callout performance"><p>All options deliver through EDS. Performance depends on blocks and images, not on the authoring tool.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Authoring option per site</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Component models and filters (UE)</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Repoless site creation</td><td>Informed</td><td>Consulted</td><td>Responsible</td></tr>
+      <tr><td>Support terms for each tool</td><td>Informed</td><td>Informed</td><td>Responsible</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="a4-check"><script type="application/json">{"questions":[
+    {"q":"In document-based authoring, what makes a table become a block?","options":["Its first row names the block","Its colour","Placing it last on the page"],"answer":0,"explain":"The first row holds the block name, which maps to blocks/<name>/."},
+    {"q":"What is Experience Workspace?","options":["A new CDN","The evolution of Document Authoring with a visual canvas and AI assistance","A replacement for GitHub"],"answer":1,"explain":"aem.live presents DA as Experience Workspace, enabled on existing DA projects."},
+    {"q":"Which repository does Experience Workspace work with?","options":["AEM Author","The EDS document-based repository","SharePoint only"],"answer":1,"explain":"Teams on AEM Author would have to move content."},
+    {"q":"With the Universal Editor, who renders the semantic HTML that EDS ingests on publish?","options":["AEM","The CDN","The author's browser"],"answer":0,"explain":"AEM renders semantic HTML for ingestion and publishes it to EDS."},
+    {"q":"Which can bring structured data into EDS pages? Choose all that apply.","options":["Content Fragments published as HTML","JSON2HTML","Retyping data into each page","The Content Fragment Editor's JSON"],"answer":[0,1,3],"explain":"Structured sources avoid retyping."},
+    {"q":"In repoless, which site needs its own GitHub repository?","options":["Every site","Only the canonical site","No site"],"answer":1,"explain":"Other sites point to the canonical code through configuration."},
+    {"q":"How many profiles can one site have in the configuration service?","options":["One","Up to three","Unlimited"],"answer":0,"explain":"A site has one profile; its own settings override the profile's."},
+    {"q":"A regional marketing team wants to publish campaign pages tomorrow using Google Docs, while the regulated product team stays on AEM. Both want the same design system. What do you propose?","options":["Force both onto AEM","Separate copies of the code for each","Two sites with different content sources sharing one codebase through repoless","Delay the campaign"],"answer":2,"explain":"Different sources, shared code and design system.","scenario":true}
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="a4-cards"><script type="application/json">{"cards":[
+    ["Document-based authoring","Pages in Word or Google Docs, data in Excel or Sheets, published with Sidekick."],
+    ["Block table","A table whose first row names the block."],
+    ["Metadata table","A table that sets title, description, image and other page metadata."],
+    ["Document Authoring (DA)","Browser-based document editor at da.live built for EDS."],
+    ["Experience Workspace","DA's evolution: visual canvas, AI assistant, MCP, scheduling and workflows."],
+    ["Universal Editor","AEM's WYSIWYG editor; content in AEM, delivery on EDS."],
+    ["Component model","Field definitions that drive the Universal Editor properties panel."],
+    ["Content Fragment","Structured, model-based content in AEM; publishable to EDS as HTML."],
+    ["Repoless","Many sites, one codebase; only the canonical site has a repo."],
+    ["Profile","Shared configuration (headers, indexes, metadata) a site inherits."],
+    ["aem up --url","Runs local code against a specific site's content."]
+  ]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>A4 · Authoring options landscape</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Documents</h4><ul><li>Word / Google Docs + Sidekick</li><li>Tables = blocks, --- = sections</li><li>Fastest to adopt</li></ul></div>
+      <div><h4>DA → Experience Workspace</h4><ul><li>da.live, document-based repo</li><li>Visual canvas, AI, MCP</li><li>Verify support terms</li></ul></div>
+      <div><h4>Universal Editor</h4><ul><li>Content in AEM</li><li>Models and filters</li><li>AEM renders HTML for EDS</li></ul></div>
+      <div><h4>Structured data</h4><ul><li>CFs → HTML on EDS</li><li>CF Editor JSON</li><li>JSON2HTML for any JSON</li></ul></div>
+      <div><h4>Repoless</h4><ul><li>Org → profile → sites</li><li>One repo, many sites</li><li>aem up --url for local dev</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://aem.live/docs/authoring-guide" rel="noopener" target="_blank">aem.live: Where to author your site</a></li>
+    <li><a href="https://www.aem.live/docs/ew/da-is-ew" rel="noopener" target="_blank">aem.live: Document Authoring is now Experience Workspace</a></li>
+    <li><a href="https://www.aem.live/docs/aem-authoring" rel="noopener" target="_blank">aem.live: Authoring with AEM for Edge Delivery Services</a></li>
+    <li><a href="https://www.aem.live/docs/repoless" rel="noopener" target="_blank">aem.live: Repoless, one codebase many sites</a></li>
+    <li><a href="https://www.aem.live/docs/config-service-setup" rel="noopener" target="_blank">aem.live: Setting up the configuration service</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/aem-authoring/authoring" rel="noopener" target="_blank">Experience League: Authoring content for Edge Delivery Services</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EDS Academy</title>
+<meta name="description" content="A self-paced, interactive course on Adobe Edge Delivery Services across authoring, development and implementation, from beginner to expert.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="assets/js/academy.js"></script>
+</head>
+<body data-page="home">
+<noscript><p class="no-js-note">This course needs JavaScript for the course map, progress and interactives. Module pages remain readable without it.</p></noscript>
+<main id="main">
+  <section class="page-hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Adobe Edge Delivery Services · Self-paced course</div>
+        <h1 style="margin-top:10px">From your first page to an enterprise EDS platform</h1>
+        <p class="lead">45 modules and 199 topics across three tracks (authoring, development and implementation), taught with diagrams, simulators, labs and checks rather than walls of text.</p>
+        <div class="badges" style="margin-top:16px"><span class="tag au">Authoring</span><span class="tag dev">Development</span><span class="tag imp">Implementation</span><span class="lvl" data-l="1">L1</span><span class="lvl" data-l="2">L2</span><span class="lvl" data-l="3">L3</span><span class="lvl" data-l="4">L4</span></div>
+      </div>
+      <div data-component="dashboard" data-part="continue"></div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <aside class="callout update" data-label="Build status"><p>This build covers the course foundation and <b>Category A (modules A1 to A4)</b>. All other modules show as <em>Planned</em> on the map; their topics are listed so you can see what is coming. Content is as of 30 October 2026.</p></aside>
+    </div>
+  </section>
+
+  <section class="band" id="course-map">
+    <div class="wrap">
+      <div class="sec-head"><h2>Course map</h2><p>Rows are categories; columns are the level where each module starts. Filter by level or track, then select a module for its topics and prerequisites.</p></div>
+      <div data-component="course-map"></div>
+    </div>
+  </section>
+
+  <section class="band" id="paths">
+    <div class="wrap">
+      <div class="sec-head"><h2>Learning paths</h2><p>Three suggested orders through the modules. Each path passes the same four capstone gates.</p></div>
+      <div data-component="dashboard" data-part="paths"></div>
+    </div>
+  </section>
+
+  <section class="band" id="capstones">
+    <div class="wrap">
+      <div class="sec-head"><h2>Capstone gates</h2><p>Finish each level with a capstone before moving to the next.</p></div>
+      <div data-component="dashboard" data-part="gates"></div>
+    </div>
+  </section>
+
+  <section class="band" id="progress">
+    <div class="wrap">
+      <div class="sec-head"><h2>Your progress</h2><p>Progress is saved in this browser only. Export it to keep a backup or move it to another device.</p></div>
+      <div data-component="progress-panel"></div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

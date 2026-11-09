@@ -1,0 +1,752 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>EDS Course Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;600&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<style>
+/* Layout: a level-by-category grid (columns = entry level, lanes = category), cards styled like EDS block-table headers, detail rail on the right */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --sunk: #e9edf3;
+  --ink: #131b26;
+  --muted: #556173;
+  --line: #d5dce6;
+  --line-strong: #aeb8c6;
+  --accent: #2945c4;
+  --accent-soft: #e2e7fb;
+  --au: #0a7a5c; --au-soft: #d9f0e7;
+  --dev: #5838c4; --dev-soft: #e9e3fb;
+  --imp: #9c5408; --imp-soft: #f6e8d6;
+  --good: #11784a;
+  --f-display: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --f-body: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e131a; --surface: #161d26; --sunk: #1d2631; --ink: #e5eaf1; --muted: #9aa5b5;
+    --line: #2a3542; --line-strong: #4a5869; --accent: #8197ff; --accent-soft: #232d55;
+    --au: #43c79f; --au-soft: #143429; --dev: #a28dff; --dev-soft: #271f47; --imp: #eea155; --imp-soft: #3a2914;
+    --good: #4cc98c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e131a; --surface: #161d26; --sunk: #1d2631; --ink: #e5eaf1; --muted: #9aa5b5;
+  --line: #2a3542; --line-strong: #4a5869; --accent: #8197ff; --accent-soft: #232d55;
+  --au: #43c79f; --au-soft: #143429; --dev: #a28dff; --dev-soft: #271f47; --imp: #eea155; --imp-soft: #3a2914;
+  --good: #4cc98c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(28px, 4.2vw, 44px); font-weight: 800; line-height: 1.08; }
+h2 { font-size: clamp(22px, 2.6vw, 28px); font-weight: 700; }
+h3 { font-size: 18px; font-weight: 700; }
+p { margin: 0; }
+code, .mono { font-family: var(--f-mono); }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.eyebrow { font: 600 12px/1.2 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+
+/* Header */
+.top { padding-block: 40px 28px; }
+.top-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: end; }
+.lead { max-width: 64ch; margin-top: 14px; color: var(--muted); font-size: 17px; }
+.asof { margin-top: 14px; font-size: 13px; color: var(--muted); }
+.progress { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; }
+.progress-nums { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.progress-nums strong { font-family: var(--f-display); font-size: 24px; display: block; line-height: 1.1; }
+.bar { height: 8px; background: var(--sunk); border-radius: 99px; overflow: hidden; }
+.bar > span { display: block; height: 100%; width: 0; background: var(--good); transition: width .3s; }
+
+section.band { padding-block: 32px; border-top: 1px solid var(--line); }
+.sec-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 24px; margin-bottom: 18px; }
+.sec-head p { color: var(--muted); max-width: 70ch; }
+
+/* Controls */
+.controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-bottom: 14px; }
+.group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.group > .lbl { font: 600 11.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.chip { appearance: none; border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 12px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip .sw { width: 9px; height: 9px; border-radius: 50%; }
+.chip[aria-pressed="true"] .sw { box-shadow: 0 0 0 2px var(--bg); }
+.search { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 12px; min-width: 0; width: 240px; max-width: 100%; font: inherit; font-size: 14px; color: var(--ink); }
+.toggle { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+.linkbtn { appearance: none; border: 0; background: none; color: var(--accent); cursor: pointer; font-size: 14px; padding: 4px 2px; text-decoration: underline; text-underline-offset: 3px; }
+.count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; color: var(--muted); margin-bottom: 12px; align-items: center; }
+.legend svg { vertical-align: middle; margin-right: 6px; }
+
+/* Map */
+.map-layout { display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 20px; align-items: start; }
+.map-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); min-width: 0; }
+.map { position: relative; min-width: 1000px; display: grid; grid-template-columns: 150px repeat(4, minmax(0, 1fr)); }
+.colhead { padding: 12px 14px; border-bottom: 1px solid var(--line); background: var(--sunk); }
+.colhead + .colhead { border-left: 1px solid var(--line); }
+.colhead b { font-family: var(--f-display); font-size: 15px; display: block; }
+.colhead span { font-size: 12.5px; color: var(--muted); }
+.lanelabel { padding: 14px; border-top: 1px solid var(--line); background: var(--sunk); }
+.lanelabel .eyebrow { display: block; margin-bottom: 4px; }
+.lanelabel b { font-family: var(--f-display); font-size: 14.5px; line-height: 1.25; display: block; }
+.map > .lanelabel:nth-child(6) { border-top: 0; }
+.cell { padding: 12px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; min-height: 64px; }
+.map > .cell:nth-child(-n+10) { border-top: 0; }
+svg.edges { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 1; overflow: visible; }
+.e-in { fill: none; stroke: var(--accent); stroke-width: 2; }
+.e-out { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.e-faint { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+.mk-in { fill: var(--accent); } .mk-out { fill: var(--muted); } .mk-faint { fill: var(--line-strong); }
+
+.node { appearance: none; position: relative; z-index: 2; display: block; width: 100%; padding: 0; text-align: left; cursor: pointer; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); transition: opacity .2s, box-shadow .15s, border-color .15s; }
+.node:hover { border-color: var(--ink); }
+.node-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--sunk); border-bottom: 1px solid var(--line); border-radius: 7px 7px 0 0; padding: 4px 10px; font: 600 12px/1.4 var(--f-mono); }
+.node-head .lv { color: var(--muted); font-weight: 500; }
+.node-head .ok { color: var(--good); }
+.node-name { display: block; padding: 8px 10px 6px; font-size: 14px; font-weight: 700; line-height: 1.3; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 10px 9px; }
+.tag { font: 600 10.5px/1 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; padding: 4px 6px; border-radius: 4px; }
+.tag.au { color: var(--au); background: var(--au-soft); }
+.tag.dev { color: var(--dev); background: var(--dev-soft); }
+.tag.imp { color: var(--imp); background: var(--imp-soft); }
+.node.sel { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.node.is-pre { border-color: var(--accent); }
+.node.is-next { border-style: dashed; border-color: var(--ink); }
+.node.dim { opacity: .25; }
+
+/* Detail rail */
+.detail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 16px; min-width: 0; }
+.detail h3 { font-size: 21px; line-height: 1.2; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.sub { font: 600 11.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.minichips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mini { appearance: none; border: 1px solid var(--line); background: var(--sunk); border-radius: 6px; padding: 3px 8px; font-size: 13px; cursor: pointer; }
+.mini code { font-size: 12px; font-weight: 600; margin-right: 4px; }
+.topics { width: 100%; border-collapse: collapse; font-size: 14px; }
+.topics td { padding: 5px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.topics td:last-child { text-align: right; padding-left: 10px; white-space: nowrap; }
+.lvb { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line-strong); color: var(--muted); }
+.runbox { background: var(--sunk); border-radius: 8px; padding: 10px 12px; display: grid; gap: 8px; }
+.runbox pre { margin: 0; font: 500 12.5px/1.55 var(--f-mono); white-space: pre-wrap; word-break: break-word; }
+.btn { appearance: none; border: 1px solid var(--ink); background: var(--ink); color: var(--bg); border-radius: 7px; padding: 6px 12px; font-size: 13.5px; cursor: pointer; justify-self: start; }
+.check { display: inline-flex; gap: 8px; align-items: center; cursor: pointer; font-size: 14.5px; }
+.check input { width: 17px; height: 17px; accent-color: var(--good); }
+
+/* Table */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table.mods { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 860px; }
+.mods th { text-align: left; font: 600 11.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 10px 12px; background: var(--sunk); border-bottom: 1px solid var(--line); }
+.mods td { padding: 9px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+.mods tr:first-child td { border-top: 0; }
+.mods td.num { font-variant-numeric: tabular-nums; text-align: right; }
+.mods th.num { text-align: right; }
+.modbtn { appearance: none; border: 0; background: none; padding: 0; cursor: pointer; text-align: left; font-weight: 700; }
+.modbtn code { color: var(--muted); font-weight: 600; margin-right: 6px; font-size: 12.5px; }
+.modbtn:hover span { text-decoration: underline; text-underline-offset: 3px; }
+.mods .tags { padding: 0; }
+.mods tfoot td { font-weight: 700; background: var(--sunk); border-top: 1px solid var(--line); }
+
+/* Paths */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.tab { appearance: none; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 10px 14px; cursor: pointer; text-align: left; display: grid; gap: 2px; min-width: 0; }
+.tab b { font-family: var(--f-display); font-size: 16px; }
+.tab span { font-size: 13px; color: var(--muted); }
+.tab[aria-selected="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.path-sum { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-bottom: 16px; font-size: 14px; color: var(--muted); }
+.path-sum strong { color: var(--ink); font-family: var(--f-display); font-size: 20px; margin-right: 4px; font-variant-numeric: tabular-nums; }
+.timeline { position: relative; display: grid; gap: 0; }
+.phase { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 0 20px; }
+.phase-label { padding-top: 12px; }
+.phase-label b { font-family: var(--f-display); font-size: 22px; display: block; }
+.phase-label span { font-size: 13px; color: var(--muted); display: block; }
+.steps { list-style: none; margin: 0; padding: 0 0 0 22px; border-left: 2px solid var(--line); display: grid; gap: 8px; padding-block: 12px; }
+.step { appearance: none; width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 9px 12px; cursor: pointer; display: grid; grid-template-columns: 30px 44px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; text-align: left; position: relative; }
+.step::before { content: ""; position: absolute; left: -29px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line-strong); }
+.step.done::before { background: var(--good); border-color: var(--good); }
+.step:hover { border-color: var(--ink); }
+.step .n { font: 600 12px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.step code { font-size: 12.5px; font-weight: 600; }
+.step .nm { font-weight: 700; font-size: 14.5px; }
+.step .h, .step .cum { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.step .cum { min-width: 64px; text-align: right; }
+.gate { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 0 20px; align-items: center; }
+.gate-inner { display: flex; gap: 12px; align-items: center; margin-left: -9px; padding-block: 6px; }
+.gate-inner svg { flex: none; }
+.gate-inner p { font-size: 14.5px; }
+.gate-inner a { font-weight: 700; }
+
+/* Capstones */
+.caps { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+.cap { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 12px; align-content: start; scroll-margin-top: 24px; }
+.cap:target { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.cap .lvl { display: flex; align-items: baseline; gap: 10px; }
+.cap .lvl b { font-family: var(--f-display); font-size: 28px; line-height: 1; }
+.cap ul { margin: 0; padding-left: 18px; font-size: 14px; display: grid; gap: 4px; }
+.cap .deliv { background: var(--accent-soft); border-radius: 8px; padding: 10px 12px; font-size: 14.5px; }
+footer { padding-block: 24px 48px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+footer p + p { margin-top: 6px; }
+
+@media (max-width: 1100px) {
+  .map-layout { grid-template-columns: minmax(0, 1fr); }
+  .detail { position: static; }
+  .top-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .phase, .gate { grid-template-columns: minmax(0, 1fr); }
+  .phase-label { padding-top: 16px; }
+  .gate > div:first-child { display: none; }
+  .gate-inner { margin-left: 0; }
+  .step { grid-template-columns: 26px 40px minmax(0, 1fr); }
+  .step .h, .step .cum { grid-column: 3; text-align: left; }
+  .search { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+
+<header class="top">
+  <div class="wrap top-grid">
+    <div>
+      <div class="eyebrow">Edge Delivery Services · Course map</div>
+      <h1>From first block to enterprise platform</h1>
+      <p class="lead">45 modules across five categories, three tracks and four levels. Pick a module to see its topics, what it needs first and what it unlocks, then copy its run settings into the course prompt.</p>
+      <p class="asof">Syllabus as of 30 Oct 2026. This map lists structure only; each module run verifies technical details against aem.live.</p>
+    </div>
+    <div class="progress" aria-live="polite">
+      <div class="progress-nums">
+        <div><strong id="pDone">0</strong><span class="muted">of 45 modules done</span></div>
+        <div style="text-align:right"><strong id="pHours">0</strong><span class="muted" id="pHoursOf">of 0 hours</span></div>
+      </div>
+      <div class="bar"><span id="pBar"></span></div>
+      <span class="muted" style="font-size:13px">Saved in this browser only.</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="band" id="map">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Course map</h2>
+        <p>Each card sits in the column of the level where the module starts. Arrows show prerequisites for the selected module.</p>
+      </div>
+      <div class="controls">
+        <div class="group" role="group" aria-label="Filter by level">
+          <span class="lbl">Level</span>
+          <button class="chip" data-level="1" aria-pressed="true">L1</button>
+          <button class="chip" data-level="2" aria-pressed="true">L2</button>
+          <button class="chip" data-level="3" aria-pressed="true">L3</button>
+          <button class="chip" data-level="4" aria-pressed="true">L4</button>
+        </div>
+        <div class="group" role="group" aria-label="Filter by track">
+          <span class="lbl">Track</span>
+          <button class="chip" data-track="au" aria-pressed="true"><span class="sw" style="background:var(--au)"></span>Authoring</button>
+          <button class="chip" data-track="dev" aria-pressed="true"><span class="sw" style="background:var(--dev)"></span>Development</button>
+          <button class="chip" data-track="imp" aria-pressed="true"><span class="sw" style="background:var(--imp)"></span>Implementation</button>
+        </div>
+        <input id="q" class="search" type="search" placeholder="Search modules and topics" aria-label="Search modules and topics">
+        <label class="toggle"><input id="allEdges" type="checkbox"> Show all prerequisite arrows</label>
+        <button class="linkbtn" id="reset" type="button">Reset filters</button>
+        <span class="count" id="count" aria-live="polite"></span>
+      </div>
+      <div class="legend">
+        <span><svg width="34" height="10" aria-hidden="true"><path d="M1 5H26" stroke="var(--accent)" stroke-width="2"/><path d="M25 1L33 5L25 9z" fill="var(--accent)"/></svg>Prerequisite of selected</span>
+        <span><svg width="34" height="10" aria-hidden="true"><path d="M1 5H26" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4"/><path d="M25 1L33 5L25 9z" fill="var(--muted)"/></svg>Unlocked by selected</span>
+        <span><span class="tag au">Auth</span> <span class="tag dev">Dev</span> <span class="tag imp">Impl</span> track tags</span>
+      </div>
+      <div class="map-layout">
+        <div class="map-scroll" id="mapScroll">
+          <div class="map" id="mapGrid"></div>
+        </div>
+        <aside class="detail" id="detail" aria-live="polite"></aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="modules">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>All modules</h2>
+        <p>Follows the map filters. Hours are planning estimates for the full module at the levels shown.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="mods">
+          <thead><tr><th>Module</th><th>Level</th><th>Track</th><th>Prerequisites</th><th class="num">Est. hours</th><th>Capstone</th><th>Done</th></tr></thead>
+          <tbody id="tbody"></tbody>
+          <tfoot><tr><td colspan="4" id="tfootLabel">Total</td><td class="num" id="tfootHours"></td><td colspan="2"></td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="paths">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Learning paths</h2>
+        <p>Three suggested orders through the modules. Each path passes the four capstone gates; select a step to open it on the map.</p>
+      </div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div id="pathPanel" role="tabpanel"></div>
+    </div>
+  </section>
+
+  <section class="band" id="capstones">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Capstone gates</h2>
+        <p>Finish the capstone before starting the next level. Labs are small, repeatable exercises inside the level.</p>
+      </div>
+      <div class="caps" id="caps"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Built from the Edge Delivery Services learning plan (categories A to E). Hours and paths are suggestions; adjust them to your pace.</p>
+    <p>Generate any module with the course prompt by pasting its run settings from the detail panel.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var TRACKS = { au: { name: 'Authoring', tag: 'Auth' }, dev: { name: 'Development', tag: 'Dev' }, imp: { name: 'Implementation', tag: 'Impl' } };
+  var LEVELS = { 1: 'Beginner', 2: 'Intermediate', 3: 'Advanced', 4: 'Expert' };
+  var CATS = [
+    { id: 'A', name: 'Foundations & Architecture' },
+    { id: 'B', name: 'Content Authoring & Management' },
+    { id: 'C', name: 'Development' },
+    { id: 'D', name: 'Implementation, Operations & Governance' },
+    { id: 'E', name: 'Advanced & Expert' }
+  ];
+  var ALL = ['au', 'dev', 'imp'];
+  var M = [
+    { id: 'A1', cat: 'A', name: 'What EDS is and where it fits', tracks: ALL, lv: [1, 2], pre: [], h: 4, topics: [['Origins and naming', 1], ['EDS vs traditional AEM Sites', 1], ['EDS vs headless', 2], ['Fit assessment', 2], ['Licensing and product packaging', 2], ['Feature lifecycle', 2]] },
+    { id: 'A2', cat: 'A', name: 'Core architecture', tracks: ALL, lv: [1, 3], pre: ['A1'], h: 6, topics: [['Content sources', 1], ['Content Bus, Code Bus, Media Bus', 2], ['Rendering pipeline', 2], ['Preview vs live', 1], ['Admin service and Admin API', 2], ['Delivery and CDN', 2], ['Caching model', 3]] },
+    { id: 'A3', cat: 'A', name: 'Web performance fundamentals', tracks: ALL, lv: [1, 2], pre: ['A1'], h: 4, topics: [['Core Web Vitals', 1], ['Lighthouse 100', 1], ['Three-phase loading', 2], ['Why no framework, no build', 2], ['Payload budgets', 2]] },
+    { id: 'A4', cat: 'A', name: 'Authoring options landscape', tracks: ALL, lv: [1, 3], pre: ['A2'], h: 4, topics: [['Document-based authoring', 1], ['Document Authoring (da.live)', 1], ['Universal Editor with AEM Sites', 1], ['Content Fragments to EDS', 2], ['Choosing an option', 2], ['Repoless', 3]] },
+
+    { id: 'B1', cat: 'B', name: 'Page structure fundamentals', tracks: ['au'], lv: [1, 2], pre: ['A4'], h: 5, topics: [['Default content', 1], ['Sections', 1], ['Blocks', 1], ['Block variants', 1], ['Section Metadata', 1], ['Page Metadata block', 1], ['Auto-blocking', 2], ['Folder and URL mapping', 1]] },
+    { id: 'B2', cat: 'B', name: 'AEM Sidekick', tracks: ['au'], lv: [1, 2], pre: ['B1'], h: 3, topics: [['Install and add a project', 1], ['Preview, publish, unpublish, delete', 1], ['Bulk operations', 2], ['Block library', 2], ['Sign-in and permissions', 2]] },
+    { id: 'B3', cat: 'B', name: 'Spreadsheets and structured content', tracks: ['au'], lv: [2, 3], pre: ['B2'], h: 6, topics: [['Spreadsheets as JSON', 2], ['Bulk metadata', 2], ['Redirects', 2], ['Placeholders', 2], ['Query index', 2], ['Sitemaps', 2], ['Taxonomy and tags', 3]] },
+    { id: 'B4', cat: 'B', name: 'Shared and reusable content', tracks: ['au'], lv: [1, 2], pre: ['B1'], h: 3, topics: [['Navigation and footer', 1], ['Fragments', 2], ['Templates', 2]] },
+    { id: 'B5', cat: 'B', name: 'Images, media and assets', tracks: ['au'], lv: [1, 3], pre: ['B1'], h: 4, topics: [['Images in content', 1], ['Video and embeds', 2], ['Icons and SVGs', 2], ['AEM Assets integration', 3]] },
+    { id: 'B6', cat: 'B', name: 'Document Authoring (da.live)', tracks: ['au'], lv: [2, 3], pre: ['B2', 'A4'], h: 6, topics: [['Editor basics', 2], ['Versions and restore', 2], ['Library and templates', 2], ['Bulk and translation tools', 3], ['DA with Universal Editor', 3], ['Support model', 2]] },
+    { id: 'B7', cat: 'B', name: 'Universal Editor with AEM Sites', tracks: ['au'], lv: [2, 3], pre: ['B1', 'A4'], h: 8, topics: [['Editor interface', 2], ['Sites console for EDS', 2], ['Components and filters', 2], ['Publishing to EDS', 2], ['Content Fragments in UE', 3], ['MSM, language copies, launches', 3], ['Workflows and tagging', 3]] },
+    { id: 'B8', cat: 'B', name: 'Publishing workflow and quality', tracks: ['au'], lv: [1, 3], pre: ['B2'], h: 5, topics: [['Preview, review, publish', 1], ['SEO authoring', 2], ['Accessibility authoring', 2], ['Scheduled and approved publishing', 3], ['Content QA checklist', 2]] },
+    { id: 'B9', cat: 'B', name: 'Localization and multi-site content', tracks: ['au'], lv: [2, 3], pre: ['B3', 'B4'], h: 5, topics: [['Locale folder strategy', 2], ['Translation workflows', 3], ['Multi-site authoring', 3]] },
+    { id: 'B10', cat: 'B', name: 'Forms and experimentation for authors', tracks: ['au'], lv: [2, 3], pre: ['B3'], h: 5, topics: [['Spreadsheet-based forms', 2], ['AEM Forms on EDS', 3], ['Experiments', 3], ['Audiences and campaigns', 3]] },
+
+    { id: 'C1', cat: 'C', name: 'Environment setup', tracks: ['dev'], lv: [1, 1], pre: ['A2'], h: 4, topics: [['Boilerplates', 1], ['AEM Code Sync GitHub App', 1], ['AEM CLI', 1], ['Linting and editor', 1], ['Branch previews', 1]] },
+    { id: 'C2', cat: 'C', name: 'Project anatomy', tracks: ['dev'], lv: [1, 2], pre: ['C1'], h: 3, topics: [['Folder layout', 1], ['Core scripts', 1], ['Styles', 1], ['UE model files', 2]] },
+    { id: 'C3', cat: 'C', name: 'Rendering and decoration', tracks: ['dev'], lv: [1, 2], pre: ['C2', 'B1'], h: 4, topics: [['Delivered markup', 1], ['Decoration pipeline', 2], ['Block loading', 2], ['Auto-blocking in code', 2]] },
+    { id: 'C4', cat: 'C', name: 'Building blocks', tracks: ['dev'], lv: [1, 4], pre: ['C3'], h: 12, topics: [['Block contract', 1], ['Reading content', 1], ['Variants', 1], ['Config blocks', 2], ['Common patterns', 2], ['Async and data blocks', 2], ['Block Collection reuse', 2], ['Accessible blocks', 2], ['Web components in blocks', 4]] },
+    { id: 'C5', cat: 'C', name: 'Styling', tracks: ['dev'], lv: [1, 3], pre: ['C2'], h: 6, topics: [['Design tokens', 1], ['Block-scoped CSS', 1], ['Section styles', 1], ['Fonts without CLS', 2], ['Design system mapping', 3]] },
+    { id: 'C6', cat: 'C', name: 'Performance engineering', tracks: ['dev'], lv: [2, 4], pre: ['C4', 'A3'], h: 8, topics: [['Eager, lazy, delayed in code', 2], ['LCP optimization', 2], ['Image handling', 2], ['Third-party governance', 3], ['PR performance gates', 3], ['RUM-driven tuning', 4]] },
+    { id: 'C7', cat: 'C', name: 'Universal Editor development', tracks: ['dev'], lv: [2, 4], pre: ['C4', 'B7'], h: 10, topics: [['Component definitions', 2], ['Models and field types', 2], ['Filters', 2], ['Per-block model files', 3], ['Container blocks', 3], ['Instrumentation', 3], ['UE extensions', 4]] },
+    { id: 'C8', cat: 'C', name: 'Data-driven development', tracks: ['dev'], lv: [2, 4], pre: ['C4', 'B3'], h: 8, topics: [['Spreadsheet JSON', 2], ['Query index', 2], ['Placeholders in code', 2], ['JSON2HTML overlay', 3], ['BYOM content source', 4]] },
+    { id: 'C9', cat: 'C', name: 'Integrations', tracks: ['dev'], lv: [3, 4], pre: ['C6'], h: 8, topics: [['Analytics and tags', 3], ['Consent management', 3], ['External APIs', 3], ['Adobe Target', 4]] },
+    { id: 'C10', cat: 'C', name: 'Testing and code quality', tracks: ['dev'], lv: [1, 3], pre: ['C4'], h: 6, topics: [['PR workflow', 1], ['Linting standards', 1], ['Unit and E2E tests', 3], ['Accessibility testing', 2], ['Visual regression', 3]] },
+    { id: 'C11', cat: 'C', name: 'Advanced developer tooling', tracks: ['dev'], lv: [3, 4], pre: ['C8', 'D2'], h: 10, topics: [['Sidekick customization', 3], ['Admin API scripting', 3], ['DA apps and plugins', 4], ['Edge workers', 4], ['Shared code across sites', 4]] },
+
+    { id: 'D1', cat: 'D', name: 'Project setup and onboarding', tracks: ['imp'], lv: [1, 2], pre: ['A2'], h: 4, topics: [['Creating a site', 1], ['Cloud Manager EDS sites', 2], ['Org and site naming', 1], ['Team onboarding', 2]] },
+    { id: 'D2', cat: 'D', name: 'Configuration service', tracks: ['imp'], lv: [2, 3], pre: ['D1'], h: 6, topics: [['Site and org config', 2], ['Legacy to config service', 2], ['API keys and tokens', 3], ['Profiles and repoless config', 3]] },
+    { id: 'D3', cat: 'D', name: 'Domains, CDN and go-live', tracks: ['imp'], lv: [2, 3], pre: ['D2', 'A2'], h: 10, topics: [['Adobe-managed CDN', 2], ['BYO CDN', 3], ['Push invalidation', 3], ['DNS, SSL, apex domains', 3], ['Edge redirects', 3], ['Go-live checklist', 3]] },
+    { id: 'D4', cat: 'D', name: 'Security and access', tracks: ['imp'], lv: [3, 3], pre: ['D2'], h: 6, topics: [['Site authentication', 3], ['Roles and permissions', 3], ['Content Security Policy', 3], ['Sidekick and IMS sign-in', 3], ['Secrets handling', 3]] },
+    { id: 'D5', cat: 'D', name: 'Environments and release management', tracks: ['imp'], lv: [2, 3], pre: ['D1', 'C10'], h: 4, topics: [['Branch-based environments', 2], ['Stage and prod with repoless', 3], ['Content release coordination', 3], ['Rollback', 2]] },
+    { id: 'D6', cat: 'D', name: 'Migration to EDS', tracks: ['imp'], lv: [3, 4], pre: ['D3', 'C4', 'B1'], h: 14, topics: [['Discovery and inventory', 3], ['Component-to-block mapping', 3], ['Content import', 3], ['URL and SEO preservation', 3], ['Parity QA and cutover', 4], ['AEM Sites to EDS with UE', 4]] },
+    { id: 'D7', cat: 'D', name: 'Monitoring and observability', tracks: ['imp'], lv: [2, 3], pre: ['D1', 'A3'], h: 5, topics: [['Operational Telemetry (RUM)', 2], ['CWV dashboards', 2], ['404 and error monitoring', 2], ['Admin logs and status', 3], ['Alerting', 3]] },
+    { id: 'D8', cat: 'D', name: 'SEO and discoverability operations', tracks: ['imp'], lv: [2, 3], pre: ['B3', 'D1'], h: 4, topics: [['robots.txt and sitemaps', 2], ['Metadata at scale', 2], ['Multi-language SEO', 3]] },
+    { id: 'D9', cat: 'D', name: 'Governance and operating model', tracks: ['imp'], lv: [3, 4], pre: ['D5', 'B8'], h: 6, topics: [['Block catalog governance', 3], ['Authoring governance', 3], ['Accessibility compliance', 3], ['Code standards', 3], ['RACI and support model', 4]] },
+    { id: 'D10', cat: 'D', name: 'Enterprise architecture', tracks: ['imp'], lv: [4, 4], pre: ['D9', 'D6', 'D3'], h: 10, topics: [['Multi-brand and multi-site', 4], ['Hybrid with AEM Sites', 4], ['Headless plus EDS', 4], ['Scaling teams', 4], ['Choosing authoring per business unit', 4]] },
+
+    { id: 'E1', cat: 'E', name: 'Experimentation', tracks: ALL, lv: [3, 3], pre: ['B10', 'C6'], h: 5, topics: [['Experimentation plugin', 3], ['Measuring results', 3]] },
+    { id: 'E2', cat: 'E', name: 'Personalization', tracks: ALL, lv: [3, 4], pre: ['E1', 'C9'], h: 6, topics: [['Audiences and campaigns', 3], ['Adobe Target and edge personalization', 4]] },
+    { id: 'E3', cat: 'E', name: 'Commerce', tracks: ['dev', 'imp'], lv: [4, 4], pre: ['C8', 'C9'], h: 14, topics: [['Commerce storefront on EDS', 4], ['Commerce architecture', 4]] },
+    { id: 'E4', cat: 'E', name: 'Forms', tracks: ALL, lv: [3, 4], pre: ['B10', 'C4'], h: 8, topics: [['AEM Forms on EDS', 3], ['Enterprise forms', 4]] },
+    { id: 'E5', cat: 'E', name: 'Structured content', tracks: ALL, lv: [3, 4], pre: ['C8', 'B7'], h: 6, topics: [['Content Fragments as HTML', 3], ['JSON-driven pages at scale', 4]] },
+    { id: 'E6', cat: 'E', name: 'AI and automation', tracks: ALL, lv: [3, 4], pre: ['C11'], h: 8, topics: [['AEM MCP servers', 4], ['AI-assisted development', 3], ['Content automation', 4]] },
+    { id: 'E7', cat: 'E', name: 'Expert accessibility', tracks: ['au', 'dev'], lv: [3, 3], pre: ['C4', 'B8'], h: 5, topics: [['Accessible complex blocks', 3]] },
+    { id: 'E8', cat: 'E', name: 'Authoring tool extensions', tracks: ['dev'], lv: [4, 4], pre: ['C11'], h: 8, topics: [['Sidekick, DA and UE extensions', 4]] },
+    { id: 'E9', cat: 'E', name: 'Performance at scale', tracks: ['imp'], lv: [4, 4], pre: ['C6', 'D7'], h: 5, topics: [['Portfolio performance program', 4]] },
+    { id: 'E10', cat: 'E', name: 'Community and contribution', tracks: ['dev'], lv: [4, 4], pre: ['C4'], h: 3, topics: [['Block Collection and open source', 4]] }
+  ];
+
+  var PATHS = {
+    author: { name: 'Author', who: 'Authors, publishers, content leads', phases: [
+      ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B4', 'B5', 'B8'],
+      ['B3', 'B6', 'B7', 'B9', 'B10', 'D8'],
+      ['E1', 'E2', 'E4', 'E5', 'E7'],
+      ['D9', 'E6', 'D10']
+    ] },
+    developer: { name: 'Developer', who: 'Front-end and full-stack developers', phases: [
+      ['A1', 'A2', 'A3', 'A4', 'B1', 'C1', 'C2', 'C3', 'C4', 'C5', 'C10'],
+      ['B3', 'B7', 'C6', 'C7', 'C8', 'D1', 'D5'],
+      ['C9', 'C11', 'E1', 'E4', 'E5', 'E7'],
+      ['E2', 'E3', 'E6', 'E8', 'E10']
+    ] },
+    lead: { name: 'Implementation lead', who: 'Tech leads, architects, platform owners', phases: [
+      ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'C1', 'D1'],
+      ['D2', 'D3', 'D5', 'D7', 'D8', 'B6', 'B7'],
+      ['D4', 'D6', 'D9', 'C6', 'E1'],
+      ['D10', 'E3', 'E9', 'E6', 'E2']
+    ] }
+  };
+
+  var GATES = {
+    1: { title: 'Personal microsite', deliverable: 'A microsite on aem.live with nav, footer, 5 pages and a custom block scoring 100 on mobile Lighthouse.', labs: ['Author a page with sections, blocks and metadata', 'Run the project locally with the AEM CLI', 'Build a simple card block', 'Publish with Sidekick'] },
+    2: { title: 'Multi-locale blog', deliverable: 'A blog with a query-index listing, tags, placeholders, two locales and a block library for authors.', labs: ['Spreadsheet-driven list block', 'Redirects and bulk metadata', 'A Universal Editor block with models and filters', 'A Document Authoring page with templates'] },
+    3: { title: 'Migrated section', deliverable: 'A migrated section of a real or sample site with redirects, analytics in the delayed phase, CSP and a go-live checklist.', labs: ['BYO CDN with push invalidation', 'Site authentication', 'Admin API automation script', 'Import 20 pages from a legacy site', 'Run an A/B experiment'] },
+    4: { title: 'Enterprise reference architecture', deliverable: 'A multi-brand platform design with governance model, block catalog, migration plan and operating runbook.', labs: ['Repoless multi-site setup', 'Commerce drop-in on a product page', 'AEM Forms on EDS', 'A Sidekick plugin', 'RUM-based performance review'] }
+  };
+
+  var byId = {};
+  M.forEach(function (m) { byId[m.id] = m; m.next = []; });
+  M.forEach(function (m) { m.pre.forEach(function (p) { byId[p].next.push(m.id); }); });
+  var TOTAL_H = M.reduce(function (s, m) { return s + m.h; }, 0);
+
+  var KEY = 'eds-course-map-v1';
+  function load() { try { var v = JSON.parse(localStorage.getItem(KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  var saved = load();
+  var state = {
+    levels: [1, 2, 3, 4], tracks: ['au', 'dev', 'imp'], q: '', all: false,
+    sel: (saved.sel && byId[saved.sel]) ? saved.sel : 'A2',
+    path: (saved.path && PATHS[saved.path]) ? saved.path : 'developer',
+    done: Array.isArray(saved.done) ? saved.done.filter(function (d) { return byId[d]; }) : []
+  };
+  function save() { try { localStorage.setItem(KEY, JSON.stringify({ sel: state.sel, path: state.path, done: state.done })); } catch (e) {} }
+  function isDone(id) { return state.done.indexOf(id) !== -1; }
+  function lvText(m) { return m.lv[0] === m.lv[1] ? 'L' + m.lv[0] : 'L' + m.lv[0] + '–L' + m.lv[1]; }
+  function tagsHtml(tr) { return tr.map(function (t) { return '<span class="tag ' + t + '">' + TRACKS[t].tag + '</span>'; }).join(''); }
+  function trackNames(tr) { return tr.length === 3 ? 'All tracks' : tr.map(function (t) { return TRACKS[t].name; }).join(', '); }
+  function catName(id) { for (var i = 0; i < CATS.length; i++) { if (CATS[i].id === id) return CATS[i].name; } return ''; }
+  function matches(m) {
+    var lvOk = state.levels.some(function (l) { return l >= m.lv[0] && l <= m.lv[1]; });
+    var trOk = m.tracks.some(function (t) { return state.tracks.indexOf(t) !== -1; });
+    if (!lvOk || !trOk) return false;
+    if (!state.q) return true;
+    var hay = (m.id + ' ' + m.name + ' ' + m.topics.map(function (t) { return t[0]; }).join(' ')).toLowerCase();
+    return hay.indexOf(state.q) !== -1;
+  }
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Map ---------- */
+  var grid = document.getElementById('mapGrid');
+  var nodeEls = {};
+  (function buildMap() {
+    var html = '<div class="colhead"><b>Category</b><span>lane</span></div>';
+    [1, 2, 3, 4].forEach(function (l) { html += '<div class="colhead"><b>L' + l + ' ' + LEVELS[l] + '</b><span>modules starting here</span></div>'; });
+    CATS.forEach(function (c) {
+      html += '<div class="lanelabel"><span class="eyebrow">Category ' + c.id + '</span><b>' + c.name + '</b></div>';
+      [1, 2, 3, 4].forEach(function (l) {
+        html += '<div class="cell">';
+        M.filter(function (m) { return m.cat === c.id && m.lv[0] === l; }).forEach(function (m) {
+          html += '<button type="button" class="node" data-id="' + m.id + '" aria-label="' + m.id + ' ' + m.name + ', ' + lvText(m) + ', ' + trackNames(m.tracks) + '">' +
+            '<span class="node-head"><span>' + m.id + '</span><span class="lv">' + lvText(m) + '</span></span>' +
+            '<span class="node-name">' + m.name + '</span><span class="tags">' + tagsHtml(m.tracks) + '</span></button>';
+        });
+        html += '</div>';
+      });
+    });
+    html += '<svg class="edges" id="edges" aria-hidden="true"><defs>' +
+      '<marker id="mk-in" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto"><path class="mk-in" d="M0 0L10 5L0 10z"/></marker>' +
+      '<marker id="mk-out" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path class="mk-out" d="M0 0L10 5L0 10z"/></marker>' +
+      '<marker id="mk-faint" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto"><path class="mk-faint" d="M0 0L10 5L0 10z"/></marker>' +
+      '</defs><g id="edgeLayer"></g></svg>';
+    grid.innerHTML = html;
+    Array.prototype.forEach.call(grid.querySelectorAll('.node'), function (el) {
+      nodeEls[el.getAttribute('data-id')] = el;
+      el.addEventListener('click', function () { select(el.getAttribute('data-id')); });
+    });
+  })();
+  var svg = document.getElementById('edges');
+  var layer = document.getElementById('edgeLayer');
+
+  function rectOf(id, base) {
+    var r = nodeEls[id].getBoundingClientRect();
+    return { l: r.left - base.left, r: r.right - base.left, cy: (r.top + r.bottom) / 2 - base.top };
+  }
+  function edgePath(a, b) {
+    var sx, sy = a.cy, ex, ey = b.cy, c;
+    if (b.l > a.r + 8) { sx = a.r; ex = b.l - 1; c = Math.max(28, (ex - sx) / 2); return 'M' + sx + ' ' + sy + 'C' + (sx + c) + ' ' + sy + ' ' + (ex - c) + ' ' + ey + ' ' + ex + ' ' + ey; }
+    if (b.r < a.l - 8) { sx = a.l; ex = b.r + 1; c = Math.max(28, (sx - ex) / 2); return 'M' + sx + ' ' + sy + 'C' + (sx - c) + ' ' + sy + ' ' + (ex + c) + ' ' + ey + ' ' + ex + ' ' + ey; }
+    sx = a.r; ex = b.r + 1; var bulge = 34 + Math.min(40, Math.abs(ey - sy) / 8);
+    return 'M' + sx + ' ' + sy + 'C' + (sx + bulge) + ' ' + sy + ' ' + (ex + bulge) + ' ' + ey + ' ' + ex + ' ' + ey;
+  }
+  function drawEdges() {
+    var base = grid.getBoundingClientRect();
+    svg.setAttribute('width', grid.offsetWidth);
+    svg.setAttribute('height', grid.offsetHeight);
+    var out = '';
+    if (state.all) {
+      M.forEach(function (m) {
+        if (!matches(m)) return;
+        m.pre.forEach(function (p) {
+          if (!matches(byId[p]) || m.id === state.sel || p === state.sel) return;
+          out += '<path class="e-faint" marker-end="url(#mk-faint)" d="' + edgePath(rectOf(p, base), rectOf(m.id, base)) + '"/>';
+        });
+      });
+    }
+    var s = byId[state.sel];
+    if (s) {
+      s.next.forEach(function (n) { out += '<path class="e-out" marker-end="url(#mk-out)" d="' + edgePath(rectOf(s.id, base), rectOf(n, base)) + '"/>'; });
+      s.pre.forEach(function (p) { out += '<path class="e-in" marker-end="url(#mk-in)" d="' + edgePath(rectOf(p, base), rectOf(s.id, base)) + '"/>'; });
+    }
+    layer.innerHTML = out;
+  }
+  var raf = 0;
+  function scheduleDraw() { cancelAnimationFrame(raf); raf = requestAnimationFrame(drawEdges); }
+  if (window.ResizeObserver) { new ResizeObserver(scheduleDraw).observe(grid); }
+  window.addEventListener('resize', scheduleDraw);
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(scheduleDraw); }
+
+  /* ---------- Detail ---------- */
+  var detail = document.getElementById('detail');
+  function pathsWith(id) {
+    var res = [];
+    Object.keys(PATHS).forEach(function (k) {
+      PATHS[k].phases.forEach(function (ph, i) { if (ph.indexOf(id) !== -1) res.push(PATHS[k].name + ' (phase L' + (i + 1) + ')'); });
+    });
+    return res;
+  }
+  function chipList(ids) {
+    if (!ids.length) return '<span class="muted" style="font-size:14px">None</span>';
+    return ids.map(function (id) { return '<button type="button" class="mini" data-go="' + id + '"><code>' + id + '</code>' + byId[id].name + '</button>'; }).join('');
+  }
+  function runText(m) {
+    var focus = m.tracks.length === 3 ? 'All' : m.tracks.map(function (t) { return TRACKS[t].name; }).join(' / ');
+    return 'MODULE: ' + m.id + '. ' + m.name + '\nLEVEL: ' + lvText(m).replace('–', '-') + '\nTRACK FOCUS: ' + focus;
+  }
+  function renderDetail() {
+    var m = byId[state.sel];
+    var inPaths = pathsWith(m.id);
+    detail.innerHTML =
+      '<div><div class="eyebrow">Category ' + m.cat + ' · ' + catName(m.cat) + '</div>' +
+      '<h3 style="margin-top:6px"><span class="mono" style="color:var(--muted);font-size:16px;margin-right:6px">' + m.id + '</span>' + m.name + '</h3>' +
+      '<div class="tags" style="padding:8px 0 0">' + tagsHtml(m.tracks) + '</div></div>' +
+      '<dl class="kv"><dt>Levels</dt><dd>' + lvText(m) + ' (' + LEVELS[m.lv[0]] + (m.lv[1] !== m.lv[0] ? ' to ' + LEVELS[m.lv[1]] : '') + ')</dd>' +
+      '<dt>Est. hours</dt><dd>' + m.h + '</dd>' +
+      '<dt>Capstone</dt><dd><a href="#capstone-l' + m.lv[0] + '">Gate ' + m.lv[0] + ': ' + GATES[m.lv[0]].title + '</a></dd>' +
+      '<dt>Paths</dt><dd>' + (inPaths.length ? inPaths.join('; ') : 'Elective') + '</dd></dl>' +
+      '<label class="check"><input type="checkbox" id="detail-done"' + (isDone(m.id) ? ' checked' : '') + '> Mark module complete</label>' +
+      '<div><div class="sub">Needs first</div><div class="minichips">' + chipList(m.pre) + '</div></div>' +
+      '<div><div class="sub">Unlocks</div><div class="minichips">' + chipList(m.next) + '</div></div>' +
+      '<div><div class="sub">Topics (' + m.topics.length + ')</div><table class="topics"><tbody>' +
+      m.topics.map(function (t) { return '<tr><td>' + t[0] + '</td><td><span class="lvb">L' + t[1] + '</span></td></tr>'; }).join('') +
+      '</tbody></table></div>' +
+      '<div><div class="sub">Run settings for the course prompt</div><div class="runbox"><pre id="runText">' + runText(m) + '</pre>' +
+      '<button type="button" class="btn" id="copyRun">Copy run settings</button></div></div>';
+    document.getElementById('detail-done').addEventListener('change', function (e) { setDone(m.id, e.target.checked); });
+    Array.prototype.forEach.call(detail.querySelectorAll('[data-go]'), function (b) {
+      b.addEventListener('click', function () { select(b.getAttribute('data-go'), true); });
+    });
+    var copyBtn = document.getElementById('copyRun');
+    copyBtn.addEventListener('click', function () {
+      var text = runText(m);
+      var fallback = function () {
+        var pre = document.getElementById('runText');
+        var range = document.createRange(); range.selectNodeContents(pre);
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+        copyBtn.textContent = 'Selected: press Ctrl+C or Cmd+C';
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { copyBtn.textContent = 'Copied'; setTimeout(function () { copyBtn.textContent = 'Copy run settings'; }, 1600); }, fallback);
+        } else { fallback(); }
+      } catch (e) { fallback(); }
+    });
+  }
+
+  function select(id, scroll) {
+    state.sel = id; save();
+    var s = byId[id];
+    Object.keys(nodeEls).forEach(function (k) {
+      var el = nodeEls[k];
+      el.classList.toggle('sel', k === id);
+      el.classList.toggle('is-pre', s.pre.indexOf(k) !== -1);
+      el.classList.toggle('is-next', s.next.indexOf(k) !== -1);
+      el.setAttribute('aria-pressed', k === id ? 'true' : 'false');
+    });
+    renderDetail();
+    scheduleDraw();
+    if (scroll) {
+      document.getElementById('map').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+      nodeEls[id].scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  /* ---------- Table ---------- */
+  var tbody = document.getElementById('tbody');
+  tbody.innerHTML = M.map(function (m) {
+    return '<tr data-row="' + m.id + '">' +
+      '<td><button type="button" class="modbtn" data-go="' + m.id + '"><code>' + m.id + '</code><span>' + m.name + '</span></button></td>' +
+      '<td class="mono" style="font-size:13px">' + lvText(m) + '</td>' +
+      '<td><div class="tags">' + tagsHtml(m.tracks) + '</div></td>' +
+      '<td class="mono" style="font-size:13px">' + (m.pre.length ? m.pre.join(', ') : '—') + '</td>' +
+      '<td class="num">' + m.h + '</td>' +
+      '<td><a href="#capstone-l' + m.lv[0] + '">Gate ' + m.lv[0] + '</a></td>' +
+      '<td><input type="checkbox" id="done-' + m.id + '" aria-label="Mark ' + m.id + ' complete"' + (isDone(m.id) ? ' checked' : '') + '></td></tr>';
+  }).join('');
+  Array.prototype.forEach.call(tbody.querySelectorAll('[data-go]'), function (b) {
+    b.addEventListener('click', function () { select(b.getAttribute('data-go'), true); });
+  });
+  M.forEach(function (m) {
+    document.getElementById('done-' + m.id).addEventListener('change', function (e) { setDone(m.id, e.target.checked); });
+  });
+
+  /* ---------- Filters ---------- */
+  function applyFilters() {
+    var n = 0, hrs = 0;
+    M.forEach(function (m) {
+      var ok = matches(m);
+      if (ok) { n++; hrs += m.h; }
+      nodeEls[m.id].classList.toggle('dim', !ok);
+      tbody.querySelector('[data-row="' + m.id + '"]').hidden = !ok;
+    });
+    document.getElementById('count').textContent = n + ' of ' + M.length + ' modules match';
+    document.getElementById('tfootLabel').textContent = 'Total for ' + n + ' shown module' + (n === 1 ? '' : 's');
+    document.getElementById('tfootHours').textContent = hrs;
+    scheduleDraw();
+  }
+  function syncChips() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-level]'), function (b) {
+      b.setAttribute('aria-pressed', state.levels.indexOf(Number(b.getAttribute('data-level'))) !== -1 ? 'true' : 'false');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-track]'), function (b) {
+      b.setAttribute('aria-pressed', state.tracks.indexOf(b.getAttribute('data-track')) !== -1 ? 'true' : 'false');
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-level]'), function (b) {
+    b.addEventListener('click', function () {
+      var l = Number(b.getAttribute('data-level')), i = state.levels.indexOf(l);
+      if (i === -1) state.levels.push(l); else state.levels.splice(i, 1);
+      syncChips(); applyFilters();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-track]'), function (b) {
+    b.addEventListener('click', function () {
+      var t = b.getAttribute('data-track'), i = state.tracks.indexOf(t);
+      if (i === -1) state.tracks.push(t); else state.tracks.splice(i, 1);
+      syncChips(); applyFilters();
+    });
+  });
+  var qEl = document.getElementById('q');
+  qEl.addEventListener('input', function () { state.q = qEl.value.trim().toLowerCase(); applyFilters(); });
+  document.getElementById('allEdges').addEventListener('change', function (e) { state.all = e.target.checked; scheduleDraw(); });
+  document.getElementById('reset').addEventListener('click', function () {
+    state.levels = [1, 2, 3, 4]; state.tracks = ['au', 'dev', 'imp']; state.q = ''; qEl.value = '';
+    syncChips(); applyFilters();
+  });
+
+  /* ---------- Progress ---------- */
+  function setDone(id, val) {
+    var i = state.done.indexOf(id);
+    if (val && i === -1) state.done.push(id);
+    if (!val && i !== -1) state.done.splice(i, 1);
+    save();
+    var cb = document.getElementById('done-' + id); if (cb) cb.checked = val;
+    var dd = document.getElementById('detail-done'); if (dd && state.sel === id) dd.checked = val;
+    markNode(id);
+    renderProgress();
+    renderPath();
+  }
+  function markNode(id) {
+    var head = nodeEls[id].querySelector('.node-head .lv');
+    var m = byId[id];
+    head.innerHTML = isDone(id) ? '<span class="ok">✓ done</span>' : lvText(m);
+  }
+  function renderProgress() {
+    var hrs = state.done.reduce(function (s, id) { return s + byId[id].h; }, 0);
+    document.getElementById('pDone').textContent = state.done.length;
+    document.getElementById('pHours').textContent = hrs;
+    document.getElementById('pHoursOf').textContent = 'of ' + TOTAL_H + ' hours';
+    document.getElementById('pBar').style.width = (hrs / TOTAL_H * 100).toFixed(1) + '%';
+  }
+
+  /* ---------- Paths ---------- */
+  var tabs = document.getElementById('tabs');
+  var panel = document.getElementById('pathPanel');
+  tabs.innerHTML = Object.keys(PATHS).map(function (k) {
+    var p = PATHS[k];
+    return '<button type="button" class="tab" role="tab" id="tab-' + k + '" data-path="' + k + '" aria-controls="pathPanel"><b>' + p.name + '</b><span>' + p.who + '</span></button>';
+  }).join('');
+  Array.prototype.forEach.call(tabs.querySelectorAll('.tab'), function (b) {
+    b.addEventListener('click', function () { state.path = b.getAttribute('data-path'); save(); renderPath(); });
+    b.addEventListener('keydown', function (e) {
+      var keys = Object.keys(PATHS), i = keys.indexOf(b.getAttribute('data-path'));
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        var j = (i + (e.key === 'ArrowRight' ? 1 : keys.length - 1)) % keys.length;
+        state.path = keys[j]; save(); renderPath(); document.getElementById('tab-' + keys[j]).focus();
+      }
+    });
+  });
+  var gateSvg = '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1L19 10L10 19L1 10z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/></svg>';
+  function renderPath() {
+    Array.prototype.forEach.call(tabs.querySelectorAll('.tab'), function (b) {
+      var on = b.getAttribute('data-path') === state.path;
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.tabIndex = on ? 0 : -1;
+    });
+    panel.setAttribute('aria-labelledby', 'tab-' + state.path);
+    var p = PATHS[state.path];
+    var flat = [].concat.apply([], p.phases);
+    var total = flat.reduce(function (s, id) { return s + byId[id].h; }, 0);
+    var doneCount = flat.filter(isDone).length;
+    var html = '<div class="path-sum"><span><strong>' + flat.length + '</strong>modules</span><span><strong>' + total + '</strong>estimated hours</span>' +
+      '<span><strong>' + Math.round(total / 8) + '</strong>weeks at 8 h/week</span><span><strong>' + doneCount + '</strong>done</span></div><div class="timeline">';
+    var n = 0, cum = 0;
+    p.phases.forEach(function (ph, i) {
+      var lvl = i + 1;
+      var phH = ph.reduce(function (s, id) { return s + byId[id].h; }, 0);
+      html += '<div class="phase"><div class="phase-label"><b>L' + lvl + '</b><span>' + LEVELS[lvl] + '</span><span>' + phH + ' h</span></div><ol class="steps">';
+      ph.forEach(function (id) {
+        var m = byId[id]; n++; cum += m.h;
+        html += '<li><button type="button" class="step' + (isDone(id) ? ' done' : '') + '" data-go="' + id + '" aria-label="Step ' + n + ': ' + id + ' ' + m.name + (isDone(id) ? ', done' : '') + '">' +
+          '<span class="n">' + (n < 10 ? '0' : '') + n + '</span><code>' + id + '</code><span class="nm">' + m.name + '</span>' +
+          '<span class="h">' + m.h + ' h</span><span class="cum">' + cum + ' h total</span></button></li>';
+      });
+      html += '</ol></div>';
+      html += '<div class="gate"><div></div><div class="gate-inner">' + gateSvg + '<p><a href="#capstone-l' + lvl + '">Gate ' + lvl + ': ' + GATES[lvl].title + '</a> <span class="muted">· ' + GATES[lvl].deliverable + '</span></p></div></div>';
+    });
+    html += '</div>';
+    panel.innerHTML = html;
+    Array.prototype.forEach.call(panel.querySelectorAll('[data-go]'), function (b) {
+      b.addEventListener('click', function () { select(b.getAttribute('data-go'), true); });
+    });
+  }
+
+  /* ---------- Capstones ---------- */
+  document.getElementById('caps').innerHTML = [1, 2, 3, 4].map(function (l) {
+    var g = GATES[l];
+    var feeds = M.filter(function (m) { return m.lv[0] === l; });
+    return '<article class="cap" id="capstone-l' + l + '"><div class="lvl"><b>L' + l + '</b><span class="eyebrow">' + LEVELS[l] + ' · Gate ' + l + '</span></div>' +
+      '<h3>' + g.title + '</h3><p class="deliv">' + g.deliverable + '</p>' +
+      '<div><div class="sub">Labs</div><ul>' + g.labs.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>' +
+      '<div><div class="sub">Modules starting at this level (' + feeds.length + ')</div><div class="minichips">' +
+      feeds.map(function (m) { return '<button type="button" class="mini" data-go="' + m.id + '"><code>' + m.id + '</code>' + m.name + '</button>'; }).join('') +
+      '</div></div></article>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('#caps [data-go]'), function (b) {
+    b.addEventListener('click', function () { select(b.getAttribute('data-go'), true); });
+  });
+
+  /* ---------- Init ---------- */
+  M.forEach(function (m) { markNode(m.id); });
+  renderProgress();
+  renderPath();
+  syncChips();
+  applyFilters();
+  select(state.sel);
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,631 @@
+{
+ "asOf": "2026-10-30",
+ "terms": [
+  {
+   "id": "admin-api",
+   "term": "Admin API",
+   "full": "",
+   "def": "The HTTP API at admin.hlx.page for preview, publish, status, code, cache, index, log, config, sitemap and job operations.",
+   "match": [
+    "Admin API"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "code-sync",
+   "term": "AEM Code Sync",
+   "full": "",
+   "def": "The GitHub app that syncs a repository's branches to the Code Bus whenever you push.",
+   "match": [
+    "AEM Code Sync",
+    "Code Sync"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "sidekick",
+   "term": "AEM Sidekick",
+   "full": "",
+   "def": "A browser extension authors use to preview, publish and unpublish document-based content.",
+   "match": [
+    "Sidekick",
+    "AEM Sidekick"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "aem-sites",
+   "term": "AEM Sites",
+   "full": "",
+   "def": "Adobe Experience Manager's web content management product. Edge Delivery Services is part of AEM Sites and requires an AEM Sites licence.",
+   "match": [
+    "AEM Sites"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "aem-live",
+   "term": "aem.live",
+   "full": "",
+   "def": "Live domain for Edge Delivery Services sites, formerly hlx.live. Also the home of the official documentation.",
+   "match": [
+    "aem.live",
+    ".aem.live"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "aem-page",
+   "term": "aem.page",
+   "full": "",
+   "def": "Preview domain for Edge Delivery Services sites, formerly hlx.page.",
+   "match": [
+    "aem.page",
+    ".aem.page"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "aoda",
+   "term": "AODA",
+   "full": "Accessibility for Ontarians with Disabilities Act",
+   "def": "Ontario law requiring organizations to meet accessibility standards; for websites the benchmark is WCAG 2.0 AA.",
+   "match": [
+    "AODA"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "api-service",
+   "term": "API service",
+   "full": "Admin service",
+   "def": "The service that previews and publishes content: it pulls from the content source into the Content Bus and promotes content to live.",
+   "match": [
+    "API service",
+    "admin service",
+    "Admin service"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "block",
+   "term": "Block",
+   "full": "",
+   "def": "A component authored as a table whose first row names it; code in blocks/<name>/ decorates it on the page.",
+   "match": [
+    "block",
+    "blocks"
+   ],
+   "module": "B1"
+  },
+  {
+   "id": "boilerplate",
+   "term": "Boilerplate",
+   "full": "",
+   "def": "Adobe's starter repository for EDS projects, with aem.js, scripts.js, styles and sample blocks.",
+   "match": [
+    "boilerplate",
+    "aem-boilerplate"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "branch-url",
+   "term": "Branch URL",
+   "full": "",
+   "def": "A URL of the form {ref}--{site}--{org}.aem.page that serves one code branch, so every branch is its own environment.",
+   "match": [
+    "branch URL",
+    "branch URLs"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "byo-cdn",
+   "term": "BYO CDN",
+   "full": "Bring your own CDN",
+   "def": "Using your own production CDN (Akamai, Fastly, Cloudflare or CloudFront) in front of EDS instead of the Adobe-managed CDN.",
+   "match": [
+    "BYO CDN",
+    "bring-your-own CDN"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "byom",
+   "term": "BYOM",
+   "full": "Bring your own markup",
+   "def": "A content source option where your own service supplies HTML that EDS ingests.",
+   "match": [
+    "BYOM",
+    "bring-your-own-markup"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "cdn",
+   "term": "CDN",
+   "full": "Content delivery network",
+   "def": "A network of edge servers that caches and serves content close to visitors.",
+   "match": [
+    "CDN"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "cloud-manager",
+   "term": "Cloud Manager",
+   "full": "",
+   "def": "Adobe's console for AEM as a Cloud Service programs and pipelines; since 2026.4.0 it can create Edge Delivery sites.",
+   "match": [
+    "Cloud Manager"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "cls",
+   "term": "CLS",
+   "full": "Cumulative Layout Shift",
+   "def": "A score for how much visible content moves unexpectedly while a page loads. Good is 0.1 or less.",
+   "match": [
+    "CLS",
+    "Cumulative Layout Shift"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "code-bus",
+   "term": "Code Bus",
+   "full": "",
+   "def": "Storage for JavaScript, CSS and other code, kept per branch so each branch is its own environment.",
+   "match": [
+    "Code Bus"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "config-bus",
+   "term": "Config Bus",
+   "full": "",
+   "def": "Storage for site and organization configuration, which can inherit from a profile.",
+   "match": [
+    "Config Bus"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "config-service",
+   "term": "Configuration service",
+   "full": "",
+   "def": "The Admin API-backed service that stores organization, profile and site configuration, enabling repoless sites.",
+   "match": [
+    "configuration service",
+    "Configuration Service"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "content-bus",
+   "term": "Content Bus",
+   "full": "",
+   "def": "Storage for previewed and published content (text, PDFs, SVGs, redirects), with preview and publish lifecycle states.",
+   "match": [
+    "Content Bus"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "content-fragment",
+   "term": "Content Fragment",
+   "full": "CF",
+   "def": "A structured, reusable piece of content in AEM defined by a model; it can be published to EDS as semantic HTML.",
+   "match": [
+    "Content Fragment",
+    "Content Fragments"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "content-source",
+   "term": "Content source",
+   "full": "",
+   "def": "The system where authors create content for an EDS site: AEM with Universal Editor, Google Drive, SharePoint, Document Authoring or a bring-your-own-markup source.",
+   "match": [
+    "content source",
+    "content sources"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "cwv",
+   "term": "Core Web Vitals",
+   "full": "CWV",
+   "def": "Google's three user-experience metrics: LCP for loading, CLS for visual stability and INP for responsiveness.",
+   "match": [
+    "Core Web Vitals"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "default-content",
+   "term": "Default content",
+   "full": "",
+   "def": "Headings, paragraphs, lists, images and links written with normal formatting, outside any block.",
+   "match": [
+    "default content"
+   ],
+   "module": "B1"
+  },
+  {
+   "id": "delayed",
+   "term": "Delayed phase",
+   "full": "",
+   "def": "The third loading phase: third-party tags, consent and analytics, loaded well after LCP.",
+   "match": [
+    "delayed phase"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "dispatcher",
+   "term": "Dispatcher",
+   "full": "",
+   "def": "AEM's caching and load-balancing module that sits in front of the traditional AEM publish tier.",
+   "match": [
+    "Dispatcher"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "document-authoring",
+   "term": "Document Authoring",
+   "full": "DA",
+   "def": "A browser-based, document-style editor at da.live built for EDS. Adobe now presents it as Experience Workspace.",
+   "match": [
+    "Document Authoring",
+    "da.live"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "eager",
+   "term": "Eager phase",
+   "full": "",
+   "def": "The first loading phase: everything needed to reach LCP, including the first section and the LCP candidate.",
+   "match": [
+    "eager phase"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "early-access",
+   "term": "Early access",
+   "full": "",
+   "def": "Edge Delivery Services feature stage where a capability is available to customers but may still change significantly and need extra support.",
+   "match": [
+    "early access"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "eds",
+   "term": "Edge Delivery Services",
+   "full": "EDS",
+   "def": "Adobe's edge-rendered publishing and delivery service for websites, part of AEM Sites. It turns authored content into fast, semantic HTML served from a CDN.",
+   "match": [
+    "Edge Delivery Services",
+    "EDS"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "es-modules",
+   "term": "ES modules",
+   "full": "",
+   "def": "JavaScript's native module system (import and export), which browsers load without a build step.",
+   "match": [
+    "ES modules"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "experience-workspace",
+   "term": "Experience Workspace",
+   "full": "",
+   "def": "Adobe's newer name and expanded authoring surface for Document Authoring, adding a visual canvas, AI assistance and MCP connections.",
+   "match": [
+    "Experience Workspace"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "fallback-font",
+   "term": "Fallback font",
+   "full": "",
+   "def": "A local font sized to match a web font so text does not jump (CLS) when the web font loads after LCP.",
+   "match": [
+    "fallback font",
+    "fallback fonts"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "franklin",
+   "term": "Franklin",
+   "full": "",
+   "def": "A later internal project name for Edge Delivery Services, used publicly as \"AEM Franklin\" before the October 2023 rename.",
+   "match": [
+    "Franklin"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "fstab",
+   "term": "fstab.yaml",
+   "full": "",
+   "def": "The older in-repository file that mapped a site to its content source. With the configuration service (Helix 5) it is no longer required.",
+   "match": [
+    "fstab.yaml"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "headless",
+   "term": "Headless CMS",
+   "full": "",
+   "def": "A content system that stores structured content and delivers it as JSON through APIs, leaving rendering to a separate front end.",
+   "match": [
+    "headless"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "helix",
+   "term": "Helix",
+   "full": "",
+   "def": "Internal Adobe project name behind the technology that became Edge Delivery Services; it survives in names such as hlx.page and admin.hlx.page.",
+   "match": [
+    "Helix"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "inp",
+   "term": "INP",
+   "full": "Interaction to Next Paint",
+   "def": "Time from a user interaction to the next visual update. Good is 200 milliseconds or less.",
+   "match": [
+    "INP",
+    "Interaction to Next Paint"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "json2html",
+   "term": "JSON2HTML",
+   "full": "",
+   "def": "An Edge Delivery Services overlay that renders EDS-friendly HTML pages from JSON data at any endpoint.",
+   "match": [
+    "JSON2HTML"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "lazy",
+   "term": "Lazy phase",
+   "full": "",
+   "def": "The second loading phase: project-controlled resources served mostly from the same origin, such as later sections and remaining images.",
+   "match": [
+    "lazy phase"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "lcp",
+   "term": "LCP",
+   "full": "Largest Contentful Paint",
+   "def": "Time until the largest image or text block in the viewport is painted. Good is 2.5 seconds or less.",
+   "match": [
+    "LCP",
+    "Largest Contentful Paint"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "lighthouse",
+   "term": "Lighthouse",
+   "full": "",
+   "def": "Google's lab tool that scores page performance, accessibility, best practices and SEO from 0 to 100. EDS targets 100 on mobile.",
+   "match": [
+    "Lighthouse"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "live",
+   "term": "Live",
+   "full": "",
+   "def": "The published stage of content, served on an .aem.live host and through the production CDN.",
+   "match": [
+    "live environment"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "mcp",
+   "term": "MCP",
+   "full": "Model Context Protocol",
+   "def": "An open protocol that lets AI tools connect to systems such as AEM to read and manage content.",
+   "match": [
+    "MCP"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "media-bus",
+   "term": "Media Bus",
+   "full": "",
+   "def": "Content-addressable storage for images and media. Each asset is stored once under a hash with a media_ prefix, so it is immutable and can be cached permanently.",
+   "match": [
+    "Media Bus"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "msm",
+   "term": "MSM",
+   "full": "Multi Site Manager",
+   "def": "AEM's feature for managing live copies of content across sites and locales. With EDS it is combined with repoless setups.",
+   "match": [
+    "MSM",
+    "Multi Site Manager"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "psi",
+   "term": "PageSpeed Insights",
+   "full": "PSI",
+   "def": "Google's service that runs Lighthouse and reports field data. The AEM GitHub bot runs it on pull requests.",
+   "match": [
+    "PageSpeed Insights",
+    "PSI"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "payload",
+   "term": "Payload",
+   "full": "",
+   "def": "The total bytes a page downloads. aem.live advises keeping the payload before LCP under 100 KB.",
+   "match": [
+    "payload"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "preview",
+   "term": "Preview",
+   "full": "",
+   "def": "The review stage of content, served on an .aem.page host after an author previews a page.",
+   "match": [
+    "preview environment"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "profile",
+   "term": "Profile",
+   "full": "",
+   "def": "A configuration-service object holding reusable settings (headers, indexes, metadata) that sites in an organization share. A site has at most one profile.",
+   "match": [
+    "profile"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "push-invalidation",
+   "term": "Push invalidation",
+   "full": "",
+   "def": "Automatic purging of CDN caches when content is published, so the CDN can cache for a long time without serving stale pages.",
+   "match": [
+    "push invalidation"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "repoless",
+   "term": "Repoless",
+   "full": "",
+   "def": "Running several sites from one codebase: only the first site has a GitHub repository; the others point to it through configuration.",
+   "match": [
+    "repoless",
+    "Repoless"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "rum",
+   "term": "RUM",
+   "full": "Real user monitoring",
+   "def": "Performance data collected from real visitors' browsers. In EDS this is called Operational Telemetry.",
+   "match": [
+    "RUM",
+    "real user monitoring"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "section",
+   "term": "Section",
+   "full": "",
+   "def": "A part of a page separated by a horizontal rule (---) in documents; it wraps default content and blocks.",
+   "match": [
+    "section",
+    "sections"
+   ],
+   "module": "B1"
+  },
+  {
+   "id": "semantic-html",
+   "term": "Semantic HTML",
+   "full": "",
+   "def": "HTML that uses elements for their meaning (headings, lists, main) so browsers, search engines and assistive tech understand it.",
+   "match": [
+    "semantic HTML"
+   ],
+   "module": "A1"
+  },
+  {
+   "id": "tti",
+   "term": "Single host rule",
+   "full": "",
+   "def": "aem.live guidance that, before LCP, only one host should carry network payload, so early connections to other hosts are avoided.",
+   "match": [
+    "single host"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "source-bus",
+   "term": "Source Bus",
+   "full": "",
+   "def": "Storage that holds documents and spreadsheets in their authored form. Only the API service can access it.",
+   "match": [
+    "Source Bus"
+   ],
+   "module": "A2"
+  },
+  {
+   "id": "third-party",
+   "term": "Third-party script",
+   "full": "",
+   "def": "Code loaded from another company's host, such as tag managers, chat widgets or ad pixels.",
+   "match": [
+    "third-party",
+    "third parties"
+   ],
+   "module": "A3"
+  },
+  {
+   "id": "universal-editor",
+   "term": "Universal Editor",
+   "full": "UE",
+   "def": "AEM's WYSIWYG editor for in-context editing with a properties panel; content is stored in AEM and published to EDS.",
+   "match": [
+    "Universal Editor"
+   ],
+   "module": "A4"
+  },
+  {
+   "id": "wcag",
+   "term": "WCAG",
+   "full": "Web Content Accessibility Guidelines",
+   "def": "The W3C accessibility standard. WCAG 2.2 AA is the common enterprise target.",
+   "match": [
+    "WCAG"
+   ],
+   "module": "A1"
+  }
+ ]
+}
