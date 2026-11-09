@@ -41,7 +41,7 @@ export default function courseMap(el, ctx) {
       grid.append(cell);
     });
   });
-  const detail = h('aside', { class: 'cm-detail card', 'aria-live': 'polite' });
+  const detail = h('div', { class: 'cm-detail card', 'aria-live': 'polite' });
   el.append(controls, h('div', { class: 'cm-layout' }, h('div', { class: 'cm-scroll' }, grid), detail));
 
   function matches(m) {

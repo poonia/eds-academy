@@ -5,7 +5,7 @@
 
 const ROOT = new URL('../../', import.meta.url);
 export const href = (p) => new URL(p, ROOT).href;
-export const AS_OF = '30 Oct 2026';
+export const AS_OF = '9 Nov 2026';
 const STORE_KEY = 'eds-academy-v1';
 const THEME_KEY = 'eds-academy-theme';
 const MERMAID_URL = 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs';
@@ -55,6 +55,13 @@ export const uid = (p = 'x') => `${p}-${++uidN}`;
 export function slugify(s) { return String(s).toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 export const reducedMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 export function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* Keyboard users need a tab stop to scroll a diagram that is wider than its frame. */
+function markScrollable(n) {
+  if (n.scrollWidth > n.clientWidth + 1) { n.setAttribute('tabindex', '0'); n.setAttribute('aria-label', 'Diagram, scrollable'); } else { n.removeAttribute('tabindex'); n.removeAttribute('aria-label'); }
+}
+let scrollTimer;
+window.addEventListener('resize', () => { clearTimeout(scrollTimer); scrollTimer = setTimeout(() => document.querySelectorAll('pre.mermaid[data-rendered]').forEach(markScrollable), 150); });
 
 /* ---------- progress store ---------- */
 function fresh() { return { v: 1, topics: {}, modules: {}, quizzes: {}, labs: {}, capstones: {}, checklists: {}, cards: {}, last: null }; }
@@ -292,7 +299,7 @@ function buildModule(syl) {
   const paintModDone = () => { const p = moduleProgress(m); const flag = store.get('modules', m.id) === 'done'; doneBtn.textContent = flag ? 'Marked complete (undo)' : 'Mark module complete'; doneMsg.innerHTML = `<strong>${p.complete ? 'Module complete.' : `${p.done} of ${p.total} topics done.`}</strong><br><span class="muted">Your progress is saved in this browser.</span>`; };
   doneBtn.addEventListener('click', () => { store.set('modules', m.id, store.get('modules', m.id) === 'done' ? null : 'done'); });
   paintModDone(); document.addEventListener('academy:progress', paintModDone);
-  content.append(h('div', { class: 'module-done' }, doneMsg, doneBtn));
+  content.append(h('section', { class: 'module-done', 'aria-label': 'Module progress' }, doneMsg, doneBtn));
   const prev = syl.modules[m.index - 1]; const next = syl.modules[m.index + 1];
   const pn = (mm, dir) => {
     if (!mm) return h('div', { 'aria-hidden': 'true', style: 'visibility:hidden' });
@@ -308,15 +315,15 @@ function buildNextSteps(box, m, syl) {
     const flat = p.phases.flat(); const i = flat.indexOf(m.id);
     if (i === -1) return;
     const nx = flat[i + 1] ? syl.byId[flat[i + 1]] : null;
-    grid.append(h('div', { class: 'next-card' }, h('h4', {}, `${p.name} path`), nx ? modLink(nx) : h('span', { class: 'muted' }, 'This is the last module on this path.')));
+    grid.append(h('div', { class: 'next-card' }, h('h3', {}, `${p.name} path`), nx ? modLink(nx) : h('span', { class: 'muted' }, 'This is the last module on this path.')));
   });
   if (m.next.length) {
-    const rel = h('div', { class: 'next-card' }, h('h4', {}, 'This module unlocks'));
+    const rel = h('div', { class: 'next-card' }, h('h3', {}, 'This module unlocks'));
     m.next.forEach((id) => rel.append(h('div', {}, modLink(syl.byId[id]))));
     grid.append(rel);
   }
   const gate = syl.gates.find((g) => g.level === m.levels[0]);
-  if (gate) grid.append(h('div', { class: 'next-card' }, h('h4', {}, `Feeds capstone gate ${gate.level}`), h('b', {}, gate.title), h('span', { class: 'muted', style: 'font-size:14px' }, gate.brief), gate.built ? h('a', { href: href(gate.page) }, 'Open capstone') : h('span', { class: 'muted', style: 'font-size:13px' }, 'Capstone page not built yet.')));
+  if (gate) grid.append(h('div', { class: 'next-card' }, h('h3', {}, `Feeds capstone gate ${gate.level}`), h('b', {}, gate.title), h('span', { class: 'muted', style: 'font-size:14px' }, gate.brief), gate.built ? h('a', { href: href(gate.page) }, 'Open capstone') : h('span', { class: 'muted', style: 'font-size:13px' }, 'Capstone page not built yet.')));
   box.append(grid);
 }
 
@@ -326,6 +333,7 @@ function enhanceCallouts(root = document) {
     if (c.dataset.enhanced) return; c.dataset.enhanced = '1';
     const type = Object.keys(CALLOUT_LABEL).find((k) => c.classList.contains(k)) || 'tip';
     const custom = c.dataset.label;
+    c.setAttribute('role', 'note');
     c.prepend(h('p', { class: 'callout-label', html: `${ICON[type]}<span>${esc(custom || CALLOUT_LABEL[type])}</span>` }));
     if (!c.getAttribute('role') && (type === 'warning' || type === 'verify')) c.setAttribute('role', 'note');
   });
@@ -463,6 +471,7 @@ async function renderMermaid(root = document) {
         const natural = s.viewBox.baseVal.width; const avail = n.clientWidth || 600;
         if (natural * 0.72 > avail) { s.style.maxWidth = 'none'; s.style.width = `${Math.round(natural * 0.72)}px`; n.after(h('p', { class: 'scroll-hint' }, 'Scroll sideways to see the whole diagram.')); }
       }
+      markScrollable(n);
       if (s) { s.setAttribute('role', 'img'); const cap = n.closest('figure') && $('figcaption', n.closest('figure')); s.setAttribute('aria-label', cap ? cap.textContent.trim() : 'Diagram'); }
     } catch (e) {
       console.warn('[academy] mermaid render failed', e);
@@ -600,8 +609,8 @@ function progressPanel(el, syl) {
   yes.addEventListener('click', () => { store.reset(); confirmRow.hidden = true; btnReset.hidden = false; msg.textContent = 'Progress reset.'; });
   el.append(stats,
     h('div', { class: 'grid-2', style: 'margin-top:16px' },
-      h('div', {}, h('h4', {}, 'Back up or move your progress'), h('p', { class: 'muted', style: 'font-size:14.5px' }, 'Progress lives in this browser only. Export it to keep a copy or move to another device.'), exp, h('div', { class: 'pp-row' }, btnExp)),
-      h('div', {}, h('h4', {}, 'Restore progress'), h('p', { class: 'muted', style: 'font-size:14.5px' }, 'Paste text from an earlier export.'), imp, h('div', { class: 'pp-row' }, btnImp, btnReset, confirmRow))),
+      h('div', {}, h('h3', { class: 'pp-h' }, 'Back up or move your progress'), h('p', { class: 'muted', style: 'font-size:14.5px' }, 'Progress lives in this browser only. Export it to keep a copy or move to another device.'), exp, h('div', { class: 'pp-row' }, btnExp)),
+      h('div', {}, h('h3', { class: 'pp-h' }, 'Restore progress'), h('p', { class: 'muted', style: 'font-size:14.5px' }, 'Paste text from an earlier export.'), imp, h('div', { class: 'pp-row' }, btnImp, btnReset, confirmRow))),
     h('div', { class: 'pp-row' }, msg));
 }
 

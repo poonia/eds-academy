@@ -4,7 +4,7 @@ A self-paced, interactive course on Adobe Edge Delivery Services (EDS), covering
 development and implementation from beginner (L1) to expert (L4). It is a static site with
 no build step: plain HTML, CSS and ES modules, which mirrors how EDS projects are built.
 
-Category A content is as of **30 October 2026** Categories B and C as of **8 November 2026**, and Categories D and E, capstones and exams as of **9 November 2026**. Build status and open items are listed in `project/BUILD-LOG.md`.
+Category A content is as of **30 October 2026**, Categories B and C as of **8 November 2026**, and Categories D and E, capstones and exams as of **9 November 2026**. Build status and open items are in `project/BUILD-LOG.md`, and the latest review is in `project/COVERAGE-REPORT.md`.
 
 ## Open it locally
 

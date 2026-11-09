@@ -112,7 +112,7 @@ for m in syl['modules']:
     sheet = re.search(r'<div class="cheat">\s*<h3>.*?</h3>\s*(<div class="cheat-grid">.*?</div>)\s*</div>\s*</section>', text, re.S)
     if not sheet:
         sys.exit(f"{m['id']}: cheat sheet not found")
-    sheets.append(f'<div data-item data-cat="{m["cat"]}" id="{m["id"].lower()}" class="cheat cs-item"><h3><a href="../{m["page"]}#cheat-sheet"><code>{m["id"]}</code> {esc(m["name"])}</a></h3>{sheet.group(1)}</div>')
+    sheets.append(f'<div data-item data-cat="{m["cat"]}" id="{m["id"].lower()}" class="cheat cs-item"><h2><a href="../{m["page"]}#cheat-sheet"><code>{m["id"]}</code> {esc(m["name"])}</a></h2>{sheet.group(1).replace("<h4>", "<h3>").replace("</h4>", "</h3>")}</div>')
     reading = re.search(r'id="further-reading".*?</section>', text, re.S).group(0)
     for url, title in re.findall(r'<a href="(https?://[^"]+)"[^>]*>([^<]+)</a>', reading):
         url = html.unescape(url).replace('https://aem.live', 'https://www.aem.live')
@@ -151,7 +151,7 @@ body += band(f'<aside class="callout update" data-label="Unofficial"><p>EDS Acad
 shell('reference/resources.html', 'Resources', 'External documentation and sources used across EDS Academy.', 'reference', body)
 
 cards = [('glossary.html', 'Glossary', f'{len(glossary)} terms, each linked to the module that teaches it.'), ('cheat-sheets.html', 'Cheat sheets', f'{len(sheets)} printable one-page summaries.'), ('resources.html', 'Resources', f'{len(links)} external sources, grouped by publisher.'), ('components.html', 'Components', 'Every interactive component in the course, with its markup.')]
-grid = '<div class="grid-3">' + ''.join(f'<a class="card ref-card" href="{u}"><h3>{t}</h3><p class="muted" style="margin:0">{d}</p></a>' for u, t, d in cards) + '</div>'
+grid = '<div class="grid-3">' + ''.join(f'<a class="card ref-card" href="{u}"><h2>{t}</h2><p class="muted" style="margin:0">{d}</p></a>' for u, t, d in cards) + '</div>'
 shell('reference/index.html', 'Reference', 'The EDS Academy glossary, cheat sheets, resources and component showcase.', 'reference', hero('Reference', 'index.html', 'Reference', 'Look something up without going back through a module.') + band(grid))
 
 json_links = [{'t': re.sub(r'^(aem\.live|Adobe|GitHub|W3C|Ontario|Adobe Developer|web\.dev): ', '', e['title']), 'u': u, 'x': 'Used in ' + ', '.join(e['mods'])} for u, e in sorted(links.items())]

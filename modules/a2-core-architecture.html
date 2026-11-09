@@ -170,7 +170,7 @@
     <div data-component="tabs" data-label="Pipeline stages">
       <div data-tab="1. Authored">
         <div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span class="url">Mortgages.docx</span></div><div class="mock-body"><div class="doc-page">
-          <h5>Fixed-rate mortgages</h5><p>Lock in your rate for up to ten years.</p>
+          <p class="mock-heading">Fixed-rate mortgages</p><p>Lock in your rate for up to ten years.</p>
           <table class="blocktable"><tr><th colspan="2">Cards</th></tr><tr><td>5-year fixed</td><td>Stable payments</td></tr><tr><td>10-year fixed</td><td>Longest certainty</td></tr></table>
         </div></div></div>
       </div>
@@ -360,7 +360,7 @@
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
-      <thead><tr><th></th><th>Adobe-managed CDN</th><th>Bring your own CDN</th></tr></thead>
+      <thead><tr><th><span class="sr-only">Item</span></th><th>Adobe-managed CDN</th><th>Bring your own CDN</th></tr></thead>
       <tbody>
         <tr><th>Who operates it</th><td>Adobe</td><td>Your network team</td></tr>
         <tr><th>Options</th><td>Included with AEM as a Cloud Service setups</td><td>Akamai, Fastly, Cloudflare, CloudFront</td></tr>
@@ -464,9 +464,9 @@
 <section class="mpart" id="lab" data-toc="Hands-on lab">
   <h2>Hands-on lab: trace a page through the architecture</h2>
   <div class="lab-meta">
-    <div><h4>Goal</h4><p>Observe preview, live, media and status for a real EDS site and map each to a bus.</p></div>
-    <div><h4>You need</h4><p>Browser DevTools and a terminal with <code>curl</code>.</p></div>
-    <div><h4>Time</h4><p>About 45 minutes</p></div>
+    <div><h3>Goal</h3><p>Observe preview, live, media and status for a real EDS site and map each to a bus.</p></div>
+    <div><h3>You need</h3><p>Browser DevTools and a terminal with <code>curl</code>.</p></div>
+    <div><h3>Time</h3><p>About 45 minutes</p></div>
   </div>
   <ol class="lab-steps">
     <li><div><b>Pick a page.</b> Use any page on aem.live, or your own tutorial site if you have built one.</div></li>
@@ -478,9 +478,9 @@
   </ol>
   <aside class="callout update"><p>Checked on 8 November 2026: both <code>main--helix-website--adobe</code> hosts responded, and anonymous status requests returned 401. If a host stops responding, run the lab against your own tutorial site.</p></aside>
   <div class="lab-meta" style="margin-top:16px">
-    <div><h4>Expected result</h4><p>Matching preview and live pages, a hashed media URL, and a status JSON with preview and live dates.</p></div>
-    <div><h4>How to verify</h4><p>Your sketch shows Content, Media and Code buses meeting at edge delivery, with the CDN in front.</p></div>
-    <div><h4>Stretch</h4><p>Create a branch in your own repo, push a CSS change, and open its branch URL.</p></div>
+    <div><h3>Expected result</h3><p>Matching preview and live pages, a hashed media URL, and a status JSON with preview and live dates.</p></div>
+    <div><h3>How to verify</h3><p>Your sketch shows Content, Media and Code buses meeting at edge delivery, with the CDN in front.</p></div>
+    <div><h3>Stretch</h3><p>Create a branch in your own repo, push a CSS change, and open its branch URL.</p></div>
   </div>
   <ul class="checklist" data-id="a2-lab">
     <li>Opened the same path on .aem.page and .aem.live</li>

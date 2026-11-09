@@ -65,7 +65,7 @@
     </figure>
   </div>
   <div data-part="show">
-    <div data-component="hotspots" data-title="Default content in a document"><div class="hs-stage"><div class="doc-page"><h5 data-hotspot="Heading style" data-text="A real heading becomes an h1 to h6. Bold, large text stays a paragraph.">Save sooner with a TFSA</h5><p data-hotspot="Paragraph" data-text="Plain text becomes a p element and needs no block.">Grow your savings tax-free and withdraw when you need to.</p><p data-hotspot="Link" data-text="Enter the full URL of a page on your site. EDS adjusts same-site links to be relative."><u>Compare accounts</u></p></div></div></div>
+    <div data-component="hotspots" data-title="Default content in a document"><div class="hs-stage"><div class="doc-page"><p class="mock-heading" data-hotspot="Heading style" data-text="A real heading becomes an h1 to h6. Bold, large text stays a paragraph.">Save sooner with a TFSA</p><p data-hotspot="Paragraph" data-text="Plain text becomes a p element and needs no block.">Grow your savings tax-free and withdraw when you need to.</p><p data-hotspot="Link" data-text="Enter the full URL of a page on your site. EDS adjusts same-site links to be relative."><u>Compare accounts</u></p></div></div></div>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="b1-t1"><script type="application/json">{"questions": [{"q": "An author makes a line bold and 20 point so it looks like a heading. What will EDS output?", "options": ["A block", "An h2", "A paragraph"], "answer": 2, "explain": "Only a real heading style produces a heading element."}]}</script></div>
@@ -301,7 +301,7 @@
   </table></div>
   </div>
   <div data-part="show">
-    <aside class="callout warning" data-label="Do not confuse with folder mapping"><p>The <em>folder mapping</em> feature, which serves one page for a whole range of URLs, is different. aem.live feature-flags it and warns against it for sites with SEO needs, because it creates an effectively infinite URL space that always returns 200.</p></aside>
+    <aside class="callout warning" data-label="Do not confuse with folder mapping"><p>The <em>folder mapping</em> feature, which serves one page for a whole range of URLs, is different. Adobe now lists it as deprecated. aem.live feature-flags it and warns against it for sites with SEO needs, because it creates an effectively infinite URL space that always returns 200.</p></aside>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="b1-t8"><script type="application/json">{"questions": [{"q": "What URL does /Products/Home Loans get?", "options": ["/Products/Home Loans", "/products/homeloans", "/products/home-loans"], "answer": 2, "explain": "Lower case, with other characters replaced by a dash."}]}</script></div>
@@ -323,9 +323,9 @@
 <section class="mpart" id="lab" data-toc="Hands-on lab">
   <h2>Hands-on lab: author and inspect a real page</h2>
   <div class="lab-meta">
-    <div><h4>Goal</h4><p>Author a page using every structural feature and confirm the delivered HTML.</p></div>
-    <div><h4>You need</h4><p>A tutorial site and Sidekick, or the simulator above if you have no site yet.</p></div>
-    <div><h4>Time</h4><p>About 60 minutes</p></div>
+    <div><h3>Goal</h3><p>Author a page using every structural feature and confirm the delivered HTML.</p></div>
+    <div><h3>You need</h3><p>A tutorial site and Sidekick, or the simulator above if you have no site yet.</p></div>
+    <div><h3>Time</h3><p>About 60 minutes</p></div>
   </div>
   <ol class="lab-steps">
     <li><div><b>Outline the page</b> on paper: what is default content and what truly needs a block?</div></li>
@@ -336,9 +336,9 @@
     <li><div><b>Add <code>.plain.html</code></b> to the preview URL and compare it with the full page.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
-    <div><h4>Expected result</h4><p>A previewed page whose source shows your sections, block classes and metadata.</p></div>
-    <div><h4>How to verify</h4><p>Each authored feature can be matched to a line in View Source.</p></div>
-    <div><h4>Stretch</h4><p>Remove the description and find which paragraph EDS used instead.</p></div>
+    <div><h3>Expected result</h3><p>A previewed page whose source shows your sections, block classes and metadata.</p></div>
+    <div><h3>How to verify</h3><p>Each authored feature can be matched to a line in View Source.</p></div>
+    <div><h3>Stretch</h3><p>Remove the description and find which paragraph EDS used instead.</p></div>
   </div>
   <ul class="checklist" data-id="b1-lab">
     <li>Most content is default content</li>
@@ -388,7 +388,7 @@
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="b1-cards"><script type="application/json">{"cards": [["Default content", "Text, headings, lists, images and links with no block."], ["Section", "A group of content, separated by three hyphens."], ["Block", "A table whose first row names it."], ["Variant", "Words in parentheses that become CSS classes."], ["Section Metadata", "A table that adds classes, an ID or data attributes to its section."], ["Metadata block", "A table that sets head tags."], ["template", "Metadata that becomes a body class and often drives auto-blocking."], ["Auto-blocking", "Code builds blocks from default content and metadata."], ["index", "The document served at a folder’s trailing-slash URL."], ["Folder mapping", "A restricted feature serving one page for many URLs."]]}</script></div>
+  <div data-component="flashcards" data-id="b1-cards"><script type="application/json">{"cards": [["Default content", "Text, headings, lists, images and links with no block."], ["Section", "A group of content, separated by three hyphens."], ["Block", "A table whose first row names it."], ["Variant", "Words in parentheses that become CSS classes."], ["Section Metadata", "A table that adds classes, an ID or data attributes to its section."], ["Metadata block", "A table that sets head tags."], ["template", "Metadata that becomes a body class and often drives auto-blocking."], ["Auto-blocking", "Code builds blocks from default content and metadata."], ["index", "The document served at a folder’s trailing-slash URL."], ["Folder mapping", "A deprecated, restricted feature serving one page for many URLs."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">

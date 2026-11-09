@@ -165,7 +165,7 @@
   <div data-part="why"><p>A rate change must go live at exactly 9:00 on the first of the month, after sign-off. The tools depend on how you author.</p></div>
   <div data-part="concept">
     <p>With Experience Workspace, Schedule Publish queues a page for a future time once it has been enabled, and <b>Request Publish</b> sends approvers an email with a link to review. Request Publish needs onboarding.</p>
-    <p>Other setups can register with Adobe’s scheduling service to schedule snapshots and pages. AEM authors can use Manage Publication. A <code>crontab</code> sheet in <code>.helix</code> can also run tasks; its times are in UTC.</p>
+    <p>Other setups can register with Adobe’s scheduling service to schedule snapshots and pages. AEM authors can use Manage Publication. Older projects may have a <code>crontab</code> sheet in <code>.helix</code>. Adobe now lists it as deprecated, so do not use it for new work.</p>
   </div>
   <div data-part="visual">
     <div class="table-wrap"><table class="t">
@@ -173,19 +173,26 @@
     <tbody>
       <tr><td>Experience Workspace</td><td>Schedule Publish</td><td>Request Publish</td></tr>
       <tr><td>AEM</td><td>Manage Publication</td><td>AEM workflows</td></tr>
-      <tr><td>Word or Docs</td><td>Scheduling service or crontab</td><td>Your own process</td></tr>
+      <tr><td>Word or Docs</td><td>Scheduling service</td><td>Your own process</td></tr>
     </tbody>
   </table></div>
   </div>
   <div data-part="show">
-    <figure class="code" data-file=".helix/crontab" data-lang="text">
-      <textarea class="src" hidden>when                                command
-at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
-      <figcaption><b>Watch out:</b> leave out the year, and the job repeats every year.</figcaption>
+    <figure class="code" data-file="Sidekick plugin in site configuration" data-lang="json">
+      <textarea class="src" hidden>{
+  "id": "schedule-publish",
+  "title": "Schedule Publish",
+  "environments": ["edit", "preview"],
+  "url": "https://tools.aem.live/tools/scheduler/schedule.html",
+  "isPopover": true,
+  "passReferrer": true,
+  "passConfig": true
+}</textarea>
+      <figcaption><b>Note:</b> the site must first be registered with Adobe’s scheduling service, using an Admin API key that can publish.</figcaption>
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b8-t4"><script type="application/json">{"questions": [{"q": "You schedule “at 9:00 am” in the crontab sheet for a Toronto launch. What is the risk?", "options": ["It needs a new block", "Times are UTC, so it runs at the wrong local time", "Crontab does not exist"], "answer": 1, "explain": "Convert from local time to UTC."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b8-t4"><script type="application/json">{"questions": [{"q": "Forty pages on a Word-based site must go live together at a set time. What should you use?", "options": ["Publish each page by hand at that time", "A snapshot scheduled through Adobe’s scheduling service", "A new crontab sheet"], "answer": 1, "explain": "The scheduling service publishes a snapshot’s pages together. The crontab sheet is deprecated."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -243,9 +250,9 @@ at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
 <section class="mpart" id="lab" data-toc="Hands-on lab">
   <h2>Hands-on lab: QA a page before it goes live</h2>
   <div class="lab-meta">
-    <div><h4>Goal</h4><p>Find and fix issues on a real or sample page.</p></div>
-    <div><h4>You need</h4><p>A preview URL, a keyboard, and DevTools or an accessibility tool.</p></div>
-    <div><h4>Time</h4><p>About 50 minutes</p></div>
+    <div><h3>Goal</h3><p>Find and fix issues on a real or sample page.</p></div>
+    <div><h3>You need</h3><p>A preview URL, a keyboard, and DevTools or an accessibility tool.</p></div>
+    <div><h3>Time</h3><p>About 50 minutes</p></div>
   </div>
   <ol class="lab-steps">
     <li><div><b>Open the preview URL</b> on desktop and a phone.</div></li>
@@ -257,9 +264,9 @@ at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
     <li><div><b>Publish</b>, then confirm on production.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
-    <div><h4>Expected result</h4><p>A page that passes every item, with notes on what you fixed.</p></div>
-    <div><h4>How to verify</h4><p>The checker shows Ready to publish and the head tags are correct.</p></div>
-    <div><h4>Stretch</h4><p>Tailor the checklist for your organization’s content types.</p></div>
+    <div><h3>Expected result</h3><p>A page that passes every item, with notes on what you fixed.</p></div>
+    <div><h3>How to verify</h3><p>The checker shows Ready to publish and the head tags are correct.</p></div>
+    <div><h3>Stretch</h3><p>Tailor the checklist for your organization’s content types.</p></div>
   </div>
   <ul class="checklist" data-id="b8-lab">
     <li>Reviewed on a phone</li>
@@ -304,12 +311,12 @@ at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b8-check"><script type="application/json">{"questions": [{"q": "What do reviewers open?", "options": ["The Word file only", "The live site", "The aem.page URL"], "answer": 2, "explain": "Preview URLs exist for review."}, {"q": "Publishing a page publishes its fragment too. True or false?", "options": ["False", "True"], "answer": 0, "explain": "Shared resources are separate."}, {"q": "What creates canonical URLs by default?", "options": ["The author", "cdn.prod.host", "A redirect"], "answer": 1, "explain": "Set in site configuration."}, {"q": "Which help accessibility? Choose all that apply.", "options": ["Colour as the only signal", "Alt text", "Real headings", "Meaningful link text"], "answer": [1, 2, 3], "explain": "Colour alone excludes people."}, {"q": "Times in crontab are in?", "options": ["Local time", "UTC", "The author’s time zone"], "answer": 1, "explain": "Convert first."}, {"q": "Which tool sends approvers a link in Experience Workspace?", "options": ["Traverse", "Bulk Operations", "Request Publish"], "answer": 2, "explain": "It needs onboarding."}, {"q": "How should a blog and a regulated page differ in QA?", "options": ["They should be identical", "The regulated page needs extra approval checks", "The blog needs more"], "answer": 1, "explain": "Tailor by risk."}, {"q": "A campaign must launch at 9:00 Eastern on Monday, with legal sign-off on Friday. You author in Google Docs. What do you do?", "options": ["Publish Friday and hope", "Ask users to refresh at 9:00", "Get sign-off on the preview, then use the scheduling service or an accurately converted UTC schedule", "Publish at 9:00 from a phone with no plan"], "answer": 2, "explain": "Separate approval from timed release, and convert the time.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b8-check"><script type="application/json">{"questions": [{"q": "What do reviewers open?", "options": ["The Word file only", "The live site", "The aem.page URL"], "answer": 2, "explain": "Preview URLs exist for review."}, {"q": "Publishing a page publishes its fragment too. True or false?", "options": ["False", "True"], "answer": 0, "explain": "Shared resources are separate."}, {"q": "What creates canonical URLs by default?", "options": ["The author", "cdn.prod.host", "A redirect"], "answer": 1, "explain": "Set in site configuration."}, {"q": "Which help accessibility? Choose all that apply.", "options": ["Colour as the only signal", "Alt text", "Real headings", "Meaningful link text"], "answer": [1, 2, 3], "explain": "Colour alone excludes people."}, {"q": "Which older scheduling method does Adobe now list as deprecated?", "options": ["Manage Publication", "The crontab sheet", "Experience Workspace scheduling"], "answer": 1, "explain": "Use the scheduling service, Schedule Publish or Manage Publication."}, {"q": "Which tool sends approvers a link in Experience Workspace?", "options": ["Traverse", "Bulk Operations", "Request Publish"], "answer": 2, "explain": "It needs onboarding."}, {"q": "How should a blog and a regulated page differ in QA?", "options": ["They should be identical", "The regulated page needs extra approval checks", "The blog needs more"], "answer": 1, "explain": "Tailor by risk."}, {"q": "A campaign must launch at 9:00 Eastern on Monday, with legal sign-off on Friday. You author in Google Docs. What do you do?", "options": ["Publish Friday and hope", "Ask users to refresh at 9:00", "Get sign-off on the preview, then use the scheduling service, and confirm the time zone", "Publish at 9:00 from a phone with no plan"], "answer": 2, "explain": "Separate approval from timed release, and convert the time.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="b8-cards"><script type="application/json">{"cards": [["Preview URL", "aem.page address for review."], ["Canonical", "The preferred URL for a page."], ["noindex", "Keeps a page out of search."], ["Alt text", "Text alternative for an image."], ["Heading order", "Levels without skipping."], ["Schedule Publish", "EW plugin that queues publication."], ["Request Publish", "EW approval workflow."], ["Manage Publication", "AEM option with scheduling."], ["crontab sheet", "Scheduled tasks, with times in UTC."], ["AODA", "Ontario accessibility legislation."]]}</script></div>
+  <div data-component="flashcards" data-id="b8-cards"><script type="application/json">{"cards": [["Preview URL", "aem.page address for review."], ["Canonical", "The preferred URL for a page."], ["noindex", "Keeps a page out of search."], ["Alt text", "Text alternative for an image."], ["Heading order", "Levels without skipping."], ["Schedule Publish", "EW plugin that queues publication."], ["Request Publish", "EW approval workflow."], ["Manage Publication", "AEM option with scheduling."], ["crontab sheet", "Older scheduling method, now deprecated."], ["AODA", "Ontario accessibility legislation."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -320,7 +327,7 @@ at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
       <div><h4>Flow</h4><ul><li>Edit, preview, review</li><li>Publish, then check</li><li>Shared resources separately</li></ul></div>
       <div><h4>SEO</h4><ul><li>Unique title and description</li><li>Real headings</li><li>noindex when needed</li></ul></div>
       <div><h4>Accessibility</h4><ul><li>One h1, in order</li><li>Alt text</li><li>Meaningful links</li></ul></div>
-      <div><h4>Timing</h4><ul><li>EW Schedule Publish</li><li>AEM Manage Publication</li><li>crontab uses UTC</li></ul></div>
+      <div><h4>Timing</h4><ul><li>EW Schedule Publish</li><li>AEM Manage Publication</li><li>Scheduling service</li></ul></div>
       <div><h4>Approvals</h4><ul><li>Request Publish</li><li>AEM workflows</li><li>Keep evidence</li></ul></div>
     </div>
   </div>
@@ -332,7 +339,7 @@ at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
     <li><a href="https://www.aem.live/docs/authoring" rel="noopener" target="_blank">aem.live: Authoring and publishing content</a></li>
     <li><a href="https://www.aem.live/docs/seo-geo" rel="noopener" target="_blank">aem.live: SEO and GEO best practices</a></li>
     <li><a href="https://www.aem.live/docs/special-metadata-properties" rel="noopener" target="_blank">aem.live: Special metadata properties</a></li>
-    <li><a href="https://www.aem.live/docs/scheduling" rel="noopener" target="_blank">aem.live: Scheduling</a></li>
+    <li><a href="https://www.aem.live/developer/scheduling" rel="noopener" target="_blank">aem.live: Scheduled Publishing</a></li>
     <li><a href="https://www.aem.live/developer/scheduling" rel="noopener" target="_blank">aem.live: Scheduled publishing</a></li>
     <li><a href="https://www.aem.live/docs/ew/administering/schedule-publish" rel="noopener" target="_blank">aem.live: Schedule Publish</a></li>
     <li><a href="https://www.aem.live/docs/ew/administering/request-publish" rel="noopener" target="_blank">aem.live: Request Publish</a></li>

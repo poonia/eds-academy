@@ -16,7 +16,7 @@ export default function a11yDemos(el, { h, uid }) {
   const panels = NAMES.map((n, i) => { const p = h('div', { role: 'tabpanel', id: `${base}-p${i}`, 'aria-labelledby': `${base}-t${i}`, tabindex: '0', class: 'ad-panel' }, TEXT[i]); p.hidden = i !== 0; return p; });
   const tabs = NAMES.map((n, i) => h('button', { type: 'button', role: 'tab', id: `${base}-t${i}`, 'aria-controls': `${base}-p${i}`, 'aria-selected': String(i === 0), tabindex: i === 0 ? '0' : '-1', class: 'chip' }, n));
   const select = (i, focus) => {
-    tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(j === i)); t.setAttribute('aria-pressed', String(j === i)); t.tabIndex = j === i ? 0 : -1; panels[j].hidden = j !== i; });
+    tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(j === i)); t.tabIndex = j === i ? 0 : -1; panels[j].hidden = j !== i; });
     if (focus) tabs[i].focus();
   };
   tabs.forEach((t, i) => {

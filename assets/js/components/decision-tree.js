@@ -6,7 +6,7 @@ export default function decisionTree(el, { h, readJSON }) {
   const nodes = data.nodes || {};
   let path = [];
   el.classList.add('ix');
-  const trail = h('div', { class: 'dt-trail', 'aria-label': 'Your answers so far' });
+  const trail = h('div', { class: 'dt-trail', role: 'group', 'aria-label': 'Your answers so far' });
   const stage = h('div', { 'aria-live': 'polite' });
   const back = h('button', { class: 'btn small', type: 'button' }, '← Back');
   const restart = h('button', { class: 'btn small ghost', type: 'button' }, 'Start over');

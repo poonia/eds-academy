@@ -195,7 +195,7 @@
       <figcaption><b>Expected result:</b> a block can fetch this JSON and render a rate table without a separate CMS or API layer.</figcaption>
     </figure>
     <div class="table-wrap"><table class="t">
-      <thead><tr><th></th><th>Headless + framework app</th><th>EDS</th></tr></thead>
+      <thead><tr><th><span class="sr-only">Item</span></th><th>Headless + framework app</th><th>EDS</th></tr></thead>
       <tbody>
         <tr><th>Output</th><td>JSON; your app renders HTML</td><td>HTML first; JSON where needed</td></tr>
         <tr><th>SEO and accessibility</th><td>Depends on your rendering setup</td><td>Semantic HTML by default</td></tr>
@@ -378,9 +378,9 @@
 <section class="mpart" id="lab" data-toc="Hands-on lab">
   <h2>Hands-on lab: inspect a live EDS site and write a fit memo</h2>
   <div class="lab-meta">
-    <div><h4>Goal</h4><p>See EDS output with your own eyes and produce a one-page fit memo for one of your sites.</p></div>
-    <div><h4>You need</h4><p>A desktop browser with DevTools. No accounts or installs.</p></div>
-    <div><h4>Time</h4><p>About 45 minutes</p></div>
+    <div><h3>Goal</h3><p>See EDS output with your own eyes and produce a one-page fit memo for one of your sites.</p></div>
+    <div><h3>You need</h3><p>A desktop browser with DevTools. No accounts or installs.</p></div>
+    <div><h3>Time</h3><p>About 45 minutes</p></div>
   </div>
   <ol class="lab-steps">
     <li><div><b>Open a page on aem.live.</b> The official documentation site runs on Edge Delivery Services. Open <a href="https://www.aem.live/docs/" rel="noopener" target="_blank">aem.live/docs</a>.</div></li>
@@ -392,9 +392,9 @@
     <li><div><b>Write the memo.</b> One page: site name, verdict, top three reasons, risks to verify, and a suggested pilot scope.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
-    <div><h4>Expected result</h4><p>Notes on source vs decorated DOM, a PSI result, and a fit memo.</p></div>
-    <div><h4>How to verify</h4><p>Your memo cites at least two scorer reasons and one feature to check against aem.live.</p></div>
-    <div><h4>Stretch</h4><p>Repeat steps 2–5 on one of your current AEM pages and compare.</p></div>
+    <div><h3>Expected result</h3><p>Notes on source vs decorated DOM, a PSI result, and a fit memo.</p></div>
+    <div><h3>How to verify</h3><p>Your memo cites at least two scorer reasons and one feature to check against aem.live.</p></div>
+    <div><h3>Stretch</h3><p>Repeat steps 2–5 on one of your current AEM pages and compare.</p></div>
   </div>
   <aside class="callout tip"><p>The boilerplate's fragment block fetches <code>.plain.html</code>, so this view is how fragments load. For a home page use <code>/index.plain.html</code>: <code>/.plain.html</code> returned 404 on aem.live when checked on 8 November 2026.</p></aside>
   <ul class="checklist" data-id="a1-lab">

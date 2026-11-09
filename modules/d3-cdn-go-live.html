@@ -50,7 +50,7 @@
   <h2>Adobe-managed CDN</h2>
   <div data-part="why"><p>Your licence includes a CDN. Knowing what it does and does not cover helps you decide whether to use it.</p></div>
   <div data-part="concept">
-    <p>The Adobe-managed CDN is part of the Edge Delivery Services entitlement. You must own the domain and be able to change its DNS. You can bring a certificate, or ask Adobe for one from Let’s Encrypt. HTTPS is required and IPv6 is not supported.</p>
+    <p>The Adobe-managed CDN is part of the Edge Delivery Services entitlement. You must own the domain and be able to change its DNS. You can bring a certificate, or ask Adobe for one from Let’s Encrypt. HTTPS is required and IPv6 is not supported. Adobe no longer accepts new domains for its bring-your-own-DNS service, so choose this CDN or your own.</p>
     <p>You install certificates and domains in Cloud Manager, for both <code>www</code> and the apex. A CDN configuration then maps the domain to your site. Production must use the <code>main</code> branch origin, and push invalidation must be set up in the site configuration.</p>
     <p>Advanced rules go in a <code>cdn.yaml</code> file deployed by a configuration pipeline. They can change headers, filter traffic, redirect, select origins and authenticate. Always guard rules with a domain condition.</p>
   </div>
@@ -321,9 +321,9 @@ data:
 <section class="mpart" id="lab" data-toc="Hands-on lab">
   <h2>Hands-on lab: rehearse a cutover on a staging host</h2>
   <div class="lab-meta">
-    <div><h4>Goal</h4><p>Prove your CDN settings before real traffic arrives.</p></div>
-    <div><h4>You need</h4><p>A test domain and access to a CDN.</p></div>
-    <div><h4>Time</h4><p>About 2 hours</p></div>
+    <div><h3>Goal</h3><p>Prove your CDN settings before real traffic arrives.</p></div>
+    <div><h3>You need</h3><p>A test domain and access to a CDN.</p></div>
+    <div><h3>Time</h3><p>About 2 hours</p></div>
   </div>
   <ol class="lab-steps">
     <li><div><b>Create</b> a staging hostname that follows your production pattern.</div></li>
@@ -336,9 +336,9 @@ data:
     <li><div><b>Write down</b> the steps and how to reverse them.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
-    <div><h4>Expected result</h4><p>A tested runbook for go-live.</p></div>
-    <div><h4>How to verify</h4><p>A small publish appears on the staging host, and each curl check returns the expected status.</p></div>
-    <div><h4>Stretch</h4><p>Rehearse the rollback too.</p></div>
+    <div><h3>Expected result</h3><p>A tested runbook for go-live.</p></div>
+    <div><h3>How to verify</h3><p>A small publish appears on the staging host, and each curl check returns the expected status.</p></div>
+    <div><h3>Stretch</h3><p>Rehearse the rollback too.</p></div>
   </div>
   <ul class="checklist" data-id="d3-lab">
     <li>Origin is main</li>

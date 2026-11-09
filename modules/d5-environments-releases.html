@@ -138,7 +138,7 @@
   <div data-part="concept">
     <p><b>Snapshots</b> capture a set of previewed pages at a point in time, like a branch for content. Reviewers use a <code>.aem.reviews</code> environment to see the whole site as it will be. Requesting review locks the snapshot, rejecting it unlocks it, and approving publishes it.</p>
     <p>A copy in a snapshot stays fixed even if the page changes, unless you update it there. Viewing needs <code>aem.page</code> access, editing needs the author role, and publishing needs the publish role.</p>
-    <p>Document-based projects can also schedule preview, publish or purge tasks from a <code>crontab</code> sheet in <code>.helix</code>. Times are in UTC, and the scheduler runs only every 5 minutes. On AEM authoring, Manage Publication provides scheduling.</p>
+    <p>For a timed launch, <b>Scheduled Publishing</b> can publish a snapshot or individual pages at a set time. Experience Workspace has it built in, through a scheduling app. Other authoring registers the org and site with Adobe’s scheduling service, using an Admin API key that can publish, and can add a Schedule Publish plugin to Sidekick. On AEM authoring, Manage Publication provides scheduling. The older <code>crontab</code> sheet in <code>.helix</code> is listed as deprecated, so avoid it for new work.</p>
   </div>
   <div data-part="visual">
     <div data-component="stepper" data-title="Release with a snapshot"><div class="step" data-label="1. Name"><p>Create <code>fall-collection-2026</code>.</p></div><div class="step" data-label="2. Add"><p>Edit and preview pages, and add them to the snapshot.</p></div><div class="step" data-label="3. Review"><p>Open <code>fall-collection-2026--main--site--org.aem.reviews</code>.</p></div><div class="step" data-label="4. Lock"><p>Requesting a review locks the snapshot.</p></div><div class="step" data-label="5. Decide"><p>Rejecting unlocks it. Approving publishes it and removes the URLs.</p></div></div>
@@ -160,8 +160,8 @@
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Review shows old copy</td><td>Page not updated in snapshot</td><td>Update it there.</td></tr>
-      <tr><td>Schedule misses by minutes</td><td>Runs every 5 minutes</td><td>Schedule at least one run ahead.</td></tr>
-      <tr><td>Job runs next year</td><td>No year in text</td><td>Include the year for one-off jobs.</td></tr>
+      <tr><td>Scheduled snapshot does not publish</td><td>Site not registered, or key cannot publish</td><td>Verify the registration and the API key.</td></tr>
+      <tr><td>Project still relies on crontab</td><td>Deprecated method</td><td>Move to Scheduled Publishing.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -236,9 +236,9 @@ git push origin HEAD:revert-launch-banner
 <section class="mpart" id="lab" data-toc="Hands-on lab">
   <h2>Hands-on lab: run a rehearsal release</h2>
   <div class="lab-meta">
-    <div><h4>Goal</h4><p>Ship a code change and a content change, then undo both.</p></div>
-    <div><h4>You need</h4><p>A test site and permission to merge.</p></div>
-    <div><h4>Time</h4><p>About 90 minutes</p></div>
+    <div><h3>Goal</h3><p>Ship a code change and a content change, then undo both.</p></div>
+    <div><h3>You need</h3><p>A test site and permission to merge.</p></div>
+    <div><h3>Time</h3><p>About 90 minutes</p></div>
   </div>
   <ol class="lab-steps">
     <li><div><b>Create a branch</b> and change one block in a backward-compatible way.</div></li>
@@ -251,9 +251,9 @@ git push origin HEAD:revert-launch-banner
     <li><div><b>Restore</b> a page, preview and publish.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
-    <div><h4>Expected result</h4><p>A documented release and rollback.</p></div>
-    <div><h4>How to verify</h4><p>Your branch, reviews, production and restored page show the expected state at each step.</p></div>
-    <div><h4>Stretch</h4><p>Time each rollback.</p></div>
+    <div><h3>Expected result</h3><p>A documented release and rollback.</p></div>
+    <div><h3>How to verify</h3><p>Your branch, reviews, production and restored page show the expected state at each step.</p></div>
+    <div><h3>Stretch</h3><p>Time each rollback.</p></div>
   </div>
   <ul class="checklist" data-id="d5-lab">
     <li>Test URL in PR</li>
@@ -298,12 +298,12 @@ git push origin HEAD:revert-launch-banner
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="d5-check"><script type="application/json">{"questions": [{"q": "Does EDS have a CI/CD pipeline for customer code like AEMaaCS?", "options": ["No, code comes directly from branches", "Yes, a required pipeline", "Only for main"], "answer": 0, "explain": "See Operations."}, {"q": "What does Adobe say about a separate staging branch mapped to a CDN site?", "options": ["Not advisable", "Required", "Recommended by default"], "answer": 0, "explain": "See Staging & Environments."}, {"q": "Which domain shows a snapshot?", "options": [".aem.draft", ".aem.stage", ".aem.reviews"], "answer": 2, "explain": "See Snapshots and Reviews."}, {"q": "What happens when a review is requested?", "options": ["It is deleted", "It is published", "The snapshot locks"], "answer": 2, "explain": "Reject unlocks it."}, {"q": "Which time zone does the crontab sheet use?", "options": ["Pacific", "UTC", "The author’s"], "answer": 1, "explain": "See Scheduling."}, {"q": "How often does the scheduler run?", "options": ["Once a day", "Every second", "Every 5 minutes"], "answer": 2, "explain": "Plan accordingly."}, {"q": "What does Adobe’s operations guide recommend for customer code?", "options": ["Long-lived branches", "Quarterly big-bang releases", "Small, frequent merges"], "answer": 2, "explain": "Scaled Trunk-based Development."}, {"q": "A launch needs new code and 80 new pages, and the old pages must keep working. What order is safest?", "options": ["Change the content source at launch", "Push directly to main during publish", "Publish content first and code a week later", "Merge backward-compatible code, then publish the snapshot"], "answer": 3, "explain": "Compatible code first avoids broken pages.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="d5-check"><script type="application/json">{"questions": [{"q": "Does EDS have a CI/CD pipeline for customer code like AEMaaCS?", "options": ["No, code comes directly from branches", "Yes, a required pipeline", "Only for main"], "answer": 0, "explain": "See Operations."}, {"q": "What does Adobe say about a separate staging branch mapped to a CDN site?", "options": ["Not advisable", "Required", "Recommended by default"], "answer": 0, "explain": "See Staging & Environments."}, {"q": "Which domain shows a snapshot?", "options": [".aem.draft", ".aem.stage", ".aem.reviews"], "answer": 2, "explain": "See Snapshots and Reviews."}, {"q": "What happens when a review is requested?", "options": ["It is deleted", "It is published", "The snapshot locks"], "answer": 2, "explain": "Reject unlocks it."}, {"q": "How do you schedule a snapshot outside Experience Workspace?", "options": ["Edit robots.txt", "Add a timer to head.html", "Register with Adobe’s scheduling service"], "answer": 2, "explain": "See Scheduled Publishing."}, {"q": "What is the status of the crontab scheduling sheet?", "options": ["Deprecated", "Required", "Recommended for new work"], "answer": 0, "explain": "See Deprecations and Removals."}, {"q": "What does Adobe’s operations guide recommend for customer code?", "options": ["Long-lived branches", "Quarterly big-bang releases", "Small, frequent merges"], "answer": 2, "explain": "Scaled Trunk-based Development."}, {"q": "A launch needs new code and 80 new pages, and the old pages must keep working. What order is safest?", "options": ["Change the content source at launch", "Push directly to main during publish", "Publish content first and code a week later", "Merge backward-compatible code, then publish the snapshot"], "answer": 3, "explain": "Compatible code first avoids broken pages.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="d5-cards"><script type="application/json">{"cards": [["Branch URL", "Every branch has one."], ["Trunk-based", "Small merges, often."], ["Staging CDN", "Only for complex CDN work."], ["website-prod", "Second repoless site."], ["Snapshot", "A branch for content."], [".aem.reviews", "Reviews a snapshot."], ["crontab", "Schedule sheet in .helix."], ["git revert", "Undo a merged change."], ["Backward-compatible", "Works with old and new."]]}</script></div>
+  <div data-component="flashcards" data-id="d5-cards"><script type="application/json">{"cards": [["Branch URL", "Every branch has one."], ["Trunk-based", "Small merges, often."], ["Staging CDN", "Only for complex CDN work."], ["website-prod", "Second repoless site."], ["Snapshot", "A branch for content."], [".aem.reviews", "Reviews a snapshot."], ["Scheduled Publishing", "Publishes snapshots or pages at a set time."], ["git revert", "Undo a merged change."], ["Backward-compatible", "Works with old and new."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -325,7 +325,8 @@ git push origin HEAD:revert-launch-banner
     <li><a href="https://www.aem.live/docs/staging" rel="noopener" target="_blank">aem.live: Staging and environments</a></li>
     <li><a href="https://www.aem.live/developer/repoless-environments" rel="noopener" target="_blank">aem.live: Repoless stage and prod</a></li>
     <li><a href="https://www.aem.live/docs/snapshots-reviews" rel="noopener" target="_blank">aem.live: Snapshots and reviews</a></li>
-    <li><a href="https://www.aem.live/docs/scheduling" rel="noopener" target="_blank">aem.live: Scheduling</a></li>
+    <li><a href="https://www.aem.live/developer/scheduling" rel="noopener" target="_blank">aem.live: Scheduled Publishing</a></li>
+    <li><a href="https://www.aem.live/docs/deprecation" rel="noopener" target="_blank">aem.live: Deprecations and removals</a></li>
     <li><a href="https://www.aem.live/docs/operations" rel="noopener" target="_blank">aem.live: Operations</a></li>
     <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development good practices</a></li>
   </ul>

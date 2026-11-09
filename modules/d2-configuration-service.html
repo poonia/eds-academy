@@ -96,7 +96,7 @@ curl -X POST https://admin.hlx.page/config/acme/sites/website/access/site.json \
   <h2>Legacy to config service</h2>
   <div data-part="why"><p>Older projects keep settings in files and sheets. Features such as repoless need the Configuration Service.</p></div>
   <div data-part="concept">
-    <p>Older projects use <code>fstab.yaml</code>, <code>.helix/config.xlsx</code>, <code>robots.txt</code>, <code>tools/sidekick/config.json</code>, <code>helix-query.yaml</code> and <code>helix-sitemap.yaml</code>. The service combines these for compatibility, but some features are unavailable in this document mode. aem.live does not recommend document-based configuration.</p>
+    <p>Older projects use <code>fstab.yaml</code>, <code>.helix/config.xlsx</code>, <code>robots.txt</code>, <code>tools/sidekick/config.json</code>, <code>helix-query.yaml</code> and <code>helix-sitemap.yaml</code>. The service combines these for compatibility, but some features are unavailable in this document mode. Adobe’s deprecations page lists file-based configuration as no longer supported, so move these sites.</p>
     <p>Once enabled, settings in the Configuration Service override the old files, so remove the files afterwards to avoid confusion.</p>
   </div>
   <div data-part="visual">
@@ -217,9 +217,9 @@ curl -X POST https://admin.hlx.page/config/acme/sites/website/access/site.json \
 <section class="mpart" id="lab" data-toc="Hands-on lab">
   <h2>Hands-on lab: add a security header through configuration</h2>
   <div class="lab-meta">
-    <div><h4>Goal</h4><p>Change one setting safely, and verify it.</p></div>
-    <div><h4>You need</h4><p>Admin access to a test site.</p></div>
-    <div><h4>Time</h4><p>About 45 minutes</p></div>
+    <div><h3>Goal</h3><p>Change one setting safely, and verify it.</p></div>
+    <div><h3>You need</h3><p>Admin access to a test site.</p></div>
+    <div><h3>Time</h3><p>About 45 minutes</p></div>
   </div>
   <ol class="lab-steps">
     <li><div><b>Read</b> the current site configuration, and save a copy.</div></li>
@@ -231,9 +231,9 @@ curl -X POST https://admin.hlx.page/config/acme/sites/website/access/site.json \
     <li><div><b>Delete</b> the key.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
-    <div><h4>Expected result</h4><p>A verified change and a clean rollback.</p></div>
-    <div><h4>How to verify</h4><p>The header appears, then is gone after restore.</p></div>
-    <div><h4>Stretch</h4><p>Move the header into a profile and attach it to a second site.</p></div>
+    <div><h3>Expected result</h3><p>A verified change and a clean rollback.</p></div>
+    <div><h3>How to verify</h3><p>The header appears, then is gone after restore.</p></div>
+    <div><h3>Stretch</h3><p>Move the header into a profile and attach it to a second site.</p></div>
   </div>
   <ul class="checklist" data-id="d2-lab">
     <li>Copy saved</li>
@@ -307,6 +307,7 @@ curl -X POST https://admin.hlx.page/config/acme/sites/website/access/site.json \
     <li><a href="https://www.aem.live/docs/repoless" rel="noopener" target="_blank">aem.live: Repoless</a></li>
     <li><a href="https://www.aem.live/docs/custom-headers" rel="noopener" target="_blank">aem.live: Custom headers</a></li>
     <li><a href="https://www.aem.live/docs/configuration" rel="noopener" target="_blank">aem.live: Document-based configuration</a></li>
+    <li><a href="https://www.aem.live/docs/deprecation" rel="noopener" target="_blank">aem.live: Deprecations and removals</a></li>
   </ul>
 </section>
 

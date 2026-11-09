@@ -15,7 +15,7 @@ Run mode: AGENT. This log is the resume point for later runs.
 | 5 | Category E: E1–E10 | Done (9 Nov 2026) |
 | 6 | Capstones 1–4, level exams 1–4, final exam | Done (9 Nov 2026) |
 | 7 | Path pages, full glossary page, cheat sheets page, resources page, search | Done (9 Nov 2026) |
-| 8 | Full QA pass and coverage report | Next: set `START AT: PHASE 8` |
+| 8 | Full QA pass and coverage report | Done (9 Nov 2026), see `COVERAGE-REPORT.md` |
 
 ## Accuracy note
 
@@ -175,17 +175,9 @@ taken from pages that could be opened:
 - 25 prerequisites sit outside the suggested path that uses them. The syllabus paths are unchanged; path pages flag these.
 - The primary navigation now has Paths and Reference. The component showcase moved under Reference.
 
-## Coverage matrix (built modules)
+## Coverage matrix
 
-| Module | Topic id | Page anchor |
-| --- | --- | --- |
-| A1 | origins-and-naming … feature-lifecycle | modules/a1-what-eds-is.html#<topic id> |
-| A2 | content-sources … caching-and-invalidation | modules/a2-core-architecture.html#<topic id> |
-| A3 | core-web-vitals … payload-budgets | modules/a3-web-performance.html#<topic id> |
-| A4 | document-based-authoring … repoless | modules/a4-authoring-options.html#<topic id> |
-
-`python3 tools/build-search-index.py` verifies that every syllabus topic of every built module
-has a matching section and that every JSON block parses (last run: pass, 320 index items).
+See `COVERAGE-REPORT.md`. `python3 tools/build-search-index.py` verifies that every syllabus topic has a matching section.
 
 ## QA (30 Oct 2026)
 
@@ -196,7 +188,13 @@ done → sidebar, header ring, home map and dashboard update; inline and full qu
 decision tree; hotspots; flashcards (flip, known); explain lines; search (/ and Esc);
 theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase visualizer.
 
+## Phase 8 notes (9 Nov 2026)
+
+- Adobe's deprecations page now lists `crontab` scheduling and folder mapping as deprecated, and file-based configuration
+  as no longer supported. B1, B8, D2, D3 and D5 were updated. Re-check https://www.aem.live/docs/deprecation at each content review.
+- Generated module pages are now edited directly: their original generator scripts were not kept in the repository.
+
 ## Next run
 
-Set `START AT: PHASE 8`. Run the full QA pass and write the coverage report,
-run `npm run check && npm test`, and update this log.
+All planned phases are complete. Remaining work is listed in `COVERAGE-REPORT.md`: real-project lab runs, assistive technology
+testing, cross-browser testing, learner calibration of exams, and the open Adobe confirmations.

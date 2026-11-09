@@ -311,9 +311,9 @@
 "x": "Used in B7, B9, D10"
 },
 {
-"t": "Scheduled publishing",
+"t": "Scheduled Publishing",
 "u": "https://www.aem.live/developer/scheduling",
-"x": "Used in B8"
+"x": "Used in B8, D5"
 },
 {
 "t": "Extending the Sidekick",
@@ -459,6 +459,11 @@
 "t": "Custom headers",
 "u": "https://www.aem.live/docs/custom-headers",
 "x": "Used in D2"
+},
+{
+"t": "Deprecations and removals",
+"u": "https://www.aem.live/docs/deprecation",
+"x": "Used in D2, D5"
 },
 {
 "t": "Development collaboration and good practices",
@@ -644,11 +649,6 @@
 "t": "Roles and permissions",
 "u": "https://www.aem.live/docs/roles-permissions",
 "x": "Used in D4"
-},
-{
-"t": "Scheduling",
-"u": "https://www.aem.live/docs/scheduling",
-"x": "Used in B8, D5"
 },
 {
 "t": "Security overview",

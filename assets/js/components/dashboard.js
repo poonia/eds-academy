@@ -12,7 +12,7 @@ export default function dashboard(el, ctx) {
       const p = moduleProgress(target);
       el.append(h('div', { class: 'card', style: 'display:grid;gap:10px' },
         h('div', { class: 'eyebrow' }, last ? 'Pick up where you left off' : 'Start your first module'),
-        h('h3', { style: 'font-size:21px' }, `${target.id} · ${target.name}`),
+        h('h2', { style: 'font-size:21px' }, `${target.id} · ${target.name}`),
         h('div', { class: 'meter', 'aria-hidden': 'true' }, h('span', { style: `width:${(p.done / p.total) * 100}%` })),
         h('span', { class: 'muted', style: 'font-size:14px' }, `${p.done} of ${p.total} topics done · about ${target.hours} hours`),
         h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap' }, h('a', { class: 'btn primary', href: href(target.page) }, p.done ? 'Continue' : 'Start module'), h('a', { class: 'btn', href: href('start-here.html') }, 'How the course works'))));

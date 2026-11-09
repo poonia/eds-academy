@@ -1,5 +1,5 @@
 {
- "asOf": "2026-10-30",
+ "asOf": "2026-11-09",
  "categories": [
   {
    "id": "A",
@@ -93,7 +93,8 @@
     }
    ],
    "signature": "EDS fit scorer and naming timeline",
-   "built": true
+   "built": true,
+   "asOf": "30 Oct 2026"
   },
   {
    "id": "A2",
@@ -152,7 +153,8 @@
     }
    ],
    "signature": "Click-through architecture explorer and publish sequence",
-   "built": true
+   "built": true,
+   "asOf": "30 Oct 2026"
   },
   {
    "id": "A3",
@@ -201,7 +203,8 @@
     }
    ],
    "signature": "Core Web Vitals simulator and loading-phase visualizer",
-   "built": true
+   "built": true,
+   "asOf": "30 Oct 2026"
   },
   {
    "id": "A4",
@@ -255,7 +258,8 @@
     }
    ],
    "signature": "Authoring option decision tree",
-   "built": true
+   "built": true,
+   "asOf": "30 Oct 2026"
   },
   {
    "id": "B1",
@@ -318,7 +322,7 @@
    ],
    "signature": "Document-to-HTML simulator",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "B2",
@@ -666,7 +670,7 @@
    ],
    "signature": "Pre-publish QA checker",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "B9",

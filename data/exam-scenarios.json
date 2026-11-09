@@ -11,7 +11,6 @@
   "Which defines the fields?": "In Universal Editor instrumentation, which file defines a component’s fields?",
   "What publishes assets to EDS?": "With AEM authoring, what publishes assets to Edge Delivery?",
   "What do reviewers open?": "In a preview review, what do reviewers open?",
-  "Times in crontab are in?": "Which time zone do times in the scheduling crontab sheet use?",
   "What does aem.live recommend first in a URL?": "For multi-language sites, what does aem.live recommend as the first URL segment?",
   "Which suits a simple contact form?": "Which forms authoring method suits a simple contact form?",
   "What license is needed?": "Which licence is needed for Edge Delivery Services for AEM Forms?",
@@ -30,7 +29,6 @@
   "Where does Target’s call happen?": "In which loading phase does Adobe Target’s call happen?",
   "Which code means a job was scheduled?": "Which Admin API status code means a job was scheduled?",
   "Which path protects preview only?": "Which Configuration Service path protects preview only?",
-  "How often does the scheduler run?": "How often does the crontab scheduler run?",
   "Which file holds your transformation rules?": "In the AEM Importer, which file holds your transformation rules?",
   "What is the usual sampling rate?": "What is the usual Operational Telemetry sampling rate?",
   "What does weight mean?": "In Operational Telemetry, what does weight mean?",
@@ -51,8 +49,7 @@
   "How should you prioritize sites?": "In a portfolio performance program, how should you prioritize sites?"
  },
  "explain": {
-  "Which framework does EDS require?": "EDS needs no framework. Any you add are your choice, and your cost.",
-  "Times in crontab are in?": "Convert local times to UTC."
+  "Which framework does EDS require?": "EDS needs no framework. Any you add are your choice, and your cost."
  },
  "exclude": [
   "Which step comes first?",
