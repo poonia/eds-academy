@@ -13,8 +13,15 @@ export default function quiz(el, { h, readJSON, store, uid }) {
   const kind = { check: 'Knowledge check', ready: 'Ready? Self-check', inline: 'Check yourself' }[variant] || 'Quiz';
   el.classList.add('ix');
   const scoreEl = h('span', { class: 'q-score', 'aria-live': 'polite' });
-  const head = h('div', { class: 'ix-head' }, h('div', {}, h('div', { class: 'ix-kind' }, kind), el.dataset.title ? h('h3', {}, el.dataset.title) : null), qs.length > 1 ? scoreEl : null);
-  el.append(head);
+  const heading = h('div', {}, h('div', { class: 'ix-kind' }, kind), el.dataset.title ? h('h3', {}, el.dataset.title) : null);
+  const score = qs.length > 1 ? scoreEl : null;
+  // The pre-module self-check is optional, so it starts collapsed on every page load.
+  const collapsible = variant === 'ready';
+  const root = collapsible ? h('details', { class: 'q-fold' }) : el;
+  root.append(collapsible
+    ? h('summary', { class: 'ix-head' }, heading, h('span', { class: 'q-fold-side' }, score, h('span', { class: 'q-fold-icon', 'aria-hidden': 'true' })))
+    : h('div', { class: 'ix-head' }, heading, score));
+  if (collapsible) el.append(root);
   const results = new Array(qs.length).fill(null);
   const paintScore = () => {
     const answered = results.filter((r) => r !== null).length;
@@ -67,7 +74,7 @@ export default function quiz(el, { h, readJSON, store, uid }) {
       box.append(btn);
     } else inputs.forEach((x) => x.input.addEventListener('change', check));
     box.append(fb);
-    el.append(box);
+    root.append(box);
   });
   const summary = h('div', { hidden: true, 'aria-live': 'polite' });
   const retry = h('button', { class: 'btn small', type: 'button' }, 'Retry');
@@ -80,7 +87,7 @@ export default function quiz(el, { h, readJSON, store, uid }) {
   });
   if (variant !== 'inline') {
     const prev = store.get('quizzes', id);
-    el.append(summary, h('div', { class: 'ix-foot' }, retry, prev ? h('span', { class: 'ix-note' }, `Last saved score: ${prev.score}/${prev.total}`) : null));
+    root.append(summary, h('div', { class: 'ix-foot' }, retry, prev ? h('span', { class: 'ix-note' }, `Last saved score: ${prev.score}/${prev.total}`) : null));
   }
   if (qs.length > 1) paintScore();
 }

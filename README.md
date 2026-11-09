@@ -106,7 +106,7 @@ All are driven by markup and inline JSON (`<script type="application/json">`). S
 
 | `data-component` | Purpose | Data |
 | --- | --- | --- |
-| `quiz` | Single, multiple and scenario questions with feedback; `data-variant` of check, ready or inline | `questions[]` with `q`, `options`, `answer` (index or array), `explain`, `scenario` |
+| `quiz` | Single, multiple and scenario questions with feedback; `data-variant` of check, ready (collapsed on load) or inline | `questions[]` with `q`, `options`, `answer` (index or array), `explain`, `scenario` |
 | `flashcards` | Flip cards, shuffle, mark known | `cards[]` as `[term, definition]` |
 | `stepper` | Next/Back through `.step` children | Child elements with `data-label` |
 | `hotspots` | Tour of a mockup | Elements with `data-hotspot` and `data-text` |

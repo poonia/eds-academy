@@ -311,6 +311,22 @@ test('search finds a term in the glossary and external resources', async ({ page
   await expect(page.locator('.sd-foot')).toContainText('No results');
 });
 
+test('the ready self-check starts collapsed and opens on demand', async ({ page }) => {
+  await page.goto('modules/c4-building-blocks.html');
+  await page.waitForSelector('html[data-ready="true"]');
+  const fold = page.locator('[data-variant="ready"] details.q-fold');
+  await expect(fold).not.toHaveAttribute('open', '');
+  await expect(fold.locator('.q').first()).toBeHidden();
+  await fold.locator('summary').focus();
+  await page.keyboard.press('Enter');
+  await expect(fold.locator('.q').first()).toBeVisible();
+  await fold.locator('.q-opt').first().click();
+  await expect(fold.locator('.q-score')).toContainText('2 to go');
+  await page.reload();
+  await page.waitForSelector('html[data-ready="true"]');
+  await expect(fold).not.toHaveAttribute('open', '');
+});
+
 test('primary navigation reaches the reference section', async ({ page }) => {
   await open(page, 'index.html');
   await page.locator('.primary-nav').getByRole('link', { name: 'Reference' }).click();

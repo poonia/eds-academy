@@ -313,6 +313,12 @@ details.describe > div, details.describe > p { margin-top: 8px; color: var(--ink
 .ix { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin: 0 0 1.2em; }
 .ix-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; margin-bottom: 14px; }
 .ix-head h3, .ix-head h4 { font-size: 17px; }
+.q-fold > summary { cursor: pointer; list-style: none; margin-bottom: 0; align-items: center; }
+.q-fold > summary::-webkit-details-marker { display: none; }
+.q-fold[open] > summary { margin-bottom: 14px; }
+.q-fold-side { display: inline-flex; align-items: center; gap: 12px; margin-left: auto; }
+.q-fold-icon { width: 9px; height: 9px; margin: 0 4px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateY(-2px) rotate(45deg); }
+.q-fold[open] .q-fold-icon { transform: translateY(2px) rotate(-135deg); }
 .ix-kind { font: 600 11px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .ix-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
 .ix-note { font-size: 13.5px; color: var(--muted); }
