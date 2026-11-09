@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D3 Domains, CDN and go-live · EDS Academy</title>
+<meta name="description" content="Module D3: Adobe-managed and BYO CDN, push invalidation, DNS and SSL, edge redirects, and the go-live checklist.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d3-cdn-go-live.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D3 Domains, CDN and go-live · EDS Academy">
+<meta property="og:description" content="Module D3: Adobe-managed and BYO CDN, push invalidation, DNS and SSL, edge redirects, and the go-live checklist.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d3-cdn-go-live.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D3">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Choose and configure a production CDN.</li>
+    <li>Set up push invalidation.</li>
+    <li>Prepare DNS and certificates for apex and www.</li>
+    <li>Decide where each redirect belongs.</li>
+    <li>Run a controlled go-live.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d3-ready" data-title="Ready for domains, CDN and go-live?">
+    <script type="application/json">{"questions": [{"q": "Which tier is your CDN origin?", "options": ["localhost", "aem.live", "aem.page"], "answer": 1, "explain": "Covered in A2."}, {"q": "Where do you set a site’s CDN properties?", "options": ["A page metadata block", "Configuration Service", "Block CSS"], "answer": 1, "explain": "Covered in D2."}, {"q": "Which credential does a CDN send to a protected origin?", "options": ["Sign-in token", "Site token", "A password"], "answer": 1, "explain": "Covered in D2."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="adobe-managed-cdn" data-level="2">
+  <h2>Adobe-managed CDN</h2>
+  <div data-part="why"><p>Your licence includes a CDN. Knowing what it does and does not cover helps you decide whether to use it.</p></div>
+  <div data-part="concept">
+    <p>The Adobe-managed CDN is part of the Edge Delivery Services entitlement. You must own the domain and be able to change its DNS. You can bring a certificate, or ask Adobe for one from Let’s Encrypt. HTTPS is required and IPv6 is not supported.</p>
+    <p>You install certificates and domains in Cloud Manager, for both <code>www</code> and the apex. A CDN configuration then maps the domain to your site. Production must use the <code>main</code> branch origin, and push invalidation must be set up in the site configuration.</p>
+    <p>Advanced rules go in a <code>cdn.yaml</code> file deployed by a configuration pipeline. They can change headers, filter traffic, redirect, select origins and authenticate. Always guard rules with a domain condition.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    V["Visitor"] --&gt; F["Adobe-managed CDN"]
+    F --&gt;|"main--site--org.aem.live"| E["Edge Delivery"]
+    C["Cloud Manager: domain, certificate, mapping"] -.-&gt; F
+    Y["cdn.yaml through pipeline"] -.-&gt; F</pre>
+      <figcaption><b>What to notice:</b> Cloud Manager and the pipeline configure the CDN. They are not in the request path.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visitor reaches the Adobe-managed CDN, which fetches from main--site--org.aem.live. Cloud Manager and a cdn.yaml pipeline configure the CDN out of band.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="config/cdn.yaml" data-lang="yaml">
+      <textarea class="src" hidden>kind: "CDN"
+version: "1"
+data:
+  responseTransformations:
+    rules:
+      - name: set-response-header
+        when:
+          allOf:
+            - { reqProperty: domain, equals: "www.example.com" }
+            - { reqProperty: path, like: "/private/*" }
+        actions:
+          - type: set
+            respHeader: x-test
+            value: private</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d3-t1"><script type="application/json">{"questions": [{"q": "Which branch must a production Adobe-managed CDN mapping use?", "options": ["stage", "Whichever is newest", "main"], "answer": 2, "explain": "It allows caching and push invalidation."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Certificate fails for apex</td><td>Only www was requested</td><td>Install it for both names.</td></tr>
+      <tr><td>A rule affects another site</td><td>No domain guard</td><td>Add a domain condition.</td></tr>
+      <tr><td>IPv6 expected</td><td>Not supported</td><td>Plan for IPv4.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="byo-cdn" data-level="3">
+  <h2>BYO CDN</h2>
+  <div data-part="why"><p>Security teams often require control of the WAF, the domain and the certificates. A BYO CDN gives them that, along with the responsibility.</p></div>
+  <div data-part="concept">
+    <p>You can use Fastly, Akamai, Cloudflare, CloudFront or the Adobe-managed CDN. Adobe’s guide warns that CloudFront and Cloudflare’s free plan lack the fine-grained purging that busy, large sites need.</p>
+    <p>Whichever you pick, the origin is <code>https://main--&lt;site&gt;--&lt;org&gt;.aem.live</code>. Adobe sets out mandatory or recommended settings: forward <code>X-Forwarded-Host</code>, send <code>X-Push-Invalidation: enabled</code>, respect origin cache control, compress, forward query parameters and include them in the cache key, and suppress <code>Age</code> or set it to 0.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>CDN</th><th>Adobe’s guidance</th></tr></thead>
+    <tbody>
+      <tr><td>Adobe-managed (Fastly)</td><td>Included in the licence</td></tr>
+      <tr><td>Akamai</td><td>Push invalidation; can combine backends, which helps migrations</td></tr>
+      <tr><td>Cloudflare Enterprise</td><td>Fine-grained purging, Workers, multiple backends</td></tr>
+      <tr><td>Cloudflare Free</td><td>Smaller sites only: no key-based purging</td></tr>
+      <tr><td>Fastly (self-managed)</td><td>Fine-grained push invalidation, VCL</td></tr>
+      <tr><td>CloudFront</td><td>Lacks fine-grained purges, unsuitable for frequent large updates</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout warning" data-label="CDN-injected code"><p>Test bot detection or other scripts injected by the CDN. They are a common cause of a site losing its Lighthouse score only after launch.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d3-t2"><script type="application/json">{"questions": [{"q": "Which header tells the origin your production domain?", "options": ["X-Robots-Tag", "Age", "X-Forwarded-Host"], "answer": 2, "explain": "See BYO CDN Setup."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Cached pages ignore tracking parameters incorrectly</td><td>Query not in cache key</td><td>Include query parameters.</td></tr>
+      <tr><td>Pages expire too soon in browsers</td><td><code>Age</code> passed through</td><td>Suppress it or set 0.</td></tr>
+      <tr><td>Score drops after launch</td><td>HTTP/1.1 or injected scripts</td><td>Check protocol and CDN features.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="push-invalidation" data-level="3">
+  <h2>Push invalidation</h2>
+  <div data-part="why"><p>Authors expect a publish to show on the real domain quickly. Push invalidation allows long caching and fast updates together.</p></div>
+  <div data-part="concept">
+    <p>When content or code changes on an origin with <code>main</code> in its host name, AEM purges the production CDN by URL and by cache tag or key. It takes two steps: the vendor properties in the site’s <code>cdn.prod</code> configuration, and the <code>X-Push-Invalidation: enabled</code> request header.</p>
+    <p>Other origins do not trigger it by default. A production-like CDN on another branch can set <code>cdn.prod.branch</code>, limited to <code>dev</code>, <code>develop</code>, <code>stg</code>, <code>stage</code>, <code>uat</code> and <code>qa</code>.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+    participant A as Author
+    participant E as Edge Delivery
+    participant C as Production CDN
+    participant V as Visitor
+    A-&gt;&gt;E: Publish page
+    E-&gt;&gt;C: Purge by URL and key
+    V-&gt;&gt;C: Request page
+    C-&gt;&gt;E: Miss, fetch new page
+    C--&gt;&gt;V: New content</pre>
+      <figcaption><b>What to notice:</b> the purge comes from AEM after a publish, so the CDN can cache for a long time.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An author publishes. Edge Delivery purges the production CDN by URL and key. The next visitor request misses, fetches from Edge Delivery and receives new content.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Site CDN configuration, Fastly example" data-lang="bash">
+      <textarea class="src" hidden>curl -X POST https://admin.hlx.page/config/acme/sites/website/cdn/prod.json \
+  -H 'content-type: application/json' \
+  -H "x-auth-token: $AEM_TOKEN" \
+  --data '{ "host": "www.acme.com", "type": "fastly",
+            "serviceId": "$SERVICE_ID", "authToken": "$FASTLY_TOKEN" }'</textarea>
+      <figcaption><b>Note:</b> properties differ for each CDN vendor. See the vendor page.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d3-t3"><script type="application/json">{"questions": [{"q": "You publish a page but the production domain stays old, while aem.live is new. What should you check first?", "options": ["The GitHub branch name of a feature", "Push invalidation configuration and header", "The block CSS"], "answer": 1, "explain": "aem.live shows the origin is fine."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Old page on production</td><td>Push invalidation incomplete</td><td>Check both configuration and header.</td></tr>
+      <tr><td>Short cache lifetime</td><td>Opt-in header missing</td><td>Send <code>X-Push-Invalidation</code>.</td></tr>
+      <tr><td>Staging CDN not purged</td><td>Non-main origin</td><td>Set an allowed <code>cdn.prod.branch</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="dns-ssl-apex-domains" data-level="3">
+  <h2>DNS, SSL, apex domains</h2>
+  <div data-part="why"><p>DNS mistakes are the most visible kind of launch failure, and they can take time to clear.</p></div>
+  <div data-part="concept">
+    <p>With the Adobe-managed CDN, point the <code>www</code> CNAME to <code>cdn.adobeaemcloud.com</code>, and the apex A records to the IP addresses Adobe lists. An apex name generally cannot be a CNAME, which is why it needs A records.</p>
+    <p>The redirect from apex to <code>www</code> depends on the deployment. An Edge environment gets it automatically. With a proxy from AEMaaCS you define the redirect rule yourself.</p>
+    <p>Every CDN should permanently redirect HTTP to HTTPS, keeping the host, path and query string. It is not on by default everywhere. Lower your DNS TTL ahead of a cutover so that you can reverse it quickly.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Record</th><th>Name</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>CNAME</td><td><code>www</code></td><td><code>cdn.adobeaemcloud.com</code></td></tr>
+      <tr><td>A</td><td>apex</td><td>IP addresses listed on Adobe’s page</td></tr>
+      <tr><td>TLS</td><td>both names</td><td>Your certificate or Let’s Encrypt through Adobe</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Verify the HTTPS redirect" data-lang="bash">
+      <textarea class="src" hidden>curl -sI "http://www.acme.com/some/path?x=1"
+# Expect: 301 Moved Permanently
+# Location: https://www.acme.com/some/path?x=1</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d3-t4"><script type="application/json">{"questions": [{"q": "Why are A records used for the apex with an Adobe-managed CDN?", "options": ["CNAMEs are insecure", "Apex names generally cannot be CNAMEs", "They are faster"], "answer": 1, "explain": "That rule is part of DNS itself."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>HTTP still loads</td><td>No redirect on the CDN</td><td>Add a permanent HTTPS redirect.</td></tr>
+      <tr><td>Apex does not resolve</td><td>Records missing</td><td>Add A records from Adobe’s list.</td></tr>
+      <tr><td>Slow rollback</td><td>Long DNS TTL</td><td>Lower TTL before the cutover.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="edge-redirects" data-level="3">
+  <h2>Edge redirects</h2>
+  <div data-part="why"><p>Most redirects belong with authors in a sheet. A few have to run at the edge, and those need care.</p></div>
+  <div data-part="concept">
+    <p>The <code>redirects</code> sheet handles exact paths and is reviewed like content. A site can hold up to 100,000. Redirects take precedence over existing pages, and if a workbook has several sheets, only <code>helix-default</code> is used.</p>
+    <p>Wildcards are <b>not supported</b> in the sheet. Adobe generally advises against them because they accumulate complexity, can cause loops, and tend to send visitors to 404s. Where you do need one, configure it on the CDN.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td>Page moved</td><td>Redirects sheet</td></tr>
+      <tr><td>Apex to www</td><td>CDN or deployment setting</td></tr>
+      <tr><td>HTTP to HTTPS</td><td>CDN</td></tr>
+      <tr><td>A whole retired section</td><td>CDN rule, tested against real URLs</td></tr>
+      <tr><td>Thousands of old URLs</td><td>Sheet, built from usage data</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Adobe-managed CDN redirect" data-lang="yaml">
+      <textarea class="src" hidden>kind: "CDN"
+version: "1"
+data:
+  redirects:
+    rules:
+      - name: apex-to-www
+        when: { reqProperty: domain, equals: "example.com" }
+        action:
+          type: redirect
+          status: 301
+          location:
+            reqProperty: url
+            transform:
+              - { op: replace, match: "^(.*)$", replacement: "https://www.example.com\1" }</textarea>
+      <figcaption><b>Note:</b> your pipeline deploys this rule. Test it on a staging hostname first.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d3-t5"><script type="application/json">{"questions": [{"q": "A team wants /old/* to go to /new/* in the redirects sheet. What is the problem?", "options": ["The sheet does not support wildcards", "The sheet is limited to 10 rows", "Sheets cannot redirect"], "answer": 0, "explain": "Use usage-based entries or a tested CDN rule."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Page is hidden</td><td>Redirect takes precedence</td><td>Remove the redirect.</td></tr>
+      <tr><td>Only some rows work</td><td>Workbook has other sheets</td><td>Use <code>helix-default</code>.</td></tr>
+      <tr><td>Redirects land on 404s</td><td>Broad wildcard</td><td>Use exact redirects.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="go-live-checklist" data-level="3">
+  <h2>Go-live checklist</h2>
+  <div data-part="why"><p>A go-live is a coordinated change across many teams. A checklist keeps the small items from being skipped.</p></div>
+  <div data-part="concept">
+    <p>Before launch, finish content, design, accessibility and performance checks on <code>.aem.live</code>. After sign-off, avoid late code or content location changes. Validate analytics, and warn analysts that baselines may move. Add Operational Telemetry to the old site early, for a before-and-after comparison.</p>
+    <p>You can notify Adobe at <code>aemgolives@adobe.com</code> with the URLs, domain, date and time, primary contact and channel, so that engineering can watch the launch.</p>
+    <p>After launch, re-check Lighthouse on production, monitor Search Console for weeks, confirm martech tags, and redirect popular 404s.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    Q["QA on aem.live"] --&gt; A["Analytics and OpTel"]
+    A --&gt; R["Redirects, sitemap, robots"]
+    R --&gt; S["CDN tested on stage"]
+    S --&gt; N["Tell Adobe"]
+    N --&gt; G["Switch DNS"]
+    G --&gt; V["Validate and monitor"]</pre>
+      <figcaption><b>What to notice:</b> the DNS switch is near the end, and monitoring continues afterwards.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>QA leads to analytics, then redirects and sitemap, a tested CDN, notifying Adobe, switching DNS and validating.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>After launch</th><th>Check</th></tr></thead>
+    <tbody>
+      <tr><td>Performance</td><td>Lighthouse on the production domain</td></tr>
+      <tr><td>Search</td><td>Search Console coverage and crawl errors</td></tr>
+      <tr><td>Martech</td><td>Tags still fire on the production host</td></tr>
+      <tr><td>404s</td><td>Top missing URLs redirected</td></tr>
+      <tr><td>Purge</td><td>Publish a small change and see it</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d3-t6"><script type="application/json">{"questions": [{"q": "Which metric should stay flat after a like-for-like launch?", "options": ["Analytics page views", "Analytics bounce rate", "Transactions recorded in operational systems"], "answer": 2, "explain": "Analytics baselines may move. Operational systems are not affected."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Analytics numbers jump</td><td>Loading order changed</td><td>Explain the new baseline ahead of time.</td></tr>
+      <tr><td>Pages not indexed</td><td>Robots or canonical errors</td><td>Check Search Console.</td></tr>
+      <tr><td>Last-minute breakage</td><td>Late location change</td><td>Freeze those settings after QA.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: CDN request simulator and go-live checklist</h2>
+  <p>Turn settings on, and follow the request. The trace is illustrative. Then use the checklist for your launch.</p>
+  <div data-component="cdn-sim" data-title="CDN request simulator"><script type="application/json">{}</script></div><h3>Go-live checklist</h3><ul class="checklist" data-id="d3-golive"><li>Content, design and accessibility QA done on aem.live</li><li>Lighthouse 100 on mobile and desktop</li><li>Analytics validated, and analysts warned about baselines</li><li>Operational Telemetry active before launch</li><li>Redirects loaded and tested on preview</li><li>Sitemap and robots.txt confirmed</li><li>Canonical URLs return 2xx</li><li>Favicon added</li><li>Author authentication configured</li><li>CDN tested on a staging hostname</li><li>HTTP redirects to HTTPS, on apex and www</li><li>Push invalidation tested with a small publish</li><li>Adobe notified, with named contact</li><li>After launch: Lighthouse on production</li><li>After launch: Search Console and top 404s reviewed</li></ul>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: rehearse a cutover on a staging host</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Prove your CDN settings before real traffic arrives.</p></div>
+    <div><h4>You need</h4><p>A test domain and access to a CDN.</p></div>
+    <div><h4>Time</h4><p>About 2 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Create</b> a staging hostname that follows your production pattern.</div></li>
+    <li><div><b>Set the origin</b> to the main aem.live host.</div></li>
+    <li><div><b>Add</b> the required headers and settings.</div></li>
+    <li><div><b>Check</b> a page with <code>curl -I</code>.</div></li>
+    <li><div><b>Configure</b> push invalidation for the staging CDN.</div></li>
+    <li><div><b>Publish</b> a small change and time it.</div></li>
+    <li><div><b>Test</b> HTTP to HTTPS, and apex to www.</div></li>
+    <li><div><b>Write down</b> the steps and how to reverse them.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A tested runbook for go-live.</p></div>
+    <div><h4>How to verify</h4><p>A small publish appears on the staging host, and each curl check returns the expected status.</p></div>
+    <div><h4>Stretch</h4><p>Rehearse the rollback too.</p></div>
+  </div>
+  <ul class="checklist" data-id="d3-lab">
+    <li>Origin is main</li>
+    <li>Headers verified</li>
+    <li>Purge timed</li>
+    <li>Rollback written</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Old content on production</td><td>Purge is not working</td><td>Check <code>cdn.prod</code> and the opt-in header.</td></tr>
+      <tr><td>Redirect loop</td><td>Apex and www rules disagree</td><td>Pick one direction.</td></tr>
+      <tr><td>Certificate error</td><td>Name is missing</td><td>Include both apex and www.</td></tr>
+      <tr><td>Score lower than aem.live</td><td>CDN features or protocol</td><td>Check HTTP version and injected scripts.</td></tr>
+      <tr><td>Crawled preview URLs</td><td>Unlikely by default: aem.live blocks crawlers</td><td>Check for links exposing them.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Run a go/no-go meeting</b> with named owners for DNS, CDN, content, analytics and rollback.</p></aside>
+    <aside class="callout warning" data-label="SLO is not SLA"><p>Adobe’s Service Level Objectives are 99.99% for delivery and 99.9% for publishing. Your SLA is in your contract, so confirm it there.</p></aside>
+    <aside class="callout accessibility"><p>Re-test error pages and cookie banners on production. CDN and consent layers can change them.</p></aside>
+    <aside class="callout performance"><p>Confirm HTTP/2 and effective caching on the production host.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>CDN choice</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>DNS cutover</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Redirect list</td><td>Accountable</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Go/no-go</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d3-check"><script type="application/json">{"questions": [{"q": "Which is required on a BYO CDN? Choose all that apply.", "options": ["Forward query parameters", "Remove all compression", "Include query parameters in the cache key"], "answer": [0, 2], "explain": "See BYO CDN Setup."}, {"q": "What must happen to the Age header?", "options": ["Double it", "Suppress it or set it to 0", "Pass it through unchanged"], "answer": 1, "explain": "See BYO CDN Setup."}, {"q": "Which CDN plan has no key-based purging?", "options": ["Cloudflare Enterprise", "Akamai", "Cloudflare Free"], "answer": 2, "explain": "Some updates purge the whole site."}, {"q": "What does X-Push-Invalidation: enabled allow?", "options": ["Image resizing", "Author sign-in", "Long cache TTLs"], "answer": 2, "explain": "It is the opt-in header."}, {"q": "Which address receives the CNAME for www with the Adobe-managed CDN?", "options": ["cdn.adobeaemcloud.com", "www.aem.live", "admin.hlx.page"], "answer": 0, "explain": "See Adobe Managed CDN."}, {"q": "Where does a redirects sheet live?", "options": ["In a block folder", "In the root of the content folder", "In GitHub issues"], "answer": 1, "explain": "See Redirects."}, {"q": "How many redirects does a site support?", "options": ["Up to 100,000", "Up to 100", "Unlimited, by contract only"], "answer": 0, "explain": "See Large Sites."}, {"q": "It is 30 minutes before launch. A developer wants to change the site’s code location. What do you do?", "options": ["Stop the change and keep the configuration frozen", "Allow it, and test after launch", "Change content location too", "Purge the CDN and hope"], "answer": 0, "explain": "Adobe advises against last-minute location changes.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d3-cards"><script type="application/json">{"cards": [["Push invalidation", "AEM purges your CDN on change."], ["X-Forwarded-Host", "Tells the origin your domain."], ["X-Push-Invalidation", "Opt-in for long TTLs."], ["cdn.adobeaemcloud.com", "CNAME target."], ["cdn.yaml", "Adobe-managed CDN rules."], ["helix-default", "The sheet redirects read."], ["main--", "Prefix for production origins."], ["Cache tag", "Purges related items."], ["aemgolives@adobe.com", "Go-live notice address."], ["SLO", "An objective, not a contract."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D3 · Domains, CDN and go-live</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Origin</h4><ul><li>main--site--org.aem.live</li><li>Never aem.page</li><li>Origin cache control</li></ul></div>
+      <div><h4>Headers</h4><ul><li>X-Forwarded-Host</li><li>X-Push-Invalidation</li><li>Age: 0</li></ul></div>
+      <div><h4>Domains</h4><ul><li>Certs for both</li><li>CNAME for www</li><li>A for apex</li></ul></div>
+      <div><h4>Redirects</h4><ul><li>Sheet first</li><li>No sheet wildcards</li><li>HTTP to HTTPS</li></ul></div>
+      <div><h4>Launch</h4><ul><li>Freeze locations</li><li>Tell Adobe</li><li>Monitor for weeks</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/cdn-guide" rel="noopener" target="_blank">aem.live: Picking the right CDN</a></li>
+    <li><a href="https://www.aem.live/docs/byo-cdn-setup" rel="noopener" target="_blank">aem.live: BYO CDN setup</a></li>
+    <li><a href="https://www.aem.live/docs/byo-cdn-adobe-managed" rel="noopener" target="_blank">aem.live: Adobe Managed CDN</a></li>
+    <li><a href="https://www.aem.live/docs/setup-byo-cdn-push-invalidation" rel="noopener" target="_blank">aem.live: Push invalidation</a></li>
+    <li><a href="https://www.aem.live/docs/redirects" rel="noopener" target="_blank">aem.live: Redirects</a></li>
+    <li><a href="https://www.aem.live/docs/go-live-checklist" rel="noopener" target="_blank">aem.live: Go-live checklist</a></li>
+    <li><a href="https://www.aem.live/docs/slo" rel="noopener" target="_blank">aem.live: Service Level Objectives</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

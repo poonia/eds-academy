@@ -4,7 +4,7 @@ A self-paced, interactive course on Adobe Edge Delivery Services (EDS), covering
 development and implementation from beginner (L1) to expert (L4). It is a static site with
 no build step: plain HTML, CSS and ES modules, which mirrors how EDS projects are built.
 
-Category A content is as of **30 October 2026** and Categories B and C as of **8 November 2026**. Build status and open items are listed in `project/BUILD-LOG.md`.
+Category A content is as of **30 October 2026** Categories B and C as of **8 November 2026**, and Category D as of **9 November 2026**. Build status and open items are listed in `project/BUILD-LOG.md`.
 
 ## Open it locally
 
@@ -129,6 +129,14 @@ All are driven by markup and inline JSON (`<script type="application/json">`). S
 | `query-playground` | Filter, sort and limit a sample index | `data[]` |
 | `a11y-fixit` | Apply accessibility fixes to a snippet | `code`, `issues[]` |
 | `admin-request` | Compose an Admin API curl command | none |
+| `config-explorer` | Profile and site values, and which one wins | `rows[]` with `key`, `profile`, `site`, `risky` |
+| `cdn-sim` | Production CDN settings and a request trace | none |
+| `csp-builder` | Content Security Policy options and which scripts run | none |
+| `redirect-validator` | Find loops, chains and 404 targets in a redirects sheet | `csv`, `pages[]` |
+| `rum-dashboard` | Mock telemetry with filters, sampling margin and an alert | `weight`, `rows[]`, `notFound[]` |
+| `robots-builder` | robots.txt, sitemap configuration and a crawl test | none |
+| `raci-matrix` | Assign RACI letters and check for one owner | `roles[]`, `rows[]` |
+| `routing-sim` | Brand domains and first-match CDN routing | `origins{}`, `rules[]`, `brands[]`, `repo`, `path` |
 | `course-map`, `dashboard`, `progress-panel` | Home page widgets | Read the syllabus and progress |
 
 Other enhancements: `figure.code` (highlighting, file label, `data-lines` highlights, copy,

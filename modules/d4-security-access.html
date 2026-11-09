@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D4 Security and access · EDS Academy</title>
+<meta name="description" content="Module D4: site authentication, roles, Content Security Policy, Sidekick sign-in, and secrets on Edge Delivery Services.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d4-security-access.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D4 Security and access · EDS Academy">
+<meta property="og:description" content="Module D4: site authentication, roles, Content Security Policy, Sidekick sign-in, and secrets on Edge Delivery Services.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d4-security-access.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D4">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Protect a site without locking out the CDN.</li>
+    <li>Assign least-privilege roles.</li>
+    <li>Plan a nonce-based CSP.</li>
+    <li>Explain how authors sign in.</li>
+    <li>Keep secrets out of client code.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d4-ready" data-title="Ready for security and access?">
+    <script type="application/json">{"questions": [{"q": "What should a CDN use to access a protected origin?", "options": ["A cookie", "An author’s login", "A site token"], "answer": 2, "explain": "Covered in D2."}, {"q": "Where are headers configured?", "options": ["In the Media Bus", "Configuration Service", "In a Word document"], "answer": 1, "explain": "Covered in D2."}, {"q": "Can public configuration hold a secret?", "options": ["Yes", "No", "Only if short"], "answer": 1, "explain": "Covered in D2."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="site-authentication" data-level="3">
+  <h2>Site authentication</h2>
+  <div data-part="why"><p>Intranets and pre-launch sites must be closed, but a badly planned lock can also shut out your own CDN.</p></div>
+  <div data-part="concept">
+    <p>Site authentication protects <code>aem.page</code>, <code>aem.live</code>, or both, with <b>site tokens</b>. Create a secret, then list its ID under <code>access/site</code>, <code>access/preview</code> or <code>access/live</code>. If <code>preview</code> or <code>live</code> is set, it overrides <code>site</code>.</p>
+    <p>Limits matter: it provides <b>authentication only</b>, not authorization. It applies to the whole site, and you cannot customize the denied page. For access rules on particular pages, aem.live documents <b>Closed User Groups</b>, which are enforced by a CDN such as Cloudflare or Akamai.</p>
+    <p>Once the origin is protected, your CDN must send <code>Authorization: token …</code> on each origin request, or every visitor sees an error. Protection also stops the automatic PageSpeed checks on pull requests, unless Adobe enables a feature flag.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    V["Visitor"] --&gt; C["CDN"]
+    C --&gt;|"Authorization: token"| O["Protected aem.live"]
+    B["Browser with Sidekick and a role"] --&gt; O
+    X["No token"] -.401.-&gt; O</pre>
+      <figcaption><b>What to notice:</b> without a token the origin answers 401, including to your own CDN.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visitor goes through the CDN, which sends a site token to the protected origin. A browser with Sidekick and a role can also reach it. A request with no token gets 401.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Protect preview only" data-lang="bash">
+      <textarea class="src" hidden>curl -X POST https://admin.hlx.page/config/acme/sites/website/secrets.json \
+  -H "x-auth-token: $AEM_TOKEN"
+
+curl -X POST https://admin.hlx.page/config/acme/sites/website/access/preview.json \
+  -H 'content-type: application/json' \
+  -H "x-auth-token: $AEM_TOKEN" \
+  --data '{ "allow": ["*@acme.com"], "secretId": ["SECRET_ID"] }'</textarea>
+      <figcaption><b>Note:</b> the POST overwrites the object. Include existing values.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d4-t1"><script type="application/json">{"questions": [{"q": "You need only /members to be private. Is site authentication enough?", "options": ["No, it applies to the whole site", "Yes, it works per path", "Yes, with a robots rule"], "answer": 0, "explain": "Consider Closed User Groups at the CDN."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Whole site shows 401 after enabling</td><td>CDN sends no token</td><td>Add the Authorization header at the CDN.</td></tr>
+      <tr><td>PR check stops running</td><td>Site is protected</td><td>Ask Adobe about the feature flag.</td></tr>
+      <tr><td>Everyone signed in sees everything</td><td>No authorization</td><td>Use CUG or your own controls.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="roles-and-permissions" data-level="3">
+  <h2>Roles and permissions</h2>
+  <div data-part="why"><p>Publishing rights are a control. Most audit findings start with “everyone is an admin.”</p></div>
+  <div data-part="concept">
+    <p>Roles map under <code>access.admin.role</code>, using exact emails or wildcards such as <code>*@acme.com</code>. Built-in roles are <code>admin</code>, <code>author</code>, <code>publish</code>, <code>develop</code>, <code>config</code>, <code>config_admin</code> and <code>view</code>.</p>
+    <p>The <code>requireAuth</code> value controls enforcement. <code>auto</code>, the default, enforces sign-in as soon as a role mapping exists. <code>true</code> always enforces it. <code>false</code> does not. A <code>defaultRole</code> applies when no mapping matches.</p>
+    <p>Grant the smallest role that fits, and check the published permissions table. At the time of writing, that table lists <code>config:write</code> under <code>publish</code>, so a publisher may be able to change configuration.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Role</th><th>Preview</th><th>Publish</th><th>Change config</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>view</td><td>Read only</td><td>No</td><td>No</td><td>Read and list</td></tr>
+      <tr><td>author</td><td>Yes</td><td>No</td><td>No</td><td>Can purge cache</td></tr>
+      <tr><td>develop</td><td>Yes</td><td>No</td><td>No</td><td>Can force-delete code</td></tr>
+      <tr><td>publish</td><td>Yes</td><td>Yes</td><td>Listed</td><td>Check before granting widely</td></tr>
+      <tr><td>config</td><td>No</td><td>No</td><td>No</td><td>Reads redacted config only</td></tr>
+      <tr><td>config_admin</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Used for technical accounts</td></tr>
+      <tr><td>admin</td><td>Yes</td><td>Yes</td><td>Yes</td><td>All permissions</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Map authors and one publisher" data-lang="bash">
+      <textarea class="src" hidden>curl -X POST https://admin.hlx.page/config/acme/sites/website/access/admin.json \
+  -H 'content-type: application/json' \
+  -H "x-auth-token: $AEM_TOKEN" \
+  --data '{ "role": {
+    "author": ["*@acme.com"],
+    "publish": ["publisher@acme.com"]
+  } }'</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d4-t2"><script type="application/json">{"questions": [{"q": "Which requireAuth value enforces sign-in once a role mapping exists?", "options": ["auto", "manual", "never"], "answer": 0, "explain": "auto is the default."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Everybody can publish</td><td>A wildcard on <code>publish</code></td><td>Name the publishers.</td></tr>
+      <tr><td>Unexpected logins required</td><td><code>requireAuth</code> auto</td><td>Set it deliberately.</td></tr>
+      <tr><td>Technical account fails to publish</td><td>Not in configuration</td><td>Add it with the right role.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="content-security-policy" data-level="3">
+  <h2>Content Security Policy</h2>
+  <div data-part="why"><p>A CSP is the last line of defence when an injection slips through. Done badly, it also blocks your own site.</p></div>
+  <div data-part="concept">
+    <p>aem.live recommends <code>script-src 'nonce-aem' 'strict-dynamic'; base-uri 'self'; object-src 'none';</code>. AEM replaces <code>aem</code> with a random value whenever it renders HTML. The value then stays the same while that page is cached. Scripts in your repository’s HTML need <code>nonce="aem"</code>.</p>
+    <p>New boilerplate sites include it in <code>head.html</code> as a meta tag with <code>move-to-http-header="true"</code>. The current boilerplate adds more, including <code>'unsafe-inline' http: https:</code>, a <code>frame-src</code> and <code>require-trusted-types-for 'script'</code>. Compare your copy with the guide, and test before you change it.</p>
+    <p>For a site already in production, try the meta option in a feature branch, test thoroughly, move it to main, then move to a response header. <code>content-security-policy-report-only</code> offers no protection, and is only for testing.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    N["script with nonce"] --&gt; R["Runs"]
+    N --&gt; D["Scripts it loads"]
+    D --&gt; R
+    I["Injected script, no nonce"] --&gt; B["Blocked"]</pre>
+      <figcaption><b>What to notice:</b> trust flows from a nonced script to what it loads.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A script with a nonce runs, as do scripts it loads. An injected script without a nonce is blocked.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="head.html" data-lang="xml">
+      <textarea class="src" hidden>&lt;script nonce="aem" src="/scripts/aem.js" type="module"&gt;&lt;/script&gt;
+&lt;script nonce="aem" src="/scripts/scripts.js" type="module"&gt;&lt;/script&gt;</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d4-t3"><script type="application/json">{"questions": [{"q": "A CSP is in place. Does that mean developers can skip input sanitization?", "options": ["No, CSP is a last line of defence", "Only on mobile", "Yes, CSP replaces it"], "answer": 0, "explain": "Adobe’s guide says so directly."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Blocks do not load</td><td>Missing <code>strict-dynamic</code></td><td>Add it, so trusted scripts can load others.</td></tr>
+      <tr><td>New static page has blocked scripts</td><td>No nonce markers</td><td>Add <code>nonce="aem"</code>.</td></tr>
+      <tr><td>Nonce is literally aem</td><td>Not configured correctly</td><td>Recheck the policy and marker.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="sidekick-and-ims-sign-in" data-level="3">
+  <h2>Sidekick and IMS sign-in</h2>
+  <div data-part="why"><p>Which identity system authors use depends on the content source, and that surprises many security reviews.</p></div>
+  <div data-part="concept">
+    <p>Sidekick delegates sign-in to the identity provider behind the content source. AEM and Document Authoring use Adobe authentication. Google Drive uses Google, and SharePoint uses Microsoft. A Microsoft tenant admin may first need to grant consent.</p>
+    <p>Sidekick is a browser extension. Its token sits in session storage, its project configuration in sync storage. It samples anonymous usage data: action names and target URLs, for one in ten interactions. Only trusted Adobe origins can add projects or sign users in on its behalf.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Content source</th><th>Sign in with</th></tr></thead>
+    <tbody>
+      <tr><td>AEM authoring</td><td>Adobe</td></tr>
+      <tr><td>Document Authoring / Experience Workspace</td><td>Adobe</td></tr>
+      <tr><td>Google Drive</td><td>Google</td></tr>
+      <tr><td>SharePoint</td><td>Microsoft</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout warning" data-label="CORS and Sidekick"><p><code>access-control-allow-origin: *</code> can expose protected preview and live environments to CSRF attacks against signed-in authors. Limit it to specific origins and URLs.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d4-t4"><script type="application/json">{"questions": [{"q": "A SharePoint author cannot sign in and sees a consent message. Who can resolve it?", "options": ["A tenant administrator", "A website visitor", "The CDN vendor"], "answer": 0, "explain": "An admin grants consent for the organization."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Consent error</td><td>Tenant admin approval needed</td><td>Ask for consent at the Admin endpoint or Azure portal.</td></tr>
+      <tr><td>Sidekick blocked by policy</td><td>Extension not allowed</td><td>Have IT allow the extension.</td></tr>
+      <tr><td>Wrong account used</td><td>Multiple sessions</td><td>Sign out, and use the right profile.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="secrets-handling" data-level="3">
+  <h2>Secrets handling</h2>
+  <div data-part="why"><p>Everything in the code repository can reach the browser, so a secret there is effectively public.</p></div>
+  <div data-part="concept">
+    <p>EDS has no server-side application tier of your own. Client code cannot hold secrets. Protected API keys go in a CDN worker or backend. For Adobe-managed CDN rules, use Cloud Manager pipeline secret variables, referenced as <code>${{NAME}}</code>.</p>
+    <p>Never place secrets in public configuration, block code, sheets or metadata. Treat any leaked credential as compromised, and revoke it first. Then look at audit logs to see what was done with it.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Secret</th><th>Where it belongs</th></tr></thead>
+    <tbody>
+      <tr><td>Third-party API key</td><td>Edge worker or backend</td></tr>
+      <tr><td>Admin API key</td><td>CI secret store</td></tr>
+      <tr><td>Site token at CDN</td><td>CDN secret or origin configuration</td></tr>
+      <tr><td>CDN rule password</td><td>Pipeline secret variable</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="cdn.yaml" data-lang="yaml">
+      <textarea class="src" hidden># Not a literal password.
+password: ${{JANE_DOE_PASSWORD}}</textarea>
+      <figcaption><b>Note:</b> the value is supplied by the pipeline.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d4-t5"><script type="application/json">{"questions": [{"q": "A block needs to call an API with a secret key. Where should the key be?", "options": ["In the block JavaScript", "In a metadata block", "In a worker or backend"], "answer": 2, "explain": "Browser code is public."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Key visible in DevTools</td><td>Called from browser</td><td>Proxy through the edge.</td></tr>
+      <tr><td>Key in Git history</td><td>Committed once</td><td>Revoke it. Deleting the line is not enough.</td></tr>
+      <tr><td>Token shared in chat</td><td>Convenience</td><td>Rotate it, and use a store.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: CSP header builder</h2>
+  <p>Choose directives, delivery and mode, and see which sample scripts run. This models the main rules, not every browser.</p>
+  <div data-component="csp-builder" data-title="CSP header builder"><script type="application/json">{}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: harden a test site</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Add authentication, roles and a policy, then prove them.</p></div>
+    <div><h4>You need</h4><p>Admin access to a test site.</p></div>
+    <div><h4>Time</h4><p>About 2 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Map</b> an author and a publisher.</div></li>
+    <li><div><b>Confirm</b> the author cannot publish.</div></li>
+    <li><div><b>Create</b> a site token and protect preview only.</div></li>
+    <li><div><b>Check</b> that a request without a token gets 401.</div></li>
+    <li><div><b>Check</b> that a request with the token works.</div></li>
+    <li><div><b>Add</b> nonce markers and the CSP in a branch.</div></li>
+    <li><div><b>Read</b> the browser console for blocked scripts.</div></li>
+    <li><div><b>Remove</b> the protection, and revoke the token.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A verified access model and CSP.</p></div>
+    <div><h4>How to verify</h4><p>The 401, the token request and the blocked-script behaviour all match your plan.</p></div>
+    <div><h4>Stretch</h4><p>Move the CSP to a response header.</p></div>
+  </div>
+  <ul class="checklist" data-id="d4-lab">
+    <li>Role limits tested</li>
+    <li>401 confirmed</li>
+    <li>CSP tested</li>
+    <li>Token revoked</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Everything is 401</td><td>CDN lacks token</td><td>Add Authorization at the CDN.</td></tr>
+      <tr><td>Author sees 403</td><td>Role is missing</td><td>Add the mapping.</td></tr>
+      <tr><td>Scripts blocked</td><td>Nonce or strict-dynamic</td><td>Check markers and policy.</td></tr>
+      <tr><td>Third-party tag blocked</td><td>Not loaded by a trusted script</td><td>Load it from trusted code, and review it.</td></tr>
+      <tr><td>Report-only shows no effect</td><td>It does not block</td><td>Enforce it after testing.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Regulated work.</b> Adobe documents options such as a single sovereign architecture for dedicated residency and FedRAMP. Confirm requirements with Adobe.</p></aside>
+    <aside class="callout warning" data-label="Scope"><p>This module is technical guidance, not a security audit or compliance sign-off.</p></aside>
+    <aside class="callout accessibility"><p>Sign-in pages from your identity provider must also meet your accessibility standard.</p></aside>
+    <aside class="callout performance"><p>WAF and bot tools can inject script. Measure them on production.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Site protection</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Role mapping</td><td>Consulted</td><td>Informed</td><td>Accountable</td></tr>
+      <tr><td>CSP</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Secret rotation</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d4-check"><script type="application/json">{"questions": [{"q": "What does site authentication not provide?", "options": ["A 401 for missing tokens", "Authorization", "Preview protection"], "answer": 1, "explain": "See Limitations."}, {"q": "Which path protects preview only?", "options": ["access/preview.json", "access/live.json", "access/robots.json"], "answer": 0, "explain": "See Configuring Site Authentication."}, {"q": "Which header can test a CSP without enforcing it?", "options": ["x-frame-options", "cache-control", "content-security-policy-report-only"], "answer": 2, "explain": "It gives no protection."}, {"q": "What does nonce=\"aem\" become?", "options": ["A user ID", "A random value generated at render", "The word aem forever"], "answer": 1, "explain": "It stays the same while cached."}, {"q": "Which role has all permissions?", "options": ["admin", "view", "author"], "answer": 0, "explain": "See Roles."}, {"q": "Who signs in with Google for Sidekick?", "options": ["Only Adobe staff", "All visitors", "Authors on Google Drive projects"], "answer": 2, "explain": "The content source decides."}, {"q": "Which configuration value disables enforced sign-in while keeping roles?", "options": ["requireAuth: false", "roles: none", "requireAuth: auto"], "answer": 0, "explain": "See Configuring Authentication for Authors."}, {"q": "A security team wants a WAF they control. What fits?", "options": ["Adding a block", "A longer password on Sidekick", "A BYO CDN in front of delivery", "A metadata rule"], "answer": 2, "explain": "Traffic ends on your CDN, under your rules.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d4-cards"><script type="application/json">{"cards": [["Site token", "Reads a protected site."], ["access/preview", "Protects aem.page only."], ["Closed User Groups", "Page-level rules, enforced at the CDN."], ["requireAuth", "auto, true, or false."], ["defaultRole", "Role with no mapping."], ["nonce-aem", "Replaced with a random value."], ["strict-dynamic", "Trust flows to loaded scripts."], ["Report only", "Reports, does not protect."], ["${{NAME}}", "Pipeline secret reference."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D4 · Security and access</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Site</h4><ul><li>Tokens</li><li>Whole site only</li><li>CDN needs token</li></ul></div>
+      <div><h4>Roles</h4><ul><li>Least privilege</li><li>Name publishers</li><li>requireAuth</li></ul></div>
+      <div><h4>CSP</h4><ul><li>nonce-aem</li><li>strict-dynamic</li><li>Test in a branch</li></ul></div>
+      <div><h4>Sign-in</h4><ul><li>Follows content source</li><li>Tenant consent</li><li>Sidekick</li></ul></div>
+      <div><h4>Secrets</h4><ul><li>Not in browser</li><li>Edge or backend</li><li>Rotate if leaked</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/security" rel="noopener" target="_blank">aem.live: Security overview</a></li>
+    <li><a href="https://www.aem.live/docs/authentication-setup-site" rel="noopener" target="_blank">aem.live: Site authentication</a></li>
+    <li><a href="https://www.aem.live/docs/authentication-setup-authoring" rel="noopener" target="_blank">aem.live: Author authentication</a></li>
+    <li><a href="https://www.aem.live/docs/roles-permissions" rel="noopener" target="_blank">aem.live: Roles and permissions</a></li>
+    <li><a href="https://www.aem.live/docs/csp" rel="noopener" target="_blank">aem.live: Content Security Policy</a></li>
+    <li><a href="https://www.aem.live/developer/closed-user-groups" rel="noopener" target="_blank">aem.live: Closed User Groups</a></li>
+    <li><a href="https://www.aem.live/docs/sidekick-security" rel="noopener" target="_blank">aem.live: Sidekick security</a></li>
+    <li><a href="https://www.aem.live/docs/regulated-industries" rel="noopener" target="_blank">aem.live: Regulated industries</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

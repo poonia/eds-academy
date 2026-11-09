@@ -625,3 +625,15 @@ dialog.search-dlg::backdrop { background: rgb(10 14 20 / 45%); }
 .q-opt { overflow-wrap: anywhere; }
 
 .ft-folder { padding: 3px 8px; color: var(--muted); }
+.sim-table td { vertical-align: middle; }
+.sim-table .sim-input { min-width: 92px; padding: 6px 8px; }
+.sim-grid { min-width: 0; }
+.rd-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px; }
+.rd-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.rd-card b { font-size: 22px; }
+.rd-card.ok { border-left: 4px solid var(--good); }
+.rd-card.poor { border-left: 4px solid var(--bad); }
+.rs-hit td { background: var(--accent-soft); }
+.sim-io .sim-table { min-width: 0; width: 100%; }
+.sim-io .sim-table .sim-input { min-width: 84px; }
+.rd-cards ~ h4 { margin-top: 18px; }

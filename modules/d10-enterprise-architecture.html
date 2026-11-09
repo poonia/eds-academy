@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D10 Enterprise architecture · EDS Academy</title>
+<meta name="description" content="Module D10: multi-brand, hybrid with AEM Sites, headless with EDS, scaling teams and choosing authoring by business unit.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d10-enterprise-architecture.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D10 Enterprise architecture · EDS Academy">
+<meta property="og:description" content="Module D10: multi-brand, hybrid with AEM Sites, headless with EDS, scaling teams and choosing authoring by business unit.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d10-enterprise-architecture.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D10">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Design a multi-brand portfolio.</li>
+    <li>Plan a hybrid with AEM Sites.</li>
+    <li>Combine headless patterns with EDS.</li>
+    <li>Organize teams at scale.</li>
+    <li>Choose authoring by business unit.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d10-ready" data-title="Ready for enterprise architecture?">
+    <script type="application/json">{"questions": [{"q": "What runs several sites from one codebase?", "options": ["Repoless", "Sidekick", "A sitemap"], "answer": 0, "explain": "Covered in D2."}, {"q": "Which routes paths to another origin on the Adobe-managed CDN?", "options": ["Page metadata", "A block", "Origin selectors"], "answer": 2, "explain": "Covered in D3."}, {"q": "Who should own each decision in a RACI?", "options": ["A committee", "One Accountable person", "Nobody"], "answer": 1, "explain": "Covered in D9."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="multi-brand-and-multi-site" data-level="4">
+  <h2>Multi-brand and multi-site</h2>
+  <div data-part="why"><p>Separate codebases per brand multiply the work, and they drift apart.</p></div>
+  <div data-part="concept">
+    <p>Use <b>repoless</b> to run many sites from one codebase, then add a theming layer. Themes are applied as a class on <code>&lt;body&gt;</code> from page metadata, usually set site-wide or per section with bulk metadata.</p>
+    <p>Choose how to organize CSS. <b>Body-class selectors in shared CSS</b> keep tokens in one place, but every visitor downloads all brands. Adobe considers this best for two or three closely related brands. <b>Separate theme files</b>, loaded in the eager phase from metadata, isolate each brand and suit larger portfolios or white-label sites.</p>
+    <p>Repoless suits sites that share structure. If a brand differs fundamentally in function, a separate codebase may be justified. AEM authoring can use MSM Live Copies with one Edge Delivery site per locale.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th></th><th>Shared CSS</th><th>Separate theme files</th></tr></thead>
+    <tbody>
+      <tr><td>Download</td><td>All brands</td><td>One brand</td></tr>
+      <tr><td>Visibility</td><td>Tokens exposed across brands</td><td>Isolated</td></tr>
+      <tr><td>Requests</td><td>None extra</td><td>One more stylesheet</td></tr>
+      <tr><td>Best for</td><td>2 or 3 related brands</td><td>Larger or white-label portfolios</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="scripts/scripts.js" data-lang="javascript">
+      <textarea class="src" hidden>async function loadTheme() {
+  const theme = getMetadata('theme');
+  if (theme) {
+    await loadCSS(`${window.hlx.codeBasePath}/styles/themes/${theme}.css`);
+  }
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d10-t1"><script type="application/json">{"questions": [{"q": "You run 14 white-label brands that must not expose each other’s tokens. Which fits?", "options": ["Separate theme files loaded by metadata", "One shared CSS file", "A CSS file per block per page"], "answer": 0, "explain": "Shared CSS reveals every brand."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Flash of wrong brand</td><td>Theme loads late</td><td>Load it in the eager phase.</td></tr>
+      <tr><td>Brand logic scattered</td><td>Selectors in block CSS</td><td>Use tokens only.</td></tr>
+      <tr><td>Merge hits all brands</td><td>Shared code</td><td>Test on each brand’s content.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="hybrid-with-aem-sites" data-level="4">
+  <h2>Hybrid with AEM Sites</h2>
+  <div data-part="why"><p>Few enterprises replace everything at once. A hybrid lets the high-traffic parts move first.</p></div>
+  <div data-part="concept">
+    <p>A CDN routes paths to either origin. With the Adobe-managed CDN, an existing AEMaaCS environment can proxy paths to EDS using <b>origin selectors</b>. Akamai and Cloudflare can also combine backends.</p>
+    <p>Handle what crosses the boundary: header and footer, consent state, analytics continuity, redirects and sitemaps across origins. The <code>aem-embed</code> web component can share EDS content, such as a header, into other sites, with CSS isolated by shadow DOM.</p>
+    <p>Set an end state. A hybrid with no plan to finish means paying for two platforms indefinitely.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    V["Visitor"] --&gt; C["CDN"]
+    C --&gt;|"/products/*"| E["Edge Delivery"]
+    C --&gt;|"/account/*"| A["AEM publish or app"]
+    C --&gt;|"default"| L["Legacy"]</pre>
+      <figcaption><b>What to notice:</b> routing happens at the CDN, so visitors see one domain.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visitor reaches the CDN. Products go to Edge Delivery, account to AEM publish or an application, and anything else to legacy.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Concern</th><th>Plan</th></tr></thead>
+    <tbody>
+      <tr><td>Header and footer</td><td>Shared through aem-embed, or matched</td></tr>
+      <tr><td>Consent</td><td>Same CMP and domain</td></tr>
+      <tr><td>Analytics</td><td>Same report suite; note baselines</td></tr>
+      <tr><td>Sitemaps</td><td>Sitemap index across origins</td></tr>
+      <tr><td>Redirects</td><td>Know which layer owns each</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d10-t2"><script type="application/json">{"questions": [{"q": "Two origins serve one domain. Where does routing belong?", "options": ["At the CDN", "In each block", "In robots.txt"], "answer": 0, "explain": "One domain, with rules at the edge."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Visitors see two designs</td><td>No shared header</td><td>Share or match it.</td></tr>
+      <tr><td>Consent asked twice</td><td>Separate CMP setups</td><td>Share the set-up.</td></tr>
+      <tr><td>Hybrid never ends</td><td>No end date</td><td>Set an exit plan.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="headless-plus-eds" data-level="4">
+  <h2>Headless plus EDS</h2>
+  <div data-part="why"><p>Some content is structured data, or already lives in an app. EDS can work with both.</p></div>
+  <div data-part="concept">
+    <p>Keep canonical content in server-rendered HTML wherever possible. <b>JSON2HTML</b> and <b>Bring Your Own Markup</b> can turn structured data into HTML for the delivery pipeline. Content Fragments can reach EDS through an overlay and mapping.</p>
+    <p>In the other direction, <code>aem-embed</code> lets an existing web app consume AEM content without headless API work, and without releasing the app for each content change. Personalized or transactional data can stay client-side or in an API, loaded after the main content.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Pattern</th></tr></thead>
+    <tbody>
+      <tr><td>Products rendered as pages</td><td>JSON2HTML or BYOM</td></tr>
+      <tr><td>Marketing content in an app</td><td>aem-embed</td></tr>
+      <tr><td>Account balance</td><td>Client-side API, after LCP</td></tr>
+      <tr><td>Content Fragments</td><td>Overlay, mapping and JSON2HTML</td></tr>
+      <tr><td>Native app feed</td><td>JSON from sheets or index</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div data-component="match" data-title="Pick the pattern"><script type="application/json">{"prompt": "Match each need to a pattern.", "pairs": [["Show EDS header inside a React app", "aem-embed"], ["Generate pages from a product feed", "JSON2HTML or BYOM"], ["Show a logged-in user’s points", "Client-side API after LCP"], ["Feed a simple list to an app", "Published JSON"]], "explain": "Pick the pattern that keeps primary content in the first HTML."}</script></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d10-t3"><script type="application/json">{"questions": [{"q": "Why avoid rendering primary page content only with client-side API calls?", "options": ["APIs are forbidden", "Crawlers and LLM agents may not see it, and it can hurt LCP", "CSS stops working"], "answer": 1, "explain": "Primary content belongs in the initial HTML."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Blank until API responds</td><td>Primary content client-side</td><td>Render it into HTML.</td></tr>
+      <tr><td>App must release for every change</td><td>Content in code</td><td>Use aem-embed.</td></tr>
+      <tr><td>Personal data cached</td><td>Wrong layer</td><td>Keep it out of shared caches.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="scaling-teams" data-level="4">
+  <h2>Scaling teams</h2>
+  <div data-part="why"><p>Ten teams pushing into one repository need more structure than one team does.</p></div>
+  <div data-part="concept">
+    <p>Create a small <b>platform team</b> that owns shared code, the catalog, configuration and standards. Feature teams contribute through pull requests. Prefer trunk-based work: small merges, short branches, and protection on main. Use <code>CODEOWNERS</code> to require the right reviewers for shared files.</p>
+    <p>Enablement scales better than gatekeeping: provide templates, documentation, office hours and a clear contribution route. Track a few shared measures, such as Lighthouse results, time to merge and accessibility defects.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Team size</th><th>Model</th></tr></thead>
+    <tbody>
+      <tr><td>1 team, 1 site</td><td>Maintainer reviews everything</td></tr>
+      <tr><td>Several teams</td><td>Platform team plus <code>CODEOWNERS</code></td></tr>
+      <tr><td>Portfolio</td><td>Central platform, federated delivery, brand owners</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file=".github/CODEOWNERS" data-lang="bash">
+      <textarea class="src" hidden># Shared foundations
+/scripts/   @acme/web-platform
+/styles/    @acme/web-platform
+
+# A team-owned block
+/blocks/plans/  @acme/retail-web</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d10-t4"><script type="application/json">{"questions": [{"q": "Several teams edit a shared repository. What helps reviews reach the right people?", "options": ["Longer branches", "CODEOWNERS", "Direct pushes"], "answer": 1, "explain": "GitHub requests the owners automatically."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Platform team is a bottleneck</td><td>Reviews everything</td><td>Delegate block ownership.</td></tr>
+      <tr><td>Inconsistent blocks</td><td>No catalog</td><td>Publish standards.</td></tr>
+      <tr><td>Merge conflicts</td><td>Long branches</td><td>Merge smaller and sooner.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="choosing-authoring-per-business-unit" data-level="4">
+  <h2>Choosing authoring per business unit</h2>
+  <div data-part="why"><p>Different business units have different needs. One authoring tool does not always suit them all.</p></div>
+  <div data-part="concept">
+    <p>Because content source is per site, business units can differ while sharing code. But blocks, and how content is modelled, may differ between document-based authoring and AEM with Universal Editor. Check whether code really can be shared before you promise it.</p>
+    <p>Adobe recommends Experience Workspace as the default content source for new projects. Decide on evidence: authors’ skills, workflows, compliance, existing systems, and integrations. Check regulation too. For example, aem.live says Experience Workspace HIPAA compliance is “coming soon”, while AEM and SharePoint authoring are compliant.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Business unit</th><th>Likely source</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Marketing, Microsoft-based</td><td>SharePoint or Experience Workspace</td><td>Familiar tools</td></tr>
+      <tr><td>Regulated, with AEM workflows</td><td>AEM with Universal Editor</td><td>Existing governance</td></tr>
+      <tr><td>New small brand</td><td>Experience Workspace</td><td>Adobe’s default</td></tr>
+      <tr><td>Healthcare</td><td>AEM or SharePoint for now</td><td>HIPAA, as stated</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout verify" data-label="Check before you rely on this"><p>Compliance positions change. Confirm them with Adobe at the time of your decision.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d10-t5"><script type="application/json">{"questions": [{"q": "Why can mixed authoring complicate a shared codebase?", "options": ["GitHub forbids it", "Blocks and content models may differ", "CDNs cannot support it"], "answer": 1, "explain": "Universal Editor projects use component models."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Shared block breaks in one source</td><td>Different markup</td><td>Test on each source.</td></tr>
+      <tr><td>Everyone wants an exception</td><td>No criteria</td><td>Publish decision criteria.</td></tr>
+      <tr><td>Compliance gap found late</td><td>Assumed support</td><td>Check for each requirement.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: multi-brand and hybrid routing simulator</h2>
+  <p>Pick a brand and a path, then change origins. The first matching rule wins. Try a path under <code>/account/</code>, and change a rule. The hostnames are examples.</p>
+  <div data-component="routing-sim" data-title="Multi-brand and hybrid routing simulator"><script type="application/json">{"origins": {"eds": "main--site--acme.aem.live", "aem": "publish-p1-e2.adobeaemcloud.com", "legacy": "legacy.acme-origin.net"}, "repo": "website", "path": "/products/savings", "rules": [{"pattern": "/products/*", "origin": "eds"}, {"pattern": "/stories/*", "origin": "eds"}, {"pattern": "/account/*", "origin": "aem"}, {"pattern": "/*", "origin": "legacy"}], "brands": [{"host": "www.acme.com", "site": "acme", "theme": "acme"}, {"host": "www.acmehealth.com", "site": "acme-health", "theme": "health"}, {"host": "www.acmefinance.com", "site": "acme-finance", "theme": "finance"}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: write an architecture decision record</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Justify a portfolio design to reviewers.</p></div>
+    <div><h4>You need</h4><p>A sample organization, real or invented.</p></div>
+    <div><h4>Time</h4><p>About 2 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Describe</b> brands, traffic and constraints.</div></li>
+    <li><div><b>List</b> options: separate repositories, repoless, hybrid.</div></li>
+    <li><div><b>Draw</b> routing, code and content.</div></li>
+    <li><div><b>Choose</b> the theme approach.</div></li>
+    <li><div><b>Pick</b> authoring per business unit, with reasons.</div></li>
+    <li><div><b>Name</b> the risks and exit plan.</div></li>
+    <li><div><b>Review</b> with a colleague.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A decision record with diagrams.</p></div>
+    <div><h4>How to verify</h4><p>A reviewer can state your choice, reasons and risks.</p></div>
+    <div><h4>Stretch</h4><p>Estimate costs of each option.</p></div>
+  </div>
+  <ul class="checklist" data-id="d10-lab">
+    <li>Options compared</li>
+    <li>Routing drawn</li>
+    <li>Risks named</li>
+    <li>Exit plan written</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Wrong brand served</td><td>Host or site mapping</td><td>Check CDN and site.</td></tr>
+      <tr><td>Slow theme</td><td>Loaded too late</td><td>Load in eager.</td></tr>
+      <tr><td>Hybrid pages look different</td><td>Divergent chrome</td><td>Share header and footer.</td></tr>
+      <tr><td>Fragments cross-brand</td><td>Paths hard-coded</td><td>Use relative paths.</td></tr>
+      <tr><td>Change breaks many sites</td><td>Shared code</td><td>Test across brands.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Write decisions down.</b> Record the context and the alternatives, and revisit them when constraints change.</p></aside>
+    <aside class="callout warning" data-label="Residency"><p>Data residency defaults are US for work in progress and global for content at rest. Dedicated residency needs Adobe’s single sovereign architecture.</p></aside>
+    <aside class="callout accessibility"><p>Every theme must meet contrast rules. Test each token set.</p></aside>
+    <aside class="callout performance"><p>One extra theme stylesheet is acceptable. Multiple blocking files are not.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Portfolio architecture</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Theme tokens</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Hybrid exit plan</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Authoring per unit</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d10-check"><script type="application/json">{"questions": [{"q": "Where is a theme class applied?", "options": ["On a CDN header", "On the html of each block", "On the body element"], "answer": 2, "explain": "See Building Multi-Brand Sites."}, {"q": "Which brings EDS content into a non-AEM app?", "options": ["crontab", "aem-embed", "robots.txt"], "answer": 1, "explain": "See Embedding Content."}, {"q": "Which suits 2 or 3 closely related brands?", "options": ["Separate repositories", "A CDN per block", "Shared CSS with body classes"], "answer": 2, "explain": "See Building Multi-Brand Sites."}, {"q": "Which function loads a theme file?", "options": ["loadCSS", "decorateMain", "loadBlock"], "answer": 0, "explain": "It is called from loadEager in the example."}, {"q": "What helps code review reach the right team?", "options": ["A site token", "CODEOWNERS", "A wildcard redirect"], "answer": 1, "explain": "A GitHub feature."}, {"q": "What is Adobe’s default content source for new projects?", "options": ["Only SharePoint", "Only Google Drive", "Experience Workspace"], "answer": 2, "explain": "See Security Overview."}, {"q": "Which data generally belongs client-side?", "options": ["A logged-in user’s account data", "Main article text", "The page headline"], "answer": 0, "explain": "Personal data should not be in shared HTML caches."}, {"q": "A CIO wants to move all 12 sites in one weekend. What do you propose?", "options": ["Copy all code into 12 repositories", "Delay all decisions indefinitely", "One weekend without rollback", "A pilot, then staged migration by path groups"], "answer": 3, "explain": "Smaller changes can be monitored and reversed.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d10-cards"><script type="application/json">{"cards": [["Repoless", "One codebase, many sites."], ["Theme", "A body class from metadata."], ["Origin selector", "Routes to another origin."], ["aem-embed", "Web component for other apps."], ["JSON2HTML", "Renders structured data."], ["MSM", "Live Copies with AEM."], ["CODEOWNERS", "Assigns reviewers."], ["Sovereign architecture", "For dedicated residency."], ["Exit plan", "How a hybrid ends."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D10 · Enterprise architecture</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Brands</h4><ul><li>Repoless</li><li>Theme via metadata</li><li>Shared or separate CSS</li></ul></div>
+      <div><h4>Hybrid</h4><ul><li>CDN routes</li><li>Shared chrome</li><li>Exit plan</li></ul></div>
+      <div><h4>Headless</h4><ul><li>HTML first</li><li>JSON2HTML</li><li>aem-embed</li></ul></div>
+      <div><h4>Teams</h4><ul><li>Platform team</li><li>CODEOWNERS</li><li>Enable over gate</li></ul></div>
+      <div><h4>Authoring</h4><ul><li>Per site</li><li>Check models</li><li>Check compliance</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/multi-brand-sites" rel="noopener" target="_blank">aem.live: Building multi-brand sites</a></li>
+    <li><a href="https://www.aem.live/docs/repoless" rel="noopener" target="_blank">aem.live: Repoless</a></li>
+    <li><a href="https://www.aem.live/developer/repoless-multisite-manager" rel="noopener" target="_blank">aem.live: Multi site management</a></li>
+    <li><a href="https://www.aem.live/docs/aem-embed" rel="noopener" target="_blank">aem.live: Embedding content</a></li>
+    <li><a href="https://www.aem.live/developer/json2html" rel="noopener" target="_blank">aem.live: JSON2HTML</a></li>
+    <li><a href="https://www.aem.live/developer/byom" rel="noopener" target="_blank">aem.live: Bring your own markup</a></li>
+    <li><a href="https://www.aem.live/docs/regulated-industries" rel="noopener" target="_blank">aem.live: Regulated industries</a></li>
+    <li><a href="https://www.aem.live/docs/authoring-guide" rel="noopener" target="_blank">aem.live: Where to author</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

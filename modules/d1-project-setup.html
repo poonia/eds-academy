@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D1 Project setup and onboarding · EDS Academy</title>
+<meta name="description" content="Module D1: create an EDS site, use Cloud Manager, choose org and site names, and onboard a team.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d1-project-setup.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D1 Project setup and onboarding · EDS Academy">
+<meta property="og:description" content="Module D1: create an EDS site, use Cloud Manager, choose org and site names, and onboard a team.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d1-project-setup.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D1">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Create a first site and a further site.</li>
+    <li>Choose a Cloud Manager deployment type.</li>
+    <li>Pick names that work in every URL.</li>
+    <li>Onboard developers, authors and administrators.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d1-ready" data-title="Ready for project setup and onboarding?">
+    <script type="application/json">{"questions": [{"q": "Which tier shows unpublished content?", "options": ["aem.page", "aem.live", "Your production domain"], "answer": 0, "explain": "Covered in A2."}, {"q": "What syncs code from GitHub?", "options": ["Cloud Manager only", "AEM Code Sync", "Sidekick"], "answer": 1, "explain": "Covered in A2."}, {"q": "What does repoless let many sites share?", "options": ["One codebase", "One domain", "One content source"], "answer": 0, "explain": "Covered in A4."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="creating-a-site" data-level="1">
+  <h2>Creating a site</h2>
+  <div data-part="why"><p>A project that starts from the wrong template or the wrong owner account costs weeks to correct later.</p></div>
+  <div data-part="concept">
+    <p>A site combines <b>code</b>, <b>content</b> and <b>configuration</b>. The first site in an organization usually starts with the developer tutorial: create a repository from the boilerplate, install the <b>AEM Code Sync</b> GitHub app, and connect a content source.</p>
+    <p>That first step also creates your aem.live organization, named after the GitHub organization. The GitHub user who added the app becomes its admin. For later sites, you can use <a href="https://tools.aem.live" rel="noopener" target="_blank">tools.aem.live</a> or the configuration API.</p>
+    <p>Choose the boilerplate to match your authoring method. Document-based authoring and Experience Workspace use <code>adobe/aem-boilerplate</code>. AEM authoring with Universal Editor uses <code>adobe-rnd/aem-boilerplate-xwalk</code>.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    T["Boilerplate template"] --&gt; R["Your GitHub repository"]
+    R --&gt; S["AEM Code Sync app"]
+    S --&gt; O["aem.live org and site"]
+    C["Content source"] --&gt; O
+    O --&gt; P["main--site--org.aem.page"]</pre>
+      <figcaption><b>What to notice:</b> installing Code Sync is the step that claims the organization.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A boilerplate template becomes your GitHub repository. The AEM Code Sync app connects it to an aem.live org and site, which also receives a content source and serves the preview URL.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Create a further site with the API" data-lang="bash">
+      <textarea class="src" hidden>curl -X PUT https://admin.hlx.page/config/acme/sites/website.json \
+  -H 'content-type: application/json' \
+  -H "x-auth-token: $AEM_TOKEN" \
+  --data '{
+    "code": { "owner": "acme", "repo": "boilerplate" },
+    "content": { "source": { "url": "https://content.da.live/acme/website/", "type": "markup" } }
+  }'</textarea>
+      <figcaption><b>Note:</b> the site is available straight away. It shows the 404 page until content has been previewed.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d1-t1"><script type="application/json">{"questions": [{"q": "What creates the aem.live organization for a first site?", "options": ["Buying a domain", "Publishing the home page", "Adding the AEM Code Sync app through the tutorial flow"], "answer": 2, "explain": "The org takes its name from the GitHub organization."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Wrong person is org admin</td><td>They installed Code Sync from a personal login</td><td>Ask an Adobe representative to change the admin user.</td></tr>
+      <tr><td>Preview shows 404</td><td>Nothing has been previewed</td><td>Preview a page first.</td></tr>
+      <tr><td>Editor cannot load blocks</td><td>Wrong boilerplate for AEM authoring</td><td>Start from the xwalk boilerplate.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="cloud-manager-eds-sites" data-level="2">
+  <h2>Cloud Manager EDS sites</h2>
+  <div data-part="why"><p>Licensed customers often expect domains and certificates to be handled in one place. Cloud Manager can do that, but the choices differ by deployment type.</p></div>
+  <div data-part="concept">
+    <p>If you have licensed Edge Delivery Services, you can onboard a site in <b>Cloud Manager</b> and go live through a guided flow. It also brings domain names, SSL certificates and CDN mappings together with your other AEM properties.</p>
+    <p>There are two deployment types for the Adobe-managed CDN. <b>With an existing AEM as a Cloud Service environment</b>, you proxy all or part of a domain to Edge Delivery. <b>Without one</b>, called an Edge environment, Edge Delivery stands alone.</p>
+    <p>The difference matters. Experience League, updated 29 September 2026, says the configuration pipeline is available for Cloud Service environments and only through a limited beta for Edge environments. If you need advanced CDN rules on an Edge environment, confirm your access first.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th></th><th>With AEMaaCS environment</th><th>Edge environment</th></tr></thead>
+    <tbody>
+      <tr><td>Typical use</td><td>Move part of a site to Edge Delivery</td><td>Edge Delivery on its own</td></tr>
+      <tr><td>Traffic set-up</td><td>HTTP proxy with origin selectors</td><td>Guided site set-up in Cloud Manager</td></tr>
+      <tr><td>Apex to www</td><td>You define a redirect rule</td><td>Set up automatically</td></tr>
+      <tr><td>Configuration pipeline</td><td>Available</td><td>Limited beta</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout verify" data-label="Check before you rely on this"><p>Availability in Cloud Manager changes quickly. Check Experience League and your licence before you promise a set-up to a customer.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d1-t2"><script type="application/json">{"questions": [{"q": "A customer has no AEM author or publish tier and wants Edge Delivery only. Which deployment type fits?", "options": ["HTTP proxy from an existing environment", "Edge environment, without AEMaaCS", "A dedicated publish tier"], "answer": 1, "explain": "The proxy option needs an existing environment."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>No Edge Delivery option in Cloud Manager</td><td>No entitlement on the licence</td><td>Check the licence with Adobe.</td></tr>
+      <tr><td>CDN rules cannot be deployed</td><td>Edge environment without pipeline access</td><td>Ask about the beta, or use a BYO CDN.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="org-and-site-naming" data-level="1">
+  <h2>Org and site naming</h2>
+  <div data-part="why"><p>Names become part of every preview URL, and the wrong one can hit a hard length limit.</p></div>
+  <div data-part="concept">
+    <p>An aem.live organization must also exist on github.com, with at least one repository synced through Code Sync. This stops anyone from claiming a name they do not own. If Adobe or a partner creates that GitHub organization for you, it must still have an owner from your company.</p>
+    <p>Preview and live hosts follow <code>&lt;ref&gt;--&lt;site&gt;--&lt;org&gt;</code>. Special characters become a single dash. A DNS label can have at most <b>63 characters</b>, and the whole combination must fit in one label, so long branch names can break.</p>
+    <p>In repoless projects, one <b>canonical site</b> must match its GitHub owner and repository exactly. Code association and CDN push invalidation depend on it.</p>
+  </div>
+  <div data-part="visual">
+    <div data-component="match" data-title="Read an EDS URL"><script type="application/json">{"prompt": "Match each URL part to what it comes from.", "pairs": [["main", "The Git branch or reference"], ["website", "The site name"], ["acme", "The organization name"], ["aem.page", "The preview tier"], ["aem.live", "The live tier"]], "explain": "The same pattern works for every branch."}</script></div>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Name</th><th>Length</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td><code>main--website--acme</code></td><td>19</td><td>Fine</td></tr>
+      <tr><td><code>feature-new-mega-menu-for-retail--acme-global-marketing-website--acme-corp</code></td><td>74</td><td>Too long for one DNS label</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d1-t3"><script type="application/json">{"questions": [{"q": "A branch URL does not resolve, and the combined name is 70 characters. What should you do?", "options": ["Add a CDN", "Rename every block", "Use a shorter branch name"], "answer": 2, "explain": "One DNS label can hold 63 characters."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Branch URL fails</td><td>Over 63 characters</td><td>Shorten the branch name.</td></tr>
+      <tr><td>Purges do not reach the CDN</td><td>No canonical site in repoless</td><td>Create a site where org and site match owner and repo.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="team-onboarding" data-level="2">
+  <h2>Team onboarding</h2>
+  <div data-part="why"><p>Launch delays usually come from access requests, not code.</p></div>
+  <div data-part="concept">
+    <p>Treat access as a work package with an owner. Developers need the repository, the local CLI and a Sidekick install. Authors need the content source and Sidekick. Administrators need a sign-in with the right role, plus <a href="https://tools.aem.live" rel="noopener" target="_blank">tools.aem.live</a>.</p>
+    <p>By default, authors do not need to sign in to use Sidekick. Adding role mappings enforces sign-in, so plan the two together.</p>
+    <p>Adobe can set up a dedicated Microsoft Teams or Slack channel for questions and launch coordination. Request it through your Adobe account team, early in the project.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Role</th><th>Needs</th><th>Check</th></tr></thead>
+    <tbody>
+      <tr><td>Developer</td><td>Repository, CLI, Sidekick</td><td>Can open a branch URL</td></tr>
+      <tr><td>Author</td><td>Content source, Sidekick</td><td>Can preview a test page</td></tr>
+      <tr><td>Publisher</td><td>Publish role</td><td>Can publish a test page</td></tr>
+      <tr><td>Admin</td><td>Admin role, tools.aem.live</td><td>Can read site configuration</td></tr>
+      <tr><td>Project lead</td><td>Adobe channel</td><td>Has posted an introduction</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout tip"><p>Run a 30-minute “first preview” session in week one. It finds access problems while they are still cheap.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d1-t4"><script type="application/json">{"questions": [{"q": "Authors could use Sidekick without signing in, but now must sign in. What most likely changed?", "options": ["A block was renamed", "A role mapping was added to the site configuration", "The CDN was purged"], "answer": 1, "explain": "With requireAuth at its default of auto, a role mapping enforces sign-in."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Authors locked out on launch day</td><td>Roles added without telling them</td><td>Add roles early, and test with a real author.</td></tr>
+      <tr><td>Consent screen blocks a SharePoint user</td><td>Tenant admin consent is missing</td><td>Ask an Active Directory admin to grant consent.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: onboarding sequence and checklist</h2>
+  <p>Put the steps in order, then use the checklist on a real project. Your ticks are saved in this browser.</p>
+  <div data-component="order" data-title="Set-up sequence"><script type="application/json">{"prompt": "Put these project set-up steps in order.", "items": ["Confirm the licence, authoring method and owners", "Create or confirm the GitHub organization, with a company owner", "Create the repository from the right boilerplate", "Install AEM Code Sync", "Connect the content source", "Assign roles and test sign-in", "Preview and publish a first page", "Request the Adobe collaboration channel"], "explain": "Decide ownership first. Everything after it depends on the right accounts."}</script></div><ul class="checklist" data-id="d1-onboarding"><li>A company employee owns the GitHub organization</li><li>Authoring method is decided and written down</li><li>Named admin for aem.live</li><li>Developers can open a branch URL</li><li>Authors can preview a test page</li><li>Publishers are named and tested</li><li>Adobe channel requested</li><li>Site names fit the 63-character label limit</li></ul>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: onboard a small team to a test site</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Set up a site, and prove each role can do its job.</p></div>
+    <div><h4>You need</h4><p>A GitHub organization you control, a content source, and a colleague to act as author.</p></div>
+    <div><h4>Time</h4><p>About 90 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Write down</b> the owner, the authoring method and the site name.</div></li>
+    <li><div><b>Create a repository</b> from the right boilerplate.</div></li>
+    <li><div><b>Install AEM Code Sync</b> on that repository only.</div></li>
+    <li><div><b>Connect the content source</b> and preview a page.</div></li>
+    <li><div><b>Add roles</b>, starting with your own admin role.</div></li>
+    <li><div><b>Have your colleague</b> preview a test page as an author.</div></li>
+    <li><div><b>Try to publish</b> as that author, and confirm it is refused.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A working site with tested access.</p></div>
+    <div><h4>How to verify</h4><p>The preview URL shows your page, and a user with only the author role cannot publish.</p></div>
+    <div><h4>Stretch</h4><p>Create a second site through the configuration API.</p></div>
+  </div>
+  <ul class="checklist" data-id="d1-lab">
+    <li>Org owner confirmed</li>
+    <li>Boilerplate matches authoring</li>
+    <li>Author tested</li>
+    <li>Publish restriction tested</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Org name is not available</td><td>GitHub organization does not exist or is not claimed</td><td>Create it, and sync one repository.</td></tr>
+      <tr><td>Sidekick shows no project</td><td>Project not added</td><td>Open the site and add the project in Sidekick.</td></tr>
+      <tr><td>401 from the Admin API</td><td>Missing or expired token</td><td>Sign in again or use a valid key.</td></tr>
+      <tr><td>403 when publishing</td><td>Role lacks permission</td><td>Assign a publishing role.</td></tr>
+      <tr><td>Branch URL does not resolve</td><td>Name too long or not pushed</td><td>Shorten it and push.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Own your accounts.</b> The GitHub organization needs a company owner, even when a partner builds the site.</p></aside>
+    <aside class="callout warning" data-label="Scope the app"><p>Install Code Sync only on the repositories that need it. It requests write access to some repository features.</p></aside>
+    <aside class="callout accessibility"><p>Include any assistive technology your authors use when you test Sidekick and the editor.</p></aside>
+    <aside class="callout performance"><p>Turn on the PageSpeed pull request check from day one, so that the baseline starts at 100.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Authoring method</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>GitHub ownership</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Role assignment</td><td>Informed</td><td>Informed</td><td>Accountable</td></tr>
+      <tr><td>Boilerplate choice</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d1-check"><script type="application/json">{"questions": [{"q": "Which boilerplate is for AEM authoring with Universal Editor?", "options": ["adobe-rnd/aem-boilerplate-xwalk", "adobe/aem-sites-core", "adobe/aem-boilerplate-spa"], "answer": 0, "explain": "It includes component models."}, {"q": "Which must exist for every aem.live organization?", "options": ["A BYO CDN", "A matching github.com organization", "A Cloud Manager program"], "answer": 1, "explain": "It proves the name is claimed."}, {"q": "What is the longest a single DNS label can be?", "options": ["32 characters", "255 characters", "63 characters"], "answer": 2, "explain": "See Network Profile."}, {"q": "Which deployment type uses origin selectors?", "options": ["Edge environment", "Proxy from an existing AEMaaCS environment", "Local development"], "answer": 1, "explain": "It proxies some or all paths."}, {"q": "Where is a site available right after creation?", "options": ["Only on localhost", "Only on the production domain", "Its aem.page URL"], "answer": 2, "explain": "It shows 404 until previewed."}, {"q": "In repoless, which site must match the GitHub owner and repository?", "options": ["Every site", "The canonical site", "The newest site"], "answer": 1, "explain": "It handles code association and purges."}, {"q": "What is the default sign-in requirement for Sidekick?", "options": ["Only for developers", "Always required", "None until access rules are added"], "answer": 2, "explain": "See Configuring Authentication for Authors."}, {"q": "A partner created the GitHub organization and no client employee has access. What should happen before launch?", "options": ["Delete the organization", "Nothing, the partner owns it", "Add an owner from the client company", "Move the site to a personal account"], "answer": 2, "explain": "Adobe requires at least one owner from the customer.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d1-cards"><script type="application/json">{"cards": [["AEM Code Sync", "GitHub app that makes code available."], ["Org", "Matches a GitHub organization."], ["Site", "Code, content and configuration."], ["Canonical site", "Org and site match owner and repo."], ["ref--site--org", "The host pattern."], ["63", "Maximum characters in a DNS label."], ["tools.aem.live", "Admin user interfaces."], ["Edge environment", "Edge Delivery with no AEMaaCS tier."], ["Origin selector", "Proxies paths to another origin."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D1 · Project setup and onboarding</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Start</h4><ul><li>Decide owner</li><li>Pick the boilerplate</li><li>Install Code Sync</li></ul></div>
+      <div><h4>Names</h4><ul><li>ref--site--org</li><li>Max 63 chars</li><li>Canonical site</li></ul></div>
+      <div><h4>Cloud Manager</h4><ul><li>Domains and SSL</li><li>Proxy or Edge</li><li>Pipeline limits</li></ul></div>
+      <div><h4>Team</h4><ul><li>Roles early</li><li>Test real logins</li><li>Adobe channel</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/tutorial" rel="noopener" target="_blank">aem.live: Developer tutorial</a></li>
+    <li><a href="https://www.aem.live/docs/config-service-setup" rel="noopener" target="_blank">aem.live: Configuration service</a></li>
+    <li><a href="https://www.aem.live/docs/network-profile" rel="noopener" target="_blank">aem.live: Network profile</a></li>
+    <li><a href="https://www.aem.live/docs/teams" rel="noopener" target="_blank">aem.live: Teams</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/using-cloud-manager/edge-delivery-sites/introduction-to-edge-delivery-services" rel="noopener" target="_blank">Experience League: Edge Delivery Services in Cloud Manager</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

@@ -54,6 +54,16 @@
    "module": "A1"
   },
   {
+   "id": "aem-embed",
+   "term": "aem-embed",
+   "full": "",
+   "def": "A web component that embeds EDS content in other sites and applications.",
+   "match": [
+    "aem-embed"
+   ],
+   "module": "D10"
+  },
+  {
    "id": "aem-live",
    "term": "aem.live",
    "full": "",
@@ -106,6 +116,17 @@
     "App Builder"
    ],
    "module": "C9"
+  },
+  {
+   "id": "audit-log",
+   "term": "Audit log",
+   "full": "",
+   "def": "A record of successful admin operations such as preview, publish and configuration changes.",
+   "match": [
+    "Audit log",
+    "audit log"
+   ],
+   "module": "D7"
   },
   {
    "id": "auto-blocking",
@@ -195,6 +216,17 @@
    "module": "A2"
   },
   {
+   "id": "canonical-site",
+   "term": "Canonical site",
+   "full": "",
+   "def": "In repoless, the site whose org and name match the GitHub owner and repository.",
+   "match": [
+    "Canonical site",
+    "canonical site"
+   ],
+   "module": "D1"
+  },
+  {
    "id": "cdn",
    "term": "CDN",
    "full": "Content delivery network",
@@ -214,6 +246,16 @@
     "Challenger"
    ],
    "module": "B10"
+  },
+  {
+   "id": "closed-user-groups",
+   "term": "Closed User Groups",
+   "full": "",
+   "def": "Page-level access rules that are enforced at the CDN.",
+   "match": [
+    "Closed User Groups"
+   ],
+   "module": "D4"
   },
   {
    "id": "cloud-manager",
@@ -342,6 +384,16 @@
    "module": "A3"
   },
   {
+   "id": "csp",
+   "term": "CSP",
+   "full": "",
+   "def": "Content Security Policy: a browser control over which scripts and resources can load.",
+   "match": [
+    "CSP"
+   ],
+   "module": "D4"
+  },
+  {
    "id": "default-content",
    "term": "Default content",
    "full": "",
@@ -392,6 +444,17 @@
     "da.live"
    ],
    "module": "A4"
+  },
+  {
+   "id": "domain-key",
+   "term": "Domain key",
+   "full": "",
+   "def": "The key that opens a domain’s data in the Operational Telemetry explorer.",
+   "match": [
+    "domain key",
+    "Domain key"
+   ],
+   "module": "D7"
   },
   {
    "id": "eager",
@@ -662,6 +725,18 @@
    "module": "C6"
   },
   {
+   "id": "origin-selector",
+   "term": "Origin selector",
+   "full": "",
+   "def": "A CDN rule that sends matching requests to another origin.",
+   "match": [
+    "Origin selector",
+    "origin selectors",
+    "Origin selectors"
+   ],
+   "module": "D3"
+  },
+  {
    "id": "psi",
    "term": "PageSpeed Insights",
    "full": "PSI",
@@ -746,6 +821,16 @@
    "module": "B3"
   },
   {
+   "id": "raci",
+   "term": "RACI",
+   "full": "",
+   "def": "A matrix of who is Responsible, Accountable, Consulted and Informed for each decision.",
+   "match": [
+    "RACI"
+   ],
+   "module": "D9"
+  },
+  {
    "id": "repoless",
    "term": "Repoless",
    "full": "",
@@ -828,6 +913,17 @@
     "single host"
    ],
    "module": "A3"
+  },
+  {
+   "id": "site-token",
+   "term": "Site token",
+   "full": "",
+   "def": "A credential that gives read access to a protected site. A CDN sends it to a protected origin.",
+   "match": [
+    "Site token",
+    "site token"
+   ],
+   "module": "D2"
   },
   {
    "id": "snapshot",

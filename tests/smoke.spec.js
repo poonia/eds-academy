@@ -116,6 +116,62 @@ test('developer simulators respond to input', async ({ page }) => {
   await expect(admin.locator('pre')).toContainText('-X DELETE');
 });
 
+test('implementation simulators respond to input', async ({ page }) => {
+  await open(page, 'modules/d2-configuration-service.html');
+  const cfg = page.locator('[data-component="config-explorer"]');
+  await expect(cfg.locator('.sim-notes')).toContainText('public.custom.brand comes from the site');
+  await cfg.getByLabel('public.custom.brand, site value').fill('');
+  await expect(cfg.locator('.sim-notes')).toContainText('public.custom.brand comes from the profile');
+  await cfg.getByLabel('code.repo, site value').fill('other');
+  await expect(cfg.locator('.feedback')).toContainText('risky');
+
+  await open(page, 'modules/d3-cdn-go-live.html');
+  const cdn = page.locator('[data-component="cdn-sim"]');
+  await expect(cdn.locator('.feedback')).toContainText('6 settings');
+  for (const box of await cdn.locator('input[type=checkbox]').all()) await box.check();
+  await expect(cdn.locator('.feedback')).toContainText('matches');
+  await cdn.locator('select').selectOption('page');
+  await expect(cdn.locator('.feedback')).toContainText('1 setting');
+
+  await open(page, 'modules/d4-security-access.html');
+  const csp = page.locator('[data-component="csp-builder"]');
+  await expect(csp.locator('.sim-notes')).toContainText('blocked');
+  await csp.getByLabel("'strict-dynamic'").uncheck();
+  await expect(csp.locator('.feedback')).toContainText('Without strict-dynamic');
+
+  await open(page, 'modules/d6-migration.html');
+  const red = page.locator('[data-component="redirect-validator"]');
+  await expect(red.locator('.sim-notes')).toContainText('Redirect loop');
+  await red.locator('.sim-text').fill('Source,Destination\n/a,/about');
+  await expect(red.locator('.feedback')).toContainText('0 errors');
+
+  await open(page, 'modules/d7-monitoring.html');
+  const rum = page.locator('[data-component="rum-dashboard"]');
+  await expect(rum.locator('.rd-cards')).toContainText('Estimated page views');
+  await rum.locator('select').nth(1).selectOption('/support');
+  await expect(rum.locator('.feedback')).toContainText('Alert: LCP 2540ms');
+  await rum.locator('select').nth(0).selectOption('mobile');
+  await expect(rum.locator('.feedback')).toContainText('Too few samples');
+
+  await open(page, 'modules/d8-seo-operations.html');
+  const robots = page.locator('[data-component="robots-builder"]');
+  await expect(robots.locator('pre').first()).toContainText('Disallow: /search');
+  await robots.getByLabel('Disallow paths, comma separated').fill('/');
+  await expect(robots.locator('.feedback')).toContainText('whole site');
+
+  await open(page, 'modules/d9-governance.html');
+  const raci = page.locator('[data-component="raci-matrix"]');
+  await expect(raci.locator('tbody tr').first()).toContainText('Nobody is Accountable');
+  await raci.getByRole('button', { name: 'Show a suggested model' }).click();
+  await expect(raci.locator('tbody tr').first()).toContainText('One clear owner');
+
+  await open(page, 'modules/d10-enterprise-architecture.html');
+  const route = page.locator('[data-component="routing-sim"]');
+  await expect(route.locator('pre')).toContainText('main--acme--acme.aem.live');
+  await route.getByLabel('Path').fill('/account/x');
+  await expect(route.locator('pre')).toContainText('adobeaemcloud');
+});
+
 test('a missing URL at any depth shows the styled 404 page', async ({ page }) => {
   const problems = watch(page);
   const response = await page.goto('/eds-academy/no/such/deep/page.html');

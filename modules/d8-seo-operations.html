@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D8 SEO and discoverability operations · EDS Academy</title>
+<meta name="description" content="Module D8: robots.txt, sitemaps, metadata at scale and multi-language SEO operations.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d8-seo-operations.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D8 SEO and discoverability operations · EDS Academy">
+<meta property="og:description" content="Module D8: robots.txt, sitemaps, metadata at scale and multi-language SEO operations.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d8-seo-operations.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D8">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Control crawling correctly.</li>
+    <li>Configure sitemaps.</li>
+    <li>Manage metadata across a large site.</li>
+    <li>Run multi-language SEO.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d8-ready" data-title="Ready for SEO and discoverability operations?">
+    <script type="application/json">{"questions": [{"q": "What applies metadata by URL pattern?", "options": ["Bulk metadata", "Sidekick", "A CSS file"], "answer": 0, "explain": "Covered in B3."}, {"q": "Which tier blocks crawlers?", "options": ["Neither", "Your production domain, by default", "aem.page and aem.live"], "answer": 2, "explain": "See this module."}, {"q": "Which site configuration sets the production host?", "options": ["cdn.prod.host", "public.custom", "code.repo"], "answer": 0, "explain": "Covered in D2."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="robots-txt-and-sitemaps" data-level="2">
+  <h2>robots.txt and sitemaps</h2>
+  <div data-part="why"><p>One wrong line can hide a site from search, and it is easy to miss until traffic falls.</p></div>
+  <div data-part="concept">
+    <p><code>aem.page</code> and <code>aem.live</code> always disallow crawling, and add <code>X-Robots-Tag: noindex, nofollow</code>. Once traffic comes through your production domain, AEM serves a default or custom <code>robots.txt</code>, and that header goes away. The default allows crawling and points to your sitemap.</p>
+    <p><code>Disallow</code> does not remove a page from Google. It can still appear in results, and crawlers can no longer see any <code>noindex</code> on it. To remove a URL, allow crawling and set <code>robots: noindex</code>.</p>
+    <p>AEM makes <code>sitemap.xml</code> from published documents without any setup, and supports index-based and manual configurations. Each sitemap holds at most 50,000 URLs and 50 MB. Set <code>cdn.prod.host</code> so that sitemap URLs use your real domain.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    P["Request on aem.live"] --&gt; B["Blocked from crawlers"]
+    C["Request through production CDN"] --&gt; R["Default or custom robots.txt"]
+    R --&gt; S["Sitemap on your domain"]</pre>
+      <figcaption><b>What to notice:</b> platform hosts are always closed to crawlers. Your domain is what gets indexed.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A request on aem.live is blocked from crawlers. A request through the production CDN gets a robots.txt pointing to your sitemap.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Goal</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>Remove page from results</td><td>Allow crawling, set <code>robots: noindex</code></td></tr>
+      <tr><td>Reduce crawl of faceted URLs</td><td><code>Disallow</code>, carefully</td></tr>
+      <tr><td>Exclude a section</td><td>Bulk metadata noindex</td></tr>
+      <tr><td>Help find pages</td><td>Sitemap</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d8-t1"><script type="application/json">{"questions": [{"q": "You disallowed /old in robots.txt, and it still appears in Google. What should you do?", "options": ["Add another Disallow", "Change the DNS", "Allow crawling, and add noindex"], "answer": 2, "explain": "Crawlers must read the page to see noindex."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Sitemap shows aem.live URLs</td><td>No production host</td><td>Set <code>cdn.prod.host</code> or an origin.</td></tr>
+      <tr><td>robots.txt looks closed</td><td>Viewing aem.live</td><td>Check it on the production domain.</td></tr>
+      <tr><td>noindex page in sitemap</td><td>Manual index lacks robots</td><td>Add the <code>robots</code> property to the index.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="metadata-at-scale" data-level="2">
+  <h2>Metadata at scale</h2>
+  <div data-part="why"><p>A site with 10,000 pages cannot rely on people remembering to fill out every field.</p></div>
+  <div data-part="concept">
+    <p>A <code>metadata</code> sheet in the content root applies values by URL pattern. It is read top to bottom, and a site-wide <code>/**</code> entry must come before more specific entries. A page’s own metadata block wins over the sheet. Preview and publish the sheet for changes to apply.</p>
+    <p>As sites grow, a single sheet becomes hard to manage. Adobe suggests dividing indexes, sitemaps and metadata into logical sections at 50,000 pages or more. An audit should catch missing titles, duplicates and bad canonicals. Set canonical to <code>""</code> to remove it for a path if needed.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>URL</th><th>robots</th><th>template</th><th>image</th></tr></thead>
+    <tbody>
+      <tr><td><code>/**</code></td><td></td><td></td><td><code>/default.jpg</code></td></tr>
+      <tr><td><code>/news/**</code></td><td></td><td>article</td><td></td></tr>
+      <tr><td><code>/drafts/**</code></td><td>noindex, nofollow</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Site size</th><th>Adobe’s recommendation</th></tr></thead>
+    <tbody>
+      <tr><td>Up to about 50,000 pages</td><td>One index, sitemap and metadata sheet</td></tr>
+      <tr><td>50,000 to 1,000,000</td><td>One site, with split indexes, sitemaps, metadata</td></tr>
+      <tr><td>Near 1,000,000 or more</td><td>Consider several repoless sites</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d8-t2"><script type="application/json">{"questions": [{"q": "The sheet sets robots on /news/**, and one news page has its own robots metadata. Which applies?", "options": ["Neither", "The sheet", "The page metadata"], "answer": 2, "explain": "Page metadata wins."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Sheet has no effect</td><td>Not published</td><td>Preview and publish.</td></tr>
+      <tr><td>Specific rule is overwritten</td><td>Wrong order</td><td>Put <code>/**</code> first.</td></tr>
+      <tr><td>Large JSON fails</td><td>Over 6 MB compressed</td><td>Split it.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="multi-language-seo" data-level="3">
+  <h2>Multi-language SEO</h2>
+  <div data-part="why"><p>Without hreflang, your French page may show to English searchers, or compete with its own translation.</p></div>
+  <div data-part="concept">
+    <p>Use one folder per language or region, and put <code>hreflang</code> in the sitemap, where AEM can generate it. Each language has its own <code>source</code>, <code>destination</code>, <code>hreflang</code> and an <code>alternate</code> path pattern. Pages are linked when they share a matching path.</p>
+    <p>Use real translated metadata, and self-referencing canonicals per language. Do not canonicalize every translation to English. Keep URL patterns parallel where possible, so that alternates can be calculated.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="helix-sitemap.yaml" data-lang="yaml">
+      <textarea class="src" hidden>sitemaps:
+  example:
+    lastmod: YYYY-MM-DD
+    languages:
+      en:
+        source: /en/query-index.json
+        destination: /sitemap-en.xml
+        hreflang: en
+        alternate: /en/{path}
+      fr:
+        source: /fr/query-index.json
+        destination: /sitemap-fr.xml
+        hreflang: fr
+        alternate: /fr/{path}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Do</th><th>Avoid</th></tr></thead>
+    <tbody>
+      <tr><td>Translate titles and descriptions</td><td>Copied English metadata</td></tr>
+      <tr><td>Parallel paths</td><td>Random slugs per language</td></tr>
+      <tr><td>Self-referencing canonicals</td><td>Canonical to English</td></tr>
+      <tr><td>Use folders</td><td>Redirect by browser language only</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d8-t3"><script type="application/json">{"questions": [{"q": "Each French page has a canonical pointing to its English version. What may result?", "options": ["French pages may not be indexed", "Better French rankings", "Faster LCP"], "answer": 0, "explain": "A canonical tells search engines which page to keep."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Alternates missing</td><td>Paths do not match</td><td>Keep paths parallel or define them.</td></tr>
+      <tr><td>Wrong language ranks</td><td>No hreflang</td><td>Add it to the sitemap.</td></tr>
+      <tr><td>Sitemap partial</td><td>Index limit reached</td><td>Segment by section.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: robots.txt and sitemap builder</h2>
+  <p>Build both files, and test a path. Try adding <code>/</code> to the Disallow list.</p>
+  <div data-component="robots-builder" data-title="robots.txt and sitemap builder"><script type="application/json">{}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: audit discoverability</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Find and fix SEO operational problems on a test site.</p></div>
+    <div><h4>You need</h4><p>A test site with a query index.</p></div>
+    <div><h4>Time</h4><p>About 60 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open</b> <code>robots.txt</code> on the aem.live host and note it.</div></li>
+    <li><div><b>Open</b> <code>sitemap.xml</code>.</div></li>
+    <li><div><b>Add</b> a metadata sheet with a site-wide image.</div></li>
+    <li><div><b>Mark</b> one folder as noindex.</div></li>
+    <li><div><b>Publish</b> the sheet.</div></li>
+    <li><div><b>Confirm</b> the tag in page source.</div></li>
+    <li><div><b>Rebuild or check</b> the sitemap.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>Metadata and crawl rules you can explain.</p></div>
+    <div><h4>How to verify</h4><p>A noindex page has the meta tag, and is not in the sitemap if your index excludes it.</p></div>
+    <div><h4>Stretch</h4><p>Add a second language with hreflang.</p></div>
+  </div>
+  <ul class="checklist" data-id="d8-lab">
+    <li>Robots checked</li>
+    <li>Sheet published</li>
+    <li>noindex verified</li>
+    <li>Sitemap reviewed</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Site not indexed</td><td>Disallow, or noindex on a section</td><td>Check robots and metadata.</td></tr>
+      <tr><td>Preview URLs indexed</td><td>Rare; links exposed</td><td>Check for backlinks to them.</td></tr>
+      <tr><td>Sitemap too big</td><td>Over 50,000</td><td>Split it.</td></tr>
+      <tr><td>Duplicate content</td><td>Bad canonicals</td><td>Fix them.</td></tr>
+      <tr><td>AI assistants miss content</td><td>Content added client-side</td><td>Keep primary content in the initial HTML.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Name an SEO owner per site</b>, and keep a monthly review of Search Console and sitemaps.</p></aside>
+    <aside class="callout warning" data-label="Initial HTML"><p>Header, footer and fragments are decorated client-side. Keep primary content on the page itself.</p></aside>
+    <aside class="callout accessibility"><p>Meaningful titles and language attributes help screen reader users as well as search.</p></aside>
+    <aside class="callout performance"><p>Google’s rendering pass is time-boxed, so speed helps secondary content get indexed.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>robots.txt</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Metadata sheet</td><td>Accountable</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Sitemap config</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>hreflang approach</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d8-check"><script type="application/json">{"questions": [{"q": "What is the default production robots.txt?", "options": ["Allows crawling and references the sitemap", "Blocks everything", "Is empty"], "answer": 0, "explain": "See Robots."}, {"q": "What removes a URL most effectively?", "options": ["Allow crawl and noindex", "Renaming a block", "Disallow only"], "answer": 0, "explain": "See Robots."}, {"q": "What limit applies per sitemap?", "options": ["50,000 URLs and 50 MB", "500 URLs", "5 GB"], "answer": 0, "explain": "See Sitemaps."}, {"q": "Which header is added on platform domains?", "options": ["X-Robots-Tag", "Age", "X-Forwarded-Host"], "answer": 0, "explain": "See Robots."}, {"q": "How are bulk metadata rules read?", "options": ["Randomly", "Top to bottom", "Alphabetically"], "answer": 1, "explain": "See Bulk Metadata."}, {"q": "Which wins, page or bulk metadata?", "options": ["Page", "Neither", "Bulk"], "answer": 0, "explain": "See Bulk Metadata."}, {"q": "Where is hreflang set in AEM’s sitemap configuration?", "options": ["In the CDN only", "Per language in the sitemap configuration", "In CSS"], "answer": 1, "explain": "See Sitemaps."}, {"q": "After launch the site has no organic traffic. Google says pages are blocked. What do you check first?", "options": ["Sidekick plugins", "The hero image", "The GitHub stars", "Production robots.txt and noindex metadata"], "answer": 3, "explain": "The blocked status points to crawl directives.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d8-cards"><script type="application/json">{"cards": [["X-Robots-Tag", "Blocks indexing on platform hosts."], ["Disallow", "Stops crawling, not indexing."], ["noindex", "Keeps a page out of results."], ["sitemap.xml", "Generated from published pages."], ["cdn.prod.host", "Domain for sitemap URLs."], ["metadata sheet", "Metadata by pattern."], ["hreflang", "Language alternates."], ["alternate", "Path pattern for a language."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D8 · SEO and discoverability operations</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Crawl</h4><ul><li>Platform hosts closed</li><li>Check production</li><li>Disallow is not noindex</li></ul></div>
+      <div><h4>Sitemaps</h4><ul><li>Automatic</li><li>50,000 max</li><li>cdn.prod.host</li></ul></div>
+      <div><h4>Metadata</h4><ul><li>/** first</li><li>Page wins</li><li>Publish the sheet</li></ul></div>
+      <div><h4>Languages</h4><ul><li>Folders</li><li>hreflang</li><li>Self canonicals</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/robots" rel="noopener" target="_blank">aem.live: Robots</a></li>
+    <li><a href="https://www.aem.live/developer/sitemap" rel="noopener" target="_blank">aem.live: Sitemaps</a></li>
+    <li><a href="https://www.aem.live/docs/seo-geo" rel="noopener" target="_blank">aem.live: SEO and GEO</a></li>
+    <li><a href="https://www.aem.live/docs/bulk-metadata" rel="noopener" target="_blank">aem.live: Bulk metadata</a></li>
+    <li><a href="https://www.aem.live/docs/large-sites" rel="noopener" target="_blank">aem.live: Large sites</a></li>
+    <li><a href="https://www.aem.live/docs/translation-and-localization" rel="noopener" target="_blank">aem.live: Translation and localization</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

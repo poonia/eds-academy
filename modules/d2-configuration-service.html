@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D2 Configuration service · EDS Academy</title>
+<meta name="description" content="Module D2: site and organization configuration, moving from legacy files, API keys and tokens, and profiles for repoless sites.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d2-configuration-service.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D2 Configuration service · EDS Academy">
+<meta property="og:description" content="Module D2: site and organization configuration, moving from legacy files, API keys and tokens, and profiles for repoless sites.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d2-configuration-service.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D2">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Read and change a site configuration safely.</li>
+    <li>Move a project off file-based configuration.</li>
+    <li>Choose the right credential for each job.</li>
+    <li>Share configuration with profiles.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d2-ready" data-title="Ready for configuration service?">
+    <script type="application/json">{"questions": [{"q": "What is the Admin API host?", "options": ["admin.hlx.page", "cdn.aem.live", "api.github.com"], "answer": 0, "explain": "Covered in A2."}, {"q": "What is a site made of?", "options": ["Only a repository", "Code, content and configuration", "Only pages"], "answer": 1, "explain": "Covered in D1."}, {"q": "What must match in repoless?", "options": ["All domains", "The canonical site and its repository", "All content sources"], "answer": 1, "explain": "Covered in D1."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="site-and-org-config" data-level="2">
+  <h2>Site and org config</h2>
+  <div data-part="why"><p>Headers, access, CDN settings and code location all live in one service. If you know its shape, you can change them safely.</p></div>
+  <div data-part="concept">
+    <p>The <b>Configuration Service</b> gathers settings for the client, delivery, the HTML pipeline and the Admin Service. Most changes can be made at <a href="https://tools.aem.live" rel="noopener" target="_blank">tools.aem.live</a>. The service is API first, so it also suits automation through <code>admin.hlx.page</code>.</p>
+    <p>You can replace a whole site document or change one part, such as <code>code</code>, <code>content</code>, <code>access</code>, <code>cdn</code>, <code>headers</code>, <code>public</code> or <code>sidekick</code>. Some POST requests replace that entire object, so read it first and send back everything you want to keep.</p>
+    <p>Two changes are risky on production sites. Changing the code location can affect distributed caching. Changing the content location creates a new Content Bus ID, so all content must be previewed and published again, and indexes and sitemaps recreated. Instead, build a new site, validate it, then switch the CDN origin.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    O["Organization"] --&gt; S["Site configuration"]
+    P["Profile"] --&gt; S
+    S --&gt; C["Client and Sidekick"]
+    S --&gt; D["Delivery"]
+    S --&gt; H["HTML pipeline"]
+    S --&gt; A["Admin Service"]</pre>
+      <figcaption><b>What to notice:</b> one configuration serves several consumers, and only the client scope is readable from a site.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Organization and profile settings feed the site configuration, which serves the client and Sidekick, delivery, the HTML pipeline and the Admin Service.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Safe change: read, then write" data-lang="bash">
+      <textarea class="src" hidden>curl -s https://admin.hlx.page/config/acme/sites/website/access/site.json \
+  -H "x-auth-token: $AEM_TOKEN" &gt; access-site.json
+
+# Edit access-site.json, keeping the existing values, then:
+curl -X POST https://admin.hlx.page/config/acme/sites/website/access/site.json \
+  -H 'content-type: application/json' \
+  -H "x-auth-token: $AEM_TOKEN" \
+  --data @access-site.json</textarea>
+      <figcaption><b>Note:</b> each POST to this address overwrites the object.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d2-t1"><script type="application/json">{"questions": [{"q": "You must move a live site to a new content source. What is the recommended approach?", "options": ["Delete the site first", "Change content.source on the live site", "Create a new site, validate it, then switch the CDN origin"], "answer": 2, "explain": "Changing it in place creates a new Content Bus ID."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Site turns to 404s after an update</td><td>Content location changed</td><td>Republish, or go back to the old site.</td></tr>
+      <tr><td>Settings disappeared</td><td>POST replaced the object</td><td>GET first and include existing values.</td></tr>
+      <tr><td>Secret visible at /config.json</td><td>Stored in <code>public</code></td><td>Remove and rotate it. Public config is open to everyone.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="legacy-to-config-service" data-level="2">
+  <h2>Legacy to config service</h2>
+  <div data-part="why"><p>Older projects keep settings in files and sheets. Features such as repoless need the Configuration Service.</p></div>
+  <div data-part="concept">
+    <p>Older projects use <code>fstab.yaml</code>, <code>.helix/config.xlsx</code>, <code>robots.txt</code>, <code>tools/sidekick/config.json</code>, <code>helix-query.yaml</code> and <code>helix-sitemap.yaml</code>. The service combines these for compatibility, but some features are unavailable in this document mode. aem.live does not recommend document-based configuration.</p>
+    <p>Once enabled, settings in the Configuration Service override the old files, so remove the files afterwards to avoid confusion.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Old location</th><th>Configuration Service</th></tr></thead>
+    <tbody>
+      <tr><td><code>fstab.yaml</code></td><td><code>content</code></td></tr>
+      <tr><td><code>.helix/config</code></td><td>Site properties, such as <code>cdn</code></td></tr>
+      <tr><td><code>.helix/headers</code></td><td><code>headers</code></td></tr>
+      <tr><td><code>tools/sidekick/config.json</code></td><td><code>sidekick</code></td></tr>
+      <tr><td><code>helix-query.yaml</code></td><td><code>content/query.yaml</code></td></tr>
+      <tr><td><code>helix-sitemap.yaml</code></td><td><code>content/sitemap.yaml</code></td></tr>
+      <tr><td><code>robots.txt</code></td><td><code>robots.txt</code> on the site</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div data-component="stepper" data-title="Move one site"><div class="step" data-label="1. Inventory"><p>List every configuration file and sheet, and who changes it.</p></div><div class="step" data-label="2. Create"><p>Write the same values to the Configuration Service.</p></div><div class="step" data-label="3. Compare"><p>Check headers, the index, the sitemap and Sidekick on a test site.</p></div><div class="step" data-label="4. Clean up"><p>Remove the GitHub files, then confirm repository-based configuration has been cleared before you remove files from the content source.</p></div><div class="step" data-label="5. Tell people"><p>Authors who used to edit a sheet need the new place.</p></div></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d2-t2"><script type="application/json">{"questions": [{"q": "You enabled the Configuration Service, and an edit to fstab.yaml has no effect. Why?", "options": ["fstab.yaml needs publishing", "Configuration Service settings override the file", "GitHub is offline"], "answer": 1, "explain": "Remove unused files to avoid this confusion."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Old sheet edits are ignored</td><td>Service overrides it</td><td>Update the Configuration Service.</td></tr>
+      <tr><td>Sitemap goes missing</td><td>Not moved across</td><td>Add <code>content/sitemap.yaml</code> and rebuild.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="api-keys-and-tokens" data-level="3">
+  <h2>API keys and tokens</h2>
+  <div data-part="why"><p>EDS has several credentials that look alike, and mixing them up can expose a site.</p></div>
+  <div data-part="concept">
+    <p>A <b>sign-in token</b> belongs to one user. It is highly sensitive and short-lived. An <b>Admin API key</b> is for automation, with listed roles and an expiry date. A <b>site token</b> gives read access to a protected site and is the one you give your CDN.</p>
+    <p>Create keys at the organization, profile or site level. You need the admin role. The key value appears once and Adobe does not store it, so put it in a secret manager immediately. Keys expire, so plan rotation before that date.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Credential</th><th>Used for</th><th>Sent as</th><th>Keep from</th></tr></thead>
+    <tbody>
+      <tr><td>Sign-in token</td><td>A person’s ad-hoc API call</td><td><code>x-auth-token</code></td><td>Scripts, tickets, chat</td></tr>
+      <tr><td>Admin API key</td><td>Automation</td><td><code>x-auth-token</code> or <code>Authorization: token</code></td><td>Git and browser code</td></tr>
+      <tr><td>Site token</td><td>Reading a protected site</td><td><code>Authorization: token</code></td><td>Public pages</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Create a key with one role" data-lang="bash">
+      <textarea class="src" hidden>curl -X POST https://admin.hlx.page/config/acme/sites/website/apiKeys.json \
+  -H 'content-type: application/json' \
+  -H "x-auth-token: $AEM_TOKEN" \
+  --data '{ "description": "Nightly publish job", "roles": ["publish"] }'</textarea>
+      <figcaption><b>Note:</b> save <code>value</code> from the response now. You cannot retrieve it later.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d2-t3"><script type="application/json">{"questions": [{"q": "Your CDN must fetch from a protected origin. Which credential should it send?", "options": ["A site token", "A developer’s sign-in token", "An admin API key"], "answer": 0, "explain": "Admin tokens cannot be used for site authentication."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Automation stops one day</td><td>Key expired</td><td>Track expiry and rotate early.</td></tr>
+      <tr><td>Key cannot be found again</td><td>Value is only shown once</td><td>Create a new key and delete the old one.</td></tr>
+      <tr><td>Token in a pull request</td><td>Copied into a script</td><td>Revoke it, and use a secret store.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="profiles-and-repoless-config" data-level="3">
+  <h2>Profiles and repoless config</h2>
+  <div data-part="why"><p>Fifty sites with fifty copies of the same header rule will drift. Profiles keep them aligned.</p></div>
+  <div data-part="concept">
+    <p>A <b>profile</b> groups reusable configuration, such as headers, indexes and additional metadata. Several sites in an organization can use one profile, but each site can use only <b>one</b> profile. If a site and its profile conflict, the <b>site wins</b>.</p>
+    <p><b>Repoless</b> uses configuration to point several sites at one code repository. A canonical site must still match the GitHub owner and repository. A code merge reaches every site, so a profile change and a code change both have a wide reach.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    P["Profile: shared headers and index"] --&gt; A["Site: brand-a"]
+    P --&gt; B["Site: brand-b"]
+    R["Repository: acme/website"] --&gt; A
+    R --&gt; B
+    A -.override.-&gt; X["Own CDN host"]</pre>
+      <figcaption><b>What to notice:</b> shared by default, with overrides on the site.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A profile and a repository both feed two sites. Brand A also overrides with its own CDN host.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Put in</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td>Profile</td><td>Security headers, standard index, shared metadata</td></tr>
+      <tr><td>Site</td><td>Content source, CDN host, site-specific access</td></tr>
+      <tr><td>Public config</td><td>Harmless values for client code, never secrets</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d2-t4"><script type="application/json">{"questions": [{"q": "A profile sets a header and the site sets the same header differently. What applies?", "options": ["The profile value", "Both are sent", "The site value"], "answer": 2, "explain": "The site configuration wins conflicts."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Profile change has no effect on one site</td><td>Site overrides it</td><td>Remove the override.</td></tr>
+      <tr><td>One site cannot use two profiles</td><td>One profile per site</td><td>Combine the shared values, or override on the site.</td></tr>
+      <tr><td>Change broke every brand</td><td>Wide reach</td><td>Test on one site first, where the feature allows.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: configuration explorer</h2>
+  <p>Edit profile and site values to see the effective configuration. Try clearing a site value, or changing a risky property. This is a simplified model, and nothing is sent.</p>
+  <div data-component="config-explorer" data-title="Configuration explorer"><script type="application/json">{"rows": [{"key": "code.repo", "profile": "", "site": "boilerplate", "risky": true}, {"key": "content.source.url", "profile": "", "site": "https://content.da.live/acme/website/", "risky": true}, {"key": "cdn.prod.host", "profile": "", "site": "www.acme.com"}, {"key": "headers./**.x-frame-options", "profile": "SAMEORIGIN", "site": ""}, {"key": "sitemap.lastmod", "profile": "YYYY-MM-DD", "site": ""}, {"key": "public.custom.brand", "profile": "acme", "site": "acme-health"}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: add a security header through configuration</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Change one setting safely, and verify it.</p></div>
+    <div><h4>You need</h4><p>Admin access to a test site.</p></div>
+    <div><h4>Time</h4><p>About 45 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Read</b> the current site configuration, and save a copy.</div></li>
+    <li><div><b>Add</b> a harmless test header on one path.</div></li>
+    <li><div><b>Check</b> the header with <code>curl -I</code>.</div></li>
+    <li><div><b>Create</b> an API key with the smallest role that does the job.</div></li>
+    <li><div><b>Repeat</b> a read with that key.</div></li>
+    <li><div><b>Restore</b> the original configuration.</div></li>
+    <li><div><b>Delete</b> the key.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A verified change and a clean rollback.</p></div>
+    <div><h4>How to verify</h4><p>The header appears, then is gone after restore.</p></div>
+    <div><h4>Stretch</h4><p>Move the header into a profile and attach it to a second site.</p></div>
+  </div>
+  <ul class="checklist" data-id="d2-lab">
+    <li>Copy saved</li>
+    <li>Header verified</li>
+    <li>Minimal key used</li>
+    <li>Key deleted</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Setting vanished after POST</td><td>Whole object replaced</td><td>Read first, and send all values.</td></tr>
+      <tr><td>Header not applied to code files</td><td>Waits for code sync</td><td>Update main, or resync through the Admin API.</td></tr>
+      <tr><td>401 or 403</td><td>Token or role</td><td>Check the token and its role.</td></tr>
+      <tr><td>Fresh site shows 404</td><td>New Content Bus</td><td>Preview and publish content.</td></tr>
+      <tr><td>Old file is ignored</td><td>Service overrides it</td><td>Remove the file.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Treat configuration like code.</b> Script changes, keep a reviewed copy, and record who may run them.</p></aside>
+    <aside class="callout warning" data-label="Public means public"><p>Anything in the public configuration can be read at <code>/config.json</code>.</p></aside>
+    <aside class="callout accessibility"><p>If admins use a custom tool for configuration, it must be usable by keyboard and screen reader.</p></aside>
+    <aside class="callout performance"><p>Avoid fetching <code>/config.json</code> before the largest content appears.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Site configuration</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Profiles</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>API keys</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Public config values</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d2-check"><script type="application/json">{"questions": [{"q": "Where do most configuration changes start, if you are not automating?", "options": ["The Content Bus", "tools.aem.live", "A pull request to Adobe"], "answer": 1, "explain": "It offers user interfaces for common tasks."}, {"q": "What happens if you change a site’s content configuration?", "options": ["It gets a new Content Bus ID", "Nothing", "Only the CDN changes"], "answer": 0, "explain": "Content must be republished."}, {"q": "How many profiles can a site use?", "options": ["Unlimited", "One", "Two"], "answer": 1, "explain": "See Repoless."}, {"q": "Where is public configuration readable?", "options": ["/robots.txt", "/config.json", "/sitemap.xml"], "answer": 1, "explain": "Never put secrets in it."}, {"q": "Who can create Admin API keys?", "options": ["A request with an admin role", "Any visitor", "Any author"], "answer": 0, "explain": "See Admin API Keys."}, {"q": "Which of these does a profile commonly hold? Choose all that apply.", "options": ["Indexes", "Headers", "A site’s content source URL"], "answer": [0, 1], "explain": "Content sources are normally per site."}, {"q": "Which file is replaced by the content section of site configuration?", "options": ["fstab.yaml", "styles.css", "404.html"], "answer": 0, "explain": "It held the mount point."}, {"q": "A developer pastes a personal sign-in token into a scheduled job. What should you do?", "options": ["Commit it so that it is not lost", "Share it with the team for backup", "Leave it, the job works", "Replace it with a limited API key in a secret store, and retire the token"], "answer": 3, "explain": "Use a credential built for automation.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d2-cards"><script type="application/json">{"cards": [["Configuration Service", "Delivers site configuration."], ["Profile", "Reusable configuration for sites."], ["Site wins", "Site value beats profile value."], ["Content Bus ID", "Changes with the content location."], ["Sign-in token", "Sensitive, tied to a person."], ["API key", "Roles and expiry, for automation."], ["Site token", "Reads a protected site."], ["/config.json", "Public configuration."], ["tools.aem.live", "User interfaces for configuration."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D2 · Configuration service</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Change safely</h4><ul><li>GET first</li><li>Keep a copy</li><li>Verify afterwards</li></ul></div>
+      <div><h4>Do not change live</h4><ul><li>Code location</li><li>Content location</li><li>Switch the origin instead</li></ul></div>
+      <div><h4>Credentials</h4><ul><li>Person: sign-in</li><li>Script: API key</li><li>CDN: site token</li></ul></div>
+      <div><h4>Profiles</h4><ul><li>One per site</li><li>Site wins</li><li>Wide reach</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/config-service-setup" rel="noopener" target="_blank">aem.live: Configuration service</a></li>
+    <li><a href="https://www.aem.live/docs/admin-apikeys" rel="noopener" target="_blank">aem.live: Admin API keys</a></li>
+    <li><a href="https://www.aem.live/docs/repoless" rel="noopener" target="_blank">aem.live: Repoless</a></li>
+    <li><a href="https://www.aem.live/docs/custom-headers" rel="noopener" target="_blank">aem.live: Custom headers</a></li>
+    <li><a href="https://www.aem.live/docs/configuration" rel="noopener" target="_blank">aem.live: Document-based configuration</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

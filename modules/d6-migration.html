@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D6 Migration to EDS · EDS Academy</title>
+<meta name="description" content="Module D6: inventory, component mapping, content import, URL and SEO preservation, parity QA, cutover and moving AEM Sites to EDS with Universal Editor.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d6-migration.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D6 Migration to EDS · EDS Academy">
+<meta property="og:description" content="Module D6: inventory, component mapping, content import, URL and SEO preservation, parity QA, cutover and moving AEM Sites to EDS with Universal Editor.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d6-migration.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D6">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Build a migration inventory.</li>
+    <li>Map components to blocks.</li>
+    <li>Plan a content import.</li>
+    <li>Protect URLs and search value.</li>
+    <li>Run parity QA and a staged cutover.</li>
+    <li>Plan an AEM Sites to Universal Editor move.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d6-ready" data-title="Ready for migration to EDS?">
+    <script type="application/json">{"questions": [{"q": "What is a block?", "options": ["A user role", "A table-authored reusable piece with its own code", "A DNS entry"], "answer": 1, "explain": "Covered in B1 and C4."}, {"q": "What should the production CDN origin use?", "options": ["A personal branch", "main on aem.live", "aem.page"], "answer": 1, "explain": "Covered in D3."}, {"q": "Where do exact redirects go?", "options": ["head.html", "The redirects sheet", "A block"], "answer": 1, "explain": "Covered in D3."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="discovery-and-inventory" data-level="3">
+  <h2>Discovery and inventory</h2>
+  <div data-part="why"><p>You cannot estimate a migration you have not counted. Most overruns come from page types nobody listed.</p></div>
+  <div data-part="concept">
+    <p>Begin with real data: the sitemap, analytics, Search Console and your CMS. Group URLs by <b>page type</b>, then record traffic, backlinks, owner and a decision: <b>keep</b>, <b>merge</b>, <b>retire</b> or <b>rebuild</b>. Do not migrate what nobody visits.</p>
+    <p>Add Operational Telemetry to the existing site as early as you can, so that you have a performance baseline. Also list integrations, forms, personalization and tags, because those often take longer than pages. Check site size against platform limits, such as 50,000 pages per index and 100,000 redirects.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Field</th><th>Why you need it</th></tr></thead>
+    <tbody>
+      <tr><td>URL and page type</td><td>Sizes block and import work</td></tr>
+      <tr><td>Monthly visits</td><td>Sets priority</td></tr>
+      <tr><td>Backlinks</td><td>Decides redirects</td></tr>
+      <tr><td>Owner</td><td>Someone must approve the content</td></tr>
+      <tr><td>Decision</td><td>Keep, merge, retire or rebuild</td></tr>
+      <tr><td>Integrations</td><td>Reveals hidden work</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div data-component="order" data-title="Discovery order"><script type="application/json">{"prompt": "Put discovery steps in order.", "items": ["Export all known URLs", "Join traffic and backlink data", "Group URLs by page type", "Decide keep, merge, retire or rebuild", "List integrations and tags", "Estimate blocks and import rules"], "explain": "Decide what to keep before you estimate the work."}</script></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t1"><script type="application/json">{"questions": [{"q": "A section gets 3 visits a year and no backlinks. What is a sensible default?", "options": ["Copy it unchanged", "Retire it, with a redirect if there is a good target", "Rebuild it first"], "answer": 1, "explain": "Migration is a chance to reduce the site."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Estimate blown</td><td>Page types were missed</td><td>Sample real URLs from every source.</td></tr>
+      <tr><td>No before-and-after data</td><td>Telemetry added late</td><td>Add OpTel to the old site now.</td></tr>
+      <tr><td>Launch blocked by a form</td><td>Integrations not listed</td><td>Inventory them first.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="component-to-block-mapping" data-level="3">
+  <h2>Component-to-block mapping</h2>
+  <div data-part="why"><p>A one-to-one port of old components brings old complexity with it. Mapping is where you simplify.</p></div>
+  <div data-part="concept">
+    <p>List each old component with its variants and frequency, then decide. Many become <b>default content</b> such as headings, text, images and links. Others become an existing <b>block</b>, a block with a variant, or occasionally a new block. Few should become custom.</p>
+    <p>Keep content models intuitive for authors. Adobe advises importing an example of each page type early, so that authors can confirm the result makes sense. HTL, Sling models and traditional clientlibs do not carry over, so component code is rewritten.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Old component</th><th>Target</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Rich text</td><td>Default content</td><td>No block needed</td></tr>
+      <tr><td>Image with caption</td><td>Default content</td><td>Check alt text</td></tr>
+      <tr><td>Teaser list, 6 variants</td><td><code>cards</code> with 2 variants</td><td>Consolidate</td></tr>
+      <tr><td>Tabs</td><td>Block</td><td>Accessibility review</td></tr>
+      <tr><td>Search app</td><td>Separate block or integration</td><td>Scope it apart</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout tip"><p>If a variant appears on under 1% of pages, ask whether it can be dropped.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t2"><script type="application/json">{"questions": [{"q": "The old site has 40 components. What is a good aim?", "options": ["Far fewer blocks, with more default content", "Exactly 40 blocks", "One block for each page"], "answer": 0, "explain": "Simplify the model during migration."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Authors find pages complex</td><td>Too many block options</td><td>Merge variants.</td></tr>
+      <tr><td>Imported pages need heavy repair</td><td>Mapping did not match content</td><td>Test sample imports.</td></tr>
+      <tr><td>Team tries to reuse HTL</td><td>Different rendering model</td><td>Rewrite as block JavaScript and CSS.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="content-import" data-level="3">
+  <h2>Content import</h2>
+  <div data-part="why"><p>Manual copy-paste works for ten pages. For thousands you need repeatable rules.</p></div>
+  <div data-part="concept">
+    <p>Run <code>aem import</code> to open the importer at <code>localhost:3001</code>. It works only in Chrome-based browsers. It takes the page DOM, applies transformation rules from your <code>import.js</code>, and creates <b>docx</b> for SharePoint or Google Drive, <b>HTML</b> for Document Authoring, or a <b>JCR package</b> for AEM authoring.</p>
+    <p>Use the Workbench to refine rules on single pages, then the Bulk tool for lists. Heavy single-page apps can crash the browser after 60 to 100 pages. Turning off JavaScript, when the content is in the markup, can help. For 10,000 or more URLs, contact the AEM team.</p>
+    <p>JCR packages contain content only. Use the generated <code>asset-mapping.json</code> and the AEM Import Helper to bring across the assets.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Authoring</th><th>Output</th><th>Next</th></tr></thead>
+    <tbody>
+      <tr><td>SharePoint or Google Drive</td><td>docx</td><td>Upload; Drive can convert to Docs</td></tr>
+      <tr><td>Document Authoring</td><td>HTML</td><td>Drag and drop in Browse</td></tr>
+      <tr><td>AEM with Universal Editor</td><td>JCR package</td><td>Package Manager or Import Helper</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="tools/importer/import.js (sketch)" data-lang="javascript">
+      <textarea class="src" hidden>export default {
+  transformDOM: ({ document }) =&gt; {
+    const main = document.querySelector('main');
+    WebImporter.DOMUtils.remove(main, ['header', 'footer', '.cookie-banner']);
+    const meta = WebImporter.Blocks.getMetadataBlock(document, {
+      Title: document.title,
+    });
+    main.append(meta);
+    return main;
+  },
+};</textarea>
+      <figcaption><b>Simplified.</b> See the importer’s GitHub documentation for the current API.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t3"><script type="application/json">{"questions": [{"q": "Bulk import crashes after about 80 pages of a heavy single-page app. What can you try first?", "options": ["Use Firefox", "Disable JavaScript execution if the content is in the markup", "Add a CDN"], "answer": 1, "explain": "Those pages may not release memory."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Importer will not run</td><td>Wrong browser</td><td>Use a Chrome-based browser.</td></tr>
+      <tr><td>Assets are missing in AEM</td><td>Package has no binaries</td><td>Use <code>asset-mapping.json</code> and Import Helper.</td></tr>
+      <tr><td>Page frame looks broken</td><td>CORS through the proxy</td><td>Usually fine. Check output, not the preview.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="url-and-seo-preservation" data-level="3">
+  <h2>URL and SEO preservation</h2>
+  <div data-part="why"><p>A migration can lose years of search value in a single afternoon. Keeping URLs is the cheapest protection.</p></div>
+  <div data-part="concept">
+    <p>Keep URLs wherever you can. EDS document names produce lowercase URLs with only letters, numbers and dashes, and extension-less HTML. If old URLs ended in <code>.html</code> or used capitals, they need planning.</p>
+    <p>Use the <code>redirects</code> sheet, built from Search Console’s most valuable backlinks and from actual traffic. Check for loops, chains and redirects into 404s. Canonicals must return 2xx. Carry over titles, descriptions and structured data.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Old</th><th>New</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><code>/About-Us.html</code></td><td><code>/about-us</code></td><td>301 redirect</td></tr>
+      <tr><td><code>/news/2019/item</code></td><td><code>/news/item</code></td><td>301 redirect</td></tr>
+      <tr><td><code>/promo-2017</code></td><td>Nothing relevant</td><td>Allow a 404</td></tr>
+      <tr><td><code>/products/x</code></td><td><code>/products/x</code></td><td>No change</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout warning" data-label="Home-page redirects"><p>Do not redirect every retired URL to the home page. Search engines may treat those as soft 404s, and visitors do not get what they wanted.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t4"><script type="application/json">{"questions": [{"q": "Which source best identifies URLs that deserve redirects?", "options": ["The CSS file", "Search Console backlinks and analytics", "The robots.txt alone"], "answer": 1, "explain": "Base redirects on real use."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Traffic falls after launch</td><td>Missing redirects</td><td>Check Search Console and 404 reports.</td></tr>
+      <tr><td>Redirect chain</td><td>Older redirects kept</td><td>Point each directly at the final URL.</td></tr>
+      <tr><td>Duplicate pages indexed</td><td>Bad canonicals</td><td>Make canonicals return 2xx.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="parity-qa-and-cutover" data-level="4">
+  <h2>Parity QA and cutover</h2>
+  <div data-part="why"><p>“Looks the same” is not an acceptance test. Agree what parity means before anyone starts testing.</p></div>
+  <div data-part="concept">
+    <p>Define parity by page type, across content, SEO, analytics, accessibility, performance and integrations. Test all high-traffic pages and a sample of each type, on <code>.aem.live</code>. Agree on deliberate differences in writing.</p>
+    <p>Migrate in stages where possible. Akamai or Cloudflare can route some paths to EDS. With AEMaaCS, origin selectors can proxy parts of a domain. Plan rollback at the CDN. Freeze content, or run a delta import for changes since the main import.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    F["Content freeze or delta plan"] --&gt; Q["Parity sign-off"]
+    Q --&gt; C["CDN routes path group 1"]
+    C --&gt; M["Monitor 24 to 72 hours"]
+    M --&gt; N["Next path group"]
+    M -.Problem.-&gt; R["Route back to old origin"]</pre>
+      <figcaption><b>What to notice:</b> routing paths in groups lets you stop or reverse.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A content freeze leads to parity sign-off, CDN routing of the first path group, monitoring, then the next group. A problem during monitoring routes back to the old origin.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Area</th><th>Pass when</th></tr></thead>
+    <tbody>
+      <tr><td>Content</td><td>Sample matches, or differences approved</td></tr>
+      <tr><td>SEO</td><td>Titles, canonicals and redirects verified</td></tr>
+      <tr><td>Analytics</td><td>Tags fire; new baseline explained</td></tr>
+      <tr><td>Accessibility</td><td>Meets your agreed standard</td></tr>
+      <tr><td>Performance</td><td>Lighthouse 100 target</td></tr>
+      <tr><td>Integrations</td><td>Forms and APIs tested end to end</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t5"><script type="application/json">{"questions": [{"q": "Why cut over in path groups?", "options": ["It avoids all testing", "It is required by DNS", "You can monitor and reverse a smaller change"], "answer": 2, "explain": "The CDN can route some paths to each origin."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Late content is lost</td><td>No freeze or delta plan</td><td>Agree on one.</td></tr>
+      <tr><td>Parity arguments never end</td><td>No written definition</td><td>Define it first.</td></tr>
+      <tr><td>Mixed site feels broken</td><td>Header differs by origin</td><td>Share or match header and footer.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="aem-sites-to-eds-with-ue" data-level="4">
+  <h2>AEM Sites to EDS with UE</h2>
+  <div data-part="why"><p>Many teams want modern delivery but must keep AEM authoring, governance and workflows. This route allows that, though components still change.</p></div>
+  <div data-part="concept">
+    <p>Keep AEM author and use Universal Editor, with the xwalk boilerplate. Blocks replace HTL components, and component models describe their properties. Existing page content must be transformed to the new structure. The importer can produce JCR packages, placed under <code>/content</code>, with assets under <code>/content/dam</code>.</p>
+    <p>Path mapping connects AEM paths with public URLs, and decides what is published. Publishing runs pre-publish validations covering permissions, reserved paths and images. Images over 10,000 pixels on a side cannot be processed on the fly. You can also move part of a site through a proxy from your existing Cloud Service environment.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="Path mapping" data-lang="json">
+      <textarea class="src" hidden>{
+  "paths": {
+    "mappings": [
+      "/content/site/us/en-us/:/",
+      "/content/dam/site/:/assets/"
+    ],
+    "includes": ["/content/site/", "/content/dam/site/"],
+    "excludes": ["/content/site/**/drafts/**"]
+  }
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Keeps</th><th>Changes</th></tr></thead>
+    <tbody>
+      <tr><td>AEM author and assets</td><td>Components become blocks</td></tr>
+      <tr><td>Sites console and publication</td><td>HTL and clientlibs go away</td></tr>
+      <tr><td>Workflows, where supported</td><td>Delivery moves to Edge Delivery</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t6"><script type="application/json">{"questions": [{"q": "Which package type does the importer produce for AEM authoring?", "options": ["A CSS bundle", "A JCR package", "A docx file"], "answer": 1, "explain": "Assets are handled separately."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Publish refused</td><td>Technical account lacks permission</td><td>Set the correct account in configuration.</td></tr>
+      <tr><td>Page not published</td><td>Excluded or unmapped path</td><td>Check path mapping.</td></tr>
+      <tr><td>Image is not optimized</td><td>Over 10,000 pixels</td><td>Resize it or use a rendition.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: component mapping and redirect validator</h2>
+  <p>Match components, then fix the sample redirects until there are no errors. It checks a list you type here, and sends nothing.</p>
+  <div data-component="match" data-title="Component-to-block mapping"><script type="application/json">{"prompt": "Match each old component to its best EDS target.", "pairs": [["Rich text component", "Default content"], ["Teaser list", "Cards block"], ["Image with caption", "Default content with an image"], ["Page properties", "Metadata block"], ["Shared site header", "Nav document"], ["Reusable promo", "Fragment"]], "explain": "Prefer default content, then existing blocks."}</script></div><div data-component="redirect-validator" data-title="Redirect validator"><script type="application/json">{"csv": "Source,Destination\n/about-us.html,/about\n/promo,/offers\n/offers,/deals\n/old-a,/old-b\n/old-b,/old-a\n/news/*,/stories\n/team,/people", "pages": ["/about", "/deals", "/stories"]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: migrate three page types</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Prove a repeatable import on a small sample.</p></div>
+    <div><h4>You need</h4><p>A public test site you may copy, and an EDS project.</p></div>
+    <div><h4>Time</h4><p>About 3 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Inventory</b> 20 URLs and group them by type.</div></li>
+    <li><div><b>Map</b> their components.</div></li>
+    <li><div><b>Run</b> <code>aem import</code>, and test one page.</div></li>
+    <li><div><b>Write</b> rules in <code>import.js</code>.</div></li>
+    <li><div><b>Have an author</b> review the output.</div></li>
+    <li><div><b>Bulk import</b> the rest.</div></li>
+    <li><div><b>Create</b> redirects, and validate them.</div></li>
+    <li><div><b>Compare</b> old and new against your parity list.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A sample migration with documented rules.</p></div>
+    <div><h4>How to verify</h4><p>Imported pages preview with the expected blocks, and redirects land on real pages.</p></div>
+    <div><h4>Stretch</h4><p>Create a delta import for changed pages.</p></div>
+  </div>
+  <ul class="checklist" data-id="d6-lab">
+    <li>Inventory done</li>
+    <li>Mapping reviewed</li>
+    <li>Author approved</li>
+    <li>Redirects valid</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Importer cannot read page</td><td>CORS or heavy app</td><td>Try browser options, or disable JavaScript.</td></tr>
+      <tr><td>Blocks missing after import</td><td>Rules not matching</td><td>Refine <code>import.js</code>.</td></tr>
+      <tr><td>301 to 404</td><td>Target missing</td><td>Create the target or change it.</td></tr>
+      <tr><td>Analytics differs</td><td>New load pattern</td><td>Explain the new baseline.</td></tr>
+      <tr><td>Old assets broken</td><td>Not moved</td><td>Migrate and relink them.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Pilot first.</b> Take one business unit through the whole process, then estimate the rest from real numbers.</p></aside>
+    <aside class="callout warning" data-label="Rights"><p>Copying sites or assets needs permission from whoever owns them.</p></aside>
+    <aside class="callout accessibility"><p>Migrated content inherits old mistakes. Audit alt text, headings and link text on import.</p></aside>
+    <aside class="callout performance"><p>Do not carry over old tag containers untouched. Review each tag.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Keep or retire</td><td>Accountable</td><td>Informed</td><td>Consulted</td></tr>
+      <tr><td>Block mapping</td><td>Consulted</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Redirects</td><td>Accountable</td><td>Consulted</td><td>Consulted</td></tr>
+      <tr><td>Cutover</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d6-check"><script type="application/json">{"questions": [{"q": "Which command starts the importer?", "options": ["aem migrate", "npm run import", "aem import"], "answer": 2, "explain": "See Importing Content."}, {"q": "Which browsers does the importer support?", "options": ["Safari only", "Chrome-based browsers", "Any browser"], "answer": 1, "explain": "See Importing Content."}, {"q": "Which file holds your transformation rules?", "options": ["fstab.yaml", "import.js", "head.html"], "answer": 1, "explain": "It reloads in the Workbench."}, {"q": "What should you check in a redirect list? Choose all that apply.", "options": ["Chains", "Font sizes", "Loops"], "answer": [0, 2], "explain": "Also check redirects into 404s."}, {"q": "Where do assets for a JCR package come from?", "options": ["asset-mapping.json and Import Helper", "A hidden binary in the package", "The CDN"], "answer": 0, "explain": "The package is binaryless."}, {"q": "When should Operational Telemetry be added to the old site?", "options": ["Never", "Only after launch", "As early as possible"], "answer": 2, "explain": "See Go-Live Checklist."}, {"q": "Which option lets part of a domain go to EDS while AEMaaCS serves the rest?", "options": ["Bulk metadata", "A Sidekick plugin", "Origin selectors"], "answer": 2, "explain": "See Adobe Managed CDN."}, {"q": "A stakeholder wants all 8,000 retired URLs to redirect to the home page. What should you advise?", "options": ["Redirect those with value to relevant pages, and let the rest 404", "Disallow them in robots.txt", "Add a wildcard to the sheet", "Do it, it is simplest"], "answer": 0, "explain": "Redirect based on actual usage.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d6-cards"><script type="application/json">{"cards": [["Page type", "A group that shares structure."], ["Default content", "Text, headings, images and links."], ["aem import", "Starts the importer."], ["import.js", "Transformation rules."], ["JCR package", "Output for AEM authoring."], ["asset-mapping.json", "Maps assets for package imports."], ["Parity", "Agreed definition of equal."], ["Delta import", "Only what has changed."], ["Origin selector", "Routes paths to another origin."], ["Path mapping", "AEM paths to public URLs."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D6 · Migration to EDS</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Discover</h4><ul><li>Real URL data</li><li>Keep or retire</li><li>List integrations</li></ul></div>
+      <div><h4>Map</h4><ul><li>Default content first</li><li>Few variants</li><li>Sample imports</li></ul></div>
+      <div><h4>Import</h4><ul><li>aem import</li><li>Workbench then bulk</li><li>docx, HTML, JCR</li></ul></div>
+      <div><h4>URLs</h4><ul><li>Keep them</li><li>Exact redirects</li><li>No chains</li></ul></div>
+      <div><h4>Cutover</h4><ul><li>Parity list</li><li>Path groups</li><li>Reverse at CDN</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/importer" rel="noopener" target="_blank">aem.live: Importing content</a></li>
+    <li><a href="https://www.aem.live/docs/go-live-checklist" rel="noopener" target="_blank">aem.live: Go-live checklist</a></li>
+    <li><a href="https://www.aem.live/docs/redirects" rel="noopener" target="_blank">aem.live: Redirects</a></li>
+    <li><a href="https://www.aem.live/docs/large-sites" rel="noopener" target="_blank">aem.live: Large sites</a></li>
+    <li><a href="https://www.aem.live/developer/authoring-path-mapping" rel="noopener" target="_blank">aem.live: Path mapping</a></li>
+    <li><a href="https://www.aem.live/docs/publishing-from-authoring" rel="noopener" target="_blank">aem.live: Publishing from AEM authoring</a></li>
+    <li><a href="https://www.aem.live/docs/limits" rel="noopener" target="_blank">aem.live: Limits</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

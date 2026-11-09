@@ -11,8 +11,8 @@ Run mode: AGENT. This log is the resume point for later runs.
 | 1 | Category A: A1–A4 | Done (30 Oct 2026) |
 | 2 | Category B: B1–B10 | Done (8 Nov 2026) |
 | 3 | Category C: C1–C11 | Done (8 Nov 2026) |
-| 4 | Category D: D1–D10 | Next: set `START AT: PHASE 4` |
-| 5 | Category E: E1–E10 | Not started |
+| 4 | Category D: D1–D10 | Done (9 Nov 2026) |
+| 5 | Category E: E1–E10 | Next: set `START AT: PHASE 5` |
 | 6 | Capstones 1–4, level exams 1–4, final exam | Not started |
 | 7 | Path pages, full glossary page, cheat sheets page, resources page, search | Not started (search works now from the generated index) |
 | 8 | Full QA pass and coverage report | Not started |
@@ -103,7 +103,7 @@ taken from pages that could be opened:
   form-sheet, traffic-split. B2, B6 and B7 use hotspots; B8 uses scorer.
 - Sources read 8 Nov 2026: aem.live docs and developer pages, adobe/aem-boilerplate,
   adobe/aem-block-collection, adobe/aem-experimentation.
-- Glossary extended to 75 terms (85 after Category C). Module `asOf` in the syllabus overrides the global date.
+- Glossary extended to 75 terms (85 after Category C, 94 after Category D). Module `asOf` in the syllabus overrides the global date.
 - The labs have not been run against a real site, AEM sandbox or da.live project.
 - VERIFY: B6 library and starter documents; B6 support terms; B7 feature exceptions on lifecycle
   pages; B10 plugin access and form block columns; B3 taxonomy on document-based sites is a convention.
@@ -128,6 +128,21 @@ taken from pages that could be opened:
 - A4 now notes aem.live's recommendation of Experience Workspace for new projects.
 - B7 corrected to `component-definition.json`. All 65 external links resolved.
 
+### D1–D10 Category D (built 9 Nov 2026)
+- All 47 syllabus topics written. New components: config-explorer, cdn-sim, csp-builder,
+  redirect-validator, rum-dashboard, robots-builder, raci-matrix, routing-sim.
+  D1, D5 and D6 use order; D2, D5 and D9 use stepper; D1, D3, D6, D7 and D10 use match or checklists.
+- Sources read 9 Nov 2026: aem.live docs and developer pages, adobe/aem-boilerplate `head.html`,
+  Experience League (Cloud Manager, CDN rule syntax), Ontario.ca, W3C.
+- The boilerplate CSP is broader than the policy in aem.live's CSP guide. D4 teaches the guide and notes the difference.
+- aem.live's roles table lists `config:write` under `publish`. D4 flags this instead of assuming either way.
+- Dashboard numbers and request traces are invented teaching data, and are labelled as such.
+- Code samples and labs have not been run against a real project, CDN or AEM sandbox.
+- VERIFY: Cloud Manager Edge environment pipeline access; customer alerting options for telemetry;
+  Experience Workspace HIPAA status; `import.js` API detail (D6 sample is simplified);
+  AODA duties for a specific organization (needs counsel).
+- C11's prerequisite D2 now exists.
+
 ## Coverage matrix (built modules)
 
 | Module | Topic id | Page anchor |
@@ -151,5 +166,5 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
 
 ## Next run
 
-Set `START AT: PHASE 4`. Write D1–D10 with the same template, add their glossary terms and `asOf`,
+Set `START AT: PHASE 5`. Write E1–E10 with the same template, add their glossary terms and `asOf`,
 flip `built` to true in `data/syllabus.json`, run `npm run check && npm test`, and update this log.

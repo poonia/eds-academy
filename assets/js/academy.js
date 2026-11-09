@@ -21,6 +21,8 @@ const COMPONENTS = {
   'filter-sandbox': 'filter-sandbox.js', 'terminal-replay': 'terminal-replay.js', 'file-tree': 'file-tree.js',
   'block-playground': 'block-playground.js', 'token-editor': 'token-editor.js', waterfall: 'waterfall.js', 'model-preview': 'model-preview.js',
   'query-playground': 'query-playground.js', 'a11y-fixit': 'a11y-fixit.js', 'admin-request': 'admin-request.js',
+  'config-explorer': 'config-explorer.js', 'cdn-sim': 'cdn-sim.js', 'csp-builder': 'csp-builder.js', 'redirect-validator': 'redirect-validator.js',
+  'rum-dashboard': 'rum-dashboard.js', 'robots-builder': 'robots-builder.js', 'raci-matrix': 'raci-matrix.js', 'routing-sim': 'routing-sim.js',
 };
 
 /* ---------- small helpers ---------- */

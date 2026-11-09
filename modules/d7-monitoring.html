@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D7 Monitoring and observability · EDS Academy</title>
+<meta name="description" content="Module D7: Operational Telemetry, Core Web Vitals dashboards, 404 monitoring, admin logs and alerting.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d7-monitoring.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D7 Monitoring and observability · EDS Academy">
+<meta property="og:description" content="Module D7: Operational Telemetry, Core Web Vitals dashboards, 404 monitoring, admin logs and alerting.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d7-monitoring.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D7">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Explain how Operational Telemetry samples data.</li>
+    <li>Read a vitals dashboard safely.</li>
+    <li>Triage 404 reports.</li>
+    <li>Use audit logs and status.</li>
+    <li>Design alerts for what Adobe does not watch.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d7-ready" data-title="Ready for monitoring and observability?">
+    <script type="application/json">{"questions": [{"q": "What does LCP measure?", "options": ["Layout stability", "Clicks", "Loading of the largest content"], "answer": 2, "explain": "Covered in A3."}, {"q": "What is good for CLS?", "options": ["0.1 or less", "10 or less", "1.0 or less"], "answer": 0, "explain": "Covered in A3."}, {"q": "Which permission reads logs?", "options": ["media:upload", "log:read", "live:write"], "answer": 1, "explain": "See D4 roles."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="operational-telemetry-rum" data-level="2">
+  <h2>Operational Telemetry (RUM)</h2>
+  <div data-part="why"><p>Lab tests show what could happen. Real-user data shows what did.</p></div>
+  <div data-part="concept">
+    <p><b>Operational Telemetry</b> (OpTel) collects a small sample of page views, normally one in 100. It has no concept of visits, visitors or sessions, uses no cookies or similar storage, and sends data with <code>navigator.sendBeacon</code>.</p>
+    <p>Each data point has an <code>id</code> for the page view and a <code>checkpoint</code>, with an optional <code>source</code> and <code>target</code>. Common checkpoints include <code>top</code>, <code>loadresource</code>, <code>cwv</code>, <code>lcp</code> and <code>viewblock</code>. Each data point carries a weight, so one sample can stand for 100 page views.</p>
+    <p>You must not add personal data to the collection. Site operators should review the data list to understand whether it needs consent where they operate.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    B["Browser, 1 in 100 views"] --&gt;|"sendBeacon"| R["Collection service"]
+    R --&gt; E["Explorer"]
+    E --&gt; T["Team decisions"]</pre>
+      <figcaption><b>What to notice:</b> the sampling decision is per page view, which prevents following a visitor between pages.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>One in 100 browser page views sends data to the collection service, which feeds the explorer and then team decisions.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Is collected</th><th>Is not</th></tr></thead>
+    <tbody>
+      <tr><td>Host and URL without parameters</td><td>URL parameters</td></tr>
+      <tr><td>Device class</td><td>Full user agent, once stored</td></tr>
+      <tr><td>Checkpoints and vitals</td><td>Cookies or visitor IDs</td></tr>
+      <tr><td>Rounded time</td><td>Exact minute</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d7-t1"><script type="application/json">{"questions": [{"q": "Why can OpTel not follow a visitor across pages?", "options": ["Browsers forbid it", "Sampling is per page view, with no visitor ID", "It runs only on the home page"], "answer": 1, "explain": "It has no concept of sessions by design."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Personal data in checkpoint</td><td>Custom instrumentation</td><td>Remove it. It is not permitted.</td></tr>
+      <tr><td>Numbers do not match analytics</td><td>Different methods</td><td>Compare trends, not exact counts.</td></tr>
+      <tr><td>No data for a small site</td><td>Few samples</td><td>Use a longer time range.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="cwv-dashboards" data-level="2">
+  <h2>CWV dashboards</h2>
+  <div data-part="why"><p>A dashboard is useful only if you can tell a real change from sampling noise.</p></div>
+  <div data-part="concept">
+    <p>The explorer is at <code>https://www.aem.live/tools/oversight/explorer.html</code>, and most domains need a <b>domain key</b>. It shows traffic, engagement and the vitals LCP, CLS and INP, with a chart and facets. You can share a view by copying the URL.</p>
+    <p>All data is sampled, so hover over a number to see its margin of error. Filtering narrows the sample and increases uncertainty. Bots that run JavaScript also appear, as a device class.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Vital</th><th>Good is at most</th><th>Investigate</th></tr></thead>
+    <tbody>
+      <tr><td>LCP</td><td>2.5 s</td><td>Images, fonts, third parties</td></tr>
+      <tr><td>CLS</td><td>0.1</td><td>Reserved space, late content</td></tr>
+      <tr><td>INP</td><td>200 ms</td><td>Heavy event handlers, tags</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout tip"><p>Check mobile separately. An all-devices average can hide a problem on phones.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d7-t2"><script type="application/json">{"questions": [{"q": "You filter to one small landing page, and LCP looks 20% worse. What should you check first?", "options": ["The sample size and margin of error", "Your robots.txt", "The DNS TTL"], "answer": 0, "explain": "Filtering increases uncertainty."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Cannot open a domain</td><td>Needs a domain key</td><td>Ask your administrator.</td></tr>
+      <tr><td>Daily numbers bounce</td><td>Low sample</td><td>Use a week or a month.</td></tr>
+      <tr><td>Good average, poor mobile</td><td>Mixed devices</td><td>Filter by device.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="404-and-error-monitoring" data-level="2">
+  <h2>404 and error monitoring</h2>
+  <div data-part="why"><p>After any migration, 404s tell you which redirects you forgot.</p></div>
+  <div data-part="concept">
+    <p>Your 404 page comes from <code>404.html</code> at the repository root. Monitor missing pages in OpTel, in analytics, or with Adobe’s Slack bot report, where available. Redirect those that have demand and a good target.</p>
+    <p>The Admin API has its own errors, documented on aem.live, and Sidekick surfaces common ones. In repoless sites, a fragment can vary the content of the 404 page per site.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Finding</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>Popular old URL</td><td>Add a redirect</td></tr>
+      <tr><td>Mistyped internal link</td><td>Fix the link</td></tr>
+      <tr><td>Bot scanning for <code>.php</code></td><td>Ignore it</td></tr>
+      <tr><td>Removed on purpose</td><td>Leave as 404</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div data-component="match" data-title="Triage a 404 report"><script type="application/json">{"prompt": "Pick the right response.", "pairs": [["/old-product gets 800 views", "Redirect to its replacement"], ["/wp-admin probes", "Ignore"], ["/pricng linked from your nav", "Fix the link"], ["/campaign-2019 with no replacement", "Leave as 404"]], "explain": "Base the action on demand and intent."}</script></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d7-t3"><script type="application/json">{"questions": [{"q": "Where does the 404 page come from?", "options": ["The Admin API", "404.html at the repository root", "A metadata block"], "answer": 1, "explain": "The boilerplate includes one."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Same 404 for all brands</td><td>One <code>404.html</code></td><td>Load a fragment per site.</td></tr>
+      <tr><td>404 list full of bots</td><td>Scanners</td><td>Filter by real demand.</td></tr>
+      <tr><td>404 list grows</td><td>No owner</td><td>Assign a monthly review.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="admin-logs-and-status" data-level="3">
+  <h2>Admin logs and status</h2>
+  <div data-part="why"><p>When a page changes unexpectedly, the first question is who did what, and when.</p></div>
+  <div data-part="concept">
+    <p>The <b>audit log</b> records successful preview, live, index, cache, code, config, sitemap and job operations. It includes timestamp, method, route, path, ref and user, which is missing if the request was not authenticated, as well as IP. Reading it needs the <code>log:read</code> permission. Adobe’s page says audit logs are kept indefinitely, or as long as the customer wants.</p>
+    <p>The <b>status</b> endpoint reports a page’s preview, live and edit state. For events, a <b>webhook</b> can fire at most once a minute, and provides a token for reading changes from the log.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="Read recent log entries" data-lang="bash">
+      <textarea class="src" hidden>curl -s "https://admin.hlx.page/log/acme/website/main?since=1h" \
+  -H "x-auth-token: $AEM_API_KEY"</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Sidekick action</th><th>Audit log entry</th></tr></thead>
+    <tbody>
+      <tr><td>Preview</td><td><code>POST /preview</code></td></tr>
+      <tr><td>Publish</td><td><code>POST /live</code></td></tr>
+      <tr><td>Unpublish</td><td><code>DELETE /live</code></td></tr>
+      <tr><td>Delete</td><td><code>DELETE /preview</code> and <code>DELETE /live</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d7-t4"><script type="application/json">{"questions": [{"q": "A page vanished overnight. Which log entry would show an unpublish?", "options": ["GET on /config", "DELETE on /live", "POST on /preview"], "answer": 1, "explain": "Unpublish removes the live copy."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>User field is missing</td><td>Unauthenticated request</td><td>Enable author authentication.</td></tr>
+      <tr><td>Cannot read log</td><td>Role lacks <code>log:read</code></td><td>Assign an appropriate role.</td></tr>
+      <tr><td>Log has too many pages</td><td>Unfiltered</td><td>Page through with a time range.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="alerting" data-level="3">
+  <h2>Alerting</h2>
+  <div data-part="why"><p>Adobe watches the platform. It does not watch your broken checkout link.</p></div>
+  <div data-part="concept">
+    <p>Adobe runs synthetic monitors for its multi-tenant services, and for its top 10 customer sites by traffic. Multi-tenant incidents usually appear on <code>status.adobe.com</code>. If Adobe detects single-tenant problems, it will contact you.</p>
+    <p>So add your own monitoring for the things that matter to you: a few synthetic checks on key journeys through the production domain, certificate expiry, and an alert on telemetry trends. Subscribe to Adobe’s status page. Mind the rate limit of 200 requests per second per IP and host; a misconfigured monitor can trigger it.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Layer</th><th>Owner</th><th>Alert on</th></tr></thead>
+    <tbody>
+      <tr><td>Platform</td><td>Adobe</td><td><code>status.adobe.com</code></td></tr>
+      <tr><td>CDN</td><td>You or Adobe, by model</td><td>Error rates, certificates</td></tr>
+      <tr><td>Key journeys</td><td>You</td><td>Synthetic failures</td></tr>
+      <tr><td>Experience</td><td>You</td><td>LCP, 404 trends</td></tr>
+      <tr><td>Publishing</td><td>You</td><td>Failed scheduled jobs</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout verify" data-label="Check before you rely on this"><p>aem.live does not describe a built-in customer alerting product for telemetry. Check with Adobe, or build from your own monitors and queries.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d7-t5"><script type="application/json">{"questions": [{"q": "Who should monitor the checkout journey on your domain?", "options": ["Your team", "Nobody", "Only Adobe"], "answer": 0, "explain": "Adobe monitors its services, and only a few customer sites."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Alert fatigue</td><td>Thresholds too tight</td><td>Alert on sustained change.</td></tr>
+      <tr><td>Monitor blocked</td><td>Too many requests</td><td>Lower the rate.</td></tr>
+      <tr><td>Certificate surprise</td><td>No expiry check</td><td>Add a monitor.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: telemetry dashboard mock</h2>
+  <p>Filter by device and section, watch the margin of error grow, and set an alert threshold. The data is invented.</p>
+  <div data-component="rum-dashboard" data-title="Telemetry dashboard"><script type="application/json">{"weight": 100, "rows": [{"device": "mobile", "section": "/products", "samples": 1800, "lcp": 2900, "cls": 0.05, "inp": 210}, {"device": "desktop", "section": "/products", "samples": 900, "lcp": 1500, "cls": 0.03, "inp": 110}, {"device": "mobile", "section": "/blog", "samples": 700, "lcp": 2200, "cls": 0.12, "inp": 140}, {"device": "desktop", "section": "/blog", "samples": 400, "lcp": 1300, "cls": 0.06, "inp": 90}, {"device": "mobile", "section": "/support", "samples": 60, "lcp": 3100, "cls": 0.02, "inp": 180}, {"device": "desktop", "section": "/support", "samples": 40, "lcp": 1700, "cls": 0.01, "inp": 100}], "notFound": [{"path": "/old-pricing", "samples": 42}, {"path": "/about-us.html", "samples": 18}, {"path": "/wp-admin", "samples": 7}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: build a one-page runbook</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Know what to look at when something goes wrong.</p></div>
+    <div><h4>You need</h4><p>A domain key or the open demo in aem.live’s explorer.</p></div>
+    <div><h4>Time</h4><p>About 75 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open</b> the explorer on an available domain.</div></li>
+    <li><div><b>Compare</b> month and week views.</div></li>
+    <li><div><b>Filter</b> to mobile, and note how the margin changes.</div></li>
+    <li><div><b>Find</b> the 404s.</div></li>
+    <li><div><b>List</b> your key journeys.</div></li>
+    <li><div><b>Set</b> thresholds and owners.</div></li>
+    <li><div><b>Write</b> a one-page runbook.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A short runbook with owners.</p></div>
+    <div><h4>How to verify</h4><p>A colleague can follow it unaided.</p></div>
+    <div><h4>Stretch</h4><p>Query the log after a test publish and find your entry.</p></div>
+  </div>
+  <ul class="checklist" data-id="d7-lab">
+    <li>Mobile checked</li>
+    <li>404s triaged</li>
+    <li>Thresholds set</li>
+    <li>Owners named</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>No data</td><td>Wrong domain or key</td><td>Check both.</td></tr>
+      <tr><td>Numbers differ from analytics</td><td>Sampling and method</td><td>Compare trends.</td></tr>
+      <tr><td>Big swings</td><td>Few samples</td><td>Widen the range.</td></tr>
+      <tr><td>Publish missing from log</td><td>Operation failed</td><td>Only successful operations are logged.</td></tr>
+      <tr><td>Site down, status page green</td><td>Your CDN or code</td><td>Check CDN and recent changes.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Separate SLOs from SLAs.</b> Adobe’s published objectives are not your contract. Agree who responds to what, and when.</p></aside>
+    <aside class="callout warning" data-label="Privacy"><p>Do not add personal data to custom telemetry.</p></aside>
+    <aside class="callout accessibility"><p>Dashboards need text alternatives and more than colour. This mock shows words beside colour.</p></aside>
+    <aside class="callout performance"><p>OpTel is small, but extra monitoring scripts are not free. Measure them.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Telemetry review</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>404 triage</td><td>Accountable</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Synthetic monitors</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Incident communications</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d7-check"><script type="application/json">{"questions": [{"q": "What is the usual sampling rate?", "options": ["Every page view", "One in a million", "One in 100 page views"], "answer": 2, "explain": "See Operational Telemetry."}, {"q": "What does weight mean?", "options": ["Page size", "Image dimensions", "The inverse of the sampling rate"], "answer": 2, "explain": "A weight of 100 means one in 100."}, {"q": "How is data sent?", "options": ["Tracking pixels", "navigator.sendBeacon", "Cookies"], "answer": 1, "explain": "See Privacy."}, {"q": "What is needed to view most domains?", "options": ["A domain key", "A password for GitHub", "A site token"], "answer": 0, "explain": "See Explorer."}, {"q": "What does a webhook provide?", "options": ["A certificate", "New content", "A token to read changes from the log"], "answer": 2, "explain": "See Webhook."}, {"q": "What does filtering do to uncertainty?", "options": ["Increases it", "Removes it", "Has no effect"], "answer": 0, "explain": "Smaller samples mean wider margins."}, {"q": "Where do multi-tenant incidents usually appear?", "options": ["robots.txt", "GitHub stars", "status.adobe.com"], "answer": 2, "explain": "See Go-Live Checklist."}, {"q": "Authors report a page disappearing at 02:00. What do you do first?", "options": ["Rebuild the page", "Search the audit log around that time", "Disable Sidekick", "Change the CDN"], "answer": 1, "explain": "The log shows the operation and user, if authenticated.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d7-cards"><script type="application/json">{"cards": [["OpTel", "Sampled operational data."], ["Checkpoint", "Named event in a page view."], ["Weight", "Inverse of the sample rate."], ["Domain key", "Opens explorer data."], ["Audit log", "Successful admin operations."], ["Webhook", "Fires at most once a minute."], ["status.adobe.com", "Multi-tenant incidents."], ["SLO", "Internal objective."], ["Synthetic monitor", "A scripted check."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D7 · Monitoring and observability</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>OpTel</h4><ul><li>1 in 100</li><li>No cookies</li><li>No personal data</li></ul></div>
+      <div><h4>Read data</h4><ul><li>Margin of error</li><li>Mobile separately</li><li>Compare trends</li></ul></div>
+      <div><h4>404s</h4><ul><li>Fix demand</li><li>Ignore bots</li><li>Monthly owner</li></ul></div>
+      <div><h4>Logs</h4><ul><li>Who and when</li><li>Successful only</li><li>log:read</li></ul></div>
+      <div><h4>Alerts</h4><ul><li>Your journeys</li><li>Certificates</li><li>Sustained change</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/operational-telemetry" rel="noopener" target="_blank">aem.live: Operational Telemetry</a></li>
+    <li><a href="https://www.aem.live/docs/optel-explorer" rel="noopener" target="_blank">aem.live: Telemetry explorer</a></li>
+    <li><a href="https://www.aem.live/developer/operational-telemetry" rel="noopener" target="_blank">aem.live: Developing telemetry</a></li>
+    <li><a href="https://www.aem.live/docs/auditlog" rel="noopener" target="_blank">aem.live: Audit log</a></li>
+    <li><a href="https://www.aem.live/developer/webhook" rel="noopener" target="_blank">aem.live: Webhook</a></li>
+    <li><a href="https://www.aem.live/docs/operations" rel="noopener" target="_blank">aem.live: Operations</a></li>
+    <li><a href="https://www.aem.live/docs/limits" rel="noopener" target="_blank">aem.live: Limits</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

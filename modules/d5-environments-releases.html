@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D5 Environments and release management · EDS Academy</title>
+<meta name="description" content="Module D5: branch environments, repoless stage and production, snapshots, scheduling and rollback.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/d5-environments-releases.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="D5 Environments and release management · EDS Academy">
+<meta property="og:description" content="Module D5: branch environments, repoless stage and production, snapshots, scheduling and rollback.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/d5-environments-releases.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="D5">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Use branches as test environments.</li>
+    <li>Decide when staging is necessary.</li>
+    <li>Coordinate a content release with snapshots.</li>
+    <li>Roll back code, content and configuration.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="d5-ready" data-title="Ready for environments and release management?">
+    <script type="application/json">{"questions": [{"q": "What is aem.page for?", "options": ["Code storage", "Production traffic", "Content preview"], "answer": 2, "explain": "Covered in A2."}, {"q": "What merges code safely?", "options": ["A publish in Sidekick", "A direct push", "A protected pull request"], "answer": 2, "explain": "Covered in C10."}, {"q": "What is a site token for?", "options": ["Git push", "Publishing", "Reading a protected site"], "answer": 2, "explain": "Covered in D2."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="branch-based-environments" data-level="2">
+  <h2>Branch-based environments</h2>
+  <div data-part="why"><p>Traditional projects queue up for shared environments. On EDS, each branch already has its own.</p></div>
+  <div data-part="concept">
+    <p>Code changes come straight from your Git branches. There is no CI/CD pipeline as in traditional AEM as a Cloud Service. Within seconds, each branch is available at <code>https://&lt;branch&gt;--&lt;site&gt;--&lt;org&gt;.aem.page</code> and <code>.aem.live</code>.</p>
+    <p>aem.live says most customers probably do not need a staging environment. Protect <code>main</code> by requiring a pull request, passing status checks and branches that are up to date. A separate staging branch mapped to its own CDN site is not advised.</p>
+    <p>Remember that <code>aem.page</code> is for <b>content</b> preview, with different caching. Test code on the <code>.aem.live</code> branch host. Adobe recommends small, frequent merges, in the manner of Scaled Trunk-based Development.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    F1["feature-a"] --&gt; U1["feature-a--site--org.aem.live"]
+    F2["fix-b"] --&gt; U2["fix-b--site--org.aem.live"]
+    M["main"] --&gt; U3["main--site--org.aem.live"]
+    U3 --&gt; C["Production CDN"]
+    F1 --&gt;|"Pull request"| M
+    F2 --&gt;|"Pull request"| M</pre>
+      <figcaption><b>What to notice:</b> every branch has a URL, and only main feeds production.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Branches feature-a and fix-b each have their own aem.live URL. Both merge into main by pull request, and main feeds the production CDN.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Rule on main</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Require a pull request</td><td>No accidental pushes to production</td></tr>
+      <tr><td>Require status checks</td><td>Lint and PageSpeed run first</td></tr>
+      <tr><td>Require up-to-date branches</td><td>The branch reflects what will ship</td></tr>
+      <tr><td>Require approval</td><td>A second person checks it</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d5-t1"><script type="application/json">{"questions": [{"q": "Where should a developer test code before merging?", "options": ["Directly on main", "Their branch on aem.live", "Only on localhost"], "answer": 1, "explain": "aem.live has production-like caching."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Works on page, fails on live</td><td>Different caching tiers</td><td>Test on <code>.aem.live</code>.</td></tr>
+      <tr><td>Merge breaks production</td><td>Stale branch</td><td>Require up-to-date branches.</td></tr>
+      <tr><td>Huge release is frightening</td><td>Long-lived branch</td><td>Merge small changes often.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="stage-and-prod-with-repoless" data-level="3">
+  <h2>Stage and prod with repoless</h2>
+  <div data-part="why"><p>AEM authoring teams often have separate stage and production authoring programs. Repoless can follow that shape with one codebase.</p></div>
+  <div data-part="concept">
+    <p>With AEM authoring, you can create a second site, such as <code>website-prod</code>, in the Configuration Service. It uses the same code, while its <code>content.source.url</code> points at its own delivery path. The site name in the POST URL must match the one in the source URL.</p>
+    <p>You then add path mappings and update the AEM cloud configuration for that site. A CDN-level staging environment is a separate matter. It is only worth building if you have complex CDN rules or edge code, and should use <code>main--…aem.live</code> as its origin.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    R["One repository"] --&gt; S["website: stage content"]
+    R --&gt; P["website-prod: prod content"]
+    S --&gt; SC["stage.example.com, optional"]
+    P --&gt; PC["www.example.com"]</pre>
+      <figcaption><b>What to notice:</b> one repository, with two content sources.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>One repository feeds a website site with stage content and a website-prod site with production content. They are served at optional stage.example.com and at www.example.com.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Do you need staging?</th><th>Answer</th></tr></thead>
+    <tbody>
+      <tr><td>A place to test code</td><td>No: use a branch</td></tr>
+      <tr><td>A place to preview content</td><td>No: use aem.page</td></tr>
+      <tr><td>A separate AEM authoring tier</td><td>Consider repoless stage and prod</td></tr>
+      <tr><td>Complex CDN rules or edge code</td><td>Yes: a staging CDN</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d5-t2"><script type="application/json">{"questions": [{"q": "In a staging CDN, what should the origin be?", "options": ["A local machine", "aem.page", "main on aem.live"], "answer": 2, "explain": "You are testing the CDN, with accurate caching."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Staging CDN is stale</td><td>Purge not set</td><td>Purge it deliberately, or configure the branch.</td></tr>
+      <tr><td>New site shows wrong content</td><td>Site name and URL differ</td><td>Make them match.</td></tr>
+      <tr><td>Two codebases drift</td><td>Copied repository</td><td>Use repoless.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="content-release-coordination" data-level="3">
+  <h2>Content release coordination</h2>
+  <div data-part="why"><p>A product launch can change hundreds of pages at one moment, and those pages need review first.</p></div>
+  <div data-part="concept">
+    <p><b>Snapshots</b> capture a set of previewed pages at a point in time, like a branch for content. Reviewers use a <code>.aem.reviews</code> environment to see the whole site as it will be. Requesting review locks the snapshot, rejecting it unlocks it, and approving publishes it.</p>
+    <p>A copy in a snapshot stays fixed even if the page changes, unless you update it there. Viewing needs <code>aem.page</code> access, editing needs the author role, and publishing needs the publish role.</p>
+    <p>Document-based projects can also schedule preview, publish or purge tasks from a <code>crontab</code> sheet in <code>.helix</code>. Times are in UTC, and the scheduler runs only every 5 minutes. On AEM authoring, Manage Publication provides scheduling.</p>
+  </div>
+  <div data-part="visual">
+    <div data-component="stepper" data-title="Release with a snapshot"><div class="step" data-label="1. Name"><p>Create <code>fall-collection-2026</code>.</p></div><div class="step" data-label="2. Add"><p>Edit and preview pages, and add them to the snapshot.</p></div><div class="step" data-label="3. Review"><p>Open <code>fall-collection-2026--main--site--org.aem.reviews</code>.</p></div><div class="step" data-label="4. Lock"><p>Requesting a review locks the snapshot.</p></div><div class="step" data-label="5. Decide"><p>Rejecting unlocks it. Approving publishes it and removes the URLs.</p></div></div>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Time</th><th>Code</th><th>Content</th><th>Marketing</th></tr></thead>
+    <tbody>
+      <tr><td>T-5 days</td><td>Merge behind a metadata switch</td><td>Build snapshot</td><td>Approve copy</td></tr>
+      <tr><td>T-1 day</td><td>Freeze risky changes</td><td>Lock and review</td><td>Sign off</td></tr>
+      <tr><td>T</td><td>On call</td><td>Approve and publish</td><td>Announce</td></tr>
+      <tr><td>T+1 hour</td><td>Check telemetry</td><td>Fix errors</td><td>Check tags</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d5-t3"><script type="application/json">{"questions": [{"q": "Page X changed after it was added to a snapshot. What does the snapshot contain?", "options": ["The new version automatically", "Nothing", "The earlier copy, until updated"], "answer": 2, "explain": "Snapshot copies are immutable until explicitly updated."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Review shows old copy</td><td>Page not updated in snapshot</td><td>Update it there.</td></tr>
+      <tr><td>Schedule misses by minutes</td><td>Runs every 5 minutes</td><td>Schedule at least one run ahead.</td></tr>
+      <tr><td>Job runs next year</td><td>No year in text</td><td>Include the year for one-off jobs.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="rollback" data-level="2">
+  <h2>Rollback</h2>
+  <div data-part="why"><p>A rollback that nobody has rehearsed is only a hope.</p></div>
+  <div data-part="concept">
+    <p>Roll back the layer that changed. For <b>code</b>, revert the pull request on main, which goes live through Code Sync. For <b>content</b>, restore the earlier source version, then preview and publish it again. Experience Workspace, AEM and common document tools keep versions.</p>
+    <p>For <b>configuration</b>, re-apply your saved copy. For a <b>new site or a platform change</b>, keep the old origin ready and switch the CDN back. The more you prefer new-site-then-switch over in-place edits, the simpler this is.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>What changed</th><th>Rollback</th><th>Watch for</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><code>git revert</code> and merge</td><td>Content that needs the new code</td></tr>
+      <tr><td>Content</td><td>Restore, preview, publish</td><td>Related sheets and redirects</td></tr>
+      <tr><td>Configuration</td><td>Re-apply a saved copy</td><td>Objects replaced by a POST</td></tr>
+      <tr><td>Domain or origin</td><td>Switch CDN origin or DNS</td><td>DNS TTL</td></tr>
+      <tr><td>Page should vanish</td><td>Unpublish</td><td>Redirect or 404 handling</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Revert one pull request" data-lang="bash">
+      <textarea class="src" hidden>git switch main
+git pull
+git revert -m 1 &lt;merge-commit&gt;
+git push origin HEAD:revert-launch-banner
+# Open and merge a pull request</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d5-t4"><script type="application/json">{"questions": [{"q": "You merged a bad block change. What is the fastest clean fix?", "options": ["Unpublish every page", "Delete the repository", "Revert the merge through a pull request"], "answer": 2, "explain": "Code goes live from main."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Revert blocked</td><td>Branch protections</td><td>Have an emergency approver ready.</td></tr>
+      <tr><td>Pages look broken after revert</td><td>Content expects new code</td><td>Release code and content in a safe order.</td></tr>
+      <tr><td>Restored doc is not live</td><td>Not republished</td><td>Preview and publish it.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: branch-to-environment diagram and release swimlane</h2>
+  <p>Follow how code and content reach production, then put a release in order.</p>
+  <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    A["Short-lived branch"] --&gt; B["aem.live branch URL"]
+    B --&gt; C["Pull request checks"]
+    C --&gt; D["main"]
+    D --&gt; E["Production CDN"]
+    S["Snapshot"] --&gt; R[".aem.reviews"]
+    R --&gt; D2["Publish on approval"]
+    D2 --&gt; E</pre>
+      <figcaption><b>What to notice:</b> code and content travel separately, and meet on production.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A branch has its own URL and pull request checks, then main, then production. A snapshot goes through aem.reviews and publishes on approval, also reaching production.</p></details>
+    </figure><h3>Release swimlane</h3><div class="table-wrap"><table class="t">
+    <thead><tr><th>Stage</th><th>Developer</th><th>Author</th><th>Platform</th></tr></thead>
+    <tbody>
+      <tr><td>Build</td><td>Branch and pull request</td><td>Draft pages</td><td>Check configuration</td></tr>
+      <tr><td>Test</td><td>Branch URL</td><td>Preview, add to snapshot</td><td>Staging CDN if needed</td></tr>
+      <tr><td>Review</td><td>PageSpeed and approval</td><td>Snapshot review</td><td>Go/no-go</td></tr>
+      <tr><td>Release</td><td>Merge first if compatible</td><td>Approve snapshot</td><td>Watch purge</td></tr>
+      <tr><td>After</td><td>Monitor errors</td><td>Check pages</td><td>Telemetry and rollback ready</td></tr>
+    </tbody>
+  </table></div><div data-component="order" data-title="Release order"><script type="application/json">{"prompt": "Put a coordinated release in order.", "items": ["Merge backward-compatible code", "Build the snapshot", "Request review, which locks it", "Hold go/no-go", "Approve, which publishes it", "Check telemetry and purge", "Remove temporary switches"], "explain": "Code that can handle both old and new content ships first."}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: run a rehearsal release</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Ship a code change and a content change, then undo both.</p></div>
+    <div><h4>You need</h4><p>A test site and permission to merge.</p></div>
+    <div><h4>Time</h4><p>About 90 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Create a branch</b> and change one block in a backward-compatible way.</div></li>
+    <li><div><b>Open</b> a pull request with a test URL.</div></li>
+    <li><div><b>Create</b> a snapshot with two pages.</div></li>
+    <li><div><b>Review</b> it on <code>.aem.reviews</code>.</div></li>
+    <li><div><b>Merge</b> the code.</div></li>
+    <li><div><b>Approve</b> the snapshot.</div></li>
+    <li><div><b>Revert</b> the code with a pull request.</div></li>
+    <li><div><b>Restore</b> a page, preview and publish.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A documented release and rollback.</p></div>
+    <div><h4>How to verify</h4><p>Your branch, reviews, production and restored page show the expected state at each step.</p></div>
+    <div><h4>Stretch</h4><p>Time each rollback.</p></div>
+  </div>
+  <ul class="checklist" data-id="d5-lab">
+    <li>Test URL in PR</li>
+    <li>Snapshot reviewed</li>
+    <li>Code reverted</li>
+    <li>Page restored</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Branch shows old code</td><td>Push not synced</td><td>Check Code Sync and the branch name.</td></tr>
+      <tr><td>Cannot view review URL</td><td>No aem.page access</td><td>Grant access or set a review password.</td></tr>
+      <tr><td>Snapshot will not publish</td><td>Lacks publish role</td><td>Use a publisher.</td></tr>
+      <tr><td>Revert does not change site</td><td>Not merged to main</td><td>Merge it.</td></tr>
+      <tr><td>Stage differs from production</td><td>Different caching</td><td>Use aem.live origin.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Change control.</b> Map pull requests and snapshot approvals to your change records, so that audit evidence comes from the tools.</p></aside>
+    <aside class="callout warning" data-label="Approval publishes"><p>Approving a snapshot publishes it. Make sure that the approver knows that.</p></aside>
+    <aside class="callout accessibility"><p>Include an accessibility check in every pull request template and snapshot review.</p></aside>
+    <aside class="callout performance"><p>Treat a failed PageSpeed check as a failed release gate.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Merge to main</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Snapshot approval</td><td>Accountable</td><td>Informed</td><td>Consulted</td></tr>
+      <tr><td>Staging CDN</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Rollback decision</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="d5-check"><script type="application/json">{"questions": [{"q": "Does EDS have a CI/CD pipeline for customer code like AEMaaCS?", "options": ["No, code comes directly from branches", "Yes, a required pipeline", "Only for main"], "answer": 0, "explain": "See Operations."}, {"q": "What does Adobe say about a separate staging branch mapped to a CDN site?", "options": ["Not advisable", "Required", "Recommended by default"], "answer": 0, "explain": "See Staging & Environments."}, {"q": "Which domain shows a snapshot?", "options": [".aem.draft", ".aem.stage", ".aem.reviews"], "answer": 2, "explain": "See Snapshots and Reviews."}, {"q": "What happens when a review is requested?", "options": ["It is deleted", "It is published", "The snapshot locks"], "answer": 2, "explain": "Reject unlocks it."}, {"q": "Which time zone does the crontab sheet use?", "options": ["Pacific", "UTC", "The author’s"], "answer": 1, "explain": "See Scheduling."}, {"q": "How often does the scheduler run?", "options": ["Once a day", "Every second", "Every 5 minutes"], "answer": 2, "explain": "Plan accordingly."}, {"q": "What does Adobe’s operations guide recommend for customer code?", "options": ["Long-lived branches", "Quarterly big-bang releases", "Small, frequent merges"], "answer": 2, "explain": "Scaled Trunk-based Development."}, {"q": "A launch needs new code and 80 new pages, and the old pages must keep working. What order is safest?", "options": ["Change the content source at launch", "Push directly to main during publish", "Publish content first and code a week later", "Merge backward-compatible code, then publish the snapshot"], "answer": 3, "explain": "Compatible code first avoids broken pages.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="d5-cards"><script type="application/json">{"cards": [["Branch URL", "Every branch has one."], ["Trunk-based", "Small merges, often."], ["Staging CDN", "Only for complex CDN work."], ["website-prod", "Second repoless site."], ["Snapshot", "A branch for content."], [".aem.reviews", "Reviews a snapshot."], ["crontab", "Schedule sheet in .helix."], ["git revert", "Undo a merged change."], ["Backward-compatible", "Works with old and new."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>D5 · Environments and release management</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Environments</h4><ul><li>Branch = test</li><li>aem.page = content</li><li>aem.live = production-like</li></ul></div>
+      <div><h4>Staging</h4><ul><li>Usually no</li><li>CDN logic: yes</li><li>Origin is main</li></ul></div>
+      <div><h4>Snapshots</h4><ul><li>Immutable copies</li><li>Review locks</li><li>Approve publishes</li></ul></div>
+      <div><h4>Rollback</h4><ul><li>Code: revert</li><li>Content: restore</li><li>Config: saved copy</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/staging" rel="noopener" target="_blank">aem.live: Staging and environments</a></li>
+    <li><a href="https://www.aem.live/developer/repoless-environments" rel="noopener" target="_blank">aem.live: Repoless stage and prod</a></li>
+    <li><a href="https://www.aem.live/docs/snapshots-reviews" rel="noopener" target="_blank">aem.live: Snapshots and reviews</a></li>
+    <li><a href="https://www.aem.live/docs/scheduling" rel="noopener" target="_blank">aem.live: Scheduling</a></li>
+    <li><a href="https://www.aem.live/docs/operations" rel="noopener" target="_blank">aem.live: Operations</a></li>
+    <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development good practices</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

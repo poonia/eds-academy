@@ -1343,7 +1343,8 @@
     }
    ],
    "signature": "Onboarding checklist and setup sequence",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D2",
@@ -1385,7 +1386,8 @@
     }
    ],
    "signature": "Configuration explorer",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D3",
@@ -1438,7 +1440,8 @@
     }
    ],
    "signature": "CDN request simulator and go-live checklist",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D4",
@@ -1485,7 +1488,8 @@
     }
    ],
    "signature": "CSP header builder",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D5",
@@ -1528,7 +1532,8 @@
     }
    ],
    "signature": "Branch-to-environment diagram and release swimlane",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D6",
@@ -1582,7 +1587,8 @@
     }
    ],
    "signature": "Component-to-block mapping and redirect validator",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D7",
@@ -1630,7 +1636,8 @@
     }
    ],
    "signature": "RUM dashboard mock",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D8",
@@ -1668,7 +1675,8 @@
     }
    ],
    "signature": "robots.txt and sitemap builder",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D9",
@@ -1716,7 +1724,8 @@
     }
    ],
    "signature": "Interactive RACI matrix",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D10",
@@ -1765,7 +1774,8 @@
     }
    ],
    "signature": "Multi-brand architecture and hybrid routing simulator",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E1",
