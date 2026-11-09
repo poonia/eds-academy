@@ -574,6 +574,8 @@ dialog.search-dlg::backdrop { background: rgb(10 14 20 / 45%); }
   .site-head, .toc, .site-foot, .prevnext, .module-done, .done-btn, .menu-toc-btn { display: none !important; }
   body { background: #fff; color: #000; }
   .module-layout { display: block; }
+  .filter-bar, .page-hero .crumbs { display: none !important; }
+  .cs-item { break-inside: avoid; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
@@ -657,3 +659,28 @@ dialog.search-dlg::backdrop { background: rgb(10 14 20 / 45%); }
 .gate-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 [data-component="capstone"] h4, [data-component="exam"] h4 { margin: 18px 0 8px; }
 .feedback.cap-status { background: var(--surface-2); color: var(--ink); border-left: 4px solid var(--line-strong); }
+[data-item][hidden], [data-group][hidden] { display: none !important; }
+.filter-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 12px; align-items: end; margin-bottom: 18px; }
+.filter-end { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.az { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 14px; font: 600 15px var(--f-mono); }
+.gl-item { padding: 8px 10px; border-radius: 8px; scroll-margin-top: 90px; }
+.gl-item:target { background: var(--accent-soft); }
+.gl-item dt { font-weight: 700; }
+.gl-item dd { margin: 2px 0 0; }
+[data-group] h2 { scroll-margin-top: 90px; }
+.cs-list { display: grid; gap: 16px; }
+.cs-item { scroll-margin-top: 90px; }
+.res-list { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 8px; }
+.res-list li, .pp-need { overflow-wrap: anywhere; }
+.pp-phase { margin-bottom: 22px; }
+.pp-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.pp-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 14px; padding: 10px 14px; border-top: 1px solid var(--line); }
+.pp-list li:first-child { border-top: 0; }
+.pp-main { display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: baseline; min-width: 0; }
+.pp-need { flex-basis: 100%; font-size: 14px; color: var(--muted); }
+.pp-gate { background: var(--surface-2); font-weight: 700; }
+.pp-status { font-size: 14px; color: var(--muted); font-weight: 400; }
+.pp-done .pp-status { color: var(--good); font-weight: 700; }
+.ref-card { text-decoration: none; color: inherit; display: grid; gap: 6px; }
+.ref-card:hover { border-color: var(--ink); }
+.pp-phase h2, [data-group] h2 { margin-bottom: 10px; }

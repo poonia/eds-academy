@@ -14,8 +14,8 @@ Run mode: AGENT. This log is the resume point for later runs.
 | 4 | Category D: D1–D10 | Done (9 Nov 2026) |
 | 5 | Category E: E1–E10 | Done (9 Nov 2026) |
 | 6 | Capstones 1–4, level exams 1–4, final exam | Done (9 Nov 2026) |
-| 7 | Path pages, full glossary page, cheat sheets page, resources page, search | Next: set `START AT: PHASE 7` (search works now from the generated index) |
-| 8 | Full QA pass and coverage report | Not started |
+| 7 | Path pages, full glossary page, cheat sheets page, resources page, search | Done (9 Nov 2026) |
+| 8 | Full QA pass and coverage report | Next: set `START AT: PHASE 8` |
 
 ## Accuracy note
 
@@ -167,6 +167,14 @@ taken from pages that could be opened:
 - Exams and capstones are labelled self-assessments. Answers are in client data, so they cannot certify anyone.
 - Time estimates and pass marks are design choices. They have not been calibrated with learners.
 
+### Phase 7 paths and reference (built 9 Nov 2026)
+- `tools/build-reference.py` generates three path pages, the reference hub, glossary, cheat sheets, resources and
+  `data/resources.json` from the syllabus, glossary and module pages. Rerun it after changing any of those, then run
+  `tools/build-site-meta.py`. `--check` runs in `npm run check` and CI.
+- Search now covers paths, reference pages and external resources. Glossary results link to the term's entry.
+- 25 prerequisites sit outside the suggested path that uses them. The syllabus paths are unchanged; path pages flag these.
+- The primary navigation now has Paths and Reference. The component showcase moved under Reference.
+
 ## Coverage matrix (built modules)
 
 | Module | Topic id | Page anchor |
@@ -190,5 +198,5 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
 
 ## Next run
 
-Set `START AT: PHASE 7`. Build the path pages, full glossary page, cheat sheets page and resources page,
+Set `START AT: PHASE 8`. Run the full QA pass and write the coverage report,
 run `npm run check && npm test`, and update this log.

@@ -1,0 +1,774 @@
+{
+"links": [
+{
+"t": "Universal Editor extensions",
+"u": "https://developer.adobe.com/uix/docs/services/aem-universal-editor/",
+"x": "Used in E8"
+},
+{
+"t": "Experience League: Edge Delivery Services overview",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-65/content/edge-delivery-services/overview",
+"x": "Used in A1"
+},
+{
+"t": "Using MCP with AEM as a Cloud Service",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/ai-in-aem/mcp-support/using-mcp-with-aem-as-a-cloud-service",
+"x": "Used in E6"
+},
+{
+"t": "Experience League: Authoring content for Edge Delivery Services",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/aem-authoring/authoring",
+"x": "Used in A4"
+},
+{
+"t": "Experience League: Forms on Edge Delivery Services",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview",
+"x": "Used in B10, E4"
+},
+{
+"t": "Getting started with Universal Editor forms",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/universal-editor/getting-started-universal-editor",
+"x": "Used in E4"
+},
+{
+"t": "Rule Editor",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/universal-editor/rule-editor-universal-editor",
+"x": "Used in E4"
+},
+{
+"t": "Submit actions",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/universal-editor/submit-action",
+"x": "Used in E4"
+},
+{
+"t": "Extending the Universal Editor",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/extending",
+"x": "Used in E8"
+},
+{
+"t": "Experience League: Edge Delivery Services in Cloud Manager",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/using-cloud-manager/edge-delivery-sites/introduction-to-edge-delivery-services",
+"x": "Used in D1"
+},
+{
+"t": "Experience League: Cloud Manager 2026.4.0 release notes",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/release-notes/cloud-manager/2026/2026-4-0",
+"x": "Used in A1"
+},
+{
+"t": "Experience League: Keeping it 100",
+"u": "https://experienceleague.adobe.com/en/docs/experience-manager-edge-delivery/using/build/keeping-it-100",
+"x": "Used in A3"
+},
+{
+"t": "Commerce Storefront",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/",
+"x": "Used in E3"
+},
+{
+"t": "Storefront architecture",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/get-started/architecture/",
+"x": "Used in E3"
+},
+{
+"t": "Commerce services",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/get-started/architecture/commerce-services-and-backends/",
+"x": "Used in E3"
+},
+{
+"t": "Experience League: Storefront performance best practices",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/get-started/performance/",
+"x": "Used in A3"
+},
+{
+"t": "AEM Commerce Prerender",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/setup/configuration/aem-prerender/",
+"x": "Used in E3"
+},
+{
+"t": "Launch checklist",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/setup/launch/launch-checklist/",
+"x": "Used in E3"
+},
+{
+"t": "SSR and crawlability",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/setup/seo/ssr-and-crawlability/",
+"x": "Used in E3"
+},
+{
+"t": "aem-boilerplate-xwalk",
+"u": "https://github.com/adobe-rnd/aem-boilerplate-xwalk",
+"x": "Used in C1, C7"
+},
+{
+"t": "aem-block-collection",
+"u": "https://github.com/adobe/aem-block-collection",
+"x": "Used in C4, E10"
+},
+{
+"t": "Contributing",
+"u": "https://github.com/adobe/aem-block-collection/blob/main/CONTRIBUTING.md",
+"x": "Used in E10"
+},
+{
+"t": "aem-boilerplate",
+"u": "https://github.com/adobe/aem-boilerplate",
+"x": "Used in C1, C2"
+},
+{
+"t": "scripts/aem.js",
+"u": "https://github.com/adobe/aem-boilerplate/blob/main/scripts/aem.js",
+"x": "Used in C3"
+},
+{
+"t": "styles.css",
+"u": "https://github.com/adobe/aem-boilerplate/blob/main/styles/styles.css",
+"x": "Used in C5"
+},
+{
+"t": "aem-experimentation",
+"u": "https://github.com/adobe/aem-experimentation",
+"x": "Used in E1"
+},
+{
+"t": "Adobe on GitHub: Audiences",
+"u": "https://github.com/adobe/aem-experimentation/blob/main/documentation/audiences.md",
+"x": "Used in B10, E2"
+},
+{
+"t": "Adobe on GitHub: Campaigns",
+"u": "https://github.com/adobe/aem-experimentation/blob/main/documentation/campaigns.md",
+"x": "Used in B10, E2"
+},
+{
+"t": "Adobe on GitHub: Experiments",
+"u": "https://github.com/adobe/aem-experimentation/blob/main/documentation/experiments.md",
+"x": "Used in B10, E1"
+},
+{
+"t": "Adobe skills",
+"u": "https://github.com/adobe/skills",
+"x": "Used in E6"
+},
+{
+"t": "Contributor License Agreement",
+"u": "https://opensource.adobe.com/cla.html",
+"x": "Used in E10"
+},
+{
+"t": "Playwright documentation",
+"u": "https://playwright.dev/docs/intro",
+"x": "Used in C10"
+},
+{
+"t": "Web Vitals",
+"u": "https://web.dev/articles/vitals",
+"x": "Used in E9"
+},
+{
+"t": "Developing with AI tools",
+"u": "https://www.aem.live/developer/ai-coding-agents",
+"x": "Used in E6"
+},
+{
+"t": "Anatomy of a project",
+"u": "https://www.aem.live/developer/anatomy-of-a-project",
+"x": "Used in C1, C2"
+},
+{
+"t": "Path mapping",
+"u": "https://www.aem.live/developer/authoring-path-mapping",
+"x": "Used in D6"
+},
+{
+"t": "Block Collection",
+"u": "https://www.aem.live/developer/block-collection",
+"x": "Used in C4, E10"
+},
+{
+"t": "Header block",
+"u": "https://www.aem.live/developer/block-collection/header",
+"x": "Used in B4"
+},
+{
+"t": "Icons",
+"u": "https://www.aem.live/developer/block-collection/icons",
+"x": "Used in B5"
+},
+{
+"t": "Section Metadata",
+"u": "https://www.aem.live/developer/block-collection/section-metadata",
+"x": "Used in B1"
+},
+{
+"t": "Bring Your Own Markup",
+"u": "https://www.aem.live/developer/byom",
+"x": "Used in C8, D10, E5"
+},
+{
+"t": "CLI reference",
+"u": "https://www.aem.live/developer/cli-reference",
+"x": "Used in C1"
+},
+{
+"t": "Closed User Groups",
+"u": "https://www.aem.live/developer/closed-user-groups",
+"x": "Used in D4"
+},
+{
+"t": "Adding a CMP",
+"u": "https://www.aem.live/developer/cmp-integration",
+"x": "Used in C2, C9, E2"
+},
+{
+"t": "Content modeling",
+"u": "https://www.aem.live/developer/component-model-definitions",
+"x": "Used in B7, C2, C7"
+},
+{
+"t": "Publishing Content Fragments",
+"u": "https://www.aem.live/developer/content-fragment-overlay",
+"x": "Used in B7, E5"
+},
+{
+"t": "Font fallback and CLS",
+"u": "https://www.aem.live/developer/font-fallback",
+"x": "Used in C5"
+},
+{
+"t": "Forms",
+"u": "https://www.aem.live/developer/forms",
+"x": "Used in B10, E4"
+},
+{
+"t": "Google Analytics and Tag Manager",
+"u": "https://www.aem.live/developer/gtm-martech-integration",
+"x": "Used in C9"
+},
+{
+"t": "Importing content",
+"u": "https://www.aem.live/developer/importer",
+"x": "Used in D6"
+},
+{
+"t": "Indexing",
+"u": "https://www.aem.live/developer/indexing",
+"x": "Used in B3, C8"
+},
+{
+"t": "Building integrations",
+"u": "https://www.aem.live/developer/integrations",
+"x": "Used in C8, C9, C11"
+},
+{
+"t": "JSON2HTML",
+"u": "https://www.aem.live/developer/json2html",
+"x": "Used in C8, D10, E5"
+},
+{
+"t": "Keeping it 100",
+"u": "https://www.aem.live/developer/keeping-it-100",
+"x": "Used in A3, C3, C5, C6, C10, E9"
+},
+{
+"t": "Markup reference",
+"u": "https://www.aem.live/developer/markup-reference",
+"x": "Used in C3"
+},
+{
+"t": "Markup, sections, blocks and auto blocking",
+"u": "https://www.aem.live/developer/markup-sections-blocks",
+"x": "Used in A2, B1, C3, C4"
+},
+{
+"t": "Adobe Experience Cloud integration",
+"u": "https://www.aem.live/developer/martech-integration",
+"x": "Used in C9, E2"
+},
+{
+"t": "Multi-brand sites",
+"u": "https://www.aem.live/developer/multi-brand-sites",
+"x": "Used in B9, D10"
+},
+{
+"t": "Developing telemetry",
+"u": "https://www.aem.live/developer/operational-telemetry",
+"x": "Used in D7"
+},
+{
+"t": "Using placeholders",
+"u": "https://www.aem.live/developer/placeholders",
+"x": "Used in C8"
+},
+{
+"t": "Repoless stage and prod",
+"u": "https://www.aem.live/developer/repoless-environments",
+"x": "Used in D5"
+},
+{
+"t": "Multi site management",
+"u": "https://www.aem.live/developer/repoless-multisite-manager",
+"x": "Used in B7, B9, D10"
+},
+{
+"t": "Scheduled publishing",
+"u": "https://www.aem.live/developer/scheduling",
+"x": "Used in B8"
+},
+{
+"t": "Extending the Sidekick",
+"u": "https://www.aem.live/developer/sidekick-development",
+"x": "Used in C11, E8"
+},
+{
+"t": "Sitemaps",
+"u": "https://www.aem.live/developer/sitemap",
+"x": "Used in B3, B9, D8"
+},
+{
+"t": "Spreadsheets and JSON",
+"u": "https://www.aem.live/developer/spreadsheets",
+"x": "Used in B3, C8"
+},
+{
+"t": "Adobe Target integration",
+"u": "https://www.aem.live/developer/target-integration",
+"x": "Used in C9, E2"
+},
+{
+"t": "Developer tutorial",
+"u": "https://www.aem.live/developer/tutorial",
+"x": "Used in C1, D1"
+},
+{
+"t": "Universal Editor tutorial",
+"u": "https://www.aem.live/developer/ue-tutorial",
+"x": "Used in C7"
+},
+{
+"t": "Creating blocks for the Universal Editor",
+"u": "https://www.aem.live/developer/universal-editor-blocks",
+"x": "Used in B7, C7"
+},
+{
+"t": "Web Components",
+"u": "https://www.aem.live/developer/web-components",
+"x": "Used in C4"
+},
+{
+"t": "Webhook",
+"u": "https://www.aem.live/developer/webhook",
+"x": "Used in C11, D7, E5"
+},
+{
+"t": "Admin API keys",
+"u": "https://www.aem.live/docs/admin-apikeys",
+"x": "Used in C11, D2"
+},
+{
+"t": "Admin API reference",
+"u": "https://www.aem.live/docs/admin.html",
+"x": "Used in A2, C11"
+},
+{
+"t": "AEM Assets Sidekick plugin",
+"u": "https://www.aem.live/docs/aem-assets-sidekick-plugin",
+"x": "Used in B5"
+},
+{
+"t": "Authoring with AEM for Edge Delivery Services",
+"u": "https://www.aem.live/docs/aem-authoring",
+"x": "Used in A4, B7"
+},
+{
+"t": "Embedding content",
+"u": "https://www.aem.live/docs/aem-embed",
+"x": "Used in D10"
+},
+{
+"t": "Architecture",
+"u": "https://www.aem.live/docs/architecture",
+"x": "Used in A1, A2"
+},
+{
+"t": "Audit log",
+"u": "https://www.aem.live/docs/auditlog",
+"x": "Used in D7, D9"
+},
+{
+"t": "Configuring authentication for authors",
+"u": "https://www.aem.live/docs/authentication-setup-authoring",
+"x": "Used in B2, D4"
+},
+{
+"t": "Site authentication",
+"u": "https://www.aem.live/docs/authentication-setup-site",
+"x": "Used in D4"
+},
+{
+"t": "Authoring and publishing content",
+"u": "https://www.aem.live/docs/authoring",
+"x": "Used in B1, B5, B8"
+},
+{
+"t": "Where to author your site",
+"u": "https://www.aem.live/docs/authoring-guide",
+"x": "Used in A2, A4, D10"
+},
+{
+"t": "Managing taxonomy data",
+"u": "https://www.aem.live/docs/authoring-taxonomy",
+"x": "Used in B3, B7"
+},
+{
+"t": "Bulk metadata",
+"u": "https://www.aem.live/docs/bulk-metadata",
+"x": "Used in B3, B4, D8"
+},
+{
+"t": "Adobe Managed CDN",
+"u": "https://www.aem.live/docs/byo-cdn-adobe-managed",
+"x": "Used in D3"
+},
+{
+"t": "BYO CDN setup",
+"u": "https://www.aem.live/docs/byo-cdn-setup",
+"x": "Used in D3"
+},
+{
+"t": "Picking the right CDN",
+"u": "https://www.aem.live/docs/cdn-guide",
+"x": "Used in D3"
+},
+{
+"t": "Setting up the configuration service",
+"u": "https://www.aem.live/docs/config-service-setup",
+"x": "Used in A4, D1, D2"
+},
+{
+"t": "Document-based configuration",
+"u": "https://www.aem.live/docs/configuration",
+"x": "Used in D2"
+},
+{
+"t": "Content Security Policy",
+"u": "https://www.aem.live/docs/csp",
+"x": "Used in C9, D4"
+},
+{
+"t": "Custom headers",
+"u": "https://www.aem.live/docs/custom-headers",
+"x": "Used in D2"
+},
+{
+"t": "Development collaboration and good practices",
+"u": "https://www.aem.live/docs/dev-collab-and-good-practices",
+"x": "Used in C1, C4, C5, C6, C10, D5, D9, E9, E10"
+},
+{
+"t": "About Experience Workspace",
+"u": "https://www.aem.live/docs/ew/about",
+"x": "Used in B6"
+},
+{
+"t": "AEM agentic plugins",
+"u": "https://www.aem.live/docs/ew/administering/agentic-plugins",
+"x": "Used in E6"
+},
+{
+"t": "Request Publish",
+"u": "https://www.aem.live/docs/ew/administering/request-publish",
+"x": "Used in B8"
+},
+{
+"t": "Schedule Publish",
+"u": "https://www.aem.live/docs/ew/administering/schedule-publish",
+"x": "Used in B8"
+},
+{
+"t": "Set up the Universal Editor",
+"u": "https://www.aem.live/docs/ew/administering/set-up-universal-editor",
+"x": "Used in B6"
+},
+{
+"t": "Translation",
+"u": "https://www.aem.live/docs/ew/administering/translation",
+"x": "Used in B6, B9"
+},
+{
+"t": "Bulk operations",
+"u": "https://www.aem.live/docs/ew/authoring/bulk-operations",
+"x": "Used in B6"
+},
+{
+"t": "Authoring pages",
+"u": "https://www.aem.live/docs/ew/authoring/editing-docs",
+"x": "Used in B6"
+},
+{
+"t": "Experience Workspace MCP",
+"u": "https://www.aem.live/docs/ew/authoring/mcp",
+"x": "Used in E6"
+},
+{
+"t": "Snapshots",
+"u": "https://www.aem.live/docs/ew/authoring/snapshots",
+"x": "Used in B6"
+},
+{
+"t": "Versioning and history",
+"u": "https://www.aem.live/docs/ew/authoring/version-history",
+"x": "Used in B6"
+},
+{
+"t": "Document Authoring is now Experience Workspace",
+"u": "https://www.aem.live/docs/ew/da-is-ew",
+"x": "Used in A4, B6"
+},
+{
+"t": "Developing apps and plugins",
+"u": "https://www.aem.live/docs/ew/developing/apps-plugins",
+"x": "Used in C11, E8"
+},
+{
+"t": "Micro-frontends tutorial",
+"u": "https://www.aem.live/docs/ew/developing/micro-frontends",
+"x": "Used in E8"
+},
+{
+"t": "Set up experimentation in Experience Workspace",
+"u": "https://www.aem.live/docs/ew/developing/set-up-experimentation",
+"x": "Used in E1"
+},
+{
+"t": "Experimentation",
+"u": "https://www.aem.live/docs/experimentation",
+"x": "Used in B10, E1"
+},
+{
+"t": "Exploring blocks",
+"u": "https://www.aem.live/docs/exploring-blocks",
+"x": "Used in D9, E7, E10"
+},
+{
+"t": "General questions (FAQ)",
+"u": "https://www.aem.live/docs/faq",
+"x": "Used in A1, A2, A3"
+},
+{
+"t": "Fragments",
+"u": "https://www.aem.live/docs/fragments",
+"x": "Used in B4"
+},
+{
+"t": "Go-live checklist",
+"u": "https://www.aem.live/docs/go-live-checklist",
+"x": "Used in D3, D6, E9"
+},
+{
+"t": "Large sites",
+"u": "https://www.aem.live/docs/large-sites",
+"x": "Used in D6, D8, E5"
+},
+{
+"t": "Feature lifecycle",
+"u": "https://www.aem.live/docs/lifecycle",
+"x": "Used in A1"
+},
+{
+"t": "Limits",
+"u": "https://www.aem.live/docs/limits",
+"x": "Used in B1, B2, B5, D6, D7"
+},
+{
+"t": "Media assets",
+"u": "https://www.aem.live/docs/media",
+"x": "Used in B5"
+},
+{
+"t": "Page metadata",
+"u": "https://www.aem.live/docs/metadata",
+"x": "Used in B1, B4"
+},
+{
+"t": "Network profile",
+"u": "https://www.aem.live/docs/network-profile",
+"x": "Used in D1"
+},
+{
+"t": "Operational Telemetry",
+"u": "https://www.aem.live/docs/operational-telemetry",
+"x": "Used in C6, D7"
+},
+{
+"t": "Operations",
+"u": "https://www.aem.live/docs/operations",
+"x": "Used in D5, D7"
+},
+{
+"t": "OpTel Explorer",
+"u": "https://www.aem.live/docs/optel-explorer",
+"x": "Used in C6, D7, E1, E9"
+},
+{
+"t": "Placeholders",
+"u": "https://www.aem.live/docs/placeholders",
+"x": "Used in B3"
+},
+{
+"t": "Publishing from AEM",
+"u": "https://www.aem.live/docs/publishing-from-authoring",
+"x": "Used in B7, D6"
+},
+{
+"t": "Redirects",
+"u": "https://www.aem.live/docs/redirects",
+"x": "Used in B3, D3, D6"
+},
+{
+"t": "Regulated industries",
+"u": "https://www.aem.live/docs/regulated-industries",
+"x": "Used in D4, D9, D10"
+},
+{
+"t": "Repoless, one codebase many sites",
+"u": "https://www.aem.live/docs/repoless",
+"x": "Used in A4, C11, D2, D10"
+},
+{
+"t": "Robots",
+"u": "https://www.aem.live/docs/robots",
+"x": "Used in D8"
+},
+{
+"t": "Roles and permissions",
+"u": "https://www.aem.live/docs/roles-permissions",
+"x": "Used in D4"
+},
+{
+"t": "Scheduling",
+"u": "https://www.aem.live/docs/scheduling",
+"x": "Used in B8, D5"
+},
+{
+"t": "Security overview",
+"u": "https://www.aem.live/docs/security",
+"x": "Used in D4"
+},
+{
+"t": "SEO and GEO best practices",
+"u": "https://www.aem.live/docs/seo-geo",
+"x": "Used in B4, B8, D8"
+},
+{
+"t": "Push invalidation",
+"u": "https://www.aem.live/docs/setup-byo-cdn-push-invalidation",
+"x": "Used in D3"
+},
+{
+"t": "Using AEM Sidekick",
+"u": "https://www.aem.live/docs/sidekick",
+"x": "Used in B2"
+},
+{
+"t": "Sidekick errors",
+"u": "https://www.aem.live/docs/sidekick-errors",
+"x": "Used in B2"
+},
+{
+"t": "Sidekick Library",
+"u": "https://www.aem.live/docs/sidekick-library",
+"x": "Used in B2"
+},
+{
+"t": "Sidekick security",
+"u": "https://www.aem.live/docs/sidekick-security",
+"x": "Used in D4"
+},
+{
+"t": "Service Level Objectives",
+"u": "https://www.aem.live/docs/slo",
+"x": "Used in D3"
+},
+{
+"t": "Snapshots and reviews",
+"u": "https://www.aem.live/docs/snapshots-reviews",
+"x": "Used in D5"
+},
+{
+"t": "Special metadata properties",
+"u": "https://www.aem.live/docs/special-metadata-properties",
+"x": "Used in B1, B8"
+},
+{
+"t": "Staging and environments",
+"u": "https://www.aem.live/docs/staging",
+"x": "Used in D5"
+},
+{
+"t": "Storefront",
+"u": "https://www.aem.live/docs/storefront",
+"x": "Used in E3"
+},
+{
+"t": "Teams",
+"u": "https://www.aem.live/docs/teams",
+"x": "Used in D1"
+},
+{
+"t": "Load, performance and penetration testing",
+"u": "https://www.aem.live/docs/testing",
+"x": "Used in C10"
+},
+{
+"t": "Translation and localization",
+"u": "https://www.aem.live/docs/translation-and-localization",
+"x": "Used in B9, D8"
+},
+{
+"t": "Publishing pages with AEM Assets",
+"u": "https://www.aem.live/docs/universal-editor-assets",
+"x": "Used in B5"
+},
+{
+"t": "How to make websites accessible",
+"u": "https://www.ontario.ca/page/how-make-websites-accessible",
+"x": "Used in D9"
+},
+{
+"t": "WCAG 2.2",
+"u": "https://www.w3.org/TR/WCAG22/",
+"x": "Used in D9"
+},
+{
+"t": "Accordion pattern",
+"u": "https://www.w3.org/WAI/ARIA/apg/patterns/accordion/",
+"x": "Used in E7"
+},
+{
+"t": "Carousel pattern",
+"u": "https://www.w3.org/WAI/ARIA/apg/patterns/carousel/",
+"x": "Used in E7"
+},
+{
+"t": "Dialog pattern",
+"u": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+"x": "Used in E7"
+},
+{
+"t": "Tabs pattern",
+"u": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/",
+"x": "Used in E7"
+},
+{
+"t": "Understanding 2.2.2",
+"u": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html",
+"x": "Used in E7"
+},
+{
+"t": "WCAG overview",
+"u": "https://www.w3.org/WAI/standards-guidelines/wcag/",
+"x": "Used in C10"
+}
+]
+}

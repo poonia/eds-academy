@@ -33,6 +33,7 @@ export default function dashboard(el, ctx) {
           h('div', { class: 'meter', 'aria-hidden': 'true' }, h('span', { style: `width:${(done / flat.length) * 100}%` })),
           h('span', { class: 'muted', style: 'font-size:13.5px' }, `${done} of ${flat.length} modules complete`),
           next ? h('div', { style: 'font-size:14.5px' }, h('span', { class: 'muted' }, 'Next: '), modLink(next)) : h('b', {}, 'Path complete'),
+          h('a', { class: 'btn', style: 'width:fit-content', href: href(path.page) }, 'Open path'),
           h('details', {}, h('summary', { style: 'cursor:pointer;font-size:14px;color:var(--accent);font-weight:700' }, 'Show the full order'), phases)));
       });
       el.append(grid);

@@ -25,6 +25,7 @@ const COMPONENTS = {
   'rum-dashboard': 'rum-dashboard.js', 'robots-builder': 'robots-builder.js', 'raci-matrix': 'raci-matrix.js', 'routing-sim': 'routing-sim.js',
   'experiment-results': 'experiment-results.js', 'flicker-timeline': 'flicker-timeline.js', 'form-rules': 'form-rules.js', 'cf-html': 'cf-html.js',
   'a11y-demos': 'a11y-demos.js', 'portfolio-dash': 'portfolio-dash.js', exam: 'exam.js', capstone: 'capstone.js',
+  'filter-list': 'filter-list.js', 'path-progress': 'path-progress.js',
 };
 
 /* ---------- small helpers ---------- */
@@ -159,7 +160,7 @@ function ring(pct) {
 }
 function buildHeader(syl) {
   const page = document.body.dataset.page || '';
-  const links = [['index.html', 'Home', 'home'], ['start-here.html', 'Start here', 'start'], ['index.html#course-map', 'Course map', 'map'], ['reference/components.html', 'Components', 'components']];
+  const links = [['index.html', 'Home', 'home'], ['start-here.html', 'Start here', 'start'], ['index.html#course-map', 'Course map', 'map'], ['index.html#paths', 'Paths', 'paths'], ['reference/index.html', 'Reference', 'reference']];
   const nav = h('nav', { class: 'primary-nav', 'aria-label': 'Primary' });
   const mnav = h('nav', { class: 'mobile-nav wrap', 'aria-label': 'Primary (mobile)', id: 'mobile-nav' });
   links.forEach(([u, t, k]) => {
@@ -525,7 +526,7 @@ let INDEX = null; let dlg = null;
 async function searchIndex() { if (!INDEX) { try { INDEX = await (await fetch(href('data/search-index.json'))).json(); } catch (e) { INDEX = { items: [] }; } } return INDEX; }
 function openSearch() {
   if (!dlg) {
-    const input = h('input', { type: 'search', placeholder: 'Search modules, topics and terms', 'aria-label': 'Search the course', autocomplete: 'off', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': 'sd-results' });
+    const input = h('input', { type: 'search', placeholder: 'Search modules, topics, terms and resources', 'aria-label': 'Search the course', autocomplete: 'off', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': 'sd-results' });
     const list = h('ul', { class: 'sd-results', id: 'sd-results', role: 'listbox', 'aria-label': 'Results' });
     const count = h('span', { 'aria-live': 'polite' });
     const close = h('button', { class: 'btn small ghost', type: 'button' }, 'Close');
@@ -542,13 +543,13 @@ function openSearch() {
       items = idx.items.map((it) => {
         const t = it.t.toLowerCase(); const x = (it.x || '').toLowerCase(); let s = 0;
         for (const w of words) { if (t.includes(w)) s += t.startsWith(w) ? 6 : 4; else if (x.includes(w)) s += 1; else return null; }
-        if (it.k === 'module') s += 2; if (it.built) s += 1;
+        if (t === q || t.split(' (')[0] === q) s += 20; if (it.k === 'module') s += 2; if (it.built) s += 1;
         return { it, s };
       }).filter(Boolean).sort((a, b) => b.s - a.s).slice(0, 30).map((r) => r.it);
-      count.textContent = `${items.length} result${items.length === 1 ? '' : 's'}`;
+      count.textContent = items.length ? `${items.length} result${items.length === 1 ? '' : 's'}` : 'No results. Try fewer or shorter words.';
       sel = 0;
       items.forEach((it, i) => {
-        const a = h('a', { href: href(it.built === false ? 'index.html#course-map' : it.u), role: 'option', id: `sd-o${i}`, 'aria-selected': String(i === 0) }, h('span', { class: 'k' }, `${it.k}${it.m ? ` · ${it.m}` : ''}`), h('b', {}, it.t), it.x ? h('span', { class: 'x' }, it.x) : null, it.built === false ? h('span', { class: 'planned-note' }, 'Not built yet') : null);
+        const a = h('a', { ...(it.k === 'resource' ? { target: '_blank', rel: 'noopener' } : {}), href: href(it.built === false ? 'index.html#course-map' : it.u), role: 'option', id: `sd-o${i}`, 'aria-selected': String(i === 0) }, h('span', { class: 'k' }, `${it.k}${it.m ? ` · ${it.m}` : ''}`), h('b', {}, it.t), it.x ? h('span', { class: 'x' }, it.x) : null, it.built === false ? h('span', { class: 'planned-note' }, 'Not built yet') : null);
         list.append(h('li', {}, a));
       });
       input.setAttribute('aria-activedescendant', items.length ? 'sd-o0' : '');

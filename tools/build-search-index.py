@@ -60,17 +60,23 @@ for m in syl['modules']:
                 items.append({'k': 'practice', 't': f"{m['id']} {s['toc']}", 'u': f"{m['page']}#{sid}", 'm': m['id'], 'x': '', 'built': True})
 for g in glo['terms']:
     mod = syl and next((x for x in syl['modules'] if x['id'] == g['module']), None)
-    items.append({'k': 'term', 't': g['term'] + (f" ({g['full']})" if g['full'] else ''), 'u': (mod['page'] if mod and mod['built'] else 'index.html#course-map'), 'm': g['module'], 'x': g['def'], 'built': bool(mod and mod['built'])})
+    items.append({'k': 'term', 't': g['term'] + (f" ({g['full']})" if g['full'] else ''), 'u': f"reference/glossary.html#{g['id']}", 'm': g['module'], 'x': g['def'], 'built': True})
 for p, t, x in [('start-here.html', 'Start here: how the course works', 'Tracks, levels, module anatomy, tool setup, progress'), ('reference/components.html', 'Component showcase', 'Every interactive component with its markup'), ('index.html#course-map', 'Course map', 'All 45 modules by category and level'), ('index.html#progress', 'Your progress: export, import, reset', 'Back up or move progress')]:
     items.append({'k': 'page', 't': t, 'u': p, 'm': '', 'x': x, 'built': True})
 practice = [x for x in syl['gates'] + syl['exams'] if x['built']]
+for p in syl['paths']:
+    items.append({'k': 'path', 't': f"{p['name']} path", 'u': p['page'], 'm': '', 'x': p['who'], 'built': True})
+for p, t_, x in [('reference/glossary.html', 'Glossary', 'Every term in the course'), ('reference/cheat-sheets.html', 'Cheat sheets', 'Printable summaries for every module'), ('reference/resources.html', 'Resources', 'External documentation used in the course')]:
+    items.append({'k': 'page', 't': t_, 'u': p, 'm': '', 'x': x, 'built': True})
+for link in json.loads((ROOT / 'data/resources.json').read_text())['links']:
+    items.append({'k': 'resource', 't': link['t'], 'u': link['u'], 'm': '', 'x': link['x'], 'built': True})
 for x in syl['gates']:
     if x['built']:
         items.append({'k': 'practice', 't': f"Gate {x['level']}: {x['title']}", 'u': x['page'], 'm': '', 'x': x['brief'], 'built': True})
 for x in syl['exams']:
     if x['built']:
         items.append({'k': 'practice', 't': x['title'], 'u': x['page'], 'm': '', 'x': f"Self-assessment of {x['draw']} questions", 'built': True})
-for pth in ['index.html', 'start-here.html', 'reference/components.html'] + [x['page'] for x in practice]:
+for pth in ['index.html', 'start-here.html', 'reference/components.html'] + [x['page'] for x in practice] + [p['page'] for p in syl['paths']] + ['reference/index.html', 'reference/glossary.html', 'reference/cheat-sheets.html', 'reference/resources.html']:
     pp = Page(); pp.feed((ROOT / pth).read_text())
     for i, block in enumerate(pp.json_blocks):
         try: json.loads(block)

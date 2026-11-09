@@ -18,6 +18,8 @@ jobs:
       - run: npm ci
       - name: Confirm the exam bank is current and valid
         run: python3 tools/build-exam-bank.py --check
+      - name: Confirm generated reference pages are current
+        run: python3 tools/build-reference.py --check
       - name: Validate pages and rebuild the search index
         run: python3 tools/build-search-index.py
       - name: Confirm the committed search index is current

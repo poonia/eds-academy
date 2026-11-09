@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 const syllabus = require('../data/syllabus.json');
 
 const built = syllabus.modules.filter((m) => m.built);
-const pages = ['index.html', 'start-here.html', 'reference/components.html', ...built.map((m) => m.page), ...syllabus.gates.map((g) => g.page), ...syllabus.exams.map((x) => x.page)];
+const pages = ['index.html', 'start-here.html', 'reference/components.html', ...built.map((m) => m.page), ...syllabus.gates.map((g) => g.page), ...syllabus.exams.map((x) => x.page), ...syllabus.paths.map((p) => p.page), 'reference/index.html', 'reference/glossary.html', 'reference/cheat-sheets.html', 'reference/resources.html'];
 
 /* Records uncaught errors, runtime errors and failed same-origin requests. */
 function watch(page) {
@@ -260,6 +260,63 @@ test('a capstone tracks evidence and reports status on the home page', async ({ 
   await expect(page.locator('[data-component="capstone"] .feedback')).toContainText('Ready for review');
   await open(page, 'index.html');
   await expect(page.locator('[data-part="gates"]')).toContainText('Status: Ready for review');
+});
+
+test('a learning path shows progress and missing prerequisites', async ({ page }) => {
+  await open(page, 'paths/author.html');
+  const view = page.locator('[data-component="path-progress"]');
+  await expect(view.locator('.card')).toContainText('0 of 23 modules complete');
+  await expect(view.locator('li[data-m="D8"]')).toContainText('Also needs, not on this path');
+  await page.evaluate(() => localStorage.setItem('eds-academy-v1', JSON.stringify({ v: 1, topics: {}, modules: { A1: 'done' }, quizzes: {}, labs: {}, capstones: {}, checklists: {}, cards: {}, last: null })));
+  await page.reload();
+  await page.waitForSelector('html[data-ready="true"]');
+  await expect(page.locator('[data-component="path-progress"] .card')).toContainText('1 of 23 modules complete');
+  await expect(page.locator('li[data-m="A1"]')).toContainText('Done');
+  await expect(page.locator('[data-component="path-progress"] .card')).toContainText('A2');
+});
+
+test('reference pages filter their content', async ({ page }) => {
+  await open(page, 'reference/glossary.html');
+  const list = page.locator('[data-component="filter-list"]');
+  await expect(page.locator('#repoless')).toBeVisible();
+  await list.getByLabel('Filter').fill('repoless');
+  await expect(list.locator('.filter-end')).toContainText('Showing');
+  await expect(page.locator('#repoless')).toBeVisible();
+  await expect(page.locator('#hlxignore')).toBeHidden();
+  await list.getByLabel('Filter').fill('zzzz');
+  await expect(list.locator('.filter-end')).toContainText('No matches');
+
+  await open(page, 'reference/cheat-sheets.html');
+  const sheets = page.locator('[data-component="filter-list"]');
+  await expect(sheets.locator('.filter-end')).toContainText('of 45');
+  await sheets.getByLabel('Category').selectOption('E');
+  await expect(sheets.locator('.filter-end')).toContainText('Showing 10 of 45');
+  await expect(page.locator('#a1')).toBeHidden();
+
+  await open(page, 'reference/resources.html');
+  const res = page.locator('[data-component="filter-list"]');
+  await res.getByLabel('Source').selectOption('github');
+  await expect(res.locator('[data-item]:visible').first()).toContainText('Used in');
+});
+
+test('search finds a term in the glossary and external resources', async ({ page }) => {
+  await open(page, 'index.html');
+  await page.keyboard.press('/');
+  const box = page.getByRole('combobox', { name: 'Search the course' });
+  await box.fill('repoless');
+  await expect(page.locator('.sd-results a[href$="reference/glossary.html#repoless"]')).toHaveCount(1);
+  await box.fill('Target integration');
+  await expect(page.locator('.sd-results a[target="_blank"]').first()).toHaveAttribute('href', /aem\.live/);
+  await box.fill('zzzzzz');
+  await expect(page.locator('.sd-foot')).toContainText('No results');
+});
+
+test('primary navigation reaches the reference section', async ({ page }) => {
+  await open(page, 'index.html');
+  await page.locator('.primary-nav').getByRole('link', { name: 'Reference' }).click();
+  await page.waitForSelector('html[data-ready="true"]');
+  await expect(page.locator('h1')).toHaveText('Reference');
+  await expect(page.locator('.primary-nav [aria-current="page"]')).toHaveText('Reference');
 });
 
 test('a missing URL at any depth shows the styled 404 page', async ({ page }) => {
