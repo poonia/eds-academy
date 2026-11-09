@@ -63,7 +63,14 @@ for g in glo['terms']:
     items.append({'k': 'term', 't': g['term'] + (f" ({g['full']})" if g['full'] else ''), 'u': (mod['page'] if mod and mod['built'] else 'index.html#course-map'), 'm': g['module'], 'x': g['def'], 'built': bool(mod and mod['built'])})
 for p, t, x in [('start-here.html', 'Start here: how the course works', 'Tracks, levels, module anatomy, tool setup, progress'), ('reference/components.html', 'Component showcase', 'Every interactive component with its markup'), ('index.html#course-map', 'Course map', 'All 45 modules by category and level'), ('index.html#progress', 'Your progress: export, import, reset', 'Back up or move progress')]:
     items.append({'k': 'page', 't': t, 'u': p, 'm': '', 'x': x, 'built': True})
-for pth in ['index.html', 'start-here.html', 'reference/components.html']:
+practice = [x for x in syl['gates'] + syl['exams'] if x['built']]
+for x in syl['gates']:
+    if x['built']:
+        items.append({'k': 'practice', 't': f"Gate {x['level']}: {x['title']}", 'u': x['page'], 'm': '', 'x': x['brief'], 'built': True})
+for x in syl['exams']:
+    if x['built']:
+        items.append({'k': 'practice', 't': x['title'], 'u': x['page'], 'm': '', 'x': f"Self-assessment of {x['draw']} questions", 'built': True})
+for pth in ['index.html', 'start-here.html', 'reference/components.html'] + [x['page'] for x in practice]:
     pp = Page(); pp.feed((ROOT / pth).read_text())
     for i, block in enumerate(pp.json_blocks):
         try: json.loads(block)

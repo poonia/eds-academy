@@ -13,8 +13,8 @@ Run mode: AGENT. This log is the resume point for later runs.
 | 3 | Category C: C1–C11 | Done (8 Nov 2026) |
 | 4 | Category D: D1–D10 | Done (9 Nov 2026) |
 | 5 | Category E: E1–E10 | Done (9 Nov 2026) |
-| 6 | Capstones 1–4, level exams 1–4, final exam | Next: set `START AT: PHASE 6` |
-| 7 | Path pages, full glossary page, cheat sheets page, resources page, search | Not started (search works now from the generated index) |
+| 6 | Capstones 1–4, level exams 1–4, final exam | Done (9 Nov 2026) |
+| 7 | Path pages, full glossary page, cheat sheets page, resources page, search | Next: set `START AT: PHASE 7` (search works now from the generated index) |
 | 8 | Full QA pass and coverage report | Not started |
 
 ## Accuracy note
@@ -156,6 +156,17 @@ taken from pages that could be opened:
 - VERIFY: plugin availability per customer; Forms submit action list per environment (Adobe's page is inconsistent);
   Commerce drop-in licence terms; MCP capabilities per AEM release; significance test in E1 is simplified.
 
+### Phase 6 capstones and exams (built 9 Nov 2026)
+- Four capstone pages with brief, milestones, requirements, rubric, evidence and review pack (`capstone`).
+  Status is written to the `capstones` store bucket and shown on the home page.
+- Four level exams and a final exam (`exam`). `tools/build-exam-bank.py` builds `data/exam-bank.json` from
+  356 module knowledge-check questions and 56 scenarios in `data/exam-scenarios.json`. That file also rewords about 50 terse
+  questions for exam use and excludes 4 that need module context; the tool fails if an entry stops matching. Rerun it after changing a module quiz.
+- Level exams use modules whose level range includes that level. Draw: 30 questions (final 60); up to a third
+  exam-only scenarios, the rest spread by module. Pass: 70% (Level 4 75%, final 80%). Scores are the learner's best.
+- Exams and capstones are labelled self-assessments. Answers are in client data, so they cannot certify anyone.
+- Time estimates and pass marks are design choices. They have not been calibrated with learners.
+
 ## Coverage matrix (built modules)
 
 | Module | Topic id | Page anchor |
@@ -179,5 +190,5 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
 
 ## Next run
 
-Set `START AT: PHASE 6`. Build capstones 1–4, level exams 1–4 and the final exam,
+Set `START AT: PHASE 7`. Build the path pages, full glossary page, cheat sheets page and resources page,
 run `npm run check && npm test`, and update this log.

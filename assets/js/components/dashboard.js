@@ -38,6 +38,11 @@ export default function dashboard(el, ctx) {
       el.append(grid);
     }
     if (part === 'gates') {
+      const examLink = (scope, label) => {
+        const x = syl.exams.find((e) => e.scope === scope);
+        const best = store.get('quizzes', `exam-${scope}`);
+        return h('a', { class: 'btn', href: href(x.page) }, best ? `${label}: best ${best.pct}%` : label);
+      };
       const grid = h('div', { class: 'grid-3' });
       syl.gates.forEach((g) => {
         const feeds = syl.modules.filter((m) => m.levels[0] === g.level);
@@ -46,8 +51,12 @@ export default function dashboard(el, ctx) {
           h('div', { class: 'eyebrow' }, `Level ${g.level} · ${syl.levels[g.level]}`),
           h('h3', {}, `Gate ${g.level}: ${g.title}`), h('p', { style: 'margin:0;font-size:15px' }, g.brief),
           h('span', { class: 'muted', style: 'font-size:13.5px' }, `${feeds.length} modules start at this level`),
-          g.built ? h('a', { class: 'btn', href: href(g.page) }, 'Open capstone') : h('span', { class: 'tag status-planned', style: 'width:fit-content' }, st ? `Status: ${st}` : 'Capstone page planned for phase 6')));
+          st ? h('span', { class: 'tag', style: 'width:fit-content' }, `Status: ${st}`) : null,
+          h('div', { class: 'gate-actions' }, h('a', { class: 'btn', href: href(g.page) }, 'Open capstone'), examLink(g.level, `Level ${g.level} exam`))));
       });
+      grid.append(h('div', { class: 'card', style: 'display:grid;gap:8px;align-content:start' },
+        h('div', { class: 'eyebrow' }, 'All levels'), h('h3', {}, 'Final exam'), h('p', { style: 'margin:0;font-size:15px' }, 'Every module, with an emphasis on judgement across modules.'),
+        h('div', { class: 'gate-actions' }, examLink('final', 'Final exam'))));
       el.append(grid);
     }
   };

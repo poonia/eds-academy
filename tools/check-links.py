@@ -78,6 +78,10 @@ for module in syllabus['modules']:
     if module['built']:
         check('data/syllabus.json', module['page'], base='')
 
+for item in syllabus['gates'] + syllabus['exams']:
+    if item['built']:
+        check('data/syllabus.json', item['page'], base='')
+
 for item in json.loads(read('data/search-index.json'))['items']:
     if item.get('built') is not False:
         check('data/search-index.json', item['u'], base='')

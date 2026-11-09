@@ -1,0 +1,849 @@
+{
+ "rewrite": {
+  "What does Columns (dark) do?": "In a block table header, what does Columns (dark) do?",
+  "Bulk actions start from where?": "Where do Sidekick bulk actions start?",
+  "Which prefix do library sheets need?": "Which prefix do Sidekick Library sheets need?",
+  "What are the default widths?": "What are the default image widths in the EDS picture helper?",
+  "How do you reference an icon?": "How does an author reference an icon in a document?",
+  "Where is version history?": "In Experience Workspace, where is version history?",
+  "Which mode is WYSIWYG?": "Which Experience Workspace editing mode is WYSIWYG?",
+  "What do bulk tools accept?": "What do Experience Workspace bulk tools accept?",
+  "Which defines the fields?": "In Universal Editor instrumentation, which file defines a component’s fields?",
+  "What publishes assets to EDS?": "With AEM authoring, what publishes assets to Edge Delivery?",
+  "What do reviewers open?": "In a preview review, what do reviewers open?",
+  "Times in crontab are in?": "Which time zone do times in the scheduling crontab sheet use?",
+  "What does aem.live recommend first in a URL?": "For multi-language sites, what does aem.live recommend as the first URL segment?",
+  "Which suits a simple contact form?": "Which forms authoring method suits a simple contact form?",
+  "What license is needed?": "Which licence is needed for Edge Delivery Services for AEM Forms?",
+  "Default traffic with one challenger?": "What is the default experiment traffic split with one challenger?",
+  "What does --url set?": "In the aem up command, what does --url set?",
+  "Which app access option is right?": "When installing AEM Code Sync, which repository access option is right?",
+  "Where does a font-face rule go?": "In the boilerplate, where does a font-face rule go?",
+  "What does a primary button need?": "In an authored document, what makes a link a primary button?",
+  "What is block.children?": "In a block’s decorate function, what is block.children?",
+  "Which selector is too broad?": "Which selector is too broad for block CSS?",
+  "What does the classes property become?": "In a Universal Editor model, what does the classes property become?",
+  "Why move instrumentation?": "When block code replaces elements for Universal Editor, why move instrumentation?",
+  "Which parameter pages through rows?": "In spreadsheet JSON, which parameter pages through rows?",
+  "Response size limit?": "What is the response size limit for Edge Delivery JSON?",
+  "Target modifies?": "What does Adobe Target modify on an EDS page?",
+  "Where does Target’s call happen?": "In which loading phase does Adobe Target’s call happen?",
+  "Which code means a job was scheduled?": "Which Admin API status code means a job was scheduled?",
+  "Which path protects preview only?": "Which Configuration Service path protects preview only?",
+  "How often does the scheduler run?": "How often does the crontab scheduler run?",
+  "Which file holds your transformation rules?": "In the AEM Importer, which file holds your transformation rules?",
+  "What is the usual sampling rate?": "What is the usual Operational Telemetry sampling rate?",
+  "What does weight mean?": "In Operational Telemetry, what does weight mean?",
+  "How is data sent?": "How is Operational Telemetry data sent?",
+  "What does filtering do to uncertainty?": "In sampled telemetry, what does filtering do to uncertainty?",
+  "What does a webhook provide?": "What does an Edge Delivery webhook provide?",
+  "Who is L3 support in this model?": "In this course’s support model, who is L3 support?",
+  "Which feature is WYSIWYG only?": "In EDS Forms, which feature is WYSIWYG only?",
+  "In what order do rules run?": "In what order do Forms Rule Editor rules run?",
+  "Where do custom functions go?": "Where do custom Forms Rule Editor functions go?",
+  "What must custom functions be?": "What must custom Forms Rule Editor functions be?",
+  "Which language does the template use?": "Which template language does json2html use?",
+  "Which key builds pages from one array?": "In json2html, which keys build pages from one array?",
+  "What is {{id}} used with?": "In json2html configuration, what is {{id}} used with?",
+  "What are skills?": "For coding agents, what are skills?",
+  "Which plugin option limits where it appears?": "Which Sidekick plugin option limits where it appears?",
+  "Which fires when Publish is clicked?": "Which Sidekick event fires when Publish is clicked?",
+  "How should you prioritize sites?": "In a portfolio performance program, how should you prioritize sites?"
+ },
+ "explain": {
+  "Which framework does EDS require?": "EDS needs no framework. Any you add are your choice, and your cost.",
+  "Times in crontab are in?": "Convert local times to UTC."
+ },
+ "exclude": [
+  "Which step comes first?",
+  "What must you get in writing?",
+  "Default picture widths?",
+  "Which option prints index records?"
+ ],
+ "questions": [
+  {
+   "q": "An author previewed a page, and a stakeholder says the public site still shows the old text. What is the most likely reason?",
+   "options": [
+    "The page was previewed but not published",
+    "Code Sync has failed",
+    "The sitemap is out of date",
+    "The block needs new CSS"
+   ],
+   "answer": 0,
+   "explain": "Preview updates aem.page. Publishing updates aem.live and purges the production CDN.",
+   "m": "A2",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "A developer loads a large marketing tag in the eager phase, and LCP gets worse. Where should the tag load?",
+   "options": [
+    "After the page content, in the delayed phase",
+    "In head.html, before aem.js",
+    "Inside every block",
+    "Before the first section"
+   ],
+   "answer": 0,
+   "explain": "Eager is for what LCP needs. Third-party work should come last.",
+   "m": "A3",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "A small team lives in Word and SharePoint, and wants to start quickly. Which authoring options best fit their skills?",
+   "options": [
+    "Document-based authoring or Experience Workspace",
+    "A custom headless CMS",
+    "A hand-written HTML site",
+    "A JCR package per page"
+   ],
+   "answer": 0,
+   "explain": "Match the authoring option to the people who will use it.",
+   "m": "A4",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "An author pastes a table to create a three-column layout, but its first row says “Columns (3)” in plain text outside the table. What happens?",
+   "options": [
+    "The text is treated as content, and the table will not be the named block",
+    "EDS infers the block",
+    "The page fails to publish",
+    "Sidekick adds the header row"
+   ],
+   "answer": 0,
+   "explain": "The block name belongs in the first row of the table.",
+   "m": "B1",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "Two sections on a page need different background colours. What should the author use?",
+   "options": [
+    "A section break and Section Metadata",
+    "A new block for each colour",
+    "Inline CSS in the document",
+    "Two separate pages"
+   ],
+   "answer": 0,
+   "explain": "Sections group content, and Section Metadata can apply a style.",
+   "m": "B1",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "An author wants a page title and description for search results. Where do they go?",
+   "options": [
+    "The Metadata block on that page",
+    "The first paragraph",
+    "A code comment",
+    "robots.txt"
+   ],
+   "answer": 0,
+   "explain": "Page metadata belongs in the Metadata block.",
+   "m": "B2",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "A developer runs aem up and sees the old site content but new code. What does this tell you?",
+   "options": [
+    "The CLI serves local code with remote content",
+    "Content is stored in Git",
+    "The CDN is misconfigured",
+    "Local code cannot be tested"
+   ],
+   "answer": 0,
+   "explain": "The local proxy serves your code and fetches content from the project.",
+   "m": "C1",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "A hero image is the largest element, but it loads lazily. What should change?",
+   "options": [
+    "Load it eagerly, as it is the LCP candidate",
+    "Convert it to a CSS background",
+    "Add another image",
+    "Delay all sections"
+   ],
+   "answer": 0,
+   "explain": "The LCP image must not wait.",
+   "m": "C3",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "A block’s CSS accidentally styles links across the whole page. What should the developer do?",
+   "options": [
+    "Scope selectors to the block’s class",
+    "Add more !important rules",
+    "Move everything to head.html",
+    "Remove the block"
+   ],
+   "answer": 0,
+   "explain": "Block CSS should be scoped to that block.",
+   "m": "C4",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "A new block named “price table” does not load its code. What should the folder be called?",
+   "options": [
+    "blocks/price-table",
+    "blocks/PriceTable",
+    "blocks/price table",
+    "scripts/price-table"
+   ],
+   "answer": 0,
+   "explain": "Block names become lowercase, dash-separated folder names.",
+   "m": "C4",
+   "scope": 1,
+   "scenario": true
+  },
+  {
+   "q": "A page must stay published but must never appear in search results. What should you set?",
+   "options": [
+    "robots metadata with noindex",
+    "Disallow in robots.txt only",
+    "An empty title",
+    "A redirect to itself"
+   ],
+   "answer": 0,
+   "explain": "Crawlers must be able to read the page to see noindex.",
+   "m": "B3",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "Every page in /news needs one template. What is the best tool?",
+   "options": [
+    "Bulk metadata with a URL pattern",
+    "Edit every page by hand",
+    "A custom block per page",
+    "A CDN rule"
+   ],
+   "answer": 0,
+   "explain": "The metadata sheet applies values by URL pattern.",
+   "m": "B4",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "Editors need to reuse one promotion on 40 pages and change it in one place. What should they use?",
+   "options": [
+    "A fragment",
+    "Copy and paste",
+    "A separate domain",
+    "A new sitemap"
+   ],
+   "answer": 0,
+   "explain": "A fragment is authored once and included on many pages.",
+   "m": "B5",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "A new project has no existing authoring system, and wants Adobe’s recommended default. What should it choose?",
+   "options": [
+    "Experience Workspace",
+    "A custom database",
+    "Static HTML in Git",
+    "A shared drive with PDFs"
+   ],
+   "answer": 0,
+   "explain": "aem.live calls it the recommended default content source for new projects.",
+   "m": "B6",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "In Universal Editor, authors can add any block to any section, which is causing layouts to break. What should a developer change?",
+   "options": [
+    "Filters for the section container",
+    "The robots.txt",
+    "The CDN origin",
+    "The site token"
+   ],
+   "answer": 0,
+   "explain": "Filters control what can be added to a container.",
+   "m": "B7",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "Fonts load late, and text jumps when they arrive. What helps most?",
+   "options": [
+    "A size-matched fallback font",
+    "Larger images",
+    "More third-party tags",
+    "Removing all headings"
+   ],
+   "answer": 0,
+   "explain": "Matching metrics reduces layout shift.",
+   "m": "C6",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "A blog listing must filter posts by tag across thousands of pages. What should you use?",
+   "options": [
+    "A query index with the needed columns",
+    "A hand-maintained list in the nav",
+    "One large fragment",
+    "robots.txt"
+   ],
+   "answer": 0,
+   "explain": "Add tags to the index, and request only what you need.",
+   "m": "C8",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "A branch URL does not resolve. Its combined name is 71 characters. What is wrong?",
+   "options": [
+    "It exceeds the 63-character DNS label limit",
+    "The branch has no README",
+    "The CDN is not set",
+    "Sidekick is off"
+   ],
+   "answer": 0,
+   "explain": "ref--site--org must fit in one label.",
+   "m": "D1",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "A team wants a shared staging branch because “that is how we always did it”, with no complex CDN logic. What do you recommend?",
+   "options": [
+    "Use feature branches with protected main",
+    "Add a long-lived staging branch and CDN",
+    "Test only in production",
+    "Use aem.page as code staging"
+   ],
+   "answer": 0,
+   "explain": "Each branch is already an environment.",
+   "m": "D5",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "A launch needs hreflang for English and French. Where does AEM support it directly?",
+   "options": [
+    "In the sitemap configuration",
+    "In block CSS",
+    "In a Sidekick plugin",
+    "In the audit log"
+   ],
+   "answer": 0,
+   "explain": "Each language can set hreflang and alternate.",
+   "m": "D8",
+   "scope": 2,
+   "scenario": true
+  },
+  {
+   "q": "A live site must move to a new content source. What is the recommended path?",
+   "options": [
+    "Create a new site, validate it, and switch the CDN origin",
+    "Change content.source on the live site",
+    "Delete and recreate the site in place",
+    "Change the DNS only"
+   ],
+   "answer": 0,
+   "explain": "Changing it in place creates a new Content Bus ID.",
+   "m": "D2",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "Production stays stale after a publish, while aem.live shows the new page. What do you check?",
+   "options": [
+    "Push invalidation configuration and its opt-in header",
+    "Whether the page has an h1",
+    "The Git author name",
+    "The block name"
+   ],
+   "answer": 0,
+   "explain": "aem.live is correct, so the production CDN is not being purged.",
+   "m": "D3",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "After enabling a BYO CDN, identical URLs with different query strings return the same response. What is wrong?",
+   "options": [
+    "Query parameters are not in the cache key",
+    "HSTS is on",
+    "gzip is on",
+    "The site has a favicon"
+   ],
+   "answer": 0,
+   "explain": "Query parameters must be forwarded and included in the cache key.",
+   "m": "D3",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "A site’s origin is protected and visitors now get 401 through the CDN. What is missing?",
+   "options": [
+    "The CDN must send a site token",
+    "A new sitemap",
+    "A larger cache",
+    "A new block"
+   ],
+   "answer": 0,
+   "explain": "The CDN needs the Authorization header on origin requests.",
+   "m": "D4",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "A team adds a nonce-based CSP, and block scripts stop loading. Which part is probably missing?",
+   "options": [
+    "'strict-dynamic'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "An hreflang tag"
+   ],
+   "answer": 0,
+   "explain": "'strict-dynamic' lets trusted scripts load others.",
+   "m": "D4",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "A stakeholder asks for every retired URL to redirect to the home page. What should you recommend?",
+   "options": [
+    "Redirect valuable URLs to relevant pages, and let the rest return 404",
+    "Redirect them all",
+    "Disallow them",
+    "Use a wildcard in the sheet"
+   ],
+   "answer": 0,
+   "explain": "Base redirects on real use.",
+   "m": "D6",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "A filtered telemetry view looks much worse than last week. What should you check first?",
+   "options": [
+    "The sample size and margin of error",
+    "The site name",
+    "The Git history of README",
+    "The favicon"
+   ],
+   "answer": 0,
+   "explain": "Filtering shrinks the sample and increases uncertainty.",
+   "m": "D7",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "An analytics tag must not run before consent. Where does it belong?",
+   "options": [
+    "Behind consent, in the delayed phase",
+    "Eagerly in head.html",
+    "In robots.txt",
+    "In a public configuration value"
+   ],
+   "answer": 0,
+   "explain": "Respect consent, and keep third parties late.",
+   "m": "C9",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "A script receives 429 while publishing pages. What should it do?",
+   "options": [
+    "Back off and retry later",
+    "Retry at once in a loop",
+    "Use more IP addresses",
+    "Delete the pages"
+   ],
+   "answer": 0,
+   "explain": "429 means rate limited.",
+   "m": "C11",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "Estimated views are 30,000 per variant, at a sample weight of 100, and conversions differ slightly. Why can you not trust the result yet?",
+   "options": [
+    "Only about 300 views per variant were sampled",
+    "Estimates are always exact",
+    "Experiments need 30 variants",
+    "It needs a new domain"
+   ],
+   "answer": 0,
+   "explain": "Significance depends on sampled counts.",
+   "m": "E1",
+   "scope": 3,
+   "scenario": true
+  },
+  {
+   "q": "A portfolio has 14 white-label brands that must not expose each other’s design tokens. Which approach fits?",
+   "options": [
+    "Repoless with separate theme files loaded by metadata",
+    "One CSS file with all brand tokens",
+    "A repository copy per brand, kept in sync by hand",
+    "One brand for all sites"
+   ],
+   "answer": 0,
+   "explain": "Shared CSS makes every brand visible to every visitor.",
+   "m": "D10",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "Half a site stays on AEM publish during a staged move. What keeps visitors on one domain?",
+   "options": [
+    "Path routing at the CDN",
+    "A browser redirect on every page",
+    "A second domain with a banner",
+    "A larger sitemap"
+   ],
+   "answer": 0,
+   "explain": "The CDN can route paths to each origin.",
+   "m": "D10",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "Three teams each built a carousel. What should governance add first?",
+   "options": [
+    "A block catalog with owners and a reuse check",
+    "A fourth carousel",
+    "A ban on all blocks",
+    "A larger CDN"
+   ],
+   "answer": 0,
+   "explain": "Check for reuse before building.",
+   "m": "D9",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "A decision has three people marked Accountable, and nothing gets done. What should change?",
+   "options": [
+    "Make exactly one person Accountable",
+    "Add two more",
+    "Remove the RACI",
+    "Mark everyone Informed"
+   ],
+   "answer": 0,
+   "explain": "Shared accountability often means none.",
+   "m": "D9",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "Target runs on every page for one home-page banner, and mobile LCP has risen. What should you do?",
+   "options": [
+    "Limit it to the pages that need it, using a metadata flag",
+    "Add it to head.html",
+    "Turn off all images",
+    "Double the activities"
+   ],
+   "answer": 0,
+   "explain": "Adobe advises enabling it only on selected pages.",
+   "m": "E2",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "A team proposes prerendering all two million SKUs for SEO. What should guide the decision?",
+   "options": [
+    "Crawl demand and Search Console data",
+    "SKU count alone",
+    "The number of CSS files",
+    "How many brands exist"
+   ],
+   "answer": 0,
+   "explain": "Crawl demand sets the useful number of pages.",
+   "m": "E3",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "A form’s Rule Editor hides a field, and someone posts it directly. What protects the data?",
+   "options": [
+    "Server-side validation",
+    "The hidden field",
+    "A longer label",
+    "A larger font"
+   ],
+   "answer": 0,
+   "explain": "Browser rules are not a control.",
+   "m": "E4",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "An AI assistant will change 2,000 pages. What is the safest way to begin?",
+   "options": [
+    "Propose changes for a small sample, then have a person review them",
+    "Publish all, then check",
+    "Give it an admin key",
+    "Skip validation"
+   ],
+   "answer": 0,
+   "explain": "Start small, and keep a human in charge.",
+   "m": "E6",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "A team needs a new action in the Universal Editor properties panel. What should it build?",
+   "options": [
+    "A UI extension with App Builder",
+    "A metadata sheet",
+    "A robots rule",
+    "A CDN redirect"
+   ],
+   "answer": 0,
+   "explain": "Universal Editor extensions use App Builder.",
+   "m": "E8",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "Budget allows fixing one site. Site A has LCP 4 s and 5,000 views, and Site B has LCP 2.8 s and 3 million views. Where do you usually begin?",
+   "options": [
+    "Site B, as more visitors are affected",
+    "Site A, always",
+    "Neither",
+    "The one with the shortest name"
+   ],
+   "answer": 0,
+   "explain": "Weigh severity with reach.",
+   "m": "E9",
+   "scope": 4,
+   "scenario": true
+  },
+  {
+   "q": "A customer wants a fast marketing site and already owns complex AEM workflows. What is the first question to settle?",
+   "options": [
+    "Which authoring model and workflows must continue",
+    "The colour of the logo",
+    "How many fonts to use",
+    "Which browser developers prefer"
+   ],
+   "answer": 0,
+   "explain": "Fit depends on people, process and constraints.",
+   "m": "A1",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "Code on main changed, but a page still looks old on production. What are the first two things to separate? Choose the best.",
+   "options": [
+    "Whether aem.live is new, and whether the production CDN is",
+    "Whether the author is in Toronto, and the time",
+    "Which spreadsheet is open",
+    "The font and logo"
+   ],
+   "answer": 0,
+   "explain": "Check each tier in order to find where the old copy is.",
+   "m": "A2",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "A brand refresh changes colours everywhere. What makes this a small change?",
+   "options": [
+    "Design tokens as CSS custom properties",
+    "Hard-coded colours in each block",
+    "Inline styles in documents",
+    "Separate images for each colour"
+   ],
+   "answer": 0,
+   "explain": "One token change updates its users.",
+   "m": "C5",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "A Universal Editor field should combine an image and its alt text in one element. Which feature applies?",
+   "options": [
+    "Field collapse",
+    "A CDN worker",
+    "A site token",
+    "A query index"
+   ],
+   "answer": 0,
+   "explain": "Suffixes such as Alt combine properties.",
+   "m": "C7",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "A pull request has failing PageSpeed checks, and a deadline looms. What should happen?",
+   "options": [
+    "Fix it, or record an explicit exception by its owner",
+    "Merge quietly",
+    "Disable the check permanently",
+    "Delete the test page"
+   ],
+   "answer": 0,
+   "explain": "Treat gates as gates.",
+   "m": "C10",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "An image conveys a key instruction, and the author leaves alt text empty. What is the problem?",
+   "options": [
+    "Screen reader users miss the information",
+    "The CDN refuses it",
+    "It breaks Git",
+    "The image gets larger"
+   ],
+   "answer": 0,
+   "explain": "Meaningful images need useful alt text.",
+   "m": "B8",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "Translated pages keep drifting from their originals. What should the program define?",
+   "options": [
+    "A source of truth, and a translation workflow",
+    "One more font",
+    "A separate CDN per word",
+    "No review"
+   ],
+   "answer": 0,
+   "explain": "Translation needs clear ownership.",
+   "m": "B9",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "An author asks to A/B test a headline. Which is the right framing first?",
+   "options": [
+    "A hypothesis, a primary metric and enough traffic",
+    "Change it, and see if it feels better",
+    "Show both at once",
+    "Test ten headlines on a low-traffic page"
+   ],
+   "answer": 0,
+   "explain": "Plan before you launch.",
+   "m": "B10",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "A profile sets a security header, and one site removes it through its own configuration. Which applies?",
+   "options": [
+    "The site’s value",
+    "The profile’s value",
+    "Both",
+    "Neither"
+   ],
+   "answer": 0,
+   "explain": "The site wins conflicts.",
+   "m": "D2",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "Two hours before launch, someone wants to change the code location. What should you do?",
+   "options": [
+    "Stop it, and keep the configuration frozen",
+    "Do it and test later",
+    "Also change the content source",
+    "Purge everything first"
+   ],
+   "answer": 0,
+   "explain": "Adobe advises against late location changes.",
+   "m": "D3",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "A leaked Admin API key is found in Git history. What is the right first action?",
+   "options": [
+    "Revoke it, then review the audit log",
+    "Delete the line and move on",
+    "Make the repository private and keep the key",
+    "Rename the variable"
+   ],
+   "answer": 0,
+   "explain": "Treat it as compromised.",
+   "m": "D4",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "A snapshot is approved while the code it needs has not merged. What should the team have done?",
+   "options": [
+    "Merge backward-compatible code before approving",
+    "Approve first in all cases",
+    "Skip the review",
+    "Publish by hand"
+   ],
+   "answer": 0,
+   "explain": "Approving publishes the snapshot.",
+   "m": "D5",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "After migration, organic traffic falls and Search Console reports many 404s. What is your first step?",
+   "options": [
+    "Add redirects for valuable missing URLs",
+    "Rebuild the theme",
+    "Disallow the site",
+    "Reduce the sitemap"
+   ],
+   "answer": 0,
+   "explain": "Compare what is missing with real demand.",
+   "m": "D6",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "Pages are generated from JSON, and a record is deleted at source. What must be planned?",
+   "options": [
+    "A flow that unpublishes the page",
+    "Nothing, it disappears",
+    "A new CDN",
+    "A longer template"
+   ],
+   "answer": 0,
+   "explain": "Generated pages stay live until removed.",
+   "m": "E5",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "A designer proposes an auto-rotating six-slide hero. What do you raise?",
+   "options": [
+    "Accessibility, LCP, and whether it is needed",
+    "Only the number of slides",
+    "The Git branch name",
+    "Nothing"
+   ],
+   "answer": 0,
+   "explain": "Motion needs pause controls, and carousels often hide content.",
+   "m": "E7",
+   "scope": "final",
+   "scenario": true
+  },
+  {
+   "q": "You want to contribute a client’s block to open source. What comes first?",
+   "options": [
+    "Remove client material, and confirm your rights",
+    "Submit it unchanged",
+    "Rename the company only",
+    "Force-push the upstream"
+   ],
+   "answer": 0,
+   "explain": "Generalize it, and check permissions.",
+   "m": "E10",
+   "scope": "final",
+   "scenario": true
+  }
+ ]
+}

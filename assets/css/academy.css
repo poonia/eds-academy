@@ -648,3 +648,12 @@ dialog.search-dlg::backdrop { background: rgb(10 14 20 / 45%); }
 .ad-acc { border-bottom: 1px solid var(--line); padding: 6px 0; }
 .ad-slide { background: var(--surface-2); border-radius: 8px; padding: 18px 12px; margin: 0; font-weight: 700; }
 .chip[role="tab"][aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.ex-status { position: sticky; top: 68px; z-index: 2; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; width: fit-content; font: 600 13px var(--f-mono); }
+.ex-result:focus { outline: none; }
+.cap-reqs { display: grid; gap: 8px; }
+.cap-reqs label { display: block; }
+.cap-rubric th[scope="row"] { min-width: 110px; }
+.cap-rubric select { min-width: 96px; }
+.gate-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+[data-component="capstone"] h4, [data-component="exam"] h4 { margin: 18px 0 8px; }
+.feedback.cap-status { background: var(--surface-2); color: var(--ink); border-left: 4px solid var(--line-strong); }

@@ -16,6 +16,7 @@ DESCRIPTION = re.compile(r'<meta name="description" content="[^"]*">\n')
 syl = json.loads((ROOT / 'data/syllabus.json').read_text())
 pages = ['index.html', 'start-here.html', 'reference/components.html']
 pages += [m['page'] for m in syl['modules'] if m['built']]
+pages += [x['page'] for x in syl['gates'] + syl['exams'] if x['built']]
 
 
 def head_tags(path, text):

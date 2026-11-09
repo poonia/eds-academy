@@ -2117,29 +2117,33 @@
    "level": 1,
    "title": "Personal microsite",
    "page": "capstones/gate-1.html",
-   "built": false,
-   "brief": "An aem.live site with nav, footer, 5 pages and a custom block scoring 100 on mobile Lighthouse."
+   "built": true,
+   "brief": "An aem.live site with nav, footer, 5 pages and a custom block scoring 100 on mobile Lighthouse.",
+   "asOf": "9 Nov 2026"
   },
   {
    "level": 2,
    "title": "Multi-locale blog",
    "page": "capstones/gate-2.html",
-   "built": false,
-   "brief": "Query-index listing, tags, placeholders, two locales and a block library for authors."
+   "built": true,
+   "brief": "Query-index listing, tags, placeholders, two locales and a block library for authors.",
+   "asOf": "9 Nov 2026"
   },
   {
    "level": 3,
    "title": "Migrated section",
    "page": "capstones/gate-3.html",
-   "built": false,
-   "brief": "A real or sample site section moved to EDS with redirects, analytics in the delayed phase, CSP and a go-live checklist."
+   "built": true,
+   "brief": "A real or sample site section moved to EDS with redirects, analytics in the delayed phase, CSP and a go-live checklist.",
+   "asOf": "9 Nov 2026"
   },
   {
    "level": 4,
    "title": "Enterprise reference architecture",
    "page": "capstones/gate-4.html",
-   "built": false,
-   "brief": "Multi-brand platform design, governance model, block catalog, migration plan and operating runbook."
+   "built": true,
+   "brief": "Multi-brand platform design, governance model, block catalog, migration plan and operating runbook.",
+   "asOf": "9 Nov 2026"
   }
  ],
  "paths": [
@@ -2267,6 +2271,53 @@
      "E2"
     ]
    ]
+  }
+ ],
+ "exams": [
+  {
+   "scope": 1,
+   "title": "Level 1 exam",
+   "page": "exams/level-1.html",
+   "built": true,
+   "draw": 30,
+   "pass": 70,
+   "minutes": 40
+  },
+  {
+   "scope": 2,
+   "title": "Level 2 exam",
+   "page": "exams/level-2.html",
+   "built": true,
+   "draw": 30,
+   "pass": 70,
+   "minutes": 40
+  },
+  {
+   "scope": 3,
+   "title": "Level 3 exam",
+   "page": "exams/level-3.html",
+   "built": true,
+   "draw": 30,
+   "pass": 70,
+   "minutes": 45
+  },
+  {
+   "scope": 4,
+   "title": "Level 4 exam",
+   "page": "exams/level-4.html",
+   "built": true,
+   "draw": 30,
+   "pass": 75,
+   "minutes": 50
+  },
+  {
+   "scope": "final",
+   "title": "Final exam",
+   "page": "exams/final.html",
+   "built": true,
+   "draw": 60,
+   "pass": 80,
+   "minutes": 90
   }
  ]
 }

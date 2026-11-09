@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 const syllabus = require('../data/syllabus.json');
 
 const built = syllabus.modules.filter((m) => m.built);
-const pages = ['index.html', 'start-here.html', 'reference/components.html', ...built.map((m) => m.page)];
+const pages = ['index.html', 'start-here.html', 'reference/components.html', ...built.map((m) => m.page), ...syllabus.gates.map((g) => g.page), ...syllabus.exams.map((x) => x.page)];
 
 /* Records uncaught errors, runtime errors and failed same-origin requests. */
 function watch(page) {
@@ -213,6 +213,53 @@ test('advanced simulators respond to input', async ({ page }) => {
   await expect(dash.locator('tbody tr').first()).toContainText('Retail');
   await dash.getByLabel('LCP budget (ms)').fill('3000');
   await expect(dash.locator('tbody tr').first()).toContainText('Business');
+});
+
+test('an exam draws a fair paper and marks it correctly', async ({ page }) => {
+  await open(page, 'exams/level-1.html');
+  const logic = await page.evaluate(async () => {
+    const mod = await import(new URL('../assets/js/components/exam.js', location.href).href);
+    const load = (p) => fetch(new URL(p, location.href).href).then((r) => r.json());
+    const [{ questions }, syl] = await Promise.all([load('../data/exam-bank.json'), load('../data/syllabus.json')]);
+    const paper = mod.drawExam(mod.poolFor(questions, syl.modules, 1, 'all'), 30);
+    const answers = paper.map((q) => (Array.isArray(q.answer) ? q.answer : [q.answer]));
+    const right = mod.mark(paper, answers, 70);
+    const wrong = mod.mark(paper, paper.map(() => []), 70);
+    return { n: paper.length, unique: new Set(paper.map((q) => q.q)).size, pct: right.pct, passed: right.passed, modules: right.modules.length, failed: wrong.passed, level4Dev: mod.poolFor(questions, syl.modules, 4, 'dev').length };
+  });
+  expect(logic).toMatchObject({ n: 30, unique: 30, pct: 100, passed: true, failed: false });
+  expect(logic.modules).toBeGreaterThan(5);
+  expect(logic.level4Dev).toBeGreaterThanOrEqual(30);
+
+  const exam = page.locator('[data-component="exam"]');
+  await exam.getByRole('button', { name: 'Start exam' }).click();
+  await expect(exam.locator('.q')).toHaveCount(30);
+  await exam.getByRole('button', { name: 'Finish and mark' }).click();
+  await expect(exam.locator('.feedback')).toContainText('30 questions are unanswered');
+  for (const q of await exam.locator('.q').all()) await q.locator('input').first().check();
+  await expect(exam.locator('.ex-status')).toContainText('30 of 30');
+  await exam.getByRole('button', { name: 'Finish and mark' }).click();
+  await expect(exam.locator('.ex-result')).toContainText('of 30 correct');
+  await expect(exam.locator('.ex-result')).toBeFocused();
+  await exam.getByRole('button', { name: 'Take a new paper' }).click();
+  await expect(exam.getByText('Your best score')).toBeVisible();
+});
+
+test('a capstone tracks evidence and reports status on the home page', async ({ page }) => {
+  await open(page, 'capstones/gate-1.html');
+  const cap = page.locator('[data-component="capstone"]');
+  await expect(cap.locator('.feedback')).toContainText('Not started');
+  for (const box of await cap.locator('.cap-reqs input').all()) await box.check();
+  for (const s of await cap.locator('select').all()) await s.selectOption('Meets');
+  await expect(cap.locator('.feedback')).toContainText('In progress');
+  await cap.locator('.sim-text').fill('https://main--site--org.aem.live/');
+  await expect(cap.locator('.feedback')).toContainText('Ready for review');
+  await expect(cap.locator('pre')).toContainText('[x]');
+  await page.reload();
+  await page.waitForSelector('html[data-ready="true"]');
+  await expect(page.locator('[data-component="capstone"] .feedback')).toContainText('Ready for review');
+  await open(page, 'index.html');
+  await expect(page.locator('[data-part="gates"]')).toContainText('Status: Ready for review');
 });
 
 test('a missing URL at any depth shows the styled 404 page', async ({ page }) => {

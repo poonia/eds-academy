@@ -16,6 +16,8 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Confirm the exam bank is current and valid
+        run: python3 tools/build-exam-bank.py --check
       - name: Validate pages and rebuild the search index
         run: python3 tools/build-search-index.py
       - name: Confirm the committed search index is current
