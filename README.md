@@ -4,7 +4,7 @@ A self-paced, interactive course on Adobe Edge Delivery Services (EDS), covering
 development and implementation from beginner (L1) to expert (L4). It is a static site with
 no build step: plain HTML, CSS and ES modules, which mirrors how EDS projects are built.
 
-Category A content is as of **30 October 2026** and Category B as of **8 November 2026**. Build status and open items are listed in `project/BUILD-LOG.md`.
+Category A content is as of **30 October 2026** and Categories B and C as of **8 November 2026**. Build status and open items are listed in `project/BUILD-LOG.md`.
 
 ## Open it locally
 
@@ -120,6 +120,15 @@ All are driven by markup and inline JSON (`<script type="application/json">`). S
 | `hreflang-builder` | Locale folders and sitemap hreflang entry | `domain`, `languages[]`, `path` |
 | `form-sheet` | Form sheet to form preview | `csv` |
 | `traffic-split` | Experiment split and visits per variant | `visits` |
+| `terminal-replay` | Step through commands and output | `steps[]` with `cmd`, `out`, `note` |
+| `file-tree` | Select a file to see its role | `files[]` with `path`, `role`, `served` |
+| `block-playground` | Authored rows, decorate pattern, resulting DOM | `name`, `source` |
+| `token-editor` | Design tokens and a fallback-font shift model | none |
+| `waterfall` | Apply fixes and see a modelled LCP | `items[]`, `fixes[]` |
+| `model-preview` | Component model to properties panel | `model` |
+| `query-playground` | Filter, sort and limit a sample index | `data[]` |
+| `a11y-fixit` | Apply accessibility fixes to a snippet | `code`, `issues[]` |
+| `admin-request` | Compose an Admin API curl command | none |
 | `course-map`, `dashboard`, `progress-panel` | Home page widgets | Read the syllabus and progress |
 
 Other enhancements: `figure.code` (highlighting, file label, `data-lines` highlights, copy,

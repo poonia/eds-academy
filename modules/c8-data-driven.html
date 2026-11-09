@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C8 Data-driven development · EDS Academy</title>
+<meta name="description" content="Module C8: spreadsheet JSON, the query index, placeholders in code, JSON2HTML overlays and Bring Your Own Markup.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c8-data-driven.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C8 Data-driven development · EDS Academy">
+<meta property="og:description" content="Module C8: spreadsheet JSON, the query index, placeholders in code, JSON2HTML overlays and Bring Your Own Markup.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c8-data-driven.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C8">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Page through spreadsheet JSON safely.</li>
+    <li>Use the query index in blocks.</li>
+    <li>Use placeholders in code.</li>
+    <li>Generate pages with JSON2HTML.</li>
+    <li>Build a BYOM source.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c8-ready" data-title="Ready for data-driven development?">
+    <script type="application/json">{"questions": [{"q": "When is a page in the index?", "options": ["After publishing", "After a push", "After saving"], "answer": 0, "explain": "Covered in B3."}, {"q": "Does an async decorate work?", "options": ["Yes", "Only in the footer", "No"], "answer": 0, "explain": "Covered in C4."}, {"q": "Should fetched text be inserted as HTML?", "options": ["Always", "No", "Yes"], "answer": 1, "explain": "Covered in C4."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="spreadsheet-json" data-level="2">
+  <h2>Spreadsheet JSON</h2>
+  <div data-part="why"><p>A sheet is an API that non-developers can edit. Your block just needs to read it well.</p></div>
+  <div data-part="concept">
+    <p>Fetch the <code>.json</code> path of a previewed sheet. Single sheets return <code>data</code>, <code>columns</code>, <code>total</code>, <code>offset</code> and <code>limit</code>. Multi-sheet responses add <code>:names</code>, with each sheet under its own name.</p>
+    <p>Use <code>limit</code> and <code>offset</code> for large data, since a response cannot exceed 6 MB compressed. All values are strings, so convert them.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/branches/branches.js" data-lang="javascript">
+      <textarea class="src" hidden>async function fetchAll(path, pageSize = 500) {
+  const rows = [];
+  let offset = 0;
+  let total;
+  do {
+    // eslint-disable-next-line no-await-in-loop
+    const resp = await fetch(`${path}?limit=${pageSize}&amp;offset=${offset}`);
+    if (!resp.ok) throw new Error(`Failed: ${resp.status}`);
+    // eslint-disable-next-line no-await-in-loop
+    const json = await resp.json();
+    rows.push(...json.data);
+    ({ total } = json);
+    offset += pageSize;
+  } while (offset &lt; total);
+  return rows;
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Query</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>?limit=10</code></td><td>First 10 rows</td></tr>
+      <tr><td><code>?offset=10</code></td><td>Skip 10 rows</td></tr>
+      <tr><td><code>?sheet=name</code></td><td>Returns <code>shared-name</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c8-t1"><script type="application/json">{"questions": [{"q": "What type are values in the JSON?", "options": ["Numbers only", "Strings", "Typed by column"], "answer": 1, "explain": "Convert in your code."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>NaN in totals</td><td>Strings used as numbers</td><td>Use <code>Number()</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="query-index" data-level="2">
+  <h2>Query index</h2>
+  <div data-part="why"><p>A related-articles block needs a list of pages. The index already has it.</p></div>
+  <div data-part="concept">
+    <p><code>/query-index.json</code> lists published pages with the configured properties. The Index Admin tool defines these properties, and a custom index uses a CSS selector to extract values from the page.</p>
+    <p>Multi-value properties such as <code>tags</code> are delivered as a JSON string, so parse them. Indexes can grow large, so request a sensible limit and filter on the client. Cache in memory if several blocks need the same data.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="Reading tags" data-lang="javascript">
+      <textarea class="src" hidden>const { data } = await (await fetch('/query-index.json?limit=500')).json();
+const savings = data.filter((p) =&gt; JSON.parse(p.tags || '[]').includes('savings'));</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Property</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>title</td><td><code>og:title</code></td></tr>
+      <tr><td>description</td><td><code>description</code> meta</td></tr>
+      <tr><td>lastModified</td><td><code>Last-Modified</code> header</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c8-t2"><script type="application/json">{"questions": [{"q": "How do you test what would be indexed for a page locally?", "options": ["npm run lint", "aem up --print-index", "aem import"], "answer": 1, "explain": "It prints the records."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Tags error</td><td>Not parsed</td><td>Use <code>JSON.parse</code>.</td></tr>
+      <tr><td>Very slow list</td><td>Downloading the whole index</td><td>Use a limit, or a smaller index.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="placeholders-in-code" data-level="2">
+  <h2>Placeholders in code</h2>
+  <div data-part="why"><p>Hard-coded “Read more” buttons are a translation bug waiting to happen.</p></div>
+  <div data-part="concept">
+    <p>Placeholders moved from the boilerplate to the block collection. Copy <code>placeholders.js</code> into your project and import <code>fetchPlaceholders</code>. Pass a prefix such as <code>en</code> for a locale folder, or nothing for the root.</p>
+    <p>Keys with spaces or dashes become camel case in JavaScript.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="A block" data-lang="javascript">
+      <textarea class="src" hidden>import { fetchPlaceholders } from '/scripts/placeholders.js';
+
+const placeholders = await fetchPlaceholders('en');
+const { readMore } = placeholders; // Key: Read more</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Sheet key</th><th>JavaScript</th></tr></thead>
+    <tbody>
+      <tr><td>Read more</td><td><code>readMore</code></td></tr>
+      <tr><td>apply-now</td><td><code>applyNow</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c8-t3"><script type="application/json">{"questions": [{"q": "What does Read more become?", "options": ["READ_MORE", "read-more", "readMore"], "answer": 2, "explain": "Keys become camel case."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Import fails</td><td>File not in boilerplate</td><td>Add it from the block collection.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="json2html-overlay" data-level="3">
+  <h2>JSON2HTML overlay</h2>
+  <div data-part="why"><p>Thousands of product pages from a JSON API should be real, indexable pages.</p></div>
+  <div data-part="concept">
+    <p><b>JSON2HTML</b> is a generic worker that turns JSON into HTML pages for EDS. You prepare a Mustache template and add an <b>overlay</b> to your content source pointing at the worker. Then POST a configuration of paths, endpoints and templates to its <code>/config/</code> endpoint.</p>
+    <p>Preview a path that matches, and the HTML is generated and ingested, after which everything works as with any other page.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    A["JSON endpoint"] --&gt; W["JSON2HTML worker"]
+    T["Mustache template"] --&gt; W
+    W --&gt;|Overlay markup| P["Preview"]
+    P --&gt; E["Normal EDS page"]</pre>
+      <figcaption><b>What to notice:</b> generation happens at preview, not on each visit.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A JSON endpoint and a Mustache template feed the JSON2HTML worker. The overlay delivers its markup at preview, resulting in a normal EDS page.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Site content configuration" data-lang="json">
+      <textarea class="src" hidden>"overlay": {
+  "url": "https://json2html.adobeaem.workers.dev/&lt;ORG&gt;/&lt;SITE&gt;/&lt;BRANCH&gt;",
+  "type": "markup"
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c8-t4"><script type="application/json">{"questions": [{"q": "When is the HTML generated?", "options": ["At every visit", "On git push", "At preview"], "answer": 2, "explain": "It is ingested like other content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Page has old data</td><td>Not previewed again</td><td>Preview it when the data changes.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="byom-content-source" data-level="4">
+  <h2>BYOM content source</h2>
+  <div data-part="why"><p>The content lives in another system, and migrating is out of scope. EDS can read it anyway.</p></div>
+  <div data-part="concept">
+    <p><b>Bring Your Own Markup</b> lets any source publish to EDS, using HTML as the format. For each previewed page, your service returns HTML following the semantics of sections, blocks and default content.</p>
+    <p>Extra elements, spans, data attributes and styles are removed on ingestion. Images must be reachable by EDS, and are downloaded at preview. Block class names may contain only alphanumerics and single dashes, and may not start with a digit.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="A minimal BYOM response" data-lang="xml">
+      <textarea class="src" hidden>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;Home&lt;/title&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;div&gt;
+        &lt;div class="hero"&gt;
+          &lt;div&gt;&lt;div&gt;&lt;h1&gt;Hello World&lt;/h1&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p&gt;Welcome to your website.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Class</th><th>Allowed?</th></tr></thead>
+    <tbody>
+      <tr><td><code>hero wide</code></td><td>Yes</td></tr>
+      <tr><td><code>hero-wide</code></td><td>Yes</td></tr>
+      <tr><td><code>hero_wide</code></td><td>No</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c8-t5"><script type="application/json">{"questions": [{"q": "Which format does BYOM use?", "options": ["HTML", "Markdown", "XML only"], "answer": 0, "explain": "The same structure EDS delivers."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Attributes lost</td><td>Stripped at ingestion</td><td>Encode the data as content or classes.</td></tr>
+      <tr><td>Images fail</td><td>Not reachable by EDS</td><td>Use accessible URLs.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: query-index playground</h2>
+  <p>Filter, sort and limit a sample index. The code updates with your choices.</p>
+  <div data-component="query-playground" data-title="Query-index playground"><script type="application/json">{"data": [{"path": "/insights/rrsp-basics", "title": "RRSP basics", "tags": ["retirement"], "date": "2026-09-02"}, {"path": "/insights/tfsa-limits", "title": "TFSA limits", "tags": ["savings"], "date": "2026-10-11"}, {"path": "/insights/first-home", "title": "Your first home", "tags": ["mortgages", "savings"], "date": "2026-08-20"}, {"path": "/insights/fixed-variable", "title": "Fixed or variable?", "tags": ["mortgages"], "date": "2026-10-25"}, {"path": "/insights/catch-up", "title": "Catching up late", "tags": ["retirement", "savings"], "date": "2026-07-30"}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: build a data-driven list</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Build a filterable article list from the index.</p></div>
+    <div><h4>You need</h4><p>A site with a few published pages.</p></div>
+    <div><h4>Time</h4><p>About 90 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Add a title, image, description and tags</b> to several pages.</div></li>
+    <li><div><b>Configure an index</b>, then reindex.</div></li>
+    <li><div><b>Open</b> <code>/query-index.json</code>.</div></li>
+    <li><div><b>Create a block</b> that fetches and lists pages.</div></li>
+    <li><div><b>Add a tag filter</b>.</div></li>
+    <li><div><b>Handle failure</b> and an empty list.</div></li>
+    <li><div><b>Check its performance</b> and placement.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A list that updates when you publish.</p></div>
+    <div><h4>How to verify</h4><p>Publish a new page and see it appear without a code change.</p></div>
+    <div><h4>Stretch</h4><p>Create pages from a JSON source with JSON2HTML.</p></div>
+  </div>
+  <ul class="checklist" data-id="c8-lab">
+    <li>Index configured</li>
+    <li>Block fetches data</li>
+    <li>Filter works</li>
+    <li>Failure handled</li>
+    <li>Updates after publishing</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Empty data array</td><td>Nothing is published</td><td>Publish pages.</td></tr>
+      <tr><td>Stale list</td><td>Index or cache delay</td><td>Check publishing and reindex.</td></tr>
+      <tr><td>CORS error</td><td>Fetching another origin</td><td>Use same-origin or a proxy.</td></tr>
+      <tr><td>Template renders empty</td><td>Mustache keys are wrong</td><td>Check the JSON shape.</td></tr>
+      <tr><td>BYOM block missing</td><td>Class name is invalid</td><td>Use single dashes.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Data contracts.</b> Document sheet columns and JSON shapes, and name an owner.</p></aside>
+    <aside class="callout warning" data-label="Secrets"><p>Anything in delivered JSON is public. For JSON2HTML, keep API keys in the configuration, never in client code.</p></aside>
+    <aside class="callout performance"><p>Avoid loading a whole index for one small list.</p></aside>
+    <aside class="callout accessibility"><p>Announce filter results, and keep lists as real list elements.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Sheet columns</td><td>Responsible</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Index definition</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>BYOM service</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c8-check"><script type="application/json">{"questions": [{"q": "Which parameter pages through rows?", "options": ["skip", "page", "offset"], "answer": 2, "explain": "Use it with limit."}, {"q": "Response size limit?", "options": ["6 MB compressed", "No limit", "6 GB"], "answer": 0, "explain": "See Limits."}, {"q": "Which option prints index records?", "options": ["--index", "--print-index", "--open"], "answer": 1, "explain": "On aem up."}, {"q": "What language are JSON2HTML templates?", "options": ["Handlebars only", "Mustache", "JSX"], "answer": 1, "explain": "See the docs."}, {"q": "What is removed from BYOM HTML? Choose all that apply.", "options": ["Data attributes", "Extra span tags", "Headings", "Styles"], "answer": [0, 1, 3], "explain": "Headings are semantic."}, {"q": "Where does placeholders.js come from?", "options": ["npm", "The block collection", "The boilerplate"], "answer": 1, "explain": "It moved."}, {"q": "When do BYOM images get ingested?", "options": ["At preview", "Never", "At every visit"], "answer": 0, "explain": "They must be reachable."}, {"q": "A retailer has 80,000 products in an API, and they need indexable pages. What is the right approach?", "options": ["Use folder mapping", "Copy them into Word", "Generate pages through a BYOM overlay such as JSON2HTML", "Render all products client-side from one URL"], "answer": 2, "explain": "aem.live recommends the BYOM overlay for dynamic pages.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c8-cards"><script type="application/json">{"cards": [[".json", "Path of a previewed sheet."], ["limit, offset", "Paging parameters."], [":type", "sheet or multi-sheet."], ["query-index.json", "Default index path."], ["--print-index", "Shows records locally."], ["fetchPlaceholders", "Reads the placeholders sheet."], ["JSON2HTML", "Generic JSON-to-HTML worker."], ["Overlay", "Additional markup source."], ["BYOM", "Bring Your Own Markup."], ["Mustache", "Template language for JSON2HTML."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C8 · Data-driven development</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Sheets</h4><ul><li>fetch .json</li><li>limit and offset</li><li>Convert strings</li></ul></div>
+      <div><h4>Index</h4><ul><li>Published only</li><li>Parse tags</li><li>Request few rows</li></ul></div>
+      <div><h4>Placeholders</h4><ul><li>Add placeholders.js</li><li>Camel case keys</li></ul></div>
+      <div><h4>JSON2HTML</h4><ul><li>Template</li><li>Overlay</li><li>Config POST</li></ul></div>
+      <div><h4>BYOM</h4><ul><li>Return HTML</li><li>Semantic structure</li><li>Reachable images</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/spreadsheets" rel="noopener" target="_blank">aem.live: Spreadsheets and JSON</a></li>
+    <li><a href="https://www.aem.live/developer/indexing" rel="noopener" target="_blank">aem.live: Indexing</a></li>
+    <li><a href="https://www.aem.live/developer/placeholders" rel="noopener" target="_blank">aem.live: Using placeholders</a></li>
+    <li><a href="https://www.aem.live/developer/json2html" rel="noopener" target="_blank">aem.live: JSON2HTML</a></li>
+    <li><a href="https://www.aem.live/developer/byom" rel="noopener" target="_blank">aem.live: Bring Your Own Markup</a></li>
+    <li><a href="https://www.aem.live/developer/integrations" rel="noopener" target="_blank">aem.live: Building integrations</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

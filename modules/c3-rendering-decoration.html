@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C3 Rendering and decoration · EDS Academy</title>
+<meta name="description" content="Module C3: server markup, the decorateMain pipeline, how blocks load, and writing auto-blocks.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c3-rendering-decoration.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C3 Rendering and decoration · EDS Academy">
+<meta property="og:description" content="Module C3: server markup, the decorateMain pipeline, how blocks load, and writing auto-blocks.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c3-rendering-decoration.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C3">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Read delivered markup and tell it from the decorated DOM.</li>
+    <li>Name the decoration steps in order.</li>
+    <li>Explain how a block’s CSS and JS load.</li>
+    <li>Write a safe auto-block.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c3-ready" data-title="Ready for rendering and decoration?">
+    <script type="application/json">{"questions": [{"q": "Which file holds decorateMain?", "options": ["styles.css", "head.html", "scripts.js"], "answer": 2, "explain": "Covered in C2."}, {"q": "What is a section break?", "options": ["===", "---", "###"], "answer": 1, "explain": "Covered in B1."}, {"q": "What makes a table a block?", "options": ["Its width", "Its first row names it", "Its colour"], "answer": 1, "explain": "Covered in B1."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="delivered-markup" data-level="1">
+  <h2>Delivered markup</h2>
+  <div data-part="why"><p>If you code against what you see in the DOM inspector, you will misread what the server sent. Start with View Source.</p></div>
+  <div data-part="concept">
+    <p>Every page has the same shape: a head with title, metadata and <code>head.html</code>, then an empty <code>header</code>, a <code>main</code> with content, and an empty <code>footer</code>.</p>
+    <p>In <code>main</code>, each top-level <code>div</code> is a section. A block is a <code>div</code> with the block name as its class, containing a <code>div</code> per row and per cell. Default content is plain semantic HTML.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="View Source (simplified)" data-lang="xml">
+      <textarea class="src" hidden>&lt;body&gt;
+  &lt;header&gt;&lt;/header&gt;
+  &lt;main&gt;
+    &lt;div&gt;
+      &lt;h1 id="save"&gt;Save&lt;/h1&gt;
+      &lt;div class="columns dark"&gt;
+        &lt;div&gt;
+          &lt;div&gt;Left&lt;/div&gt;
+          &lt;div&gt;Right&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;&lt;/footer&gt;
+&lt;/body&gt;</textarea>
+      <figcaption><b>Read it as:</b> one section, one block, one row, two cells.</figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>View</th><th>Shows</th></tr></thead>
+    <tbody>
+      <tr><td>View Source</td><td>Markup from the server</td></tr>
+      <tr><td>DevTools Elements</td><td>DOM after decoration</td></tr>
+      <tr><td><code>.plain.html</code></td><td>Only the sections</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c3-t1"><script type="application/json">{"questions": [{"q": "Where do you confirm what the server really sent?", "options": ["View Source", "The Console", "DevTools Elements"], "answer": 0, "explain": "Elements shows the decorated DOM."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Selector fails at runtime</td><td>Written against a stale or decorated DOM</td><td>Check each stage.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="decoration-pipeline" data-level="2">
+  <h2>Decoration pipeline</h2>
+  <div data-part="why"><p>Most block bugs are order bugs. If you know the sequence, you know what exists when your code runs.</p></div>
+  <div data-part="concept">
+    <p><code>decorateMain</code> in <code>scripts.js</code> runs five steps in order: <code>decorateIcons</code>, <code>buildAutoBlocks</code>, <code>decorateSections</code>, <code>decorateBlocks</code> and <code>decorateButtons</code>.</p>
+    <p>This happens in the eager phase, and the body is hidden until then, which avoids early image downloads and layout shift. After that, the first section is loaded with priority for its first image, the LCP candidate.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    A["decorateIcons"] --&gt; B["buildAutoBlocks"]
+    B --&gt; C["decorateSections"]
+    C --&gt; D["decorateBlocks"]
+    D --&gt; E["decorateButtons"]</pre>
+      <figcaption><b>What to notice:</b> auto-blocks are built before sections and blocks are decorated, so they get the same treatment.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>decorateMain runs decorateIcons, buildAutoBlocks, decorateSections, decorateBlocks and decorateButtons in that order.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="scripts/scripts.js" data-lang="javascript">
+      <textarea class="src" hidden>export function decorateMain(main) {
+  decorateIcons(main);
+  buildAutoBlocks(main);
+  decorateSections(main);
+  decorateBlocks(main);
+  decorateButtons(main);
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c3-t2"><script type="application/json">{"questions": [{"q": "Why must auto-blocks be built before decorateBlocks?", "options": ["To load fonts", "For alphabetical order", "So they are decorated like any other block"], "answer": 2, "explain": "They become normal blocks."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Button class is missing</td><td>Link is not alone in its paragraph, or lacks bold or italic</td><td>Author it as a standalone bold or italic link.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="block-loading" data-level="2">
+  <h2>Block loading</h2>
+  <div data-part="why"><p>Blocks are loaded on demand. Understanding how keeps both the critical path and error handling honest.</p></div>
+  <div data-part="concept">
+    <p><code>loadBlock</code> sets <code>data-block-status</code> to loading, then fetches <code>blocks/name/name.css</code> and dynamically imports <code>name.js</code> in parallel. If the module has a default export, it is called with the block element, and the status becomes loaded.</p>
+    <p>A failure in one block is caught and logged, so the rest of the page continues. Sections load one by one, and the first section is awaited before lazy loading starts.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+    participant P as loadSection
+    participant B as loadBlock
+    participant N as Network
+    P-&gt;&gt;B: block (status initialized)
+    B-&gt;&gt;N: name.css and name.js
+    N--&gt;&gt;B: both arrive
+    B-&gt;&gt;B: await default(block)
+    B--&gt;&gt;P: status loaded</pre>
+      <figcaption><b>What to notice:</b> CSS and JS load in parallel, and the block is not done until decorate finishes.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>loadSection calls loadBlock. loadBlock requests the CSS and JS, waits for both, awaits the default export and then reports the status as loaded.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Simplified from scripts/aem.js" data-lang="javascript">
+      <textarea class="src" hidden>const mod = await import(`${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.js`);
+if (mod.default) await mod.default(block);</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c3-t3"><script type="application/json">{"questions": [{"q": "A block in the first section awaits a slow fetch. What happens to LCP?", "options": ["It improves", "Nothing", "It is delayed"], "answer": 2, "explain": "The first section waits for its blocks."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Console: failed to load module</td><td>File name differs from the block name</td><td>Match the folder and file names.</td></tr>
+      <tr><td>Section never appears</td><td>decorate never resolves</td><td>Do not await work that can hang.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="auto-blocking-in-code" data-level="2">
+  <h2>Auto-blocking in code</h2>
+  <div data-part="why"><p>You want every article to have a header block, without asking authors to add it. This is where you implement that.</p></div>
+  <div data-part="concept">
+    <p>Add your logic to <code>buildAutoBlocks</code>. Use <code>buildBlock(name, content)</code> to create the markup a block would have had from the server, then insert it into <code>main</code>.</p>
+    <p>The current boilerplate auto-loads links to <code>/fragments/</code> and builds widget blocks here. Keep this code tiny, because it runs before LCP, and wrap it in a try/catch as the boilerplate does.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    M["main"] --&gt; C{"h1 before a picture?"}
+    C --&gt;|Yes| H["buildBlock hero"]
+    H --&gt; P["Prepend a section"]
+    C --&gt;|No| S["Skip"]</pre>
+      <figcaption><b>What to notice:</b> code checks the content’s shape, then creates a normal block.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Code checks whether an h1 comes after a picture. If so, it builds a hero block and prepends a section. Otherwise it skips.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="scripts/scripts.js" data-lang="javascript">
+      <textarea class="src" hidden>function buildHeroBlock(main) {
+  const h1 = main.querySelector('h1');
+  const picture = main.querySelector('picture');
+  // eslint-disable-next-line no-bitwise
+  if (h1 &amp;&amp; picture &amp;&amp; (h1.compareDocumentPosition(picture) &amp; Node.DOCUMENT_POSITION_PRECEDING)) {
+    const section = document.createElement('div');
+    section.append(buildBlock('hero', { elems: [picture, h1] }));
+    main.prepend(section);
+  }
+}</textarea>
+      <figcaption><b>Pattern:</b> a common auto-block from earlier boilerplate versions.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c3-t4"><script type="application/json">{"questions": [{"q": "Which helper creates block markup in code?", "options": ["readBlockConfig", "createOptimizedPicture", "buildBlock"], "answer": 2, "explain": "It takes a name and content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Page crashes on odd content</td><td>No guard</td><td>Check elements exist, and keep the try/catch.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: decoration step-through</h2>
+  <p>Step through what happens to one small page.</p>
+  <div data-component="stepper" data-title="Decoration pipeline"><div class="step" data-label="1. Delivered"><p>The server sends sections as plain divs in <code>main</code>.</p><figure class="code" data-file="DOM" data-lang="xml">
+      <textarea class="src" hidden>&lt;main&gt;
+  &lt;div&gt;
+    &lt;h1 id="save"&gt;Save&lt;/h1&gt;
+    &lt;div class="cards"&gt;&lt;div&gt;…&lt;/div&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/main&gt;</textarea>
+    </figure></div><div class="step" data-label="2. decorateIcons"><p>Icon spans receive their images.</p><figure class="code" data-file="DOM" data-lang="xml">
+      <textarea class="src" hidden>&lt;span class="icon icon-phone"&gt;&lt;img src="/icons/phone.svg"&gt;&lt;/span&gt;</textarea>
+    </figure></div><div class="step" data-label="3. buildAutoBlocks"><p>Links to fragments and other patterns become synthetic blocks.</p><figure class="code" data-file="DOM" data-lang="xml">
+      <textarea class="src" hidden>&lt;!-- a[href*="/fragments/"] is replaced by the fragment’s content --&gt;</textarea>
+    </figure></div><div class="step" data-label="4. decorateSections"><p>Content is grouped in wrappers, and sections start hidden.</p><figure class="code" data-file="DOM" data-lang="xml">
+      <textarea class="src" hidden>&lt;div class="section" data-section-status="initialized" style="display: none;"&gt;
+  &lt;div class="default-content-wrapper"&gt;&lt;h1 id="save"&gt;Save&lt;/h1&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;div class="cards"&gt;…&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;</textarea>
+    </figure></div><div class="step" data-label="5. decorateBlocks"><p>Blocks are marked, and their wrapper and section gain classes.</p><figure class="code" data-file="DOM" data-lang="xml">
+      <textarea class="src" hidden>&lt;div class="section cards-container"&gt;
+  &lt;div class="cards-wrapper"&gt;
+    &lt;div class="cards block" data-block-name="cards" data-block-status="initialized"&gt;…&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</textarea>
+    </figure></div><div class="step" data-label="6. decorateButtons"><p>Standalone links in bold or italic become buttons.</p><figure class="code" data-file="DOM" data-lang="xml">
+      <textarea class="src" hidden>&lt;p class="button-wrapper"&gt;&lt;a class="button primary" href="/apply"&gt;Apply&lt;/a&gt;&lt;/p&gt;</textarea>
+    </figure></div><div class="step" data-label="7. loadSection"><p>The block’s CSS and JS load, decorate() runs, and the section appears.</p><figure class="code" data-file="DOM" data-lang="xml">
+      <textarea class="src" hidden>&lt;div class="cards block" data-block-status="loaded"&gt;&lt;ul&gt;…&lt;/ul&gt;&lt;/div&gt;</textarea>
+    </figure></div></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: trace one page through decoration</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>See each step of decoration in a real browser.</p></div>
+    <div><h4>You need</h4><p>A running site or aem up, and DevTools.</p></div>
+    <div><h4>Time</h4><p>About 45 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open View Source</b> and label sections and blocks.</div></li>
+    <li><div><b>Open Elements</b> and compare.</div></li>
+    <li><div><b>Set a breakpoint</b> at the start of <code>decorateMain</code>.</div></li>
+    <li><div><b>Step over each call</b> and watch the DOM.</div></li>
+    <li><div><b>Break in a block’s</b> <code>decorate</code>.</div></li>
+    <li><div><b>Log the status</b> with <code>document.querySelectorAll('[data-block-status]')</code>.</div></li>
+    <li><div><b>Write a small auto-block</b> on a branch.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>Annotated notes for each decoration step.</p></div>
+    <div><h4>How to verify</h4><p>You can predict the DOM after any step.</p></div>
+    <div><h4>Stretch</h4><p>Measure how long decoration takes with the Performance panel.</p></div>
+  </div>
+  <ul class="checklist" data-id="c3-lab">
+    <li>Compared source and DOM</li>
+    <li>Stepped through decorateMain</li>
+    <li>Inspected block status</li>
+    <li>Wrote an auto-block</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Block stuck at loading</td><td>decorate hangs</td><td>Check for a pending await.</td></tr>
+      <tr><td>Styles apply before DOM is ready</td><td>CSS targets a decorated class</td><td>Check both stages.</td></tr>
+      <tr><td>Wrong block name</td><td>First class on the div</td><td>Keep the block name first.</td></tr>
+      <tr><td>Auto-block duplicates content</td><td>Original was not moved</td><td>Move elements rather than clone them.</td></tr>
+      <tr><td>Header missing</td><td>Header block failed</td><td>Check the console and /nav.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Shared code review.</b> Auto-block logic affects every page. Require review and test on several templates.</p></aside>
+    <aside class="callout performance"><p>Everything in decorateMain runs before LCP. Measure before adding to it.</p></aside>
+    <aside class="callout accessibility"><p>Moving content with auto-blocks changes reading order. Keep DOM order sensible.</p></aside>
+    <aside class="callout warning" data-label="Security"><p>Treat authored content as untrusted when you build HTML strings. Prefer DOM APIs to innerHTML.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Auto-block rules</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>decorateMain changes</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Content structure</td><td>Responsible</td><td>Consulted</td><td>Informed</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c3-check"><script type="application/json">{"questions": [{"q": "Which step comes first?", "options": ["decorateButtons", "decorateBlocks", "decorateIcons"], "answer": 2, "explain": "Then auto-blocks."}, {"q": "What class does a section get?", "options": ["wrapper", "block", "section"], "answer": 2, "explain": "decorateSections adds it."}, {"q": "What wraps default content?", "options": ["text-block", "content", "default-content-wrapper"], "answer": 2, "explain": "See decorateSections."}, {"q": "Which attributes does decoration set? Choose all that apply.", "options": ["data-section-status", "data-block-name", "data-block-status"], "answer": [0, 1, 2], "explain": "They track load state."}, {"q": "What does a primary button need?", "options": ["A style attribute", "A block", "A standalone bold link"], "answer": 2, "explain": "Italic gives secondary, both gives accent."}, {"q": "What does loadBlock import?", "options": ["blocks/name/name.js", "name.json", "scripts/name.js"], "answer": 0, "explain": "Dynamically."}, {"q": "If a block’s JS throws, what happens?", "options": ["The page is blank", "It is logged and the page continues", "The server returns 500"], "answer": 1, "explain": "loadBlock catches errors."}, {"q": "A hero block waits on a personalization API before rendering, and LCP has doubled. What do you recommend?", "options": ["Await a longer timeout", "Hide the page until it answers", "Move all the CSS into head.html", "Render authored content first, and apply changes afterwards or in a later phase"], "answer": 3, "explain": "Protect the first section.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c3-cards"><script type="application/json">{"cards": [["main > div", "A section."], ["Block div", "Class is the block’s name."], ["decorateMain", "Runs the five decoration steps."], ["buildBlock", "Creates block markup in code."], ["loadBlock", "Fetches CSS and JS, calls default."], ["data-block-status", "initialized, loading or loaded."], ["default-content-wrapper", "Wraps text outside blocks."], ["decorateButtons", "Turns formatted links into buttons."], ["codeBasePath", "Base path for loading code."], ["LCP candidate", "First image in the first section."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C3 · Rendering and decoration</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Markup</h4><ul><li>main > div = section</li><li>div.name = block</li><li>rows and cells are divs</li></ul></div>
+      <div><h4>Pipeline</h4><ul><li>Icons</li><li>Auto-blocks</li><li>Sections, blocks, buttons</li></ul></div>
+      <div><h4>Loading</h4><ul><li>CSS and JS in parallel</li><li>default(block)</li><li>Errors are caught</li></ul></div>
+      <div><h4>Buttons</h4><ul><li>Bold: primary</li><li>Italic: secondary</li><li>Both: accent</li></ul></div>
+      <div><h4>Auto-blocks</h4><ul><li>buildAutoBlocks</li><li>buildBlock</li><li>Keep it tiny</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/markup-sections-blocks" rel="noopener" target="_blank">aem.live: Markup, sections, blocks and auto blocking</a></li>
+    <li><a href="https://www.aem.live/developer/markup-reference" rel="noopener" target="_blank">aem.live: Markup reference</a></li>
+    <li><a href="https://www.aem.live/developer/keeping-it-100" rel="noopener" target="_blank">aem.live: Keeping it 100</a></li>
+    <li><a href="https://github.com/adobe/aem-boilerplate/blob/main/scripts/aem.js" rel="noopener" target="_blank">GitHub: scripts/aem.js</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

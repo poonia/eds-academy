@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C10 Testing and code quality · EDS Academy</title>
+<meta name="description" content="Module C10: pull request workflow, linting standards, unit and end-to-end tests, accessibility testing and visual regression.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c10-testing-quality.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C10 Testing and code quality · EDS Academy">
+<meta property="og:description" content="Module C10: pull request workflow, linting standards, unit and end-to-end tests, accessibility testing and visual regression.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c10-testing-quality.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C10">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Run a strong pull request workflow.</li>
+    <li>Apply linting standards.</li>
+    <li>Choose the right kind of test.</li>
+    <li>Combine automated and manual accessibility testing.</li>
+    <li>Use branch URLs for visual comparison.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c10-ready" data-title="Ready for testing and code quality?">
+    <script type="application/json">{"questions": [{"q": "What happens when code merges to main?", "options": ["It goes to production", "Nothing yet", "It is emailed"], "answer": 0, "explain": "Covered in C1."}, {"q": "Which tools does the boilerplate lint with?", "options": ["JSHint", "ESLint and Stylelint", "None"], "answer": 1, "explain": "Covered in C1."}, {"q": "Does PSI run on PRs?", "options": ["No", "Only on Friday", "Yes"], "answer": 2, "explain": "Covered in C6."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="pr-workflow" data-level="1">
+  <h2>PR workflow</h2>
+  <div data-part="why"><p>On EDS, merging is deploying. That makes the pull request your release process.</p></div>
+  <div data-part="concept">
+    <p>Avoid pushing directly to <code>main</code> and protect it with branch rules. aem.live recommends small pull requests merged often, in scaled trunk-based development. Include a URL to a page on your branch that shows the change.</p>
+    <p>Keep the scope to what the title says, and use a draft while work is in flux. Talk to maintainers first, particularly for AI-generated changes. The person who opened a PR is the ideal person to merge it.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    B["Short-lived branch"] --&gt; P["Small PR + test URL"]
+    P --&gt; C["Lint and PSI"]
+    C --&gt; R["Review"]
+    R --&gt; M["Author merges"]
+    M --&gt; L["Production"]</pre>
+      <figcaption><b>What to notice:</b> merge is deployment, so every step before it matters.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A short-lived branch leads to a small pull request with a test URL, then lint and PageSpeed checks, review, the author merging, and production.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Do</th><th>Avoid</th></tr></thead>
+    <tbody>
+      <tr><td>One purpose per PR</td><td>Unrelated refactoring</td></tr>
+      <tr><td>Link to a test page</td><td>“Please test”</td></tr>
+      <tr><td>Draft while in progress</td><td>Review of unfinished code</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c10-t1"><script type="application/json">{"questions": [{"q": "Who should normally merge an approved PR?", "options": ["Anyone", "The first reviewer", "Its author"], "answer": 2, "explain": "Unless the author says otherwise."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Reviewer cannot test</td><td>No URL</td><td>Add a page URL.</td></tr>
+      <tr><td>Huge, risky PR</td><td>Long-lived branch</td><td>Ship smaller changes.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="linting-standards" data-level="1">
+  <h2>Linting standards</h2>
+  <div data-part="why"><p>Lint is the cheapest reviewer you have.</p></div>
+  <div data-part="concept">
+    <p>The boilerplate setup runs ESLint and Stylelint on each change. Do not submit a pull request with lint errors, and do not change the rules for personal preference.</p>
+    <p>aem.live also advises keeping dependencies current, for example with Renovate, and not reordering CSS properties or re-indenting in a functional PR, to keep the diff focused.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Rule of thumb</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Fix, do not disable</td><td>Rules reflect shared practice</td></tr>
+      <tr><td>Keep diffs focused</td><td>Easier to review</td></tr>
+      <tr><td>Update dependencies</td><td>Fewer surprises</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Terminal" data-lang="bash">
+      <textarea class="src" hidden>npm run lint
+npm run lint:fix</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c10-t2"><script type="application/json">{"questions": [{"q": "Your PR reformats a whole CSS file and fixes one bug. What is wrong?", "options": ["CSS cannot be reformatted", "Nothing", "The diff hides the real change"], "answer": 2, "explain": "Refactor in a separate PR."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Many eslint-disable comments</td><td>Avoiding the rules</td><td>Fix the underlying issue.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="unit-and-e2e-tests" data-level="3">
+  <h2>Unit and E2E tests</h2>
+  <div data-part="why"><p>Not every block needs a test suite, but the code that handles money or logic does.</p></div>
+  <div data-part="concept">
+    <p>EDS does not prescribe a test framework. Choose what fits your team. Unit-test pure logic such as parsers and calculations. Use end-to-end tools such as Playwright for critical journeys on branch URLs.</p>
+    <p>Separate these from load, performance and penetration tests. aem.live’s testing page explains that they answer different questions, and that a raw flood of requests mostly proves that the CDN serves cache.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="tests/calc.test.js" data-lang="javascript">
+      <textarea class="src" hidden>import { test } from 'node:test';
+import assert from 'node:assert';
+import { monthlyPayment } from '../blocks/calculator/calc.js';
+
+test('calculates a monthly payment', () =&gt; {
+  assert.equal(monthlyPayment(0, 0.05, 25), 0);
+});</textarea>
+      <figcaption><b>Tip:</b> keep logic in separate functions, so that it is testable.</figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Test</th><th>Answers</th></tr></thead>
+    <tbody>
+      <tr><td>Unit</td><td>Is the logic right?</td></tr>
+      <tr><td>End-to-end</td><td>Does the journey work?</td></tr>
+      <tr><td>Performance</td><td>Does it remain fast?</td></tr>
+      <tr><td>Load</td><td>Can it sustain traffic?</td></tr>
+      <tr><td>Penetration</td><td>Can it be exploited?</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c10-t3"><script type="application/json">{"questions": [{"q": "What does a raw HTTP flood mostly prove on EDS?", "options": ["That the CDN serves cached responses", "That your blocks are correct", "That SEO is good"], "answer": 0, "explain": "See aem.live’s testing guide."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Test files are served</td><td>Not excluded</td><td>Add them to <code>.hlxignore</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="accessibility-testing" data-level="2">
+  <h2>Accessibility testing</h2>
+  <div data-part="why"><p>PageSpeed Insights gives you an accessibility score. A perfect one still does not mean a page is accessible.</p></div>
+  <div data-part="concept">
+    <p>The PR check covers Accessibility as well as Performance. Automated tools such as Lighthouse and axe catch only part of the problem.</p>
+    <p>Add manual checks for each block: keyboard only, screen reader, zoom to 200 percent, and reduced motion. Test with authored content, including long text and missing images.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Check</th><th>Finds</th></tr></thead>
+    <tbody>
+      <tr><td>Automated</td><td>Missing names, contrast, ARIA errors</td></tr>
+      <tr><td>Keyboard</td><td>Traps and unreachable controls</td></tr>
+      <tr><td>Screen reader</td><td>Confusing announcements</td></tr>
+      <tr><td>Zoom</td><td>Overlaps and lost content</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout accessibility"><p>A score of 100 means no detected issues. It does not mean no issues.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c10-t4"><script type="application/json">{"questions": [{"q": "Lighthouse accessibility is 100. Are you finished?", "options": ["No: test manually too", "Yes", "Only on desktop"], "answer": 0, "explain": "Automation finds only some issues."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Focus lost after closing a dialog</td><td>Not restored</td><td>Return focus to the trigger.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="visual-regression" data-level="3">
+  <h2>Visual regression</h2>
+  <div data-part="why"><p>A shared CSS change can break a page you never opened.</p></div>
+  <div data-part="concept">
+    <p>Visual regression tools capture screenshots and compare them. EDS gives you the useful part for free: <code>main</code> and your branch both have URLs, so you can compare them directly.</p>
+    <p>Choose a small set of representative pages per block. Stabilize dynamic data, and avoid noise from animation and dates.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    M["main--site--org.aem.page/page"] --&gt; S["Screenshot"]
+    B["branch--site--org.aem.page/page"] --&gt; T["Screenshot"]
+    S --&gt; D["Compare"]
+    T --&gt; D</pre>
+      <figcaption><b>What to notice:</b> each branch comes with a URL to compare against.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Screenshots of a page on main and on a branch are compared.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Include</th><th>Exclude</th></tr></thead>
+    <tbody>
+      <tr><td>One page per block</td><td>Every page on the site</td></tr>
+      <tr><td>Mobile and desktop</td><td>Animated content</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c10-t5"><script type="application/json">{"questions": [{"q": "Which EDS feature makes visual comparison easy?", "options": ["Branch URLs", "Redirects", "Sitemaps"], "answer": 0, "explain": "Compare branch against main."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>False failures</td><td>Dynamic content</td><td>Use stable test pages.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactives: PR workflow and accessibility fix-it</h2>
+  <p>Put the workflow in order, then repair a broken snippet.</p>
+  <div data-component="order" data-title="Put the PR workflow in order"><script type="application/json">{"items": ["Talk to the maintainers about the approach", "Create a short-lived branch", "Run lint and test locally", "Open a pull request with a test URL", "Get a green PageSpeed check", "Get an approval", "The author merges to main"]}</script></div>
+  <div data-component="a11y-fixit" data-title="Accessibility fix-it"><script type="application/json">{"code": "<div class=\"cta\" onclick=\"apply()\">\n  <img src=\"/media_1a2b.png\">\n  <font color=\"#aaa\">Click here<\/font>\n<\/div>\n<h4>Rates<\/h4>", "issues": [{"label": "Use a real link for navigation", "bad": "<div class=\"cta\" onclick=\"apply()\">", "good": "<a class=\"cta\" href=\"/apply\">", "why": "Links are keyboard reachable and announced as links."}, {"label": "Close the link", "bad": "<\/div>", "good": "<\/a>", "why": "The markup must stay valid after changing the element."}, {"label": "Add alt text, or mark the image decorative", "bad": "<img src=\"/media_1a2b.png\">", "good": "<img src=\"/media_1a2b.png\" alt=\"\">", "why": "This image repeats the link, so an empty alt avoids duplicate speech."}, {"label": "Make link text meaningful and contrast adequate", "bad": "<font color=\"#aaa\">Click here<\/font>", "good": "<span>Apply for a TFSA<\/span>", "why": "“Click here” is meaningless out of context, and #aaa fails contrast on white."}, {"label": "Fix the heading level", "bad": "<h4>Rates<\/h4>", "good": "<h2>Rates<\/h2>", "why": "Heading levels should not skip for the sake of appearance."}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: ship a reviewed change</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Follow the full quality process for one change.</p></div>
+    <div><h4>You need</h4><p>A project with branch protection.</p></div>
+    <div><h4>Time</h4><p>About 90 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Agree the change</b> with a maintainer.</div></li>
+    <li><div><b>Create a short branch</b>.</div></li>
+    <li><div><b>Make one focused change</b>.</div></li>
+    <li><div><b>Run lint</b>.</div></li>
+    <li><div><b>Test with a keyboard</b> and zoom.</div></li>
+    <li><div><b>Open a PR</b> with a test URL.</div></li>
+    <li><div><b>Compare</b> screenshots of main and your branch.</div></li>
+    <li><div><b>Get approval</b>, then merge it yourself.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A merged, reviewed change.</p></div>
+    <div><h4>How to verify</h4><p>The PR has a green check, a test URL and a reviewer’s approval.</p></div>
+    <div><h4>Stretch</h4><p>Add a Playwright smoke test for one journey.</p></div>
+  </div>
+  <ul class="checklist" data-id="c10-lab">
+    <li>Small focused PR</li>
+    <li>Lint passes</li>
+    <li>Manual accessibility checks</li>
+    <li>Test URL included</li>
+    <li>Merged by author</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>PSI check missing</td><td>Code Sync not installed</td><td>Install it.</td></tr>
+      <tr><td>PR blocked</td><td>Branch protection</td><td>Get approval.</td></tr>
+      <tr><td>Tests pass, page fails</td><td>Tests cover only logic</td><td>Add a journey test.</td></tr>
+      <tr><td>Flaky screenshots</td><td>Dynamic content</td><td>Use stable pages.</td></tr>
+      <tr><td>Lint differs locally</td><td>Stale dependencies</td><td>Run <code>npm ci</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Definition of done.</b> Lint, PSI, accessibility checks and a named approver.</p></aside>
+    <aside class="callout warning" data-label="AI-assisted code"><p>AI-generated changes still need understanding and review. aem.live warns maintainers against large drive-by PRs.</p></aside>
+    <aside class="callout accessibility"><p>Make accessibility a blocking check, not a backlog item.</p></aside>
+    <aside class="callout performance"><p>Run PSI on the page that shows the change.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Branch protection</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Test strategy</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Accessibility sign-off</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c10-check"><script type="application/json">{"questions": [{"q": "Which model does aem.live recommend?", "options": ["Long-lived release branches", "Scaled trunk-based development", "Direct push to main"], "answer": 1, "explain": "Small PRs, merged often."}, {"q": "What should a PR description include?", "options": ["A URL showing the change", "Nothing", "The author’s résumé"], "answer": 0, "explain": "So that reviewers can see it."}, {"q": "What is a draft PR for?", "options": ["Work in progress", "Production fixes", "Translations"], "answer": 0, "explain": "It prevents accidental merging."}, {"q": "Which are different test disciplines? Choose all that apply.", "options": ["Performance", "Load", "Penetration"], "answer": [0, 1, 2], "explain": "Each answers a different question."}, {"q": "Does a Lighthouse 100 guarantee accessibility?", "options": ["No", "Yes", "Only with ARIA"], "answer": 0, "explain": "Manual tests remain necessary."}, {"q": "Where do you exclude test files from serving?", "options": ["head.html", "robots.txt", ".hlxignore"], "answer": 2, "explain": "Repository files are otherwise served."}, {"q": "Which framework does EDS require?", "options": ["Cypress", "Jest", "None"], "answer": 2, "explain": "It is your choice."}, {"q": "An AI tool produced a 3,000-line refactor of all blocks. What do you do?", "options": ["Disable the reviews", "Merge it if lint passes", "Discuss with maintainers and split into small, understood PRs", "Push it to main"], "answer": 2, "explain": "aem.live emphasizes communicating first.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c10-cards"><script type="application/json">{"cards": [["Trunk-based", "Small, frequent merges."], ["Draft PR", "Not ready for review."], ["Branch protection", "Rules that guard main."], ["Test URL", "Page on your branch showing the change."], ["ESLint", "JavaScript linter."], ["Stylelint", "CSS linter."], ["Renovate", "Keeps dependencies updated."], ["E2E", "Tests a whole journey."], ["axe", "Automated accessibility checks."], ["Visual regression", "Compares screenshots."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C10 · Testing and code quality</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>PRs</h4><ul><li>Small and focused</li><li>Include test URL</li><li>Author merges</li></ul></div>
+      <div><h4>Lint</h4><ul><li>Do not change rules</li><li>Fix, do not disable</li></ul></div>
+      <div><h4>Tests</h4><ul><li>Unit for logic</li><li>E2E for journeys</li><li>Exclude from serving</li></ul></div>
+      <div><h4>Accessibility</h4><ul><li>Automated + manual</li><li>Keyboard</li><li>Zoom</li></ul></div>
+      <div><h4>Visual</h4><ul><li>Main vs branch</li><li>Few stable pages</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development collaboration and good practices</a></li>
+    <li><a href="https://www.aem.live/docs/testing" rel="noopener" target="_blank">aem.live: Load, performance and penetration testing</a></li>
+    <li><a href="https://www.aem.live/developer/keeping-it-100" rel="noopener" target="_blank">aem.live: Keeping it 100</a></li>
+    <li><a href="https://playwright.dev/docs/intro" rel="noopener" target="_blank">Playwright documentation</a></li>
+    <li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener" target="_blank">W3C: WCAG overview</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

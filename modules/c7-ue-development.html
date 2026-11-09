@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C7 Universal Editor development · EDS Academy</title>
+<meta name="description" content="Module C7: component definitions, models and field types, filters, per-block files, container blocks, instrumentation and editor extensions.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c7-ue-development.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C7 Universal Editor development · EDS Academy">
+<meta property="og:description" content="Module C7: component definitions, models and field types, filters, per-block files, container blocks, instrumentation and editor extensions.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c7-ue-development.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C7">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Define a component for the Universal Editor.</li>
+    <li>Design models with field collapse and grouping.</li>
+    <li>Control placement with filters.</li>
+    <li>Build container blocks.</li>
+    <li>Keep instrumentation intact when decorating.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c7-ready" data-title="Ready for universal Editor development?">
+    <script type="application/json">{"questions": [{"q": "Which file lists what can be added?", "options": [".hlxignore", "component-definition.json", "head.html"], "answer": 1, "explain": "Covered in B7 and C2."}, {"q": "What receives a block element?", "options": ["The CDN", "Its default export", "The sitemap"], "answer": 1, "explain": "Covered in C4."}, {"q": "Where are xwalk root model files built from?", "options": ["Word files", "The CDN", "Per-block fragments"], "answer": 2, "explain": "Covered in C2."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="component-definitions" data-level="2">
+  <h2>Component definitions</h2>
+  <div data-part="why"><p>If it is not defined, authors cannot add it. Definitions are the Universal Editor’s catalogue.</p></div>
+  <div data-part="concept">
+    <p><code>component-definition.json</code> lists what can be added. Each entry has a <code>title</code>, an <code>id</code> and an xwalk plugin section with a resource type and template.</p>
+    <p>A block normally uses <code>core/franklin/components/block/v1/block</code>. Its template sets <code>name</code>, shown as the block name, and <code>model</code>, which links to its fields.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="Definition" data-lang="json">
+      <textarea class="src" hidden>{
+  "title": "Quote",
+  "id": "quote",
+  "plugins": {
+    "xwalk": {
+      "page": {
+        "resourceType": "core/franklin/components/block/v1/block",
+        "template": {
+          "name": "Quote",
+          "model": "quote"
+        }
+      }
+    }
+  }
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Property</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>Used by filters</td></tr>
+      <tr><td><code>template.name</code></td><td>Block name, which maps to code</td></tr>
+      <tr><td><code>template.model</code></td><td>Which fields to show</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t1"><script type="application/json">{"questions": [{"q": "What links a definition to its fields?", "options": ["resourceType", "template.model", "title"], "answer": 1, "explain": "It matches a model id."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Editor adds an empty block</td><td>Template has no model</td><td>Set <code>template.model</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="models-and-field-types" data-level="2">
+  <h2>Models and field types</h2>
+  <div data-part="why"><p>The model is the author’s form. Field names also decide the block’s HTML.</p></div>
+  <div data-part="concept">
+    <p>A model has an <code>id</code> and <code>fields</code>. Common <code>component</code> types include <code>text</code>, <code>richtext</code>, <code>reference</code>, <code>select</code>, <code>boolean</code> and <code>number</code>. Check the current field list for the full set.</p>
+    <p><b>Field collapse</b> combines properties by suffix: <code>Title</code>, <code>Type</code>, <code>MimeType</code>, <code>Alt</code> and <code>Text</code>. So <code>imageAlt</code> becomes the alt of <code>image</code>, and <code>headingType</code> sets the level of <code>heading</code>. <b>Element grouping</b> uses an underscore, so <code>teaserText_title</code> goes into the <code>teaserText</code> cell.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Fields</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td><code>image</code> + <code>imageAlt</code></td><td>A picture with alt text</td></tr>
+      <tr><td><code>link</code> + <code>linkText</code> + <code>linkType</code></td><td>A styled link</td></tr>
+      <tr><td><code>heading</code> + <code>headingType</code></td><td>An h2, for example</td></tr>
+      <tr><td><code>classes</code></td><td>Block options</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Field collapse" data-lang="xml">
+      <textarea class="src" hidden>&lt;picture&gt;
+  &lt;img src="/content/dam/red-car.png" alt="A red car on a road"&gt;
+&lt;/picture&gt;</textarea>
+      <figcaption><b>From:</b> <code>image</code> and <code>imageAlt</code>.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t2"><script type="application/json">{"questions": [{"q": "What does a property named linkText do when link exists?", "options": ["Nothing", "Sets that link’s text", "Creates a new field"], "answer": 1, "explain": "The suffix collapses it."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Extra text appears in HTML</td><td>Suffix mismatch; names are case sensitive</td><td>Use the exact suffix.</td></tr>
+      <tr><td>A cell has unwanted content</td><td>Group naming</td><td>Use one group prefix per cell.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="filters" data-level="2">
+  <h2>Filters</h2>
+  <div data-part="why"><p>Filters keep pages consistent by limiting what goes where.</p></div>
+  <div data-part="concept">
+    <p>A filter has an <code>id</code> and a list of <code>components</code>. Container definitions refer to a filter by id. Add a block to the <code>section</code> filter to make it addable to sections.</p>
+    <p>Keep the lists tight. A smaller Add menu is easier for authors and easier to govern.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="component-filters.json" data-lang="json">
+      <textarea class="src" hidden>{
+  "id": "section",
+  "components": ["text", "image", "button", "title", "hero", "cards", "columns", "quote"]
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    S["section filter"] --&gt; T["text"]
+    S --&gt; H["hero"]
+    S --&gt; C["cards"]
+    C --&gt; F["cards filter"]
+    F --&gt; I["card only"]</pre>
+      <figcaption><b>What to notice:</b> each container level can have its own list.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The section filter allows text, hero and cards. The cards filter allows only card.</p></details>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t3"><script type="application/json">{"questions": [{"q": "A new block will not appear in Add. What is most likely?", "options": ["It is not in the filter", "CSS is broken", "The sitemap is stale"], "answer": 0, "explain": "Add its id to the filter."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Block not addable</td><td>Filter is missing it</td><td>Add its id.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="per-block-model-files" data-level="3">
+  <h2>Per-block model files</h2>
+  <div data-part="why"><p>One huge JSON file makes every pull request a merge conflict. Per-block files avoid that.</p></div>
+  <div data-part="concept">
+    <p>In the xwalk boilerplate, each block has <code>blocks/hero/_hero.json</code> with its own <code>definitions</code>, <code>models</code> and optional <code>filters</code>. Shared items live under <code>models/</code>.</p>
+    <p><code>npm run build:json</code> uses <code>merge-json-cli</code> to create the three root files, and a Husky hook runs it on commit. The root files are generated, so never edit them by hand.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="package.json (xwalk, excerpt)" data-lang="json">
+      <textarea class="src" hidden>{
+  "build:json": "npm-run-all -p build:json:models build:json:definitions build:json:filters",
+  "build:json:models": "merge-json-cli -i \"models/_component-models.json\" -o \"component-models.json\""
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Benefit</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Fewer conflicts</td><td>A block’s model changes in its own file</td></tr>
+      <tr><td>Reviewable</td><td>Change sits beside the code</td></tr>
+      <tr><td>Reusable</td><td>Copy a block folder whole</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t4"><script type="application/json">{"questions": [{"q": "What runs build:json on commit?", "options": ["A Husky hook", "The CDN", "AEM Code Sync"], "answer": 0, "explain": "It is a pre-commit hook."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Hook did not run</td><td>Dependencies not installed</td><td>Run <code>npm install</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="container-blocks" data-level="3">
+  <h2>Container blocks</h2>
+  <div data-part="why"><p>Cards hold many cards. Container blocks model that.</p></div>
+  <div data-part="concept">
+    <p>A container block has its own properties and children. In the markup, its properties come first as single-column rows. Then each child is a row, with each of its properties as a column.</p>
+    <p>The container’s template sets a <code>filter</code> that allows its child type. A child uses the resource type <code>core/franklin/components/block/v1/block/item</code>.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/cards/_cards.json (excerpt)" data-lang="json">
+      <textarea class="src" hidden>{
+  "definitions": [
+    { "title": "Cards", "id": "cards", "plugins": { "xwalk": { "page": {
+      "resourceType": "core/franklin/components/block/v1/block",
+      "template": { "name": "Cards", "filter": "cards" } } } } },
+    { "title": "Card", "id": "card", "plugins": { "xwalk": { "page": {
+      "resourceType": "core/franklin/components/block/v1/block/item",
+      "template": { "name": "Card", "model": "card" } } } } }
+  ]
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    C["Cards: container, filter=cards"] --&gt; A["Card item"]
+    C --&gt; B["Card item"]
+    A --&gt; R1["Row: image and text cells"]</pre>
+      <figcaption><b>What to notice:</b> each child becomes one row of the delivered block.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A Cards container with filter cards has card items. Each becomes a row with image and text cells.</p></details>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t5"><script type="application/json">{"questions": [{"q": "How does a child render in the block’s markup?", "options": ["As metadata", "As a row, with properties as columns", "As a section"], "answer": 1, "explain": "Item properties become columns."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Cannot add a child</td><td>No filter on the container</td><td>Set <code>template.filter</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="instrumentation" data-level="3">
+  <h2>Instrumentation</h2>
+  <div data-part="why"><p>The editor needs to know which element belongs to which content. Lose that link, and in-place editing breaks.</p></div>
+  <div data-part="concept">
+    <p>The Universal Editor uses <code>data-aue-*</code> attributes on elements, and semantic element attributes in the boilerplate’s helpers. When your <code>decorate</code> moves content into new elements, those attributes must move as well.</p>
+    <p>The xwalk boilerplate provides <code>moveInstrumentation(from, to)</code> in <code>scripts.js</code> for this reason.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="Inside decorate()" data-lang="javascript">
+      <textarea class="src" hidden>import { moveInstrumentation } from '../../scripts/scripts.js';
+
+[...block.children].forEach((row) =&gt; {
+  const li = document.createElement('li');
+  moveInstrumentation(row, li);
+  while (row.firstElementChild) li.append(row.firstElementChild);
+  ul.append(li);
+});</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+    <tbody>
+      <tr><td>Cannot select an item in the canvas</td><td>Attributes left on the old element</td></tr>
+      <tr><td>Edit changes the wrong item</td><td>Attributes copied, not moved</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t6"><script type="application/json">{"questions": [{"q": "Your rebuilt card cannot be selected in the editor. What is missing?", "options": ["A font", "moveInstrumentation", "A sitemap entry"], "answer": 1, "explain": "Instrumentation must follow content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Edits do not stick</td><td>Lost instrumentation</td><td>Move attributes during decoration.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="ue-extensions" data-level="4">
+  <h2>UE extensions</h2>
+  <div data-part="why"><p>Sometimes authors need a custom picker or a data lookup in the editor.</p></div>
+  <div data-part="concept">
+    <p>The Universal Editor can be extended through Adobe’s extensibility model, commonly using App Builder. Examples include custom field types and side panels.</p>
+    <p>Treat an extension as a product: it has authentication, hosting and upgrade costs. First see whether a model field type, a filter or a Sidekick plugin solves the problem.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+    N["Author need"] --&gt; F{"Field type solves it?"}
+    F --&gt;|Yes| M["Model change"]
+    F --&gt;|No| S{"Plugin solves it?"}
+    S --&gt;|Yes| P["Plugin"]
+    S --&gt;|No| E["Extension"]</pre>
+      <figcaption><b>What to notice:</b> an extension is the last resort, not the first.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>If a field type solves the need, change the model. Otherwise, use a plugin if that solves it. Only then build an extension.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <aside class="callout verify"><p>Extension APIs change. Check Experience League for the current extension points before you plan one.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t7"><script type="application/json">{"questions": [{"q": "What should you try before building an extension?", "options": ["A fork of the editor", "A model field or plugin", "A new CDN"], "answer": 1, "explain": "Choose the smallest thing that works."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Extension broke after an update</td><td>Dependent on unstable details</td><td>Use supported extension points.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: model to properties panel</h2>
+  <p>Edit the model JSON and see the panel. Try renaming imageAlt to see field collapse notes change.</p>
+  <div data-component="model-preview" data-title="Model JSON to properties-panel preview"><script type="application/json">{"model": {"id": "hero", "fields": [{"component": "reference", "valueType": "string", "name": "image", "label": "Image", "multi": false}, {"component": "text", "valueType": "string", "name": "imageAlt", "label": "Alt", "value": ""}, {"component": "richtext", "name": "text", "value": "", "label": "Text", "valueType": "string"}]}}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: build a Universal Editor block</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Add a quote block that authors can edit in place.</p></div>
+    <div><h4>You need</h4><p>An AEM sandbox with the xwalk template, or a code walkthrough.</p></div>
+    <div><h4>Time</h4><p>About 2 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Create</b> <code>blocks/quote/_quote.json</code>.</div></li>
+    <li><div><b>Define</b> the definition and model.</div></li>
+    <li><div><b>Add it</b> to the section filter.</div></li>
+    <li><div><b>Run</b> <code>npm run build:json</code>.</div></li>
+    <li><div><b>Push</b> to a branch.</div></li>
+    <li><div><b>Add the block</b> in the editor and fill in its fields.</div></li>
+    <li><div><b>Decorate it</b> in <code>quote.js</code> with instrumentation intact.</div></li>
+    <li><div><b>Confirm</b> in-place editing still works.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A working block in the editor.</p></div>
+    <div><h4>How to verify</h4><p>You can select and edit each part in place, and the live page is correct.</p></div>
+    <div><h4>Stretch</h4><p>Turn it into a container with several quotes.</p></div>
+  </div>
+  <ul class="checklist" data-id="c7-lab">
+    <li>Definition created</li>
+    <li>Model created</li>
+    <li>Filter updated</li>
+    <li>JSON built</li>
+    <li>Editing still works</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Block missing from Add</td><td>Filter or definition</td><td>Check both.</td></tr>
+      <tr><td>Properties panel empty</td><td>Model id mismatch</td><td>Match template.model.</td></tr>
+      <tr><td>Wrong HTML</td><td>Field names</td><td>Review suffix rules.</td></tr>
+      <tr><td>Editor shows old models</td><td>Wrong branch</td><td>Check the code reference.</td></tr>
+      <tr><td>Selecting fails after decorate</td><td>Instrumentation lost</td><td>Use moveInstrumentation.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Contract.</b> Models are a contract with authors. Plan migrations before you rename fields.</p></aside>
+    <aside class="callout warning" data-label="Content compatibility"><p>Renaming a field can orphan existing content. Add new fields and migrate on purpose.</p></aside>
+    <aside class="callout accessibility"><p>Require alt text and heading levels through the model.</p></aside>
+    <aside class="callout performance"><p>Field design shapes markup. Keep it simple and let blocks remain light.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Model changes</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Filter lists</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Extensions</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c7-check"><script type="application/json">{"questions": [{"q": "Which resource type is a block item?", "options": ["core/wcm/button", "block/item/v2", "core/franklin/components/block/v1/block/item"], "answer": 2, "explain": "See _cards.json."}, {"q": "Which suffixes collapse? Choose all that apply.", "options": ["Title", "Color", "Alt", "Type"], "answer": [0, 2, 3], "explain": "Also MimeType and Text."}, {"q": "What separates a group and a property?", "options": ["An underscore", "A dash", "A dot"], "answer": 0, "explain": "teaserText_title."}, {"q": "What does the classes property become?", "options": ["A new block", "Block options", "A filter"], "answer": 1, "explain": "It adds style options."}, {"q": "Which file do you add a block to for a section?", "options": ["sitemap.xml", "head.html", "component-filters.json, through its fragment"], "answer": 2, "explain": "Add its id."}, {"q": "In a container, what does each child become?", "options": ["A page", "A row", "A section"], "answer": 1, "explain": "Properties become columns."}, {"q": "Why move instrumentation?", "options": ["For SEO", "So the editor can still find the content", "To speed up CSS"], "answer": 1, "explain": "It connects the DOM to content."}, {"q": "A team wants to rename a heavily used field. What do you recommend?", "options": ["Edit generated JSON by hand", "Rename it and tell nobody", "Plan a migration so existing content is not orphaned", "Delete all pages"], "answer": 2, "explain": "Models are a contract with content.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c7-cards"><script type="application/json">{"cards": [["Definition", "What can be added."], ["Model", "The properties form."], ["Filter", "What a container allows."], ["richtext", "Formatted text field."], ["reference", "Picks an asset."], ["Field collapse", "Suffix merges properties."], ["Element grouping", "Underscore merges cells."], ["Container block", "Has child items."], ["moveInstrumentation", "Moves editor attributes."], ["_name.json", "Per-block fragment."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C7 · Universal Editor development</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Files</h4><ul><li>definition: catalogue</li><li>models: forms</li><li>filters: placement</li></ul></div>
+      <div><h4>Naming</h4><ul><li>Alt, Title, Type, MimeType, Text</li><li>group_field</li><li>Case sensitive</li></ul></div>
+      <div><h4>Containers</h4><ul><li>Set template.filter</li><li>Item resource type</li></ul></div>
+      <div><h4>Editing</h4><ul><li>moveInstrumentation</li><li>Do not clone attributes</li></ul></div>
+      <div><h4>Workflow</h4><ul><li>Edit _name.json</li><li>npm run build:json</li><li>Hook on commit</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/component-model-definitions" rel="noopener" target="_blank">aem.live: Content modeling for AEM authoring</a></li>
+    <li><a href="https://www.aem.live/developer/universal-editor-blocks" rel="noopener" target="_blank">aem.live: Creating blocks for the Universal Editor</a></li>
+    <li><a href="https://www.aem.live/developer/ue-tutorial" rel="noopener" target="_blank">aem.live: Universal Editor tutorial</a></li>
+    <li><a href="https://github.com/adobe-rnd/aem-boilerplate-xwalk" rel="noopener" target="_blank">GitHub: aem-boilerplate-xwalk</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

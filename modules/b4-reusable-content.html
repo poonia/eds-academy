@@ -39,7 +39,7 @@
     <li>Apply a template to a page or folder.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="b4-ready" data-title="Ready for shared and reusable content?">
-    <script type="application/json">{"questions": [{"q": "What separates sections in a document?", "options": ["Three hyphens", "A heading", "A table"], "answer": 0, "explain": "Covered in B1."}, {"q": "Which table sets template?", "options": ["Metadata", "Cards", "Section Metadata"], "answer": 0, "explain": "Template is page metadata."}, {"q": "What must happen before visitors see a change?", "options": ["Publish", "Save", "Reload"], "answer": 0, "explain": "Covered in B2."}]}</script>
+    <script type="application/json">{"questions": [{"q": "What separates sections in a document?", "options": ["Three hyphens", "A heading", "A table"], "answer": 0, "explain": "Covered in B1."}, {"q": "Which table sets template?", "options": ["Cards", "Metadata", "Section Metadata"], "answer": 1, "explain": "Template is page metadata."}, {"q": "What must happen before visitors see a change?", "options": ["Publish", "Save", "Reload"], "answer": 0, "explain": "Covered in B2."}]}</script>
   </div>
 </section>
 
@@ -68,7 +68,7 @@
     <div class="doc-page"><p><b>Acme Bank</b></p><div class="doc-hr">---</div><ul><li>Savings<ul><li>TFSA</li><li>RRSP</li></ul></li><li>Mortgages</li></ul><div class="doc-hr">---</div><p>Sign in</p></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b4-t1"><script type="application/json">{"questions": [{"q": "The tools have appeared in the menu area. What is the likely cause?", "options": ["A missing section break in /nav", "A CDN issue", "The wrong theme"], "answer": 0, "explain": "Sections are read by position."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b4-t1"><script type="application/json">{"questions": [{"q": "The tools have appeared in the menu area. What is the likely cause?", "options": ["The wrong theme", "A CDN issue", "A missing section break in /nav"], "answer": 2, "explain": "Sections are read by position."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -100,7 +100,7 @@
     <div class="doc-page"><table class="blocktable"><tr><th colspan="1">Fragment</th></tr><tr><td>https://main--site--org.aem.page/fragments/disclosure</td></tr></table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b4-t2"><script type="application/json">{"questions": [{"q": "Which content is the best fit for a fragment?", "options": ["A disclosure on 60 pages", "The main article text of one page", "A page’s h1"], "answer": 0, "explain": "Reuse across many pages is the point."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b4-t2"><script type="application/json">{"questions": [{"q": "Which content is the best fit for a fragment?", "options": ["A disclosure on 60 pages", "A page’s h1", "The main article text of one page"], "answer": 0, "explain": "Reuse across many pages is the point."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -139,7 +139,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b4-t3"><script type="application/json">{"questions": [{"q": "How do you apply a template to a whole folder?", "options": ["Bulk metadata", "Rename the folder", "A redirect"], "answer": 0, "explain": "Add a template column for that URL pattern."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b4-t3"><script type="application/json">{"questions": [{"q": "How do you apply a template to a whole folder?", "options": ["Rename the folder", "Bulk metadata", "A redirect"], "answer": 1, "explain": "Add a template column for that URL pattern."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -216,7 +216,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b4-check"><script type="application/json">{"questions": [{"q": "What are the three nav sections, in order?", "options": ["Brand, sections, tools", "Tools, sections, brand", "Header, body, footer"], "answer": 0, "explain": "The boilerplate reads them by position."}, {"q": "When does the header load?", "options": ["Lazy phase", "Eager phase", "Before HTML"], "answer": 0, "explain": "It is not on the critical path to LCP."}, {"q": "What overrides the default nav path?", "options": ["nav metadata", "A redirect", "A variant"], "answer": 0, "explain": "The header code reads it."}, {"q": "How can a fragment be referenced? Choose all that apply.", "options": ["By the boilerplate", "By code using metadata", "By a Fragment block", "Only by the CDN"], "answer": [0, 1, 2], "explain": "Three routes exist."}, {"q": "Why avoid fragments for main content?", "options": ["It is not in the page’s initial HTML", "They cost more", "They cannot hold text"], "answer": 0, "explain": "Canonical content belongs in the page."}, {"q": "What does template metadata become?", "options": ["A body class", "A new block", "A URL"], "answer": 0, "explain": "Code then responds to it."}, {"q": "A template locks the page structure. True or false?", "options": ["False", "True"], "answer": 0, "explain": "It is a label for code."}, {"q": "A regulator requires a disclaimer update on all mortgage pages by noon. It is pasted into 45 documents today. What is your best long-term fix?", "options": ["Keep editing 45 documents", "Create one fragment and reference it from those pages", "Put it in the footer of every page on the site", "Add it to placeholders as a long paragraph"], "answer": 1, "explain": "A fragment gives one source of truth for that content.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b4-check"><script type="application/json">{"questions": [{"q": "What are the three nav sections, in order?", "options": ["Header, body, footer", "Tools, sections, brand", "Brand, sections, tools"], "answer": 2, "explain": "The boilerplate reads them by position."}, {"q": "When does the header load?", "options": ["Eager phase", "Before HTML", "Lazy phase"], "answer": 2, "explain": "It is not on the critical path to LCP."}, {"q": "What overrides the default nav path?", "options": ["nav metadata", "A variant", "A redirect"], "answer": 0, "explain": "The header code reads it."}, {"q": "How can a fragment be referenced? Choose all that apply.", "options": ["By the boilerplate", "By code using metadata", "By a Fragment block", "Only by the CDN"], "answer": [0, 1, 2], "explain": "Three routes exist."}, {"q": "Why avoid fragments for main content?", "options": ["It is not in the page’s initial HTML", "They cannot hold text", "They cost more"], "answer": 0, "explain": "Canonical content belongs in the page."}, {"q": "What does template metadata become?", "options": ["A URL", "A new block", "A body class"], "answer": 2, "explain": "Code then responds to it."}, {"q": "A template locks the page structure. True or false?", "options": ["False", "True"], "answer": 0, "explain": "It is a label for code."}, {"q": "A regulator requires a disclaimer update on all mortgage pages by noon. It is pasted into 45 documents today. What is your best long-term fix?", "options": ["Add it to placeholders as a long paragraph", "Create one fragment and reference it from those pages", "Put it in the footer of every page on the site", "Keep editing 45 documents"], "answer": 1, "explain": "A fragment gives one source of truth for that content.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

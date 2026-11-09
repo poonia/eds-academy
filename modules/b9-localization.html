@@ -40,7 +40,7 @@
     <li>Configure the idea of hreflang through sitemaps.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="b9-ready" data-title="Ready for localization and multi-site content?">
-    <script type="application/json">{"questions": [{"q": "What holds shared strings?", "options": ["Placeholders", "Variants", "Fragments only"], "answer": 0, "explain": "Covered in B3."}, {"q": "What does repoless share?", "options": ["Code", "Content", "Authors"], "answer": 0, "explain": "Covered in A4."}, {"q": "Which fragment holds the menu?", "options": ["/nav", "/footer", "/menu.json"], "answer": 0, "explain": "Covered in B4."}]}</script>
+    <script type="application/json">{"questions": [{"q": "What holds shared strings?", "options": ["Variants", "Placeholders", "Fragments only"], "answer": 1, "explain": "Covered in B3."}, {"q": "What does repoless share?", "options": ["Content", "Code", "Authors"], "answer": 1, "explain": "Covered in A4."}, {"q": "Which fragment holds the menu?", "options": ["/nav", "/menu.json", "/footer"], "answer": 0, "explain": "Covered in B4."}]}</script>
   </div>
 </section>
 
@@ -75,7 +75,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b9-t1"><script type="application/json">{"questions": [{"q": "When is a market-first structure reasonable?", "options": ["When markets share little content, such as under different regulation", "Always", "Never"], "answer": 0, "explain": "aem.live notes these exceptions."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b9-t1"><script type="application/json">{"questions": [{"q": "When is a market-first structure reasonable?", "options": ["Never", "Always", "When markets share little content, such as under different regulation"], "answer": 2, "explain": "aem.live notes these exceptions."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -115,7 +115,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b9-t2"><script type="application/json">{"questions": [{"q": "Should you auto-redirect visitors arriving from a French search result?", "options": ["No: they are already in the right language", "Yes, always", "Only on Mondays"], "answer": 0, "explain": "Detection is only a fallback."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b9-t2"><script type="application/json">{"questions": [{"q": "Should you auto-redirect visitors arriving from a French search result?", "options": ["Only on Mondays", "No: they are already in the right language", "Yes, always"], "answer": 1, "explain": "Detection is only a fallback."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -162,7 +162,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b9-t3"><script type="application/json">{"questions": [{"q": "How does the sitemap relate /welcome and /fr/welcome?", "options": ["Through their common suffix", "By publication date", "By author name"], "answer": 0, "explain": "Keep page names aligned across folders."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b9-t3"><script type="application/json">{"questions": [{"q": "How does the sitemap relate /welcome and /fr/welcome?", "options": ["By author name", "Through their common suffix", "By publication date"], "answer": 1, "explain": "Keep page names aligned across folders."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -242,7 +242,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b9-check"><script type="application/json">{"questions": [{"q": "What does aem.live recommend first in a URL?", "options": ["Language", "Market", "Year"], "answer": 0, "explain": "Then market as the second tier."}, {"q": "What is the problem with full market copies?", "options": ["Duplicate content and management work", "They are too fast", "Nothing"], "answer": 0, "explain": "See topic 1."}, {"q": "When should language be auto-detected?", "options": ["Only as a fallback", "Always", "On every page view"], "answer": 0, "explain": "People should choose."}, {"q": "Which translation connectors exist in Experience Workspace? Choose all that apply.", "options": ["Google Translate", "Lionbridge", "Smartling", "Trados"], "answer": [0, 1, 2, 3], "explain": "You can also build your own."}, {"q": "MSM on EDS needs?", "options": ["Repoless", "Folder mapping", "A second CDN"], "answer": 0, "explain": "See topic 3."}, {"q": "Google uses which for language targeting?", "options": ["hreflang", "html-lang", "The file name"], "answer": 0, "explain": "aem.live notes Google ignores the lang attribute."}, {"q": "Sitemap alternates rely on?", "options": ["A common path suffix", "Identical titles", "Identical images"], "answer": 0, "explain": "Or a manually specified primary language."}, {"q": "A company in Canada needs English and French, sharing almost all content, and a US English offer on one page. What is the best fit?", "options": ["/ca_en, /ca_fr and /us_en as full copies", "/en/ and /fr/, with an /en/us/ override for the one page", "Separate repositories for each", "One page with hidden languages"], "answer": 1, "explain": "Language-first, with a market override only where content differs.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b9-check"><script type="application/json">{"questions": [{"q": "What does aem.live recommend first in a URL?", "options": ["Year", "Market", "Language"], "answer": 2, "explain": "Then market as the second tier."}, {"q": "What is the problem with full market copies?", "options": ["Nothing", "Duplicate content and management work", "They are too fast"], "answer": 1, "explain": "See topic 1."}, {"q": "When should language be auto-detected?", "options": ["On every page view", "Always", "Only as a fallback"], "answer": 2, "explain": "People should choose."}, {"q": "Which translation connectors exist in Experience Workspace? Choose all that apply.", "options": ["Lionbridge", "Trados", "Smartling", "Google Translate"], "answer": [0, 1, 2, 3], "explain": "You can also build your own."}, {"q": "MSM on EDS needs?", "options": ["Repoless", "A second CDN", "Folder mapping"], "answer": 0, "explain": "See topic 3."}, {"q": "Google uses which for language targeting?", "options": ["hreflang", "The file name", "html-lang"], "answer": 0, "explain": "aem.live notes Google ignores the lang attribute."}, {"q": "Sitemap alternates rely on?", "options": ["A common path suffix", "Identical images", "Identical titles"], "answer": 0, "explain": "Or a manually specified primary language."}, {"q": "A company in Canada needs English and French, sharing almost all content, and a US English offer on one page. What is the best fit?", "options": ["/ca_en, /ca_fr and /us_en as full copies", "/en/ and /fr/, with an /en/us/ override for the one page", "One page with hidden languages", "Separate repositories for each"], "answer": 1, "explain": "Language-first, with a market override only where content differs.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

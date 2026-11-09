@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C6 Performance engineering · EDS Academy</title>
+<meta name="description" content="Module C6: loading phases in code, LCP, image handling, third-party governance, pull request performance gates, and tuning with field data.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c6-performance-engineering.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C6 Performance engineering · EDS Academy">
+<meta property="og:description" content="Module C6: loading phases in code, LCP, image handling, third-party governance, pull request performance gates, and tuning with field data.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c6-performance-engineering.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C6">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Place code in the right loading phase.</li>
+    <li>Diagnose and improve LCP.</li>
+    <li>Use responsive images in blocks correctly.</li>
+    <li>Govern third parties.</li>
+    <li>Use lab and field data together.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c6-ready" data-title="Ready for performance engineering?">
+    <script type="application/json">{"questions": [{"q": "What is the 100 KB rule about?", "options": ["Total site size", "Image size only", "Payload before LCP"], "answer": 2, "explain": "Covered in A3."}, {"q": "Which function loads the first section?", "options": ["loadDelayed", "loadEager", "loadFooter"], "answer": 1, "explain": "Covered in C2."}, {"q": "Which runs a block’s code?", "options": ["loadBlock", "decorateIcons", "getMetadata"], "answer": 0, "explain": "Covered in C3."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="eager-lazy-delayed-in-code" data-level="2">
+  <h2>Eager, lazy, delayed in code</h2>
+  <div data-part="why"><p>A3 taught the idea. Here is where each line of your code actually goes.</p></div>
+  <div data-part="concept">
+    <p><code>loadEager</code> decorates <code>main</code> and awaits the first section. <code>loadLazy</code> loads the header, the remaining sections, the footer, <code>lazy-styles.css</code> and fonts. <code>loadDelayed</code> runs last.</p>
+    <p>aem.live’s test for the delayed phase is about third parties and anything not material to the experience. It advises starting at least three seconds after LCP. The current boilerplate has no timer, so add one if you need to.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="scripts/scripts.js (simplified)" data-lang="javascript">
+      <textarea class="src" hidden>async function loadEager(doc) {
+  decorateTemplateAndTheme();
+  const main = doc.querySelector('main');
+  if (main) {
+    decorateMain(main);
+    document.body.classList.add('appear');
+    await loadSection(main.querySelector('.section'), waitForFirstImage);
+  }
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Code</th><th>Phase</th></tr></thead>
+    <tbody>
+      <tr><td>A hero block</td><td>Eager</td></tr>
+      <tr><td>Below-the-fold block</td><td>Lazy</td></tr>
+      <tr><td>Own, non-critical CSS</td><td>Lazy</td></tr>
+      <tr><td>Analytics, chat, tag manager</td><td>Delayed, after consent</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c6-t1"><script type="application/json">{"questions": [{"q": "A chat widget belongs in?", "options": ["Eager", "Delayed", "head.html"], "answer": 1, "explain": "It is a non-essential third party."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Everything loads at once</td><td>Code imported at module top level</td><td>Use dynamic <code>import()</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="lcp-optimization" data-level="2">
+  <h2>LCP optimization</h2>
+  <div data-part="why"><p>LCP usually comes down to a few decisions about the first section.</p></div>
+  <div data-part="concept">
+    <p>aem.live’s rule of thumb is to keep the total payload before LCP under 100 KB. Avoid connecting to a second origin before LCP, because setting up the connection costs time, particularly on mobile.</p>
+    <p>Keep the first section small: the fewer blocks it has, the faster LCP can be. Do not load large libraries for first-section blocks.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    H["HTML"] --&gt; C["CSS and JS"]
+    C --&gt; B["First section's blocks"]
+    B --&gt; I["LCP image"]
+    X["Second origin"] -.avoid.-&gt; B</pre>
+      <figcaption><b>What to notice:</b> each step depends on the one before, so any addition delays LCP.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>HTML leads to CSS and JS, then the first section’s blocks, then the LCP image. A connection to a second origin should be avoided before this point.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Check</th><th>Goal</th></tr></thead>
+    <tbody>
+      <tr><td>Payload before LCP</td><td>Under 100 KB</td></tr>
+      <tr><td>Origins before LCP</td><td>One</td></tr>
+      <tr><td>Blocks in the first section</td><td>As few as possible</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c6-t2"><script type="application/json">{"questions": [{"q": "Which is most harmful before LCP?", "options": ["A connection to another origin", "A short heading", "Semantic HTML"], "answer": 0, "explain": "aem.live strongly discourages it."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>LCP fails on mobile only</td><td>Network-bound payload</td><td>Reduce what precedes LCP.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="image-handling" data-level="2">
+  <h2>Image handling</h2>
+  <div data-part="why"><p>A block that re-creates images can quietly undo what the platform did for you.</p></div>
+  <div data-part="concept">
+    <p>Use <code>createOptimizedPicture(src, alt, eager, breakpoints)</code> to build responsive pictures. Its default is 2000 px from 600 px up and 750 px below. <code>waitForFirstImage</code> marks the first image eager.</p>
+    <p>Choose widths for how large a block really displays images. The Cards block in the boilerplate uses <code>[{ width: '750' }]</code>. Pass <code>eager</code> only for the true LCP image.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/cards/cards.js (from aem-boilerplate)" data-lang="javascript">
+      <textarea class="src" hidden>ul.querySelectorAll('picture &gt; img').forEach((img) =&gt; img.closest('picture').replaceWith(
+  createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]),
+));</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Argument</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>src</code></td><td>Source image</td></tr>
+      <tr><td><code>alt</code></td><td>Keep the author’s alt text</td></tr>
+      <tr><td><code>eager</code></td><td><code>true</code> only for the LCP image</td></tr>
+      <tr><td><code>breakpoints</code></td><td>Media and width for each source</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c6-t3"><script type="application/json">{"questions": [{"q": "Which images should be eager?", "options": ["All of them", "Only the LCP image", "None ever"], "answer": 1, "explain": "Eager downloads compete for bandwidth."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Alt text lost</td><td>Picture rebuilt without it</td><td>Pass <code>img.alt</code>.</td></tr>
+      <tr><td>Oversized downloads</td><td>Default 2000 px in a small card</td><td>Pass smaller breakpoints.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="third-party-governance" data-level="3">
+  <h2>Third-party governance</h2>
+  <div data-part="why"><p>Each tag is a small decision that nobody owns, until the site is slow.</p></div>
+  <div data-part="concept">
+    <p>Keep an inventory: tag, owner, purpose, cost and review date. Load through the delayed phase and behind consent. aem.live strongly advises against adding martech to <code>head.html</code>.</p>
+    <p>Budget third parties like any other performance cost. Measure each in the field, and remove tags with no owner.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Tag</th><th>Owner</th><th>Phase</th><th>Consent</th><th>Review</th></tr></thead>
+    <tbody>
+      <tr><td>Analytics</td><td>Marketing</td><td>Delayed</td><td>Yes</td><td>Q1</td></tr>
+      <tr><td>Chat</td><td>Support</td><td>Delayed</td><td>Yes</td><td>Q2</td></tr>
+      <tr><td>Unknown pixel</td><td>None</td><td>—</td><td>—</td><td>Remove</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    R["Request a tag"] --&gt; O["Owner and purpose"]
+    O --&gt; P["Privacy review"]
+    P --&gt; T["Test on a branch"]
+    T --&gt; D["Add in delayed phase"]</pre>
+      <figcaption><b>What to notice:</b> the process comes before the code.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A tag request needs an owner and purpose, a privacy review and a test on a branch before it is added to the delayed phase.</p></details>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c6-t4"><script type="application/json">{"questions": [{"q": "A tag has no owner. What should happen?", "options": ["Keep it forever", "Move it to the head", "Remove it or assign an owner"], "answer": 2, "explain": "Unowned tags are pure risk."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Score fell with no code change</td><td>Tag manager was updated</td><td>Review what it loads.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="pr-performance-gates" data-level="3">
+  <h2>PR performance gates</h2>
+  <div data-part="why"><p>Performance decays one small change at a time. A gate on every pull request stops it.</p></div>
+  <div data-part="concept">
+    <p>AEM Code Sync runs Google PageSpeed Insights for each change in a pull request. aem.live says not to submit a pull request for review without a green score for mobile and desktop, ideally 100 for both.</p>
+    <p>Include a test URL with the block, so that the check covers relevant content. aem.live favours PageSpeed Insights as the common measure over custom Lighthouse configurations.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    P["Pull request with test URL"] --&gt; S["PageSpeed Insights"]
+    S --&gt;|Green| R["Review"]
+    S --&gt;|Red| F["Fix"]
+    F --&gt; P</pre>
+      <figcaption><b>What to notice:</b> performance is checked before a person spends time reviewing.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A pull request with a test URL runs PageSpeed Insights. Green goes to review, and red goes back to be fixed.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>In your PR</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Test URL on your branch</td><td>Reviewers and checks see the feature</td></tr>
+      <tr><td>Before and after numbers</td><td>Evidence of impact</td></tr>
+      <tr><td>Small scope</td><td>Easy to diagnose</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c6-t5"><script type="application/json">{"questions": [{"q": "Which tool checks PRs by default?", "options": ["Selenium", "PageSpeed Insights", "JMeter"], "answer": 1, "explain": "AEM Code Sync runs it."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Check failed on the wrong page</td><td>No relevant test URL</td><td>Link to a page using the feature.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="rum-driven-tuning" data-level="4">
+  <h2>RUM-driven tuning</h2>
+  <div data-part="why"><p>A lab score says what could happen. Field data says what did.</p></div>
+  <div data-part="concept">
+    <p><b>Operational Telemetry</b>, also known as real use monitoring, collects performance data from a sample of real visits. It uses no cookies or other client-side state, sends data with <code>navigator.sendBeacon</code>, and does not fingerprint visitors.</p>
+    <p>Field results often differ from lab results because real devices and networks vary. For small changes, variance and low traffic can make results hard to read. The OpTel Explorer tool helps you examine the data.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    L["Lab: PSI on each PR"] --&gt; M["Merge"]
+    M --&gt; F["Field: sampled OpTel"]
+    F --&gt; A["Find slow pages and devices"]
+    A --&gt; L</pre>
+      <figcaption><b>What to notice:</b> lab and field data answer different questions, and feed each other.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Lab PageSpeed Insights runs on each pull request. After merging, sampled field data reveals slow pages and devices, which leads back to lab work.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Lab</th><th>Field</th></tr></thead>
+    <tbody>
+      <tr><td>Controlled and repeatable</td><td>Real devices and networks</td></tr>
+      <tr><td>Immediate</td><td>Needs traffic</td></tr>
+      <tr><td>Prevents regressions</td><td>Confirms real impact</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c6-t6"><script type="application/json">{"questions": [{"q": "Does Operational Telemetry use cookies?", "options": ["Yes", "No", "Only with consent"], "answer": 1, "explain": "It uses no client-side state or ID."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Personal data added to OpTel</td><td>Custom checkpoint</td><td>Remove it: this is not permitted.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: loading waterfall visualizer</h2>
+  <p>Apply each fix and watch the modelled LCP.</p>
+  <div data-component="waterfall" data-title="Loading waterfall visualizer"><script type="application/json">{"items": [{"name": "HTML", "start": 0, "ms": 300, "lcp": true}, {"name": "styles.css", "start": 300, "ms": 200, "lcp": true}, {"name": "scripts.js, aem.js", "start": 300, "ms": 300, "lcp": true}, {"name": "Tag manager (head)", "start": 300, "ms": 1100, "lcp": true, "fix": "tags", "fixed": {"start": 3900, "ms": 900, "lcp": false}}, {"name": "Web font", "start": 600, "ms": 500, "lcp": true, "fix": "font", "fixed": {"start": 3000, "ms": 300, "lcp": false}}, {"name": "Carousel library", "start": 1400, "ms": 800, "lcp": true, "fix": "carousel", "fixed": {"start": 3100, "ms": 600, "lcp": false}}, {"name": "Hero image", "start": 2200, "ms": 900, "lcp": true, "fix": "hero", "fixed": {"start": 700, "ms": 500}}, {"name": "Footer", "start": 3300, "ms": 200, "lcp": false}], "fixes": [{"id": "tags", "label": "Move tags to the delayed phase"}, {"id": "font", "label": "Load fonts after LCP, with a fallback"}, {"id": "carousel", "label": "Load the carousel code lazily"}, {"id": "hero", "label": "Keep the first image eager and early"}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: diagnose a slow page</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Take a slow branch to a measured improvement.</p></div>
+    <div><h4>You need</h4><p>A branch, PageSpeed Insights and DevTools.</p></div>
+    <div><h4>Time</h4><p>About 90 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Run PageSpeed Insights</b> on a page and save the result.</div></li>
+    <li><div><b>Find the LCP element</b>.</div></li>
+    <li><div><b>List requests before LCP</b> and total their size.</div></li>
+    <li><div><b>Find any second origin</b> before LCP.</div></li>
+    <li><div><b>Make one change</b> at a time.</div></li>
+    <li><div><b>Re-measure</b> and note the result.</div></li>
+    <li><div><b>Write it up</b> in a pull request.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A before and after comparison, with an explanation.</p></div>
+    <div><h4>How to verify</h4><p>The score improves and you can explain why.</p></div>
+    <div><h4>Stretch</h4><p>Check the page in OpTel Explorer after the change has shipped.</p></div>
+  </div>
+  <ul class="checklist" data-id="c6-lab">
+    <li>Measured a baseline</li>
+    <li>Identified the LCP element</li>
+    <li>Totalled the payload</li>
+    <li>Improved something</li>
+    <li>Documented it</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Score varies between runs</td><td>Lab variance</td><td>Compare several runs.</td></tr>
+      <tr><td>LCP image is lazy</td><td>First image is not in the first section</td><td>Restructure the page.</td></tr>
+      <tr><td>CLS from blocks</td><td>Space not reserved</td><td>Set dimensions.</td></tr>
+      <tr><td>TBT high</td><td>Long tasks</td><td>Split or defer the work.</td></tr>
+      <tr><td>Field worse than lab</td><td>Real devices are slower</td><td>Target the slower segment.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Budget.</b> Publish performance budgets, and treat a red score as a blocked release.</p></aside>
+    <aside class="callout warning" data-label="Privacy"><p>Do not add personal data to telemetry.</p></aside>
+    <aside class="callout accessibility"><p>Speed helps people on older devices and slow connections. Respect reduced motion too.</p></aside>
+    <aside class="callout performance"><p>Aim for Lighthouse 100, and treat each regression as a defect.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Budget</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Tag approval</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>PR gates</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c6-check"><script type="application/json">{"questions": [{"q": "What is aem.live’s pre-LCP payload rule of thumb?", "options": ["Under 10 KB", "Under 1 MB", "Under 100 KB"], "answer": 2, "explain": "Results in a fast LCP."}, {"q": "Which function marks the first image eager?", "options": ["loadFonts", "getMetadata", "waitForFirstImage"], "answer": 2, "explain": "See aem.js."}, {"q": "Default picture widths?", "options": ["4000 and 2000", "2000 and 750", "1200 and 400"], "answer": 1, "explain": "See createOptimizedPicture."}, {"q": "Which are field data? Choose all that apply.", "options": ["Operational Telemetry", "A single lab run", "CrUX"], "answer": [0, 2], "explain": "Lab runs are simulations."}, {"q": "How is telemetry sent?", "options": ["A pixel with cookies", "navigator.sendBeacon", "Email"], "answer": 1, "explain": "See the privacy notes."}, {"q": "What is ideal for a PR’s score?", "options": ["Desktop only", "100 on mobile and desktop", "50 on mobile"], "answer": 1, "explain": "aem.live’s guidance."}, {"q": "Should you make a separate Lighthouse config?", "options": ["Yes, per page", "Prefer the default PageSpeed Insights measure", "Yes, per team"], "answer": 1, "explain": "It keeps comparisons meaningful."}, {"q": "A/B tool vendor says their snippet must be first in head. LCP would suffer. What do you do?", "options": ["Comply without testing", "Remove all images", "Hide the page until it loads", "Test alternatives such as native experimentation, and measure any exception"], "answer": 3, "explain": "aem.live points to its native capability first.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c6-cards"><script type="application/json">{"cards": [["loadEager", "Decorates and shows the first section."], ["loadLazy", "Remaining sections, header, footer, fonts."], ["loadDelayed", "Runs last."], ["100 KB", "Rule of thumb before LCP."], ["Second origin", "Costly before LCP."], ["createOptimizedPicture", "Builds responsive pictures."], ["PSI", "PageSpeed Insights."], ["OpTel", "Operational Telemetry."], ["Lab data", "Simulated measurement."], ["Field data", "Measured from real visits."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C6 · Performance engineering</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Phases</h4><ul><li>Eager: to LCP</li><li>Lazy: own code</li><li>Delayed: the rest</li></ul></div>
+      <div><h4>LCP</h4><ul><li>Under 100 KB</li><li>One origin</li><li>Few first blocks</li></ul></div>
+      <div><h4>Images</h4><ul><li>createOptimizedPicture</li><li>Eager only for LCP</li><li>Keep alt</li></ul></div>
+      <div><h4>Gates</h4><ul><li>PSI on each PR</li><li>Include test URL</li><li>Aim for 100</li></ul></div>
+      <div><h4>Field</h4><ul><li>Sampled</li><li>No cookies</li><li>Confirms impact</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/keeping-it-100" rel="noopener" target="_blank">aem.live: Keeping it 100</a></li>
+    <li><a href="https://www.aem.live/docs/operational-telemetry" rel="noopener" target="_blank">aem.live: Operational Telemetry</a></li>
+    <li><a href="https://www.aem.live/docs/optel-explorer" rel="noopener" target="_blank">aem.live: OpTel Explorer</a></li>
+    <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development collaboration and good practices</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

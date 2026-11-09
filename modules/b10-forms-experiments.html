@@ -40,7 +40,7 @@
     <li>Explain audiences and campaigns, and when they need developers.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="b10-ready" data-title="Ready for forms and experimentation for authors?">
-    <script type="application/json">{"questions": [{"q": "What does a sheet become after preview?", "options": ["JSON", "PDF", "A workflow"], "answer": 0, "explain": "Covered in B3."}, {"q": "How do you keep a page out of search?", "options": ["robots: noindex", "Delete its images", "Add a variant"], "answer": 0, "explain": "Covered in B3."}, {"q": "What can be applied across a folder?", "options": ["Bulk metadata", "Heading styles", "Alt text"], "answer": 0, "explain": "Covered in B3."}]}</script>
+    <script type="application/json">{"questions": [{"q": "What does a sheet become after preview?", "options": ["PDF", "JSON", "A workflow"], "answer": 1, "explain": "Covered in B3."}, {"q": "How do you keep a page out of search?", "options": ["robots: noindex", "Delete its images", "Add a variant"], "answer": 0, "explain": "Covered in B3."}, {"q": "What can be applied across a folder?", "options": ["Bulk metadata", "Heading styles", "Alt text"], "answer": 0, "explain": "Covered in B3."}]}</script>
   </div>
 </section>
 
@@ -73,7 +73,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b10-t1"><script type="application/json">{"questions": [{"q": "What does one row of a form sheet represent?", "options": ["A field", "A page", "A submission"], "answer": 0, "explain": "Rows define fields."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b10-t1"><script type="application/json">{"questions": [{"q": "What does one row of a form sheet represent?", "options": ["A page", "A submission", "A field"], "answer": 2, "explain": "Rows define fields."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -108,7 +108,7 @@
     <div data-component="decision-tree" data-title="Which forms route?"><script type="application/json">{"start": "a", "nodes": {"a": {"q": "Does the form need complex logic or several panels?", "options": [{"label": "Yes", "next": "w"}, {"label": "No", "next": "b"}]}, "b": {"q": "Do you need a tamper-proof archive or AEM Workflows?", "options": [{"label": "Yes", "next": "w"}, {"label": "No", "next": "d"}]}, "w": {"result": "WYSIWYG authoring", "why": "Complex logic, archival and workflows belong in the Universal Editor route."}, "d": {"result": "Document-based authoring", "why": "A simple spreadsheet definition is quicker to create and change."}}}</script></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b10-t2"><script type="application/json">{"questions": [{"q": "Which route provides a document of record?", "options": ["WYSIWYG", "Document-based", "Neither"], "answer": 0, "explain": "It is listed for WYSIWYG authoring."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b10-t2"><script type="application/json">{"questions": [{"q": "Which route provides a document of record?", "options": ["Document-based", "Neither", "WYSIWYG"], "answer": 2, "explain": "It is listed for WYSIWYG authoring."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -141,7 +141,7 @@
     <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Experiment</td><td>opt-0134</td></tr><tr><td>Experiment Variants</td><td>https://www.example.com/experiments/opt-0134/challenger-1</td></tr></table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b10-t3"><script type="application/json">{"questions": [{"q": "With two challengers, what share does each variant get by default?", "options": ["A third", "Half", "10 percent"], "answer": 0, "explain": "Even distribution across all variants."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b10-t3"><script type="application/json">{"questions": [{"q": "With two challengers, what share does each variant get by default?", "options": ["10 percent", "Half", "A third"], "answer": 2, "explain": "Even distribution across all variants."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -173,7 +173,7 @@
     <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Campaign: Xmas</td><td>https://www.example.com/my-page-for-xmas</td></tr><tr><td>Campaign: Halloween</td><td>https://www.example.com/my-page-for-halloween</td></tr></table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b10-t4"><script type="application/json">{"questions": [{"q": "Which link shows the xmas campaign?", "options": ["?utm_campaign=xmas", "?theme=xmas", "#xmas"], "answer": 0, "explain": "<code>campaign<\/code> also works by default."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b10-t4"><script type="application/json">{"questions": [{"q": "Which link shows the xmas campaign?", "options": ["#xmas", "?utm_campaign=xmas", "?theme=xmas"], "answer": 1, "explain": "<code>campaign<\/code> also works by default."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -254,7 +254,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b10-check"><script type="application/json">{"questions": [{"q": "Which suits a simple contact form?", "options": ["Document-based authoring", "WYSIWYG only", "Neither"], "answer": 0, "explain": "Spreadsheets are quick for simple forms."}, {"q": "What license is needed?", "options": ["A valid AEM Forms license", "None", "Only a GitHub license"], "answer": 0, "explain": "See aem.live."}, {"q": "What does a challenger differ from?", "options": ["The control", "The sitemap", "The nav"], "answer": 0, "explain": "Challengers compete with the control."}, {"q": "Which metadata rows define an experiment? Choose all that apply.", "options": ["Experiment", "Experiment Variants", "Section Metadata"], "answer": [0, 1], "explain": "Both go on the control page."}, {"q": "Default traffic with one challenger?", "options": ["50/50", "90/10", "100/0"], "answer": 0, "explain": "Even split."}, {"q": "How do you stop challengers being indexed?", "options": ["noindex,nofollow", "Rename the file", "Leave it"], "answer": 0, "explain": "By folder in bulk metadata, or per page."}, {"q": "Which is a default campaign parameter?", "options": ["utm_campaign", "utm_size", "lang"], "answer": 0, "explain": "<code>campaign<\/code> also works."}, {"q": "A team wants to test 4 challengers on a page with 2,000 visits a month. What do you advise?", "options": ["Run all 4 for a week", "Test one big change, for longer, and check significance", "Declare a winner by opinion", "Turn off real user data"], "answer": 1, "explain": "Too little traffic split too thin gives no reliable answer.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b10-check"><script type="application/json">{"questions": [{"q": "Which suits a simple contact form?", "options": ["Document-based authoring", "Neither", "WYSIWYG only"], "answer": 0, "explain": "Spreadsheets are quick for simple forms."}, {"q": "What license is needed?", "options": ["None", "Only a GitHub license", "A valid AEM Forms license"], "answer": 2, "explain": "See aem.live."}, {"q": "What does a challenger differ from?", "options": ["The control", "The sitemap", "The nav"], "answer": 0, "explain": "Challengers compete with the control."}, {"q": "Which metadata rows define an experiment? Choose all that apply.", "options": ["Section Metadata", "Experiment", "Experiment Variants"], "answer": [1, 2], "explain": "Both go on the control page."}, {"q": "Default traffic with one challenger?", "options": ["100/0", "50/50", "90/10"], "answer": 1, "explain": "Even split."}, {"q": "How do you stop challengers being indexed?", "options": ["Rename the file", "noindex,nofollow", "Leave it"], "answer": 1, "explain": "By folder in bulk metadata, or per page."}, {"q": "Which is a default campaign parameter?", "options": ["utm_campaign", "utm_size", "lang"], "answer": 0, "explain": "<code>campaign<\/code> also works."}, {"q": "A team wants to test 4 challengers on a page with 2,000 visits a month. What do you advise?", "options": ["Declare a winner by opinion", "Turn off real user data", "Run all 4 for a week", "Test one big change, for longer, and check significance"], "answer": 3, "explain": "Too little traffic split too thin gives no reliable answer.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

@@ -67,8 +67,8 @@ for name in sorted(files):
         for ref in re.findall(r'''url\(["']?([^"')]+)["']?\)''', read(name)):
             check(name, ref)
     elif name.endswith('.js') and name.startswith('assets/'):
-        for ref in re.findall(r'''(?:from\s+|import\s*\()["'`](\.[^"'`$]+)["'`]''', read(name)):
-            check(name, ref)
+        for ref in re.findall(r'''^\s*(?:import|export)\b[^'"`\n]*\bfrom\s+["'`](\.[^"'`$]+)["'`]|\bimport\(["'`](\.[^"'`$]+)["'`]\)''', read(name), re.M):
+            check(name, ref[0] or ref[1])
 
 for component in re.findall(r"""['\w-]+:\s*'([\w-]+\.js)'""", read('assets/js/academy.js')):
     check('assets/js/academy.js', f'components/{component}')

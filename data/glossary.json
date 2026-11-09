@@ -2,6 +2,16 @@
  "asOf": "2026-10-30",
  "terms": [
   {
+   "id": "hlxignore",
+   "term": ".hlxignore",
+   "full": "",
+   "def": "Lists repository files that should not be served.",
+   "match": [
+    ".hlxignore"
+   ],
+   "module": "C2"
+  },
+  {
    "id": "admin-api",
    "term": "Admin API",
    "full": "",
@@ -88,6 +98,16 @@
    "module": "A2"
   },
   {
+   "id": "app-builder",
+   "term": "App Builder",
+   "full": "",
+   "def": "Adobe’s serverless platform for custom applications and integrations.",
+   "match": [
+    "App Builder"
+   ],
+   "module": "C9"
+  },
+  {
    "id": "auto-blocking",
    "term": "Auto-blocking",
    "full": "",
@@ -108,6 +128,16 @@
     "blocks"
    ],
    "module": "B1"
+  },
+  {
+   "id": "block-collection",
+   "term": "Block Collection",
+   "full": "",
+   "def": "Adobe’s public repository of reusable blocks that projects copy and adapt.",
+   "match": [
+    "Block Collection"
+   ],
+   "module": "C4"
   },
   {
    "id": "boilerplate",
@@ -207,6 +237,16 @@
    "module": "A3"
   },
   {
+   "id": "cmp",
+   "term": "CMP",
+   "full": "",
+   "def": "Consent management platform: software that records a visitor’s privacy choices.",
+   "match": [
+    "CMP"
+   ],
+   "module": "C9"
+  },
+  {
    "id": "code-bus",
    "term": "Code Bus",
    "full": "",
@@ -247,6 +287,17 @@
     "Configuration Service"
    ],
    "module": "A4"
+  },
+  {
+   "id": "container-block",
+   "term": "Container block",
+   "full": "",
+   "def": "A Universal Editor block with its own properties and child items.",
+   "match": [
+    "Container block",
+    "container block"
+   ],
+   "module": "C7"
   },
   {
    "id": "content-bus",
@@ -311,6 +362,17 @@
    "module": "A3"
   },
   {
+   "id": "design-token",
+   "term": "Design token",
+   "full": "",
+   "def": "A named design value, held on EDS as a CSS custom property.",
+   "match": [
+    "design tokens",
+    "Design tokens"
+   ],
+   "module": "C5"
+  },
+  {
    "id": "dispatcher",
    "term": "Dispatcher",
    "full": "",
@@ -363,6 +425,17 @@
    "module": "A1"
   },
   {
+   "id": "element-grouping",
+   "term": "Element grouping",
+   "full": "",
+   "def": "Combines several elements into one cell, using an underscore in the field name.",
+   "match": [
+    "Element grouping",
+    "element grouping"
+   ],
+   "module": "C7"
+  },
+  {
    "id": "es-modules",
    "term": "ES modules",
    "full": "",
@@ -392,6 +465,17 @@
     "fallback fonts"
    ],
    "module": "A3"
+  },
+  {
+   "id": "field-collapse",
+   "term": "Field collapse",
+   "full": "",
+   "def": "Combines model properties into one element using suffixes such as Alt, Title and Type.",
+   "match": [
+    "Field collapse",
+    "field collapse"
+   ],
+   "module": "C7"
   },
   {
    "id": "fragment-block",
@@ -566,6 +650,16 @@
     "noindex"
    ],
    "module": "B3"
+  },
+  {
+   "id": "operational-telemetry",
+   "term": "Operational Telemetry",
+   "full": "",
+   "def": "Sampled performance data from real visits, collected without cookies.",
+   "match": [
+    "Operational Telemetry"
+   ],
+   "module": "C6"
   },
   {
    "id": "psi",
@@ -786,6 +880,16 @@
     "WCAG"
    ],
    "module": "A1"
+  },
+  {
+   "id": "web-sdk",
+   "term": "Web SDK",
+   "full": "",
+   "def": "Adobe Experience Platform’s client library for analytics and personalization.",
+   "match": [
+    "Web SDK"
+   ],
+   "module": "C9"
   }
  ]
 }

@@ -603,3 +603,25 @@ dialog.search-dlg::backdrop { background: rgb(10 14 20 / 45%); }
 .ts-bar.control { background: var(--surface-3); }
 
 .blocktable td, .blocktable th { overflow-wrap: anywhere; }
+
+/* Developer simulators (modules C1 to C11) */
+.term { background: #0d1218; color: #d7f5dc; min-height: 180px; }
+.ft-list { display: grid; align-content: start; font: 14px var(--f-mono); border: 1px solid var(--line); border-radius: 8px; padding: 6px; max-height: 380px; overflow: auto; }
+.ft-file { all: unset; cursor: pointer; padding: 3px 8px; border-radius: 4px; overflow-wrap: anywhere; }
+.ft-file:hover { background: var(--surface-2); }
+.ft-file:focus-visible { outline: 2px solid var(--accent); }
+.ft-file[aria-pressed="true"] { background: var(--accent-soft); font-weight: 700; }
+.ft-detail code { overflow-wrap: anywhere; }
+.te-sample { --link-color: #3b63fb; --body-font-size-m: 18px; --button-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px; margin-bottom: 10px; font-size: var(--body-font-size-m); }
+.te-sample p { margin: 0 0 10px; }
+.te-button { display: inline-block; background: var(--link-color); color: #fff; padding: 6px 14px; border-radius: var(--button-radius); text-decoration: none; }
+.wf { display: grid; gap: 4px; margin: 12px 0; }
+.wf-row { display: grid; grid-template-columns: minmax(70px, 150px) 1fr; gap: 8px; align-items: center; font-size: 13px; }
+.wf-name { overflow-wrap: anywhere; }
+.wf-track { position: relative; height: 14px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+.wf-bar { position: absolute; top: 0; bottom: 0; background: var(--line-strong); border-radius: 3px; }
+.wf-bar.lcp { background: var(--accent); }
+
+.q-opt { overflow-wrap: anywhere; }
+
+.ft-folder { padding: 3px 8px; color: var(--muted); }

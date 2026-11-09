@@ -41,7 +41,7 @@
     <li>Explain what MSM needs on EDS.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="b7-ready" data-title="Ready for universal Editor with AEM Sites?">
-    <script type="application/json">{"questions": [{"q": "Where does AEM-authored content live?", "options": ["In AEM", "In SharePoint", "In GitHub"], "answer": 0, "explain": "Covered in A4."}, {"q": "Who renders semantic HTML on publish?", "options": ["AEM", "The browser", "The CDN"], "answer": 0, "explain": "Covered in A4."}, {"q": "What is a section?", "options": ["A group of content", "A workflow", "A tag"], "answer": 0, "explain": "Covered in B1."}]}</script>
+    <script type="application/json">{"questions": [{"q": "Where does AEM-authored content live?", "options": ["In AEM", "In GitHub", "In SharePoint"], "answer": 0, "explain": "Covered in A4."}, {"q": "Who renders semantic HTML on publish?", "options": ["The CDN", "The browser", "AEM"], "answer": 2, "explain": "Covered in A4."}, {"q": "What is a section?", "options": ["A group of content", "A workflow", "A tag"], "answer": 0, "explain": "Covered in B1."}]}</script>
   </div>
 </section>
 
@@ -75,7 +75,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b7-t1"><script type="application/json">{"questions": [{"q": "What does the Universal Editor call blocks?", "options": ["Components", "Fragments", "Templates"], "answer": 0, "explain": "Same idea, different label."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b7-t1"><script type="application/json">{"questions": [{"q": "What does the Universal Editor call blocks?", "options": ["Templates", "Components", "Fragments"], "answer": 1, "explain": "Same idea, different label."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -113,7 +113,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b7-t2"><script type="application/json">{"questions": [{"q": "What connects /content/acme/en/savings to /savings?", "options": ["Path mapping", "A variant", "Block library"], "answer": 0, "explain": "Mapping defines the relationship."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b7-t2"><script type="application/json">{"questions": [{"q": "What connects /content/acme/en/savings to /savings?", "options": ["Block library", "A variant", "Path mapping"], "answer": 2, "explain": "Mapping defines the relationship."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -127,7 +127,7 @@
   <h2>Components and filters</h2>
   <div data-part="why"><p>If authors can drop anything anywhere, consistency goes first. Filters decide what can be added where.</p></div>
   <div data-part="concept">
-    <p>Three files define the authoring experience: <code>component-definitions.json</code> lists what can be added, <code>component-models.json</code> defines each one’s fields, and <code>component-filters.json</code> controls what each container allows.</p>
+    <p>Three files define the authoring experience: <code>component-definition.json</code> lists what can be added, <code>component-models.json</code> defines each one’s fields, and <code>component-filters.json</code> controls what each container allows.</p>
     <p>In Adobe’s AEM authoring boilerplate, each block keeps a JSON fragment, and a pre-commit step compiles them into those files. Adding a block to a section’s filter list makes it available there.</p>
   </div>
   <div data-part="visual">
@@ -152,7 +152,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b7-t3"><script type="application/json">{"questions": [{"q": "Authors need a new field on a teaser. Which file changes?", "options": ["component-models.json", "component-filters.json", "robots.txt"], "answer": 0, "explain": "Models define fields."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b7-t3"><script type="application/json">{"questions": [{"q": "Authors need a new field on a teaser. Which file changes?", "options": ["robots.txt", "component-filters.json", "component-models.json"], "answer": 2, "explain": "Models define fields."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -194,7 +194,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b7-t4"><script type="application/json">{"questions": [{"q": "What happens to aem.page when you unpublish from Live?", "options": ["It is unchanged", "The page is removed", "It is republished"], "answer": 1, "explain": "Unlike unpublishing in Sidekick, this also removes the preview page."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b7-t4"><script type="application/json">{"questions": [{"q": "What happens to aem.page when you unpublish from Live?", "options": ["It is unchanged", "It is republished", "The page is removed"], "answer": 2, "explain": "Unlike unpublishing in Sidekick, this also removes the preview page."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -233,7 +233,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b7-t5"><script type="application/json">{"questions": [{"q": "Why publish fragments as semantic HTML?", "options": ["Crawlers and agents can read the full content", "It disables caching", "It removes the need for models"], "answer": 0, "explain": "No JavaScript is needed to read the content."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b7-t5"><script type="application/json">{"questions": [{"q": "Why publish fragments as semantic HTML?", "options": ["It disables caching", "Crawlers and agents can read the full content", "It removes the need for models"], "answer": 1, "explain": "No JavaScript is needed to read the content."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -265,7 +265,7 @@
     <aside class="callout verify"><p>aem.live’s lifecycle pages track any exceptions by feature. Check each MSM, translation or Launch behaviour that you depend on.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b7-t6"><script type="application/json">{"questions": [{"q": "What must be enabled to use MSM with EDS?", "options": ["Repoless", "Folder mapping", "Bulk metadata"], "answer": 0, "explain": "Localized sites share central code."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b7-t6"><script type="application/json">{"questions": [{"q": "What must be enabled to use MSM with EDS?", "options": ["Folder mapping", "Bulk metadata", "Repoless"], "answer": 2, "explain": "Localized sites share central code."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -303,7 +303,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b7-t7"><script type="application/json">{"questions": [{"q": "Why does a taxonomy page exist?", "options": ["To expose tag descriptions to the Universal Editor", "To replace workflows", "To speed up images"], "answer": 0, "explain": "The editor uses IDs."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b7-t7"><script type="application/json">{"questions": [{"q": "Why does a taxonomy page exist?", "options": ["To expose tag descriptions to the Universal Editor", "To speed up images", "To replace workflows"], "answer": 0, "explain": "The editor uses IDs."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -382,12 +382,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b7-check"><script type="application/json">{"questions": [{"q": "Which file controls what a container allows?", "options": ["component-filters.json", "component-models.json", "sitemap.xml"], "answer": 0, "explain": "Filters control placement."}, {"q": "Which defines the fields?", "options": ["component-models.json", "component-filters.json", "robots.txt"], "answer": 0, "explain": "Models drive the panel."}, {"q": "Quick Publish is the same as which destination?", "options": ["Live", "Preview", "Neither"], "answer": 0, "explain": "See the docs."}, {"q": "What happens when a pre-publish check fails?", "options": ["Publishing stops or the resource is excluded", "It always publishes", "The page is deleted"], "answer": 0, "explain": "Most checks show an error."}, {"q": "What publishes assets to EDS?", "options": ["A technical account", "The visitor", "Google"], "answer": 0, "explain": "It needs folder access."}, {"q": "Which capabilities are stated as available? Choose all that apply.", "options": ["Workflows", "MSM", "Launches", "Translation"], "answer": [0, 1, 2, 3], "explain": "Check lifecycle pages for exceptions."}, {"q": "What does aem.live recommend for new projects?", "options": ["Experience Workspace", "Universal Editor only", "Static site generators"], "answer": 0, "explain": "See module B6."}, {"q": "A multinational insurer already runs MSM and translation in AEM, with heavy workflows. They want EDS speed. What is the most suitable authoring route for now?", "options": ["Rewrite everything in Google Docs", "Stay on AEM authoring with Universal Editor, enable repoless, and validate features", "Use spreadsheets only", "Use folder mapping"], "answer": 1, "explain": "Keep working workflows, and verify each dependency.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b7-check"><script type="application/json">{"questions": [{"q": "Which file controls what a container allows?", "options": ["component-models.json", "sitemap.xml", "component-filters.json"], "answer": 2, "explain": "Filters control placement."}, {"q": "Which defines the fields?", "options": ["component-filters.json", "robots.txt", "component-models.json"], "answer": 2, "explain": "Models drive the panel."}, {"q": "Quick Publish is the same as which destination?", "options": ["Live", "Preview", "Neither"], "answer": 0, "explain": "See the docs."}, {"q": "What happens when a pre-publish check fails?", "options": ["It always publishes", "The page is deleted", "Publishing stops or the resource is excluded"], "answer": 2, "explain": "Most checks show an error."}, {"q": "What publishes assets to EDS?", "options": ["Google", "The visitor", "A technical account"], "answer": 2, "explain": "It needs folder access."}, {"q": "Which capabilities are stated as available? Choose all that apply.", "options": ["Translation", "Launches", "Workflows", "MSM"], "answer": [0, 1, 2, 3], "explain": "Check lifecycle pages for exceptions."}, {"q": "What does aem.live recommend for new projects?", "options": ["Universal Editor only", "Static site generators", "Experience Workspace"], "answer": 2, "explain": "See module B6."}, {"q": "A multinational insurer already runs MSM and translation in AEM, with heavy workflows. They want EDS speed. What is the most suitable authoring route for now?", "options": ["Use spreadsheets only", "Use folder mapping", "Stay on AEM authoring with Universal Editor, enable repoless, and validate features", "Rewrite everything in Google Docs"], "answer": 2, "explain": "Keep working workflows, and verify each dependency.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="b7-cards"><script type="application/json">{"cards": [["Universal Editor", "WYSIWYG editor for AEM-authored EDS sites."], ["Component", "What the editor calls a block."], ["component-definitions.json", "What can be added."], ["component-models.json", "What fields each has."], ["component-filters.json", "What each container allows."], ["Path mapping", "Maps AEM paths to public URLs."], ["Quick Publish", "Same effect as Live."], ["Manage Publication", "Offers destination and scheduling."], ["Live Copy", "MSM-synchronized copy of a source."], ["Taxonomy page", "Exposes tag descriptions."]]}</script></div>
+  <div data-component="flashcards" data-id="b7-cards"><script type="application/json">{"cards": [["Universal Editor", "WYSIWYG editor for AEM-authored EDS sites."], ["Component", "What the editor calls a block."], ["component-definition.json", "What can be added."], ["component-models.json", "What fields each has."], ["component-filters.json", "What each container allows."], ["Path mapping", "Maps AEM paths to public URLs."], ["Quick Publish", "Same effect as Live."], ["Manage Publication", "Offers destination and scheduling."], ["Live Copy", "MSM-synchronized copy of a source."], ["Taxonomy page", "Exposes tag descriptions."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">

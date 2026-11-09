@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C1 Environment setup · EDS Academy</title>
+<meta name="description" content="Module C1: choose a boilerplate, install AEM Code Sync and the AEM CLI, set up linting, and use branch previews.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c1-environment-setup.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C1 Environment setup · EDS Academy">
+<meta property="og:description" content="Module C1: choose a boilerplate, install AEM Code Sync and the AEM CLI, set up linting, and use branch previews.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c1-environment-setup.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C1">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Choose the right boilerplate.</li>
+    <li>Connect a repository with AEM Code Sync.</li>
+    <li>Develop locally with the AEM CLI.</li>
+    <li>Run the standard lint tools.</li>
+    <li>Use and troubleshoot branch URLs.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c1-ready" data-title="Ready for environment setup?">
+    <script type="application/json">{"questions": [{"q": "Where does code live in EDS?", "options": ["GitHub", "The CDN only", "The content source"], "answer": 0, "explain": "Covered in A2."}, {"q": "Which host shows previewed content?", "options": ["aem.live", "aem.page", "localhost"], "answer": 1, "explain": "Covered in A2."}, {"q": "Does EDS need a build step?", "options": ["Yes, always Vite", "Yes, always webpack", "No"], "answer": 2, "explain": "Covered in A3."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="boilerplates" data-level="1">
+  <h2>Boilerplates</h2>
+  <div data-part="why"><p>A new project should not begin with a blank repository. The boilerplate gives you a loading sequence that is already fast, so your job is not to break it.</p></div>
+  <div data-part="concept">
+    <p>Most projects start from <code>adobe/aem-boilerplate</code>, used as a GitHub template. It contains the loading scripts, base styles and starter blocks such as hero, cards, columns, header, footer and fragment. There is no build step: code runs directly from the repository.</p>
+    <p>Projects that author in AEM with the Universal Editor use a separate template, <code>adobe-rnd/aem-boilerplate-xwalk</code>, which adds component model files. aem.live recommends keeping repositories public, because everything in them is sent to browsers anyway.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+    Q{"Where is content authored?"}
+    Q --&gt;|Document Authoring, Word, Google Docs| B["adobe/aem-boilerplate"]
+    Q --&gt;|AEM with Universal Editor| X["adobe-rnd/aem-boilerplate-xwalk"]</pre>
+      <figcaption><b>What to notice:</b> the authoring choice decides the starting template.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>If content is authored in Document Authoring, Word or Google Docs, use adobe/aem-boilerplate. If it is authored in AEM with the Universal Editor, use adobe-rnd/aem-boilerplate-xwalk.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Starter</th><th>Adds</th></tr></thead>
+    <tbody>
+      <tr><td>aem-boilerplate</td><td>Loading scripts, base styles, starter blocks</td></tr>
+      <tr><td>aem-boilerplate-xwalk</td><td>The same ideas, plus component models and filters</td></tr>
+      <tr><td>aem-block-collection</td><td>A catalogue of reusable blocks to copy</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c1-t1"><script type="application/json">{"questions": [{"q": "A project authors in AEM with the Universal Editor. Which template fits?", "options": ["aem-boilerplate", "A blank repository", "aem-boilerplate-xwalk"], "answer": 2, "explain": "It includes the component model files."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Editor has no components to add</td><td>Started from the document boilerplate</td><td>Use the xwalk template for AEM authoring.</td></tr>
+      <tr><td>Team adds a bundler first</td><td>Habit from other platforms</td><td>Start buildless and justify any added step.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="aem-code-sync-github-app" data-level="1">
+  <h2>AEM Code Sync GitHub App</h2>
+  <div data-part="why"><p>Your site has no deployment pipeline to configure. A GitHub App notices each push, and that is what makes the code available.</p></div>
+  <div data-part="concept">
+    <p>Install the <b>AEM Code Sync</b> app on your repository. In its repository access settings, choose <em>Only select repositories</em>, select yours and save. From then on, each pushed branch is served automatically, and changes merged to <code>main</code> reach production.</p>
+    <p>The app also runs Google PageSpeed Insights on pull requests. GitHub Enterprise with IP filtering needs the app’s IP address added to its allow list.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    P["git push"] --&gt; A["AEM Code Sync"]
+    A --&gt; C["Code Bus, per branch"]
+    C --&gt; U["branch--repo--owner.aem.page"]</pre>
+      <figcaption><b>What to notice:</b> there is no separate build or deploy step between a push and a URL.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A git push is picked up by AEM Code Sync, which updates the Code Bus for that branch and makes it available on its branch URL.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <aside class="callout warning" data-label="Least privilege"><p>Choose <em>Only select repositories</em>, not <em>All repositories</em>, when you install the app. Grant it only what it needs.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c1-t2"><script type="application/json">{"questions": [{"q": "You merge a pull request to main. What happens next?", "options": ["The change reaches production automatically", "An Adobe engineer reviews it", "You must run a deploy job"], "answer": 0, "explain": "Code Sync deploys what is merged to main."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Branch URL returns 404</td><td>App not installed on this repository</td><td>Install it and select the repository.</td></tr>
+      <tr><td>Sync fails with enterprise GitHub</td><td>IP allow list</td><td>Allow the address listed in the tutorial.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="aem-cli-and-local-preview" data-level="1">
+  <h2>AEM CLI and local preview</h2>
+  <div data-part="why"><p>Waiting for a push to see a CSS change would ruin your afternoon. The CLI serves your local code with real content.</p></div>
+  <div data-part="concept">
+    <p>Install with <code>npm install -g @adobe/aem-cli</code>, then run <code>aem up</code> in your repository. It serves <code>http://localhost:3000</code>, reloads as files change, and fetches content from your site.</p>
+    <p>Use <code>--url</code> to develop against a specific site, which is essential for repoless projects. <code>--print-index</code> shows the index records for the current page, and <code>--forward-browser-logs</code> sends console output to your terminal.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    L["Local files: blocks, styles, scripts"] --&gt; S["aem up at localhost:3000"]
+    R["Remote content from .aem.page"] --&gt; S
+    S --&gt; B["Your browser"]</pre>
+      <figcaption><b>What to notice:</b> code is local, but content is remote.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Local blocks, styles and scripts combine with remote content from aem.page in the aem up server, which your browser opens at localhost port 3000.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Terminal" data-lang="bash">
+      <textarea class="src" hidden>npm install -g @adobe/aem-cli
+git clone https://github.com/acme/website
+cd website
+aem up
+
+# Another site that shares this code
+aem up --url https://main--brand-b--acme.aem.page</textarea>
+      <figcaption><b>Tip:</b> <code>--port</code> changes the port if 3000 is in use.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c1-t3"><script type="application/json">{"questions": [{"q": "A repoless site shows the wrong content locally. Which option helps?", "options": ["--no-open", "--url", "--log-level"], "answer": 1, "explain": "--url sets the content origin."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Local page has no content</td><td>Content has not been previewed</td><td>Preview the page, then reload.</td></tr>
+      <tr><td>Port conflict</td><td>Another server is on 3000</td><td>Use <code>--port</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="linting-and-editor" data-level="1">
+  <h2>Linting and editor</h2>
+  <div data-part="why"><p>Style arguments waste review time. The boilerplate settles them before you begin.</p></div>
+  <div data-part="concept">
+    <p>The boilerplate uses ESLint with the airbnb-base rules and Stylelint. <code>npm run lint</code> runs both, and <code>npm run lint:fix</code> corrects what it can. Its GitHub workflow runs lint on every push.</p>
+    <p>aem.live advises against changing the rules, even for preference, because that makes it harder to reuse code from the boilerplate and block collection. Install the ESLint and Stylelint editor extensions to see problems as you type.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="package.json (excerpt)" data-lang="json">
+      <textarea class="src" hidden>{
+  "scripts": {
+    "lint:js": "eslint .",
+    "lint:css": "stylelint \"blocks/**/*.css\" \"styles/*.css\"",
+    "lint": "npm run lint:js &amp;&amp; npm run lint:css",
+    "lint:fix": "npm run lint:js -- --fix &amp;&amp; npm run lint:css -- --fix"
+  }
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Tool</th><th>Checks</th></tr></thead>
+    <tbody>
+      <tr><td>ESLint (airbnb-base)</td><td>JavaScript</td></tr>
+      <tr><td>Stylelint</td><td>CSS in blocks and styles</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c1-t4"><script type="application/json">{"questions": [{"q": "You dislike a lint rule. What should you do?", "options": ["Follow it", "Disable it for the project", "Fork the boilerplate"], "answer": 0, "explain": "Shared rules keep code reusable."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>PR fails lint</td><td>Issues were not fixed locally</td><td>Run <code>npm run lint:fix</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="branch-previews" data-level="1">
+  <h2>Branch previews</h2>
+  <div data-part="why"><p>A reviewer needs to see your block in action. Every branch already has its own URL.</p></div>
+  <div data-part="concept">
+    <p>Each branch is served at <code>https://&lt;branch&gt;--&lt;repo&gt;--&lt;owner&gt;.aem.page/</code> for preview and <code>.aem.live</code> for published content. Content is shared by all branches, so your code runs against real pages.</p>
+    <p>The combined <code>branch--repo--owner</code> must not exceed 63 characters, and none of the three parts may contain <code>--</code>. Long branch names are the usual cause of a broken URL.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    M["main"] --&gt; U1["main--site--acme.aem.page"]
+    F["hero-fix"] --&gt; U2["hero-fix--site--acme.aem.page"]
+    C["Same content"] --&gt; U1
+    C --&gt; U2</pre>
+      <figcaption><b>What to notice:</b> branches differ in code, and share content.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The main and hero-fix branches each have their own URL, and both use the same content.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Branch</th><th>Valid?</th></tr></thead>
+    <tbody>
+      <tr><td><code>hero-fix</code></td><td>Yes</td></tr>
+      <tr><td><code>feature--hero</code></td><td>No: contains <code>--</code></td></tr>
+      <tr><td>A 60-character branch name</td><td>Probably no: over 63 in total</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c1-t5"><script type="application/json">{"questions": [{"q": "Why does feature--login have no URL?", "options": ["It is not merged", "Branch names cannot contain --", "Login is reserved"], "answer": 1, "explain": "The double dash separates URL parts."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Branch URL fails</td><td>Name too long or has <code>--</code></td><td>Rename the branch.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: project setup replay</h2>
+  <p>Step through a typical first day in the terminal.</p>
+  <div data-component="terminal-replay" data-title="Terminal replay of project setup"><script type="application/json">{"steps": [{"cmd": "npm install -g @adobe/aem-cli", "out": "added @adobe/aem-cli", "note": "Install the CLI once on your machine."}, {"cmd": "git clone https://github.com/acme/website", "out": "Cloning into 'website'...", "note": "The repository was created from the boilerplate, and has AEM Code Sync installed."}, {"cmd": "cd website && aem up", "out": "Local server started at http://localhost:3000", "note": "Output is abbreviated. Local code now renders with remote content."}, {"cmd": "git switch -c hero-fix", "out": "Switched to a new branch 'hero-fix'", "note": "Keep branch names short and without double dashes."}, {"cmd": "npm run lint", "out": "> eslint . && stylelint \"blocks/**/*.css\" \"styles/*.css\"", "note": "Fix lint problems before you open a pull request."}, {"cmd": "git push -u origin hero-fix", "out": "hero-fix -> hero-fix\n# Live at https://hero-fix--website--acme.aem.page", "note": "Code Sync serves the branch. Put this URL in the pull request."}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: create a site and open a pull request</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Go from an empty GitHub account to a reviewed branch URL.</p></div>
+    <div><h4>You need</h4><p>A GitHub account, Node.js and a code editor.</p></div>
+    <div><h4>Time</h4><p>About 60 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Create a repository</b> from <code>aem-boilerplate</code>.</div></li>
+    <li><div><b>Install AEM Code Sync</b> on only that repository.</div></li>
+    <li><div><b>Follow the developer tutorial</b> to connect content.</div></li>
+    <li><div><b>Run <code>aem up</code></b> and change a CSS value.</div></li>
+    <li><div><b>Create a branch</b> and push it.</div></li>
+    <li><div><b>Open the branch URL</b>.</div></li>
+    <li><div><b>Open a draft pull request</b> with the URL in its description.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A running branch URL and a draft pull request.</p></div>
+    <div><h4>How to verify</h4><p>The branch URL shows your change while main does not.</p></div>
+    <div><h4>Stretch</h4><p>Run <code>aem up --print-index</code> on a page and read the output.</p></div>
+  </div>
+  <ul class="checklist" data-id="c1-lab">
+    <li>Code Sync installed on one repository</li>
+    <li>Local server works</li>
+    <li>Lint passes</li>
+    <li>Branch URL works</li>
+    <li>Draft PR opened</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>CLI command not found</td><td>Global npm path</td><td>Check your npm global bin directory.</td></tr>
+      <tr><td>Styles do not update</td><td>Live reload disabled or cached</td><td>Reload, and check for <code>--no-livereload</code>.</td></tr>
+      <tr><td>404 on branch URL</td><td>Code Sync not installed</td><td>Install and select the repository.</td></tr>
+      <tr><td>URL is invalid</td><td>Name over 63 characters</td><td>Shorten the branch.</td></tr>
+      <tr><td>Lint fails in CI only</td><td>Different dependencies</td><td>Run <code>npm ci</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Repository settings.</b> Protect <code>main</code>, require reviews, and let administrators bypass only for emergencies.</p></aside>
+    <aside class="callout warning" data-label="Secrets"><p>Never put secrets in the repository. Every file can be served unless it is excluded, and code runs in the browser.</p></aside>
+    <aside class="callout performance"><p>The boilerplate begins at a high Lighthouse score. Check it on each change, so that you notice what lowered it.</p></aside>
+    <aside class="callout accessibility"><p>Add accessibility checks to your definition of done from your first block.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Repository visibility</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Branch protection</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Lint rules</td><td>Informed</td><td>Responsible</td><td>Consulted</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c1-check"><script type="application/json">{"questions": [{"q": "What serves each branch?", "options": ["AEM Code Sync", "A nightly job", "The author"], "answer": 0, "explain": "It observes the repository."}, {"q": "What does aem up start?", "options": ["A local development server", "An index rebuild", "A production deploy"], "answer": 0, "explain": "On port 3000 by default."}, {"q": "What does --url set?", "options": ["The port", "The Git remote", "The content origin"], "answer": 2, "explain": "Essential for repoless."}, {"q": "Which tools does the boilerplate lint with? Choose all that apply.", "options": ["ESLint", "Prettier only", "Stylelint"], "answer": [0, 2], "explain": "ESLint uses airbnb-base."}, {"q": "Max length of branch--repo--owner?", "options": ["255 characters", "32 characters", "63 characters"], "answer": 2, "explain": "It is a subdomain limit."}, {"q": "Why keep repositories public, according to aem.live?", "options": ["It makes pages faster", "GitHub requires it", "The code is served to browsers anyway"], "answer": 2, "explain": "And it supports the community."}, {"q": "Which app access option is right?", "options": ["Only select repositories", "All repositories", "No repositories"], "answer": 0, "explain": "Least privilege."}, {"q": "A developer wants to add a bundler on day one, for familiarity. What do you say?", "options": ["Rewrite the boilerplate", "Add it: it is always better", "Start buildless and add tools only with a measured need", "Commit build output by hand from now on"], "answer": 2, "explain": "EDS is designed to run directly from the repository.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c1-cards"><script type="application/json">{"cards": [["aem-boilerplate", "Starter template for document-based projects."], ["aem-boilerplate-xwalk", "Starter template for AEM authoring."], ["AEM Code Sync", "GitHub App that serves branches."], ["aem up", "Starts the local server."], ["--url", "Sets the content origin."], ["Branch URL", "branch--repo--owner.aem.page"], ["63 characters", "Limit on the combined subdomain."], ["npm run lint", "Runs ESLint and Stylelint."], ["lint:fix", "Fixes what it can."], ["Draft PR", "Signals work in progress."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C1 · Environment setup</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Start</h4><ul><li>Use a template</li><li>xwalk for AEM authoring</li><li>Keep it buildless</li></ul></div>
+      <div><h4>Connect</h4><ul><li>Install AEM Code Sync</li><li>Only select repositories</li></ul></div>
+      <div><h4>Local</h4><ul><li>npm i -g @adobe/aem-cli</li><li>aem up</li><li>--url for repoless</li></ul></div>
+      <div><h4>Quality</h4><ul><li>npm run lint</li><li>lint:fix</li><li>Do not change rules</li></ul></div>
+      <div><h4>Branches</h4><ul><li>branch--repo--owner</li><li>Max 63 characters</li><li>No double dashes</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/tutorial" rel="noopener" target="_blank">aem.live: Developer tutorial</a></li>
+    <li><a href="https://www.aem.live/developer/cli-reference" rel="noopener" target="_blank">aem.live: CLI reference</a></li>
+    <li><a href="https://www.aem.live/developer/anatomy-of-a-project" rel="noopener" target="_blank">aem.live: Anatomy of a project</a></li>
+    <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development collaboration and good practices</a></li>
+    <li><a href="https://github.com/adobe/aem-boilerplate" rel="noopener" target="_blank">GitHub: aem-boilerplate</a></li>
+    <li><a href="https://github.com/adobe-rnd/aem-boilerplate-xwalk" rel="noopener" target="_blank">GitHub: aem-boilerplate-xwalk</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

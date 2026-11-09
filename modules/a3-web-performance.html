@@ -42,10 +42,10 @@
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="a3-ready" data-title="Ready for performance?">
     <script type="application/json">{"questions":[
-      {"q":"Where does EDS do most of the work to turn a block table into a component?","options":["In the browser, with the block's JS and CSS","On the publish tier","In the CDN"],"answer":0,"explain":"Covered in A2: decoration happens client-side."},
-      {"q":"Which panel in browser DevTools lists every file a page downloads?","options":["Network","Elements","Sources"],"answer":0,"explain":"You will use the Network and Performance panels in this module's lab."},
-      {"q":"Which is a third-party script?","options":["Your blocks/cards/cards.js","A tag manager loaded from another company's host","styles.css"],"answer":1,"explain":"Third parties load from someone else's servers."}
-    ]}</script>
+    {"q": "Where does EDS do most of the work to turn a block table into a component?", "options": ["In the CDN", "In the browser, with the block's JS and CSS", "On the publish tier"], "answer": 1, "explain": "Covered in A2: decoration happens client-side."},
+    {"q": "Which panel in browser DevTools lists every file a page downloads?", "options": ["Network", "Elements", "Sources"], "answer": 0, "explain": "You will use the Network and Performance panels in this module's lab."},
+    {"q": "Which is a third-party script?", "options": ["Your blocks/cards/cards.js", "A tag manager loaded from another company's host", "styles.css"], "answer": 1, "explain": "Third parties load from someone else's servers."}
+  ]}</script>
   </div>
 </section>
 
@@ -125,7 +125,7 @@
     </div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a3-t2"><script type="application/json">{"questions":[{"q":"Your PR scores 100 on desktop and 93 on mobile. What happens?","options":["It passes; desktop is what counts","It fails; the bar is the mobile score","It passes if accessibility is 100"],"answer":1,"explain":"The check uses the mobile score, which is harder to achieve."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a3-t2"><script type="application/json">{"questions": [{"q": "Your PR scores 100 on desktop and 93 on mobile. What happens?", "options": ["It fails; the bar is the mobile score", "It passes; desktop is what counts", "It passes if accessibility is 100"], "answer": 0, "explain": "The check uses the mobile score, which is harder to achieve."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -280,7 +280,7 @@
     </div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a3-t4"><script type="application/json">{"questions":[{"q":"A team wants a complex, interactive loan comparison widget built in a framework. What is the EDS-friendly way?","options":["Load the framework in head.html for every page","Wrap it in one block and load it lazily, only where that block appears","Refuse; frameworks are forbidden"],"answer":1,"explain":"Isolate heavy code in a block, off the critical path."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a3-t4"><script type="application/json">{"questions": [{"q": "A team wants a complex, interactive loan comparison widget built in a framework. What is the EDS-friendly way?", "options": ["Wrap it in one block and load it lazily, only where that block appears", "Refuse; frameworks are forbidden", "Load the framework in head.html for every page"], "answer": 0, "explain": "Isolate heavy code in a block, off the critical path."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -349,7 +349,7 @@
     </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a3-t5"><script type="application/json">{"questions":[{"q":"Before LCP your page loads 40 KB of first-party code, a 70 KB hero image and a 30 KB font. What should change first?","options":["Preload the font so it arrives sooner","Move the font after LCP with a fallback, and serve a smaller hero rendition","Nothing, 140 KB is fine"],"answer":1,"explain":"Fonts belong after LCP, and the hero rendition is the biggest lever."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a3-t5"><script type="application/json">{"questions": [{"q": "Before LCP your page loads 40 KB of first-party code, a 70 KB hero image and a 30 KB font. What should change first?", "options": ["Preload the font so it arrives sooner", "Move the font after LCP with a fallback, and serve a smaller hero rendition", "Nothing, 140 KB is fine"], "answer": 1, "explain": "Fonts belong after LCP, and the hero rendition is the biggest lever."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -445,14 +445,14 @@
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
   <div data-component="quiz" data-id="a3-check"><script type="application/json">{"questions":[
-    {"q":"What is the Good threshold for LCP?","options":["2.5 seconds or less","4 seconds or less","1 second or less"],"answer":0,"explain":"Good LCP is 2.5 s or less; over 4 s is Poor."},
-    {"q":"Which metric measures responsiveness to taps and clicks?","options":["CLS","INP","LCP"],"answer":1,"explain":"Interaction to Next Paint."},
-    {"q":"Which Lighthouse score does the EDS pull-request check use?","options":["Desktop","Mobile","The average of both"],"answer":1,"explain":"Mobile, because it is harder to achieve."},
-    {"q":"What belongs in the eager phase?","options":["Everything needed to reach LCP","Analytics and consent","The footer"],"answer":0,"explain":"Eager is only what LCP needs."},
-    {"q":"According to aem.live, when should the delayed phase start?","options":["Immediately","At least three seconds after LCP","After the user scrolls"],"answer":1,"explain":"And newer boilerplates do not enforce it with a timer, so add one if needed."},
-    {"q":"Which statements match aem.live guidance? Choose all that apply.","options":["Keep payload before LCP below 100 KB","Preload web fonts","Only one host should carry payload before LCP","Preconnect to tag hosts early"],"answer":[0,2],"explain":"Preload and preconnect do not help LCP here and consume bandwidth."},
-    {"q":"Why do EDS projects avoid a build step?","options":["Builds are illegal in GitHub","Code runs as pushed, branches are reviewable instantly, and nothing extra lands before LCP","Browsers cannot run bundles"],"answer":1,"explain":"Simplicity and speed, not prohibition."},
-    {"q":"Marketing asks to add a chat widget, a heat-map tool and a new tag manager before the RRSP campaign. What do you do?","options":["Add them to head.html so they never miss a visit","Load them in delayed.js, verify the PR still scores 100, and get privacy sign-off","Refuse all third parties"],"answer":1,"explain":"Delayed phase, performance check, privacy review.","scenario":true}
+    {"q": "What is the Good threshold for LCP?", "options": ["1 second or less", "4 seconds or less", "2.5 seconds or less"], "answer": 2, "explain": "Good LCP is 2.5 s or less; over 4 s is Poor."},
+    {"q": "Which metric measures responsiveness to taps and clicks?", "options": ["LCP", "CLS", "INP"], "answer": 2, "explain": "Interaction to Next Paint."},
+    {"q": "Which Lighthouse score does the EDS pull-request check use?", "options": ["Desktop", "The average of both", "Mobile"], "answer": 2, "explain": "Mobile, because it is harder to achieve."},
+    {"q": "What belongs in the eager phase?", "options": ["Analytics and consent", "Everything needed to reach LCP", "The footer"], "answer": 1, "explain": "Eager is only what LCP needs."},
+    {"q": "According to aem.live, when should the delayed phase start?", "options": ["After the user scrolls", "Immediately", "At least three seconds after LCP"], "answer": 2, "explain": "And newer boilerplates do not enforce it with a timer, so add one if needed."},
+    {"q": "Which statements match aem.live guidance? Choose all that apply.", "options": ["Only one host should carry payload before LCP", "Keep payload before LCP below 100 KB", "Preload web fonts", "Preconnect to tag hosts early"], "answer": [0, 1], "explain": "Preload and preconnect do not help LCP here and consume bandwidth."},
+    {"q": "Why do EDS projects avoid a build step?", "options": ["Builds are illegal in GitHub", "Code runs as pushed, branches are reviewable instantly, and nothing extra lands before LCP", "Browsers cannot run bundles"], "answer": 1, "explain": "Simplicity and speed, not prohibition."},
+    {"q": "Marketing asks to add a chat widget, a heat-map tool and a new tag manager before the RRSP campaign. What do you do?", "options": ["Add them to head.html so they never miss a visit", "Load them in delayed.js, verify the PR still scores 100, and get privacy sign-off", "Refuse all third parties"], "answer": 1, "explain": "Delayed phase, performance check, privacy review.", "scenario": true}
   ]}</script></div>
 </section>
 

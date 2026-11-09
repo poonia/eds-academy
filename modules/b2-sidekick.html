@@ -41,7 +41,7 @@
     <li>Explain which roles each action requires.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="b2-ready" data-title="Ready for AEM Sidekick?">
-    <script type="application/json">{"questions": [{"q": "What is a block authored as?", "options": ["A table", "A comment", "A style"], "answer": 0, "explain": "Covered in B1."}, {"q": "Which host shows preview content?", "options": ["aem.page", "aem.live", "github.com"], "answer": 0, "explain": "aem.page is for review."}, {"q": "Do document saves appear on the site automatically?", "options": ["Yes", "No", "Only at night"], "answer": 1, "explain": "Preview and publish move content forward."}]}</script>
+    <script type="application/json">{"questions": [{"q": "What is a block authored as?", "options": ["A table", "A style", "A comment"], "answer": 0, "explain": "Covered in B1."}, {"q": "Which host shows preview content?", "options": ["aem.page", "aem.live", "github.com"], "answer": 0, "explain": "aem.page is for review."}, {"q": "Do document saves appear on the site automatically?", "options": ["No", "Only at night", "Yes"], "answer": 0, "explain": "Preview and publish move content forward."}]}</script>
   </div>
 </section>
 
@@ -75,7 +75,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b2-t1"><script type="application/json">{"questions": [{"q": "Which browser needs an extra setting before installing?", "options": ["Chrome", "Microsoft Edge", "Neither"], "answer": 1, "explain": "Edge must allow extensions from other stores."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b2-t1"><script type="application/json">{"questions": [{"q": "Which browser needs an extra setting before installing?", "options": ["Neither", "Microsoft Edge", "Chrome"], "answer": 1, "explain": "Edge must allow extensions from other stores."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -119,7 +119,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b2-t2"><script type="application/json">{"questions": [{"q": "A promotion ended but may return next year. What should you do?", "options": ["Delete", "Unpublish", "Rename the file"], "answer": 1, "explain": "Unpublish takes it off the site and keeps it on preview."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b2-t2"><script type="application/json">{"questions": [{"q": "A promotion ended but may return next year. What should you do?", "options": ["Rename the file", "Unpublish", "Delete"], "answer": 1, "explain": "Unpublish takes it off the site and keeps it on preview."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -152,7 +152,7 @@
     <aside class="callout tip"><p>Bulk preview first, spot-check with <em>Open URLs</em>, then bulk publish.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b2-t3"><script type="application/json">{"questions": [{"q": "How many files should you select at once in SharePoint to avoid problems?", "options": ["60 or fewer", "Up to 1,000", "Exactly 100"], "answer": 0, "explain": "Larger selections may not reach Sidekick."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b2-t3"><script type="application/json">{"questions": [{"q": "How many files should you select at once in SharePoint to avoid problems?", "options": ["60 or fewer", "Exactly 100", "Up to 1,000"], "answer": 0, "explain": "Larger selections may not reach Sidekick."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -191,7 +191,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b2-t4"><script type="application/json">{"questions": [{"q": "What must a library sheet name begin with?", "options": ["tools-", "helix-", "shared-"], "answer": 1, "explain": "The sheet name decides the plugin, for example helix-tags."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b2-t4"><script type="application/json">{"questions": [{"q": "What must a library sheet name begin with?", "options": ["helix-", "shared-", "tools-"], "answer": 0, "explain": "The sheet name decides the plugin, for example helix-tags."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -322,7 +322,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b2-check"><script type="application/json">{"questions": [{"q": "Where do you install Sidekick?", "options": ["Chrome Web Store", "npm", "GitHub"], "answer": 0, "explain": "It is a browser extension."}, {"q": "What does Publish copy to live?", "options": ["The current preview version", "The latest saved document", "Only images"], "answer": 0, "explain": "Live gets what is in preview."}, {"q": "What stays after Unpublish?", "options": ["The preview", "Nothing", "Only the live page"], "answer": 0, "explain": "The page remains on preview."}, {"q": "Which role can delete? Choose all that apply.", "options": ["publish", "author", "None, anyone can without signing in"], "answer": [0, 1], "explain": "And you must be signed in."}, {"q": "Bulk actions start from where?", "options": ["Google Drive or SharePoint", "The CDN", "GitHub"], "answer": 0, "explain": "Select files, then use Sidekick."}, {"q": "Which prefix do library sheets need?", "options": ["helix-", "lib-", "shared-"], "answer": 0, "explain": "For example helix-blocks."}, {"q": "By default, must authors sign in to preview?", "options": ["No", "Always", "Only on weekends"], "answer": 0, "explain": "Only after access statements are added."}, {"q": "A publisher published a page containing an unapproved rate 2 minutes ago. The content may be reused next quarter. What should they do first?", "options": ["Delete the page and the document", "Unpublish it, then correct the source", "Purge the CDN only", "Wait for the next deployment"], "answer": 1, "explain": "Unpublish removes it from the public site and keeps the page for correction.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b2-check"><script type="application/json">{"questions": [{"q": "Where do you install Sidekick?", "options": ["GitHub", "npm", "Chrome Web Store"], "answer": 2, "explain": "It is a browser extension."}, {"q": "What does Publish copy to live?", "options": ["Only images", "The current preview version", "The latest saved document"], "answer": 1, "explain": "Live gets what is in preview."}, {"q": "What stays after Unpublish?", "options": ["Only the live page", "Nothing", "The preview"], "answer": 2, "explain": "The page remains on preview."}, {"q": "Which role can delete? Choose all that apply.", "options": ["None, anyone can without signing in", "author", "publish"], "answer": [1, 2], "explain": "And you must be signed in."}, {"q": "Bulk actions start from where?", "options": ["Google Drive or SharePoint", "GitHub", "The CDN"], "answer": 0, "explain": "Select files, then use Sidekick."}, {"q": "Which prefix do library sheets need?", "options": ["lib-", "shared-", "helix-"], "answer": 2, "explain": "For example helix-blocks."}, {"q": "By default, must authors sign in to preview?", "options": ["No", "Always", "Only on weekends"], "answer": 0, "explain": "Only after access statements are added."}, {"q": "A publisher published a page containing an unapproved rate 2 minutes ago. The content may be reused next quarter. What should they do first?", "options": ["Delete the page and the document", "Purge the CDN only", "Unpublish it, then correct the source", "Wait for the next deployment"], "answer": 2, "explain": "Unpublish removes it from the public site and keeps the page for correction.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

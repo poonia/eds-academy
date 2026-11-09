@@ -795,7 +795,8 @@
     }
    ],
    "signature": "Terminal replay of project setup",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C2",
@@ -837,7 +838,8 @@
     }
    ],
    "signature": "Project file-tree explorer",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C3",
@@ -880,7 +882,8 @@
     }
    ],
    "signature": "Decoration pipeline step-through",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C4",
@@ -947,7 +950,8 @@
     }
    ],
    "signature": "Block builder playground",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C5",
@@ -994,7 +998,8 @@
     }
    ],
    "signature": "Design token editor and fallback-font CLS demo",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C6",
@@ -1047,7 +1052,8 @@
     }
    ],
    "signature": "Loading waterfall visualizer",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C7",
@@ -1105,7 +1111,8 @@
     }
    ],
    "signature": "Model JSON to properties-panel preview",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C8",
@@ -1153,7 +1160,8 @@
     }
    ],
    "signature": "Query-index playground",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C9",
@@ -1195,7 +1203,8 @@
     }
    ],
    "signature": "Martech timeline and consent state diagram",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C10",
@@ -1242,7 +1251,8 @@
     }
    ],
    "signature": "PR workflow and accessibility fix-it exercise",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C11",
@@ -1290,7 +1300,8 @@
     }
    ],
    "signature": "Admin API request builder",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "D1",

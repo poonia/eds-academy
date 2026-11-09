@@ -86,6 +86,36 @@ test('simulators respond to input', async ({ page }) => {
   await expect(form.locator('.sim-notes')).toContainText('needs Options');
 });
 
+test('developer simulators respond to input', async ({ page }) => {
+  await open(page, 'modules/c1-environment-setup.html');
+  const term = page.locator('[data-component="terminal-replay"]');
+  await term.getByRole('button', { name: 'Run next command' }).click();
+  await expect(term.locator('pre')).toContainText('npm install -g @adobe/aem-cli');
+
+  await open(page, 'modules/c4-building-blocks.html');
+  const play = page.locator('[data-component="block-playground"]');
+  await expect(play.locator('pre').last()).toContainText('<ul>');
+  await play.locator('select').selectOption('columns');
+  await expect(play.locator('pre').last()).toContainText('columns-2-cols');
+
+  await open(page, 'modules/c6-performance-engineering.html');
+  const fall = page.locator('[data-component="waterfall"]');
+  await expect(fall.locator('.feedback')).toContainText('Slower');
+  for (const box of await fall.locator('input[type=checkbox]').all()) await box.check();
+  await expect(fall.locator('.feedback')).toContainText('Within');
+
+  await open(page, 'modules/c7-ue-development.html');
+  const model = page.locator('[data-component="model-preview"]');
+  await expect(model.locator('.sim-notes')).toContainText('Field collapse');
+  await model.locator('.sim-text').fill('{');
+  await expect(model.locator('.sim-notes')).toContainText('Invalid JSON');
+
+  await open(page, 'modules/c11-advanced-tooling.html');
+  const admin = page.locator('[data-component="admin-request"]');
+  await admin.locator('select').selectOption('unpublish');
+  await expect(admin.locator('pre')).toContainText('-X DELETE');
+});
+
 test('a missing URL at any depth shows the styled 404 page', async ({ page }) => {
   const problems = watch(page);
   const response = await page.goto('/eds-academy/no/such/deep/page.html');

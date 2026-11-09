@@ -41,7 +41,7 @@
     <li>Use a pre-publish checklist.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="b8-ready" data-title="Ready for publishing workflow and quality?">
-    <script type="application/json">{"questions": [{"q": "Which host do reviewers use?", "options": ["aem.page", "aem.live", "localhost"], "answer": 0, "explain": "Covered in B2."}, {"q": "What does Update do?", "options": ["Refreshes the preview", "Publishes", "Deletes"], "answer": 0, "explain": "Covered in B2."}, {"q": "Where are title and description set?", "options": ["Metadata table", "A Cards block", "Nav"], "answer": 0, "explain": "Covered in B1."}]}</script>
+    <script type="application/json">{"questions": [{"q": "Which host do reviewers use?", "options": ["aem.page", "aem.live", "localhost"], "answer": 0, "explain": "Covered in B2."}, {"q": "What does Update do?", "options": ["Deletes", "Refreshes the preview", "Publishes"], "answer": 1, "explain": "Covered in B2."}, {"q": "Where are title and description set?", "options": ["Metadata table", "A Cards block", "Nav"], "answer": 0, "explain": "Covered in B1."}]}</script>
   </div>
 </section>
 
@@ -116,7 +116,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b8-t2"><script type="application/json">{"questions": [{"q": "Why keep main content in the page instead of a fragment?", "options": ["So it is in the initial HTML", "To make the page bigger", "To avoid metadata"], "answer": 0, "explain": "Search engines first read the initial HTML."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b8-t2"><script type="application/json">{"questions": [{"q": "Why keep main content in the page instead of a fragment?", "options": ["To avoid metadata", "To make the page bigger", "So it is in the initial HTML"], "answer": 2, "explain": "Search engines first read the initial HTML."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -149,7 +149,7 @@
     <aside class="callout accessibility"><p>Automated checks find only some problems. Pair them with keyboard and screen reader review on important pages.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b8-t3"><script type="application/json">{"questions": [{"q": "What is good alt text for a decorative flourish?", "options": ["Empty or marked decorative", "“Decorative image of flourish”", "The file name"], "answer": 0, "explain": "Decorative images need no description."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b8-t3"><script type="application/json">{"questions": [{"q": "What is good alt text for a decorative flourish?", "options": ["The file name", "“Decorative image of flourish”", "Empty or marked decorative"], "answer": 2, "explain": "Decorative images need no description."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -185,7 +185,7 @@ at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b8-t4"><script type="application/json">{"questions": [{"q": "You schedule “at 9:00 am” in the crontab sheet for a Toronto launch. What is the risk?", "options": ["Times are UTC, so it runs at the wrong local time", "Crontab does not exist", "It needs a new block"], "answer": 0, "explain": "Convert from local time to UTC."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b8-t4"><script type="application/json">{"questions": [{"q": "You schedule “at 9:00 am” in the crontab sheet for a Toronto launch. What is the risk?", "options": ["It needs a new block", "Times are UTC, so it runs at the wrong local time", "Crontab does not exist"], "answer": 1, "explain": "Convert from local time to UTC."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -225,7 +225,7 @@ at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b8-t5"><script type="application/json">{"questions": [{"q": "What makes a checklist work?", "options": ["It is short and used every time", "It has 200 items", "Only managers read it"], "answer": 0, "explain": "Length kills adoption."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b8-t5"><script type="application/json">{"questions": [{"q": "What makes a checklist work?", "options": ["It has 200 items", "It is short and used every time", "Only managers read it"], "answer": 1, "explain": "Length kills adoption."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -304,7 +304,7 @@ at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b8-check"><script type="application/json">{"questions": [{"q": "What do reviewers open?", "options": ["The aem.page URL", "The live site", "The Word file only"], "answer": 0, "explain": "Preview URLs exist for review."}, {"q": "Publishing a page publishes its fragment too. True or false?", "options": ["False", "True"], "answer": 0, "explain": "Shared resources are separate."}, {"q": "What creates canonical URLs by default?", "options": ["cdn.prod.host", "The author", "A redirect"], "answer": 0, "explain": "Set in site configuration."}, {"q": "Which help accessibility? Choose all that apply.", "options": ["Real headings", "Alt text", "Meaningful link text", "Colour as the only signal"], "answer": [0, 1, 2], "explain": "Colour alone excludes people."}, {"q": "Times in crontab are in?", "options": ["UTC", "Local time", "The author’s time zone"], "answer": 0, "explain": "Convert first."}, {"q": "Which tool sends approvers a link in Experience Workspace?", "options": ["Request Publish", "Bulk Operations", "Traverse"], "answer": 0, "explain": "It needs onboarding."}, {"q": "How should a blog and a regulated page differ in QA?", "options": ["The regulated page needs extra approval checks", "They should be identical", "The blog needs more"], "answer": 0, "explain": "Tailor by risk."}, {"q": "A campaign must launch at 9:00 Eastern on Monday, with legal sign-off on Friday. You author in Google Docs. What do you do?", "options": ["Publish Friday and hope", "Get sign-off on the preview, then use the scheduling service or an accurately converted UTC schedule", "Ask users to refresh at 9:00", "Publish at 9:00 from a phone with no plan"], "answer": 1, "explain": "Separate approval from timed release, and convert the time.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b8-check"><script type="application/json">{"questions": [{"q": "What do reviewers open?", "options": ["The Word file only", "The live site", "The aem.page URL"], "answer": 2, "explain": "Preview URLs exist for review."}, {"q": "Publishing a page publishes its fragment too. True or false?", "options": ["False", "True"], "answer": 0, "explain": "Shared resources are separate."}, {"q": "What creates canonical URLs by default?", "options": ["The author", "cdn.prod.host", "A redirect"], "answer": 1, "explain": "Set in site configuration."}, {"q": "Which help accessibility? Choose all that apply.", "options": ["Colour as the only signal", "Alt text", "Real headings", "Meaningful link text"], "answer": [1, 2, 3], "explain": "Colour alone excludes people."}, {"q": "Times in crontab are in?", "options": ["Local time", "UTC", "The author’s time zone"], "answer": 1, "explain": "Convert first."}, {"q": "Which tool sends approvers a link in Experience Workspace?", "options": ["Traverse", "Bulk Operations", "Request Publish"], "answer": 2, "explain": "It needs onboarding."}, {"q": "How should a blog and a regulated page differ in QA?", "options": ["They should be identical", "The regulated page needs extra approval checks", "The blog needs more"], "answer": 1, "explain": "Tailor by risk."}, {"q": "A campaign must launch at 9:00 Eastern on Monday, with legal sign-off on Friday. You author in Google Docs. What do you do?", "options": ["Publish Friday and hope", "Ask users to refresh at 9:00", "Get sign-off on the preview, then use the scheduling service or an accurately converted UTC schedule", "Publish at 9:00 from a phone with no plan"], "answer": 2, "explain": "Separate approval from timed release, and convert the time.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

@@ -41,7 +41,7 @@
     <li>Recognize auto-blocking and predict the URL of any file.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="b1-ready" data-title="Ready for page structure fundamentals?">
-    <script type="application/json">{"questions": [{"q": "Where do authors write in document-based authoring?", "options": ["Word or Google Docs", "GitHub", "The CDN"], "answer": 0, "explain": "Covered in A4."}, {"q": "What publishes a document?", "options": ["AEM Sidekick", "A pull request", "Saving the file"], "answer": 0, "explain": "Authors preview and publish with Sidekick."}, {"q": "Where does block code live?", "options": ["GitHub", "Each document", "The metadata sheet"], "answer": 0, "explain": "Code lives in the repository."}]}</script>
+    <script type="application/json">{"questions": [{"q": "Where do authors write in document-based authoring?", "options": ["GitHub", "Word or Google Docs", "The CDN"], "answer": 1, "explain": "Covered in A4."}, {"q": "What publishes a document?", "options": ["A pull request", "AEM Sidekick", "Saving the file"], "answer": 1, "explain": "Authors preview and publish with Sidekick."}, {"q": "Where does block code live?", "options": ["GitHub", "The metadata sheet", "Each document"], "answer": 0, "explain": "Code lives in the repository."}]}</script>
   </div>
 </section>
 
@@ -68,7 +68,7 @@
     <div data-component="hotspots" data-title="Default content in a document"><div class="hs-stage"><div class="doc-page"><h5 data-hotspot="Heading style" data-text="A real heading becomes an h1 to h6. Bold, large text stays a paragraph.">Save sooner with a TFSA</h5><p data-hotspot="Paragraph" data-text="Plain text becomes a p element and needs no block.">Grow your savings tax-free and withdraw when you need to.</p><p data-hotspot="Link" data-text="Enter the full URL of a page on your site. EDS adjusts same-site links to be relative."><u>Compare accounts</u></p></div></div></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b1-t1"><script type="application/json">{"questions": [{"q": "An author makes a line bold and 20 point so it looks like a heading. What will EDS output?", "options": ["An h2", "A paragraph", "A block"], "answer": 1, "explain": "Only a real heading style produces a heading element."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b1-t1"><script type="application/json">{"questions": [{"q": "An author makes a line bold and 20 point so it looks like a heading. What will EDS output?", "options": ["A block", "An h2", "A paragraph"], "answer": 2, "explain": "Only a real heading style produces a heading element."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -107,7 +107,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b1-t2"><script type="application/json">{"questions": [{"q": "A document has no section breaks. How many sections does it have?", "options": ["None", "One", "One per heading"], "answer": 1, "explain": "Content is always wrapped in a section."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b1-t2"><script type="application/json">{"questions": [{"q": "A document has no section breaks. How many sections does it have?", "options": ["One", "One per heading", "None"], "answer": 0, "explain": "Content is always wrapped in a section."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -139,7 +139,7 @@
     <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Cards</th></tr><tr><td>Flexible</td><td>Withdraw any time</td></tr><tr><td>Tax-free growth</td><td>No tax on gains</td></tr></table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b1-t3"><script type="application/json">{"questions": [{"q": "Which table turns into a block?", "options": ["Any table with a header colour", "A table whose first row holds the block name", "A table at the end of a page"], "answer": 1, "explain": "The first row names the block."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b1-t3"><script type="application/json">{"questions": [{"q": "Which table turns into a block?", "options": ["A table whose first row holds the block name", "A table at the end of a page", "Any table with a header colour"], "answer": 0, "explain": "The first row names the block."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -171,7 +171,7 @@
     <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Columns (dark, wide)</th></tr><tr><td>Left text</td><td>Right text</td></tr></table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b1-t4"><script type="application/json">{"questions": [{"q": "What does Hero (centered) add to the block?", "options": ["A centered class", "A new block named centered", "Inline CSS"], "answer": 0, "explain": "Parentheses become classes that code can style."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b1-t4"><script type="application/json">{"questions": [{"q": "What does Hero (centered) add to the block?", "options": ["A new block named centered", "A centered class", "Inline CSS"], "answer": 1, "explain": "Parentheses become classes that code can style."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -202,7 +202,7 @@
     <div class="doc-page"><p>Rates are reviewed weekly.</p><table class="blocktable"><tr><th colspan="2">Section Metadata</th></tr><tr><td>Style</td><td>highlight</td></tr></table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b1-t5"><script type="application/json">{"questions": [{"q": "Which row creates anchor links to a section?", "options": ["Style", "Id", "Anchor"], "answer": 1, "explain": "Id sets the section’s id attribute."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b1-t5"><script type="application/json">{"questions": [{"q": "Which row creates anchor links to a section?", "options": ["Id", "Style", "Anchor"], "answer": 0, "explain": "Id sets the section’s id attribute."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -235,7 +235,7 @@
     <div class="doc-page"><p>Page content above.</p><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Title</td><td>TFSA savings | Acme Bank</td></tr><tr><td>Description</td><td>Grow savings tax-free.</td></tr><tr><td>Template</td><td>product</td></tr></table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b1-t6"><script type="application/json">{"questions": [{"q": "Both a page Metadata table and the bulk metadata sheet set a title. Which wins?", "options": ["The page table", "The bulk sheet", "Whichever was published last"], "answer": 0, "explain": "Page-level metadata takes precedence over bulk metadata (module B3)."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b1-t6"><script type="application/json">{"questions": [{"q": "Both a page Metadata table and the bulk metadata sheet set a title. Which wins?", "options": ["Whichever was published last", "The bulk sheet", "The page table"], "answer": 2, "explain": "Page-level metadata takes precedence over bulk metadata (module B3)."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -273,7 +273,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b1-t7"><script type="application/json">{"questions": [{"q": "A hero appears on a page, but the document has no Hero table. What is the likely reason?", "options": ["An error", "Auto-blocking", "A cached old page"], "answer": 1, "explain": "Code can build blocks from default content and metadata."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b1-t7"><script type="application/json">{"questions": [{"q": "A hero appears on a page, but the document has no Hero table. What is the likely reason?", "options": ["Auto-blocking", "An error", "A cached old page"], "answer": 0, "explain": "Code can build blocks from default content and metadata."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -304,7 +304,7 @@
     <aside class="callout warning" data-label="Do not confuse with folder mapping"><p>The <em>folder mapping</em> feature, which serves one page for a whole range of URLs, is different. aem.live feature-flags it and warns against it for sites with SEO needs, because it creates an effectively infinite URL space that always returns 200.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b1-t8"><script type="application/json">{"questions": [{"q": "What URL does /Products/Home Loans get?", "options": ["/Products/Home Loans", "/products/home-loans", "/products/homeloans"], "answer": 1, "explain": "Lower case, with other characters replaced by a dash."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b1-t8"><script type="application/json">{"questions": [{"q": "What URL does /Products/Home Loans get?", "options": ["/Products/Home Loans", "/products/homeloans", "/products/home-loans"], "answer": 2, "explain": "Lower case, with other characters replaced by a dash."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -383,7 +383,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b1-check"><script type="application/json">{"questions": [{"q": "What is default content?", "options": ["Headings, text, lists, images and links", "Any block", "Only metadata"], "answer": 0, "explain": "It uses shared document semantics."}, {"q": "How do you add a section break?", "options": ["Three hyphens on their own line", "A page break", "Heading 6"], "answer": 0, "explain": "Three hyphens, or a horizontal line in Google Docs."}, {"q": "What identifies a block?", "options": ["The first row of a table", "A comment", "The file name"], "answer": 0, "explain": "Row one names the block."}, {"q": "What does Columns (dark) do?", "options": ["Adds a dark class", "Creates a new block", "Nothing, ever"], "answer": 0, "explain": "Variants add classes."}, {"q": "Which Section Metadata row becomes classes?", "options": ["Style", "Id", "Name"], "answer": 0, "explain": "Style becomes CSS classes."}, {"q": "Which become body classes in the boilerplate? Choose all that apply.", "options": ["template", "theme", "description"], "answer": [0, 1], "explain": "Description becomes a meta tag."}, {"q": "When does auto-blocking run?", "options": ["Early in decoration, before blocks load", "During publish", "After the footer loads"], "answer": 0, "explain": "It builds block structure before block loading."}, {"q": "Marketing wants a “New” banner on 200 product pages, and authors keep forgetting the table. What do you suggest?", "options": ["Add the table to all pages by hand", "Auto-block it from metadata or a template", "Nest it in another block", "Use folder mapping"], "answer": 1, "explain": "Code can create it consistently.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b1-check"><script type="application/json">{"questions": [{"q": "What is default content?", "options": ["Headings, text, lists, images and links", "Any block", "Only metadata"], "answer": 0, "explain": "It uses shared document semantics."}, {"q": "How do you add a section break?", "options": ["Heading 6", "A page break", "Three hyphens on their own line"], "answer": 2, "explain": "Three hyphens, or a horizontal line in Google Docs."}, {"q": "What identifies a block?", "options": ["A comment", "The first row of a table", "The file name"], "answer": 1, "explain": "Row one names the block."}, {"q": "What does Columns (dark) do?", "options": ["Adds a dark class", "Creates a new block", "Nothing, ever"], "answer": 0, "explain": "Variants add classes."}, {"q": "Which Section Metadata row becomes classes?", "options": ["Name", "Id", "Style"], "answer": 2, "explain": "Style becomes CSS classes."}, {"q": "Which become body classes in the boilerplate? Choose all that apply.", "options": ["description", "theme", "template"], "answer": [1, 2], "explain": "Description becomes a meta tag."}, {"q": "When does auto-blocking run?", "options": ["Early in decoration, before blocks load", "After the footer loads", "During publish"], "answer": 0, "explain": "It builds block structure before block loading."}, {"q": "Marketing wants a “New” banner on 200 product pages, and authors keep forgetting the table. What do you suggest?", "options": ["Auto-block it from metadata or a template", "Nest it in another block", "Add the table to all pages by hand", "Use folder mapping"], "answer": 0, "explain": "Code can create it consistently.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

@@ -42,10 +42,10 @@
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="a4-ready" data-title="Ready for authoring options?">
     <script type="application/json">{"questions":[
-      {"q":"Which content sources does EDS support? Choose the one that is NOT supported.","options":["SharePoint","Google Drive","Markdown files in GitHub"],"answer":2,"explain":"Covered in A2: GitHub markdown is no longer a supported source."},
-      {"q":"What does Preview do?","options":["Publishes straight to production","Pulls the latest content into the preview state on .aem.page","Deletes the page"],"answer":1,"explain":"Preview is the review gate before publish."},
-      {"q":"Where does block code live regardless of authoring option?","options":["In GitHub","In each document","In the CDN settings"],"answer":0,"explain":"Code is shared; authoring options only change where content is written."}
-    ]}</script>
+    {"q": "Which content sources does EDS support? Choose the one that is NOT supported.", "options": ["SharePoint", "Markdown files in GitHub", "Google Drive"], "answer": 1, "explain": "Covered in A2: GitHub markdown is no longer a supported source."},
+    {"q": "What does Preview do?", "options": ["Publishes straight to production", "Pulls the latest content into the preview state on .aem.page", "Deletes the page"], "answer": 1, "explain": "Preview is the review gate before publish."},
+    {"q": "Where does block code live regardless of authoring option?", "options": ["In the CDN settings", "In each document", "In GitHub"], "answer": 2, "explain": "Code is shared; authoring options only change where content is written."}
+  ]}</script>
   </div>
 </section>
 
@@ -82,7 +82,7 @@
     </div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a4-t1"><script type="application/json">{"questions":[{"q":"An author wants a second, differently styled part of the page. What do they add first?","options":["A section break (---)","A new document","A Heading 6"],"answer":0,"explain":"Sections divide a page; Section Metadata then styles them (module B1)."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a4-t1"><script type="application/json">{"questions": [{"q": "An author wants a second, differently styled part of the page. What do they add first?", "options": ["A section break (---)", "A Heading 6", "A new document"], "answer": 0, "explain": "Sections divide a page; Section Metadata then styles them (module B1)."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -133,7 +133,7 @@
     <aside class="callout verify"><p>On 8 November 2026 aem.live showed Experience Workspace at lifecycle stage 3, Increasing use, but no aem.live page we found states its support terms or SLA. Lifecycle stage is not a support commitment, so get the terms from Adobe in writing before an enterprise commitment.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a4-t2"><script type="application/json">{"questions":[{"q":"A business unit authors in AEM with the Universal Editor and wants Experience Workspace's AI canvas. What must happen?","options":["Nothing; it works on AEM content directly","Content would need to move to the EDS document-based repository","They need a new GitHub repo"],"answer":1,"explain":"aem.live says Experience Workspace only works with the document-based repository."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a4-t2"><script type="application/json">{"questions": [{"q": "A business unit authors in AEM with the Universal Editor and wants Experience Workspace's AI canvas. What must happen?", "options": ["Nothing; it works on AEM content directly", "Content would need to move to the EDS document-based repository", "They need a new GitHub repo"], "answer": 1, "explain": "aem.live says Experience Workspace only works with the document-based repository."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -150,6 +150,7 @@
   <div data-part="concept">
     <p>The Universal Editor is AEM's WYSIWYG editor: authors see a live preview and edit in place, guided by a properties panel with defined fields. It is structure-first: developers define component models and filters that control which fields exist and which blocks can go where.</p>
     <p>Content is stored in AEM as a Cloud Service and managed in the Sites console. When it is published, AEM renders the semantic HTML that EDS ingests and publishes it to Edge Delivery Services. While editing, AEM renders the page but pulls scripts, styles and icons from EDS, so authors see the real site. aem.live says AEM features such as workflows, MSM, translation and launches are available; its feature-lifecycle pages track any that are not yet, or only partly, available on the edge.</p>
+    <aside class="callout update"><p>aem.live’s Experience Workspace setup page recommends Experience Workspace over the Universal Editor for new projects. Existing Universal Editor projects need not change. Experience Workspace needs the EDS document-based repository, so teams that depend on content in AEM should compare the two carefully.</p></aside>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -183,7 +184,7 @@
     </div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a4-t3"><script type="application/json">{"questions":[{"q":"Where is content stored when authors use the Universal Editor for an EDS site?","options":["In Google Drive","In AEM as a Cloud Service","Only in the CDN"],"answer":1,"explain":"AEM is the system of record; EDS delivers what AEM publishes."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a4-t3"><script type="application/json">{"questions": [{"q": "Where is content stored when authors use the Universal Editor for an EDS site?", "options": ["In Google Drive", "Only in the CDN", "In AEM as a Cloud Service"], "answer": 2, "explain": "AEM is the system of record; EDS delivers what AEM publishes."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -245,7 +246,7 @@
     </div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a4-t4"><script type="application/json">{"questions":[{"q":"You need 300 branch-location pages that share a layout and pull hours from a system of record. What fits best?","options":["300 hand-written documents","Structured data rendered to EDS pages (Content Fragments or JSON2HTML)","A PDF per branch"],"answer":1,"explain":"Generate repetitive pages from structured data (module E5)."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a4-t4"><script type="application/json">{"questions": [{"q": "You need 300 branch-location pages that share a layout and pull hours from a system of record. What fits best?", "options": ["Structured data rendered to EDS pages (Content Fragments or JSON2HTML)", "A PDF per branch", "300 hand-written documents"], "answer": 0, "explain": "Generate repetitive pages from structured data (module E5)."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -294,7 +295,7 @@
     <aside class="callout enterprise"><p>For regulated financial content, the deciding factors are usually approvals and audit trails. Map them explicitly before choosing a lighter option.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a4-t5"><script type="application/json">{"questions":[{"q":"Wealth management publishes regulated product pages in four languages with legal approval on every change. Which option fits best?","options":["Google Docs","Universal Editor with AEM","Whichever the developers prefer"],"answer":1,"explain":"Approvals, translation and multi-site governance point to AEM."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a4-t5"><script type="application/json">{"questions": [{"q": "Wealth management publishes regulated product pages in four languages with legal approval on every change. Which option fits best?", "options": ["Whichever the developers prefer", "Google Docs", "Universal Editor with AEM"], "answer": 2, "explain": "Approvals, translation and multi-site governance point to AEM."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -360,7 +361,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a4-t6"><script type="application/json">{"questions":[{"q":"How many GitHub repositories do five repoless sites sharing one codebase need?","options":["Five","One, for the canonical site","None"],"answer":1,"explain":"Only the first site needs its own repository; the rest point to it through configuration."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a4-t6"><script type="application/json">{"questions": [{"q": "How many GitHub repositories do five repoless sites sharing one codebase need?", "options": ["None", "One, for the canonical site", "Five"], "answer": 1, "explain": "Only the first site needs its own repository; the rest point to it through configuration."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -384,7 +385,7 @@
       "q4":{"q":"Where do the authors work today?","options":[{"label":"Microsoft 365 or Google Workspace","next":"rDocs"},{"label":"They want a simple editor made for the web","next":"q5"}]},
       "q5":{"q":"Do they want visual layout editing or AI-assisted authoring on top of documents?","options":[{"label":"Yes","next":"rEW"},{"label":"No, a clean document editor is enough","next":"rDA"}]},
       "rUE":{"result":"Universal Editor with AEM Sites","why":"Approvals, structured fields, multi-site and translation come from AEM, while EDS delivers the pages. Define component models and filters early.","link":"#universal-editor-with-aem-sites","linkText":"Review topic 3"},
-      "rUEnew":{"result":"Universal Editor with AEM (plan the AEM investment)","why":"Your governance needs point to AEM. Weigh licence and setup effort against regulatory risk with your platform team.","link":"#choosing-an-option","linkText":"Review the criteria"},
+      "rUEnew":{"result":"Universal Editor with AEM (plan the AEM investment)","why":"Your governance needs point to AEM. Weigh licence and setup effort against regulatory risk with your platform team. aem.live’s Experience Workspace setup page recommends it over the Universal Editor for new projects, so compare both before you invest.","link":"#choosing-an-option","linkText":"Review the criteria"},
       "rEWverify":{"result":"Experience Workspace, after verifying support and workflow fit","why":"It adds scheduling and workflows on document-based content. Its Request Publish approval flow needs onboarding by Adobe. Confirm support terms and that the flow meets your compliance needs.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
       "rEW":{"result":"Experience Workspace","why":"Visual canvas, AI assistant and collaboration on the EDS document repository. Check current support terms before committing.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
       "rDA":{"result":"Document Authoring (da.live)","why":"A light, document-style CMS made for EDS, with versions, bulk operations and translation.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
@@ -458,14 +459,14 @@
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
   <div data-component="quiz" data-id="a4-check"><script type="application/json">{"questions":[
-    {"q":"In document-based authoring, what makes a table become a block?","options":["Its first row names the block","Its colour","Placing it last on the page"],"answer":0,"explain":"The first row holds the block name, which maps to blocks/<name>/."},
-    {"q":"What is Experience Workspace?","options":["A new CDN","The evolution of Document Authoring with a visual canvas and AI assistance","A replacement for GitHub"],"answer":1,"explain":"aem.live presents DA as Experience Workspace, enabled on existing DA projects."},
-    {"q":"Which repository does Experience Workspace work with?","options":["AEM Author","The EDS document-based repository","SharePoint only"],"answer":1,"explain":"Teams on AEM Author would have to move content."},
-    {"q":"With the Universal Editor, who renders the semantic HTML that EDS ingests on publish?","options":["AEM","The CDN","The author's browser"],"answer":0,"explain":"AEM renders semantic HTML for ingestion and publishes it to EDS."},
-    {"q":"Which can bring structured data into EDS pages? Choose all that apply.","options":["Content Fragments published as HTML","JSON2HTML","Retyping data into each page","The Content Fragment Editor's JSON"],"answer":[0,1,3],"explain":"Structured sources avoid retyping."},
-    {"q":"In repoless, which site needs its own GitHub repository?","options":["Every site","Only the canonical site","No site"],"answer":1,"explain":"Other sites point to the canonical code through configuration."},
-    {"q":"How many profiles can one site have in the configuration service?","options":["One","Up to three","Unlimited"],"answer":0,"explain":"A site has one profile; its own settings override the profile's."},
-    {"q":"A regional marketing team wants to publish campaign pages tomorrow using Google Docs, while the regulated product team stays on AEM. Both want the same design system. What do you propose?","options":["Force both onto AEM","Separate copies of the code for each","Two sites with different content sources sharing one codebase through repoless","Delay the campaign"],"answer":2,"explain":"Different sources, shared code and design system.","scenario":true}
+    {"q": "In document-based authoring, what makes a table become a block?", "options": ["Its colour", "Its first row names the block", "Placing it last on the page"], "answer": 1, "explain": "The first row holds the block name, which maps to blocks/<name>/."},
+    {"q": "What is Experience Workspace?", "options": ["The evolution of Document Authoring with a visual canvas and AI assistance", "A new CDN", "A replacement for GitHub"], "answer": 0, "explain": "aem.live presents DA as Experience Workspace, enabled on existing DA projects."},
+    {"q": "Which repository does Experience Workspace work with?", "options": ["SharePoint only", "AEM Author", "The EDS document-based repository"], "answer": 2, "explain": "Teams on AEM Author would have to move content."},
+    {"q": "With the Universal Editor, who renders the semantic HTML that EDS ingests on publish?", "options": ["The author's browser", "AEM", "The CDN"], "answer": 1, "explain": "AEM renders semantic HTML for ingestion and publishes it to EDS."},
+    {"q": "Which can bring structured data into EDS pages? Choose all that apply.", "options": ["The Content Fragment Editor's JSON", "JSON2HTML", "Content Fragments published as HTML", "Retyping data into each page"], "answer": [0, 1, 2], "explain": "Structured sources avoid retyping."},
+    {"q": "In repoless, which site needs its own GitHub repository?", "options": ["No site", "Only the canonical site", "Every site"], "answer": 1, "explain": "Other sites point to the canonical code through configuration."},
+    {"q": "How many profiles can one site have in the configuration service?", "options": ["Up to three", "One", "Unlimited"], "answer": 1, "explain": "A site has one profile; its own settings override the profile's."},
+    {"q": "A regional marketing team wants to publish campaign pages tomorrow using Google Docs, while the regulated product team stays on AEM. Both want the same design system. What do you propose?", "options": ["Delay the campaign", "Two sites with different content sources sharing one codebase through repoless", "Force both onto AEM", "Separate copies of the code for each"], "answer": 1, "explain": "Different sources, shared code and design system.", "scenario": true}
   ]}</script></div>
 </section>
 

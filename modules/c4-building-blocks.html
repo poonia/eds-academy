@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C4 Building blocks · EDS Academy</title>
+<meta name="description" content="Module C4: the block contract, reading authored content, variants, config blocks, common patterns, data blocks, the Block Collection, accessibility and web components.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c4-building-blocks.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C4 Building blocks · EDS Academy">
+<meta property="og:description" content="Module C4: the block contract, reading authored content, variants, config blocks, common patterns, data blocks, the Block Collection, accessibility and web components.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c4-building-blocks.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C4">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Create a block that follows the contract.</li>
+    <li>Read authored content robustly.</li>
+    <li>Add variants and configuration.</li>
+    <li>Build async and accessible blocks.</li>
+    <li>Decide when to reuse a block or a web component.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c4-ready" data-title="Ready for building blocks?">
+    <script type="application/json">{"questions": [{"q": "What is the first decoration step?", "options": ["decorateIcons", "loadFooter", "decorateButtons"], "answer": 0, "explain": "Covered in C3."}, {"q": "What is passed to a block’s default export?", "options": ["The block element", "The URL", "The whole document"], "answer": 0, "explain": "Covered in C3."}, {"q": "What do variant words become?", "options": ["URLs", "Classes", "Files"], "answer": 1, "explain": "Covered in B1."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="block-contract" data-level="1">
+  <h2>Block contract</h2>
+  <div data-part="why"><p>Blocks work because the contract is small. Break it and your block simply never loads.</p></div>
+  <div data-part="concept">
+    <p>A block named <code>cards</code> lives at <code>blocks/cards/</code>, with <code>cards.js</code> and <code>cards.css</code>. The JavaScript has a default export that receives the block element. It may be async.</p>
+    <p>All names must match exactly. The folder name comes from the first class on the block’s <code>div</code>, which comes from the authored name, lower-cased with dashes.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    A["Authored: Promo Cards"] --&gt; C["class: promo-cards"]
+    C --&gt; F["blocks/promo-cards/promo-cards.js"]
+    F --&gt; D["default decorate(block)"]</pre>
+      <figcaption><b>What to notice:</b> the name flows from the author’s table all the way to a file path.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An authored name of Promo Cards becomes the class promo-cards, which loads blocks/promo-cards/promo-cards.js and calls its default export.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="blocks/quote/quote.js" data-lang="javascript">
+      <textarea class="src" hidden>export default function decorate(block) {
+  const [quote, author] = block.querySelectorAll(':scope &gt; div &gt; div');
+  const figure = document.createElement('figure');
+  const text = document.createElement('blockquote');
+  text.append(...quote.childNodes);
+  const caption = document.createElement('figcaption');
+  caption.append(...author.childNodes);
+  figure.append(text, caption);
+  block.replaceChildren(figure);
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t1"><script type="application/json">{"questions": [{"q": "What must a block’s JavaScript provide?", "options": ["A class named Block", "A default export", "A global function"], "answer": 1, "explain": "loadBlock calls mod.default(block)."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Block is not decorated</td><td>Named export only</td><td>Use <code>export default</code>.</td></tr>
+      <tr><td>Module 404</td><td>Case or name mismatch</td><td>Use lower case with dashes.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="reading-content" data-level="1">
+  <h2>Reading content</h2>
+  <div data-part="why"><p>Authors change content. Code that assumes exact positions breaks the first time they do.</p></div>
+  <div data-part="concept">
+    <p><code>block.children</code> are rows, and each row’s children are cells. Reuse the elements the server delivered, rather than copying their text, so that links, images and emphasis survive.</p>
+    <p>aem.live notes that replacing a block with a client-rendered DOM is possible but not best practice. Decorate what is there. Be tolerant of empty cells and extra rows.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/cards/cards.js (from aem-boilerplate)" data-lang="javascript">
+      <textarea class="src" hidden>[...block.children].forEach((row) =&gt; {
+  const li = document.createElement('li');
+  while (row.firstElementChild) li.append(row.firstElementChild);
+  [...li.children].forEach((div) =&gt; {
+    if (div.children.length === 1 &amp;&amp; div.querySelector('picture')) div.className = 'cards-card-image';
+    else div.className = 'cards-card-body';
+  });
+  ul.append(li);
+});</textarea>
+      <figcaption><b>Note:</b> cells are moved, not re-created.</figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Fragile</th><th>Robust</th></tr></thead>
+    <tbody>
+      <tr><td><code>block.children[2].children[1]</code></td><td>Find by content, such as <code>picture</code></td></tr>
+      <tr><td><code>textContent</code> for rich text</td><td>Move the child nodes</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t2"><script type="application/json">{"questions": [{"q": "Why move child nodes rather than copying text?", "options": ["CSS requires it", "It is shorter", "Links and formatting survive"], "answer": 2, "explain": "Authored semantics stay intact."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Links vanish</td><td>Used <code>textContent</code></td><td>Move nodes.</td></tr>
+      <tr><td>Error on empty cell</td><td>No guard</td><td>Check before reading.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="variants" data-level="1">
+  <h2>Variants</h2>
+  <div data-part="why"><p>Authors ask for “the dark one”. Variants are the cheap way to say yes.</p></div>
+  <div data-part="concept">
+    <p>An authored <code>Columns (dark, wide)</code> gives the classes <code>columns dark wide</code>. Most variants are CSS only. Check <code>block.classList.contains()</code> only if behaviour changes.</p>
+    <p>Document each variant in the block library, and remove those nobody uses.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/columns/columns.css" data-lang="css">
+      <textarea class="src" hidden>.columns.dark {
+  background: var(--dark-color);
+  color: white;
+}
+
+.columns.wide &gt; div {
+  max-width: none;
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>Different look</td><td>Variant and CSS</td></tr>
+      <tr><td>Different behaviour</td><td>Variant checked in JS</td></tr>
+      <tr><td>Different content model</td><td>Probably a new block</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t3"><script type="application/json">{"questions": [{"q": "A variant only changes colours. Does it need JavaScript?", "options": ["Only on mobile", "Yes", "No"], "answer": 2, "explain": "A class selector is enough."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Variant has no effect</td><td>Selector specificity</td><td>Scope to <code>.block.variant</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="config-blocks" data-level="2">
+  <h2>Config blocks</h2>
+  <div data-part="why"><p>Some blocks hold settings rather than content. A two-column table reads naturally for authors.</p></div>
+  <div data-part="concept">
+    <p><code>readBlockConfig(block)</code> from <code>aem.js</code> turns name and value rows into an object. Names are converted to class-name form, and values become a link’s href, an image’s src or text, or arrays when there are several.</p>
+    <p>Clear the block when you have read it, and give each setting a sensible default.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/article-list/article-list.js" data-lang="javascript">
+      <textarea class="src" hidden>import { readBlockConfig } from '../../scripts/aem.js';
+
+export default async function decorate(block) {
+  const { source = '/query-index.json', limit = '6' } = readBlockConfig(block);
+  block.textContent = '';
+  // Fetch and render using source and limit.
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Article List</th></tr><tr><td>Source</td><td>/insights/query-index.json</td></tr><tr><td>Limit</td><td>6</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t4"><script type="application/json">{"questions": [{"q": "What does a row named “Max Items” become as a key?", "options": ["max-items", "Max Items", "maxItems"], "answer": 0, "explain": "readBlockConfig uses toClassName."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Config value is undefined</td><td>Accessed with a different key</td><td>Destructure <code>'max-items'</code> or rename it.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="common-patterns" data-level="2">
+  <h2>Common patterns</h2>
+  <div data-part="why"><p>Tabs, accordions and carousels have been solved. Do not reinvent their accessibility bugs.</p></div>
+  <div data-part="concept">
+    <p>Prefer native HTML: <code>details</code> for accordions, real <code>button</code> elements for controls. Use the <code>:scope</code> selector to limit queries to direct children. Use <code>createOptimizedPicture</code> when you re-render images, and do not make every image eager.</p>
+    <p>Add classes during decoration so that the CSS stays simple. aem.live advises decorating extra classes rather than writing complex selectors.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/accordion/accordion.js" data-lang="javascript">
+      <textarea class="src" hidden>export default function decorate(block) {
+  [...block.children].forEach((row) =&gt; {
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.append(...row.children[0].childNodes);
+    const body = row.children[1];
+    details.append(summary, body);
+    row.replaceWith(details);
+  });
+}</textarea>
+      <figcaption><b>Why it is good:</b> keyboard support and state come free.</figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Pattern</th><th>Native element first</th></tr></thead>
+    <tbody>
+      <tr><td>Accordion</td><td><code>details</code> and <code>summary</code></td></tr>
+      <tr><td>Modal</td><td><code>dialog</code></td></tr>
+      <tr><td>Tabs</td><td>Button elements and ARIA roles</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t5"><script type="application/json">{"questions": [{"q": "The best starting point for an accordion?", "options": ["A carousel library", "Clickable divs", "details and summary"], "answer": 2, "explain": "Native behaviour is accessible and needs little code."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Click-only control</td><td>Used a div</td><td>Use a <code>button</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="async-and-data-blocks" data-level="2">
+  <h2>Async and data blocks</h2>
+  <div data-part="why"><p>A list of articles needs data. Done poorly, it hurts every visitor; done well, nobody notices.</p></div>
+  <div data-part="concept">
+    <p>A block’s <code>decorate</code> can be async. Fetch JSON from the same origin, handle failure, and reserve space to avoid layout shift. Keep data blocks out of the first section where possible.</p>
+    <p>aem.live reserves client-side rendering for content that is not canonical to the page, such as blocks that list other pages. Observe when the block scrolls near if the data is heavy.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/article-list/article-list.js" data-lang="javascript">
+      <textarea class="src" hidden>export default async function decorate(block) {
+  const resp = await fetch('/query-index.json?limit=6');
+  if (!resp.ok) {
+    block.closest('.section').hidden = true;
+    return;
+  }
+  const { data } = await resp.json();
+  const ul = document.createElement('ul');
+  data.forEach(({ path, title }) =&gt; {
+    const a = document.createElement('a');
+    a.href = path;
+    a.textContent = title;
+    const li = document.createElement('li');
+    li.append(a);
+    ul.append(li);
+  });
+  block.replaceChildren(ul);
+}</textarea>
+      <figcaption><b>Note:</b> <code>textContent</code> keeps fetched data from being treated as HTML.</figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Do</th><th>Avoid</th></tr></thead>
+    <tbody>
+      <tr><td>Handle a failed response</td><td>Assuming data arrives</td></tr>
+      <tr><td>Same-origin JSON</td><td>Second origin before LCP</td></tr>
+      <tr><td>Reserve space</td><td>Content pop-in</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t6"><script type="application/json">{"questions": [{"q": "Why use textContent for fetched titles?", "options": ["To prevent HTML injection", "It is required by ESLint", "It looks better"], "answer": 0, "explain": "Treat data as text."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Layout jumps</td><td>No reserved height</td><td>Set <code>min-height</code>.</td></tr>
+      <tr><td>Section is empty on error</td><td>Unhandled failure</td><td>Hide it or show a message.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="block-collection-reuse" data-level="2">
+  <h2>Block Collection reuse</h2>
+  <div data-part="why"><p>Your project probably needs tabs. Adobe has already published some.</p></div>
+  <div data-part="concept">
+    <p>The <b>Block Collection</b> repository includes accordion, cards, carousel, columns, embed, form, fragment, header, footer, hero, modal, quote, search, table, tabs and video. Copy what you need into your project: it becomes your code.</p>
+    <p>The current boilerplate includes a <code>sync-block-collection.sh</code> script and a workflow to help with this. aem.live’s linting advice exists partly so that this reuse stays easy.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    C["Block Collection"] --&gt;|Copy| P["Your blocks folder"]
+    P --&gt; A["Adapt CSS to tokens"]
+    A --&gt; T["Test with real content"]</pre>
+      <figcaption><b>What to notice:</b> copying means you own and maintain it.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Copy a block from the Block Collection into your blocks folder, adapt its CSS to your tokens, and test with real content.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <aside class="callout tip"><p>Read the block’s content model first. Reuse only makes sense if it fits how your authors want to write.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t7"><script type="application/json">{"questions": [{"q": "After copying a block, who maintains it?", "options": ["Your team", "GitHub", "Adobe"], "answer": 0, "explain": "It is your code now."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Copied block looks off</td><td>Different tokens</td><td>Map it to your variables.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="topic" id="accessible-blocks" data-level="2">
+  <h2>Accessible blocks</h2>
+  <div data-part="why"><p>A beautiful block that a keyboard cannot use is broken. Fixing it later costs far more.</p></div>
+  <div data-part="concept">
+    <p>Keep semantic elements, and add ARIA only where HTML falls short. Make every control keyboard-reachable with visible focus. Announce state changes with <code>aria-expanded</code> and similar attributes.</p>
+    <p>aem.live suggests using ARIA attributes for styling: if the state is in <code>aria-expanded</code>, your CSS can use it too, and the two cannot drift apart. Every image needs alt text from authoring.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="Toggling state" data-lang="javascript">
+      <textarea class="src" hidden>button.setAttribute('aria-expanded', String(open));</textarea>
+      <figcaption><b>CSS:</b> <code>button[aria-expanded="true"] { … }</code></figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Check</th><th>How</th></tr></thead>
+    <tbody>
+      <tr><td>Keyboard</td><td>Tab, Enter, Space, Escape</td></tr>
+      <tr><td>Focus visible</td><td>No <code>outline: none</code> without a replacement</td></tr>
+      <tr><td>Name</td><td>Accessible name on each control</td></tr>
+      <tr><td>Motion</td><td>Respect <code>prefers-reduced-motion</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t8"><script type="application/json">{"questions": [{"q": "Which element should open a panel?", "options": ["span", "div with onclick", "button"], "answer": 2, "explain": "Buttons are focusable and announced."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Keyboard is trapped</td><td>No exit from a dialog</td><td>Close with Escape and restore focus.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="topic" id="web-components-in-blocks" data-level="4">
+  <h2>Web components in blocks</h2>
+  <div data-part="why"><p>A design system may ship web components. They can work on EDS, if you control their cost.</p></div>
+  <div data-part="concept">
+    <p>Web components combine custom elements, HTML templates and Shadow DOM. To use one, load its JavaScript and have your block generate the custom element. They can suit design systems shared across teams.</p>
+    <p>Mind the performance cost, particularly of large libraries, and do not load them before LCP without measuring. Remember that Shadow DOM isolates content from global styles.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="blocks/publication-time/publication-time.js" data-lang="javascript">
+      <textarea class="src" hidden>import { loadScript, getMetadata } from '../../scripts/aem.js';
+
+export default async function decorate(block) {
+  await loadScript('/scripts/lib/relative-time.js', { type: 'module' });
+  const el = document.createElement('relative-time');
+  el.setAttribute('datetime', getMetadata('published-time'));
+  block.replaceChildren(el);
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Fits</th><th>Does not fit</th></tr></thead>
+    <tbody>
+      <tr><td>Shared cross-team widget</td><td>Simple content styling</td></tr>
+      <tr><td>Below the fold</td><td>Hero in the first section</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t9"><script type="application/json">{"questions": [{"q": "What is the main risk of a large web component library?", "options": ["Payload and performance", "Git size", "Search ranking of CSS"], "answer": 0, "explain": "See aem.live’s performance concerns."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Global styles do not apply</td><td>Shadow DOM isolation</td><td>Pass values through custom properties.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: block builder playground</h2>
+  <p>Change the rows and the pattern, and compare the code with the result.</p>
+  <div data-component="block-playground" data-title="Block builder playground"><script type="application/json">{"name": "cards", "source": "Flexible | Withdraw any time\nTax-free growth | No tax on gains"}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: build, style and ship a block</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Build a production-quality quote block.</p></div>
+    <div><h4>You need</h4><p>A project, aem up and a page to test on.</p></div>
+    <div><h4>Time</h4><p>About 2 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Agree the content model</b> with an author.</div></li>
+    <li><div><b>Author the table</b> and preview it.</div></li>
+    <li><div><b>Create</b> <code>blocks/quote/quote.js</code> and <code>quote.css</code>.</div></li>
+    <li><div><b>Use semantic elements</b> and move the child nodes.</div></li>
+    <li><div><b>Add a <code>wide</code> variant</b> in CSS only.</div></li>
+    <li><div><b>Test</b> with empty cells and long text.</div></li>
+    <li><div><b>Check keyboard use</b> and Lighthouse.</div></li>
+    <li><div><b>Open a pull request</b> with a test URL.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A merged-quality block, with a test page.</p></div>
+    <div><h4>How to verify</h4><p>Lint passes, and the PR’s PageSpeed checks are green.</p></div>
+    <div><h4>Stretch</h4><p>Add the block to the Sidekick library.</p></div>
+  </div>
+  <ul class="checklist" data-id="c4-lab">
+    <li>Content model agreed</li>
+    <li>Decorate function works</li>
+    <li>Variant works</li>
+    <li>Handles odd content</li>
+    <li>Accessible and fast</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Block unstyled</td><td>CSS name mismatch</td><td>Match folder and file.</td></tr>
+      <tr><td>Changes leak to other blocks</td><td>Unscoped selectors</td><td>Prefix with the block class.</td></tr>
+      <tr><td>Hydration flicker</td><td>Replacing the DOM after display</td><td>Decorate rather than rebuild.</td></tr>
+      <tr><td>Fetch fails on preview</td><td>Wrong path</td><td>Use same-origin relative paths.</td></tr>
+      <tr><td>Lint rejects await in loop</td><td>Sequential fetches</td><td>Use <code>Promise.all</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Block governance.</b> Keep a catalogue with owners, content models and test pages.</p></aside>
+    <aside class="callout accessibility"><p>Block authors set the floor: native elements, keyboard support and focus.</p></aside>
+    <aside class="callout performance"><p>Keep JS small and defer heavy work. First-section blocks are on the path to LCP.</p></aside>
+    <aside class="callout warning" data-label="Injection"><p>Authored content and fetched JSON can contain unsafe strings. Avoid building HTML from them.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Content model</td><td>Responsible</td><td>Responsible</td><td>Consulted</td></tr>
+      <tr><td>Block code</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Library entry</td><td>Consulted</td><td>Responsible</td><td>Informed</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c4-check"><script type="application/json">{"questions": [{"q": "A block named Hero Banner loads which file?", "options": ["blocks/HeroBanner.js", "blocks/hero-banner/hero-banner.js", "hero.js"], "answer": 1, "explain": "Names are normalized."}, {"q": "What is block.children?", "options": ["The rows", "The sections", "The cells"], "answer": 0, "explain": "Each row’s children are cells."}, {"q": "Which function reads name and value rows?", "options": ["buildBlock", "decorateBlocks", "readBlockConfig"], "answer": 2, "explain": "It returns an object."}, {"q": "Is deconstructing a block into a client-rendered DOM best practice?", "options": ["Always in the hero", "Yes", "No"], "answer": 2, "explain": "aem.live says it is not best practice."}, {"q": "Which are in the Block Collection? Choose all that apply.", "options": ["carousel", "tabs", "datagrid", "modal"], "answer": [0, 1, 3], "explain": "See the repository."}, {"q": "Which element is best for an accordion?", "options": ["table", "marquee", "details"], "answer": 2, "explain": "It is native."}, {"q": "Which are web component standards? Choose all that apply.", "options": ["HTML templates", "Custom elements", "Shadow DOM", "Service Bus"], "answer": [0, 1, 2], "explain": "The first is the most relevant for AEM projects."}, {"q": "A team proposes one giant “Page” block with 30 settings, to save authors from learning blocks. What do you advise?", "options": ["Add 30 more settings", "Approve it: fewer blocks are simpler", "Use default content and focused blocks instead", "Nest all blocks in it"], "answer": 2, "explain": "Simple content models serve authors best.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c4-cards"><script type="application/json">{"cards": [["decorate(block)", "The block’s default export."], [":scope", "Limits queries to direct children."], ["readBlockConfig", "Name and value rows to an object."], ["Variant", "Class from parentheses."], ["createOptimizedPicture", "Builds responsive images."], ["Block Collection", "Reusable blocks to copy."], ["aria-expanded", "Announces open state."], ["Custom element", "A web component standard."], ["replaceChildren", "Swaps a block’s content."], ["textContent", "Safe way to set fetched text."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C4 · Building blocks</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Contract</h4><ul><li>blocks/name/name.js</li><li>export default decorate</li><li>Names match</li></ul></div>
+      <div><h4>Content</h4><ul><li>Rows, then cells</li><li>Move nodes</li><li>Tolerate gaps</li></ul></div>
+      <div><h4>Options</h4><ul><li>Variant = class</li><li>readBlockConfig</li></ul></div>
+      <div><h4>Data</h4><ul><li>Async is fine</li><li>Handle failure</li><li>Reserve space</li></ul></div>
+      <div><h4>Quality</h4><ul><li>Native elements</li><li>Keyboard</li><li>Small JS</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/markup-sections-blocks" rel="noopener" target="_blank">aem.live: Markup, sections, blocks and auto blocking</a></li>
+    <li><a href="https://www.aem.live/developer/block-collection" rel="noopener" target="_blank">aem.live: Block Collection</a></li>
+    <li><a href="https://www.aem.live/developer/web-components" rel="noopener" target="_blank">aem.live: Web Components</a></li>
+    <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development collaboration and good practices</a></li>
+    <li><a href="https://github.com/adobe/aem-block-collection" rel="noopener" target="_blank">GitHub: aem-block-collection</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

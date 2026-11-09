@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C11 Advanced developer tooling · EDS Academy</title>
+<meta name="description" content="Module C11: Sidekick customization, Admin API scripting, Experience Workspace apps and plugins, edge workers and shared code.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c11-advanced-tooling.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C11 Advanced developer tooling · EDS Academy">
+<meta property="og:description" content="Module C11: Sidekick customization, Admin API scripting, Experience Workspace apps and plugins, edge workers and shared code.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c11-advanced-tooling.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C11">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Add a Sidekick plugin and listen for events.</li>
+    <li>Script the Admin API safely.</li>
+    <li>Choose between an app and a library plugin.</li>
+    <li>Decide when to use an edge worker.</li>
+    <li>Run many sites from one codebase.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c11-ready" data-title="Ready for advanced developer tooling?">
+    <script type="application/json">{"questions": [{"q": "What is the Admin API host?", "options": ["admin.hlx.page", "api.github.com", "cdn.aem.live"], "answer": 0, "explain": "Covered in A2."}, {"q": "Which header carries a token?", "options": ["x-auth-token", "accept", "x-forwarded-for"], "answer": 0, "explain": "Covered in A2."}, {"q": "What does repoless share?", "options": ["Content", "Code", "Authors"], "answer": 1, "explain": "Covered in A4."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="sidekick-customization" data-level="3">
+  <h2>Sidekick customization</h2>
+  <div data-part="why"><p>Authors repeatedly need one project-specific action. A plugin puts it on their toolbar.</p></div>
+  <div data-part="concept">
+    <p>Customize Sidekick with a <code>sidekick</code> object in site configuration. Plugins have an <code>id</code>, a <code>title</code>, and options such as <code>environments</code> (<code>dev</code>, <code>edit</code>, <code>admin</code>, <code>preview</code>, <code>live</code>, <code>prod</code>, <code>any</code>) and <code>includePaths</code>.</p>
+    <p>A plugin can open a URL or fire a custom event. Sidekick also emits events such as <code>previewed</code>, <code>published</code> and <code>env-switched</code>, which project code can listen for.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="Sidekick configuration" data-lang="json">
+      <textarea class="src" hidden>{
+  "project": "My project",
+  "plugins": [
+    {
+      "id": "foo",
+      "title": "Foo",
+      "environments": ["preview"],
+      "url": "/tools/sidekick/foo.html"
+    }
+  ]
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="scripts/scripts.js" data-lang="javascript">
+      <textarea class="src" hidden>document.addEventListener('sidekick-ready', () =&gt; {
+  document.querySelector('aem-sidekick')
+    .addEventListener('published', ({ detail }) =&gt; {
+      console.log('published', detail);
+    });
+}, { once: true });</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c11-t1"><script type="application/json">{"questions": [{"q": "Which event fires when Sidekick is ready?", "options": ["sidekick-ready", "init", "loaded"], "answer": 0, "explain": "On document."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Plugin not shown</td><td><code>environments</code> excludes this view</td><td>Adjust it.</td></tr>
+      <tr><td>Listener never fires</td><td>Sidekick already loaded</td><td>Check for the element first.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="admin-api-scripting" data-level="3">
+  <h2>Admin API scripting</h2>
+  <div data-part="why"><p>Publishing 3,000 migrated pages by hand is not a plan.</p></div>
+  <div data-part="concept">
+    <p>The Admin API at <code>admin.hlx.page</code> supports status, preview, publish, code, cache, index, config, log and job operations. Authenticate with an API key in <code>X-Auth-Token</code> or <code>Authorization: token</code>. Create keys with only the roles needed.</p>
+    <p>Rate limits apply: handle <code>429</code> responses and back off. Bulk endpoints run as asynchronous jobs, and return a job link to poll.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="Publish with a pause" data-lang="bash">
+      <textarea class="src" hidden>while read -r p; do
+  curl -s -o /dev/null -w "%{http_code} $p\n" -X POST \
+    "https://admin.hlx.page/live/acme/website/main${p}" \
+    -H "x-auth-token: $AEM_API_KEY"
+  sleep 1
+done &lt; paths.txt</textarea>
+      <figcaption><b>Note:</b> keep the key in an environment variable.</figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>200</td><td>Done</td></tr>
+      <tr><td>202</td><td>Job scheduled</td></tr>
+      <tr><td>401</td><td>Not authenticated</td></tr>
+      <tr><td>403</td><td>Role lacks permission</td></tr>
+      <tr><td>429</td><td>Rate limited: slow down</td></tr>
+      <tr><td>503</td><td>Content source limit or timeout</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c11-t2"><script type="application/json">{"questions": [{"q": "You get a 429. What should your script do?", "options": ["Delete the page", "Back off and retry", "Retry immediately in a tight loop"], "answer": 1, "explain": "See Limits."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>403 on publish</td><td>Key lacks the role</td><td>Use a key with the <code>publish</code> role.</td></tr>
+      <tr><td>Key leaked</td><td>Committed to git</td><td>Revoke it and create a new one.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="da-apps-and-plugins" data-level="4">
+  <h2>DA apps and plugins</h2>
+  <div data-part="why"><p>Authors need a custom tool, with access to protected content.</p></div>
+  <div data-part="concept">
+    <p>The Experience Workspace App SDK lets you build <b>fullscreen apps</b> and <b>library plugins</b>. An app is a page and a script on your site, such as <code>/tools/tags.html</code> and <code>/tools/tags/tags.js</code>.</p>
+    <p>The SDK is based on the postMessage API and lets a tool work with protected content. Import <code>https://da.live/nx/utils/sdk.js</code> as a module.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="/tools/tags.html (excerpt)" data-lang="xml">
+      <textarea class="src" hidden>&lt;script src="https://da.live/nx/utils/sdk.js" type="module"&gt;&lt;/script&gt;
+&lt;script src="/tools/tags/tags.js" type="module"&gt;&lt;/script&gt;</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Type</th><th>Good for</th></tr></thead>
+    <tbody>
+      <tr><td>Fullscreen app</td><td>A first-class tool, such as an audit</td></tr>
+      <tr><td>Library plugin</td><td>Integrating into the editor’s library</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c11-t3"><script type="application/json">{"questions": [{"q": "Which browser API is the SDK based on?", "options": ["WebUSB", "postMessage", "WebRTC"], "answer": 1, "explain": "It passes messages securely."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>App gets no context</td><td>SDK not imported first</td><td>Import the SDK in the HTML.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="edge-workers" data-level="4">
+  <h2>Edge workers</h2>
+  <div data-part="why"><p>Some logic must run before the page, for all traffic, without slowing the origin.</p></div>
+  <div data-part="concept">
+    <p>If you bring your own CDN, its edge workers can handle live-traffic integrations such as protected APIs. Cloudflare is one documented option for connecting a CDN to EDS, and aem.live’s integration guide lists edge workers for live traffic and author-side tasks.</p>
+    <p>Keep them small and independent of slow backends, and cache carefully: varying a response by user reduces the cache hit rate. Personal data must not end up in shared cache.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    V["Visitor"] --&gt; W["Edge worker on your CDN"]
+    W --&gt; O["aem.live origin"]
+    W --&gt; A["Protected API"]</pre>
+      <figcaption><b>What to notice:</b> the worker sits in front of your origin, and can hold secrets.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visitor reaches an edge worker on your CDN, which calls the aem.live origin and a protected API.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Use for</th><th>Avoid for</th></tr></thead>
+    <tbody>
+      <tr><td>Protecting API keys</td><td>Rendering every page</td></tr>
+      <tr><td>Routing</td><td>Long-running work</td></tr>
+      <tr><td>Header logic</td><td>Per-user HTML in cache</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c11-t4"><script type="application/json">{"questions": [{"q": "What is the main caching risk?", "options": ["Too many headings", "Personal data in shared cache", "Too few fonts"], "answer": 1, "explain": "Separate personal responses from cached ones."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Cache hit rate falls</td><td>Too many variations</td><td>Reduce what the response varies by.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="shared-code-across-sites" data-level="4">
+  <h2>Shared code across sites</h2>
+  <div data-part="why"><p>Copies of a codebase drift apart. Repoless removes the copies.</p></div>
+  <div data-part="concept">
+    <p><b>Repoless</b> runs many sites from one codebase. All but the first site need no repository. <b>Profiles</b> group reusable configuration, such as headers, indexes and additional metadata, for several sites in an organization.</p>
+    <p>For local work, use <code>aem up --url</code> to choose a site. For publish events, aem.live has a webhook and audit log; its GitHub Actions publication events carry a deprecation notice. Be careful: a code merge reaches every site at once.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    R["One repository"] --&gt; A["Site A"]
+    R --&gt; B["Site B"]
+    P["Profile"] --&gt; A
+    P --&gt; B
+    CA["Content A"] --&gt; A
+    CB["Content B"] --&gt; B</pre>
+      <figcaption><b>What to notice:</b> code and profile are shared, while content is per site.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>One repository and one profile serve sites A and B, each with its own content.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Shared</th><th>Per site</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td>Content source</td></tr>
+      <tr><td>Profile values</td><td>Site overrides</td></tr>
+      <tr><td>Blocks</td><td>Metadata and access</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c11-t5"><script type="application/json">{"questions": [{"q": "Which sites need a GitHub repository in repoless?", "options": ["None", "All of them", "Only the first"], "answer": 2, "explain": "Others point to its code."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>One change breaks a brand</td><td>Shared blast radius</td><td>Test on each site’s content.</td></tr>
+      <tr><td>Wrong content locally</td><td>No <code>--url</code></td><td>Pass the site URL.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: Admin API request builder</h2>
+  <p>Choose an operation and details to see the curl command. Nothing is sent.</p>
+  <div data-component="admin-request" data-title="Admin API request builder"><script type="application/json">{}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: script a safe bulk preview</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Preview a list of pages with a key that has limited roles.</p></div>
+    <div><h4>You need</h4><p>A test site and an admin who can create a key.</p></div>
+    <div><h4>Time</h4><p>About 75 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Create an API key</b> with only the roles you need.</div></li>
+    <li><div><b>Store it</b> in an environment variable.</div></li>
+    <li><div><b>Check status</b> for one page.</div></li>
+    <li><div><b>Preview one page</b> and read the response.</div></li>
+    <li><div><b>Script a list</b> with a pause between calls.</div></li>
+    <li><div><b>Handle</b> <code>429</code> and other errors.</div></li>
+    <li><div><b>Rotate or delete</b> the key.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A safe script with error handling.</p></div>
+    <div><h4>How to verify</h4><p>Each page in your list shows a new preview timestamp.</p></div>
+    <div><h4>Stretch</h4><p>Use a bulk job endpoint and poll the job link.</p></div>
+  </div>
+  <ul class="checklist" data-id="c11-lab">
+    <li>Limited key</li>
+    <li>Key not in git</li>
+    <li>Errors handled</li>
+    <li>Key rotated</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>401</td><td>Missing or expired key</td><td>Check the header and expiry.</td></tr>
+      <tr><td>403</td><td>Insufficient role</td><td>Use the right role.</td></tr>
+      <tr><td>429</td><td>Rate limited</td><td>Slow down.</td></tr>
+      <tr><td>Sidekick config ignored</td><td>Not saved to site configuration</td><td>Update and reload.</td></tr>
+      <tr><td>Worker loops</td><td>Requests itself</td><td>Check the route.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Automation inventory.</b> List scripts, keys, owners and expiry dates.</p></aside>
+    <aside class="callout warning" data-label="Key management"><p>Keys are shown once, and expire. Store them in a secret manager and rotate them.</p></aside>
+    <aside class="callout accessibility"><p>Custom tools are used by authors with disabilities too. Apply the same standards.</p></aside>
+    <aside class="callout performance"><p>Do not load Sidekick-only code for visitors.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>API keys</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Sidekick plugins</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Edge workers</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c11-check"><script type="application/json">{"questions": [{"q": "Which header works for API keys? Choose all that apply.", "options": ["X-Auth-Token", "Authorization: token", "Cookie: key"], "answer": [0, 1], "explain": "See Admin API Keys."}, {"q": "Which code means a job was scheduled?", "options": ["202", "500", "200"], "answer": 0, "explain": "Bulk operations are asynchronous."}, {"q": "Who can create API keys?", "options": ["Visitors", "An admin role", "Anyone"], "answer": 1, "explain": "See permissions."}, {"q": "Which environment value means a folder view?", "options": ["admin", "edit", "dev"], "answer": 0, "explain": "SharePoint or Google Drive."}, {"q": "What is a library plugin for?", "options": ["Serving sitemaps", "Integrating into the editor’s library", "CDN routing"], "answer": 1, "explain": "Fullscreen apps are the other type."}, {"q": "What do profiles group?", "options": ["Images", "Reusable configuration", "Authors"], "answer": 1, "explain": "Headers, indexes, metadata."}, {"q": "What is the status of GitHub Actions publication events?", "options": ["The recommended default", "Carries a deprecation notice", "Mandatory"], "answer": 1, "explain": "Look at webhooks or the audit log."}, {"q": "A nightly script uses a personal admin token committed in the repo. What should happen?", "options": ["Make the repo private and keep the token", "Keep it, the repo is small", "Email the token to the team", "Revoke it, and use a stored, limited API key"], "answer": 3, "explain": "Treat it as compromised.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c11-cards"><script type="application/json">{"cards": [["sidekick-ready", "Sidekick has been added to the DOM."], ["environments", "Where a plugin appears."], ["Admin API", "Operations at admin.hlx.page."], ["API key", "Credential with roles and expiry."], ["429", "Rate limited."], ["Job", "An asynchronous bulk operation."], ["App SDK", "For Experience Workspace tools."], ["Library plugin", "Adds to the editor’s library."], ["Edge worker", "Logic on your CDN."], ["Profile", "Shared site configuration."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C11 · Advanced developer tooling</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Sidekick</h4><ul><li>sidekick in config</li><li>id and title</li><li>Listen for events</li></ul></div>
+      <div><h4>Admin API</h4><ul><li>x-auth-token</li><li>Limited keys</li><li>Handle 429</li></ul></div>
+      <div><h4>EW tools</h4><ul><li>App SDK</li><li>Fullscreen or library</li><li>postMessage</li></ul></div>
+      <div><h4>Edge</h4><ul><li>Your CDN</li><li>Hold secrets</li><li>Beware cache</li></ul></div>
+      <div><h4>Repoless</h4><ul><li>One repo</li><li>Profiles</li><li>aem up --url</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/sidekick-development" rel="noopener" target="_blank">aem.live: Extending the Sidekick</a></li>
+    <li><a href="https://www.aem.live/docs/admin.html" rel="noopener" target="_blank">aem.live: Admin API</a></li>
+    <li><a href="https://www.aem.live/docs/admin-apikeys" rel="noopener" target="_blank">aem.live: Admin API keys</a></li>
+    <li><a href="https://www.aem.live/docs/ew/developing/apps-plugins" rel="noopener" target="_blank">aem.live: Developing apps and plugins</a></li>
+    <li><a href="https://www.aem.live/developer/integrations" rel="noopener" target="_blank">aem.live: Building integrations</a></li>
+    <li><a href="https://www.aem.live/docs/repoless" rel="noopener" target="_blank">aem.live: Repoless</a></li>
+    <li><a href="https://www.aem.live/developer/webhook" rel="noopener" target="_blank">aem.live: Webhook</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

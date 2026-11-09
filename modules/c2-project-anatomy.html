@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C2 Project anatomy · EDS Academy</title>
+<meta name="description" content="Module C2: the folders of an Edge Delivery project, its core scripts and consent files, its stylesheets, and Universal Editor model files.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/c2-project-anatomy.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="C2 Project anatomy · EDS Academy">
+<meta property="og:description" content="Module C2: the folders of an Edge Delivery project, its core scripts and consent files, its stylesheets, and Universal Editor model files.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/c2-project-anatomy.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="C2">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Find any kind of code in a project.</li>
+    <li>Explain the job of each core script.</li>
+    <li>Put CSS in the right file.</li>
+    <li>Update Universal Editor model files correctly.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="c2-ready" data-title="Ready for project anatomy?">
+    <script type="application/json">{"questions": [{"q": "What runs aem up?", "options": ["A linter", "A deploy", "A local server"], "answer": 2, "explain": "Covered in C1."}, {"q": "Which phase handles third-party tags?", "options": ["Eager", "Delayed", "Lazy"], "answer": 1, "explain": "Covered in A3."}, {"q": "What is the Code Bus for?", "options": ["Configuration", "JavaScript and CSS", "Documents"], "answer": 1, "explain": "Covered in A2."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="folder-layout" data-level="1">
+  <h2>Folder layout</h2>
+  <div data-part="why"><p>Finding your way around an unfamiliar project should take minutes. Every EDS project has nearly the same shape.</p></div>
+  <div data-part="concept">
+    <p>Every file in the repository is available on your site at the matching path, so <code>/scripts/scripts.js</code> is served from each branch URL. Blocks live in <code>blocks/&lt;name&gt;/</code>, shared JavaScript in <code>scripts/</code>, CSS in <code>styles/</code>, and fonts and icons in their own folders.</p>
+    <p>A few files are special: <code>head.html</code>, <code>404.html</code> and <code>.hlxignore</code>. Site configuration now lives in the Configuration Service rather than in repository files, although older projects may still have them.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>blocks/</code></td><td>One folder per block</td></tr>
+      <tr><td><code>scripts/</code></td><td>Loading and shared logic</td></tr>
+      <tr><td><code>styles/</code></td><td>Global CSS</td></tr>
+      <tr><td><code>head.html</code></td><td>Injected into every head</td></tr>
+      <tr><td><code>.hlxignore</code></td><td>Files not to serve</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file=".hlxignore" data-lang="text">
+      <textarea class="src" hidden>.*
+*.md
+LICENSE
+package.json
+package-lock.json
+test/*</textarea>
+      <figcaption><b>Why:</b> repository files are served unless you exclude them.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c2-t1"><script type="application/json">{"questions": [{"q": "A file at /notes/plan.txt is in the repository. Is it served?", "options": ["Yes, unless excluded", "Never", "Only on main"], "answer": 0, "explain": "Use .hlxignore to exclude it."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Internal file reachable</td><td>Not excluded</td><td>Add it to <code>.hlxignore</code>.</td></tr>
+      <tr><td>Editing head.html for a tag</td><td>Using the wrong extension point</td><td>Load third parties in the delayed phase.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="core-scripts" data-level="1">
+  <h2>Core scripts: aem.js, scripts.js, delayed.js</h2>
+  <div data-part="why"><p>Almost every performance bug starts with code in the wrong file. Know what each one is for.</p></div>
+  <div data-part="concept">
+    <p><code>aem.js</code> is the shared library, and <code>scripts.js</code> is your entry point with the three phases. Older projects and many tutorials use <code>delayed.js</code> for the last phase.</p>
+    <p>The current boilerplate has no <code>delayed.js</code>. Its <code>loadDelayed()</code> imports <code>consent-check.js</code>, which loads <code>consented.js</code> once consent is granted. Check which pattern your project uses before adding code.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    H["head.html"] --&gt; A["aem.js"]
+    H --&gt; S["scripts.js"]
+    S --&gt; E["loadEager"]
+    E --&gt; L["loadLazy"]
+    L --&gt; D["loadDelayed"]
+    D --&gt; C["consent-check.js"]
+    C --&gt;|Consent given| O["consented.js"]</pre>
+      <figcaption><b>What to notice:</b> consent now gates third-party code by default.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>head.html loads aem.js and scripts.js. scripts.js runs loadEager, loadLazy and loadDelayed. loadDelayed imports consent-check.js, which loads consented.js if consent is given.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="scripts/scripts.js (from aem-boilerplate)" data-lang="javascript">
+      <textarea class="src" hidden>function loadDelayed() {
+  import('./consent-check.js');
+  // load anything that can be postponed to the latest here
+}
+
+async function loadPage() {
+  await loadEager(document);
+  await loadLazy(document);
+  loadDelayed();
+}
+
+loadPage();</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c2-t2"><script type="application/json">{"questions": [{"q": "Where should a new analytics tag go in the current boilerplate?", "options": ["aem.js", "head.html", "consented.js"], "answer": 2, "explain": "It loads only after consent."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Tutorial mentions a missing delayed.js</td><td>Older project layout</td><td>Use the current consent pattern, or create the file deliberately.</td></tr>
+      <tr><td>Upgrade conflicts</td><td>Project edits in <code>aem.js</code></td><td>Keep custom code in <code>scripts.js</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="styles" data-level="1">
+  <h2>Styles</h2>
+  <div data-part="why"><p>CSS that loads too early delays the page. CSS that loads too late makes it jump. The three global files exist to get that right.</p></div>
+  <div data-part="concept">
+    <p><code>styles.css</code> holds design tokens and critical styles, and is linked from <code>head.html</code>. <code>lazy-styles.css</code> is loaded during the lazy phase for anything not needed above the fold. <code>fonts.css</code> is loaded without blocking LCP, and a block’s CSS loads with the block.</p>
+    <p>The boilerplate is mobile first, with a <code>min-width</code> style breakpoint at 900 px for its type sizes.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>File</th><th>Loads</th><th>Contains</th></tr></thead>
+    <tbody>
+      <tr><td>styles.css</td><td>In head</td><td>Tokens, base layout</td></tr>
+      <tr><td>fonts.css</td><td>After LCP on most visits</td><td>@font-face rules</td></tr>
+      <tr><td>blocks/x/x.css</td><td>With the block</td><td>That block only</td></tr>
+      <tr><td>lazy-styles.css</td><td>Lazy phase</td><td>Everything non-critical</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout performance"><p>Keep <code>styles.css</code> small. Everything in it travels before LCP.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c2-t3"><script type="application/json">{"questions": [{"q": "Styles for a footer widget belong in?", "options": ["That block’s CSS file", "head.html", "styles.css"], "answer": 0, "explain": "Block CSS loads with the block."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Styles flash on load</td><td>Critical rule is in lazy styles</td><td>Move only what is needed above the fold.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="ue-model-files" data-level="2">
+  <h2>UE model files</h2>
+  <div data-part="why"><p>In AEM-authored projects, three JSON files decide what authors can do. They are code, and they deserve code review.</p></div>
+  <div data-part="concept">
+    <p>The xwalk boilerplate has <code>component-definition.json</code>, <code>component-models.json</code> and <code>component-filters.json</code> at the project root. They are generated from <code>models/_*.json</code> and fragments such as <code>blocks/hero/_hero.json</code>.</p>
+    <p>The <code>build:json</code> script merges them with <code>merge-json-cli</code>, and a Husky pre-commit hook runs this. Edit the fragments, not the generated files.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    F["blocks/hero/_hero.json"] --&gt; M["npm run build:json"]
+    S["models/_section.json"] --&gt; M
+    M --&gt; D["component-definition.json"]
+    M --&gt; O["component-models.json"]
+    M --&gt; R["component-filters.json"]</pre>
+      <figcaption><b>What to notice:</b> the root files are generated.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Fragments such as blocks/hero/_hero.json and models/_section.json are merged by npm run build:json into component-definition.json, component-models.json and component-filters.json.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Edit this</th><th>Not this</th></tr></thead>
+    <tbody>
+      <tr><td><code>blocks/hero/_hero.json</code></td><td><code>component-models.json</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c2-t4"><script type="application/json">{"questions": [{"q": "Your edit to component-models.json vanished after a commit. Why?", "options": ["It is generated from fragments", "AEM rejected it", "Git lost it"], "answer": 0, "explain": "Edit the block’s _name.json."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Block not in the editor</td><td>Merge step did not run</td><td>Run <code>npm run build:json</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: project file-tree explorer</h2>
+  <p>Select a file to see what it does and whether it is served.</p>
+  <div data-component="file-tree" data-title="Project file-tree explorer"><script type="application/json">{"files": [{"path": "head.html", "role": "Injected on the server into every page’s head. aem.live says it should stay largely unchanged, and advises against adding martech or inline scripts here.", "served": true}, {"path": "404.html", "role": "Custom response for any URL that matches no content or code.", "served": true}, {"path": ".hlxignore", "role": "Lists repository files that should not be served, in .gitignore format.", "served": false}, {"path": "scripts/aem.js", "role": "The shared library: block loading, section handling, createOptimizedPicture and more. Keep it unmodified so that upgrades stay simple.", "served": true}, {"path": "scripts/scripts.js", "role": "Your project’s entry point: decorateMain, loadEager, loadLazy, loadDelayed.", "served": true}, {"path": "scripts/consent-check.js", "role": "Imported in the delayed phase. Decides whether the visitor has consented. Ships as a dummy that declines.", "served": true}, {"path": "scripts/consented.js", "role": "Where analytics and other consent-dependent code goes. Loaded once consent is granted.", "served": true}, {"path": "styles/styles.css", "role": "Global tokens and critical styles, loaded in the head.", "served": true}, {"path": "styles/lazy-styles.css", "role": "Global styles that are not needed for LCP, loaded in the lazy phase.", "served": true}, {"path": "styles/fonts.css", "role": "Web font declarations, loaded so as not to block LCP.", "served": true}, {"path": "blocks/cards/cards.js", "role": "The default export decorate(block) turns the delivered markup into the finished block.", "served": true}, {"path": "blocks/cards/cards.css", "role": "Styles for this block only, loaded with it.", "served": true}, {"path": "fonts/roboto-regular.woff2", "role": "Self-hosted web font, served from the same origin.", "served": true}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: map a real project</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Trace how one page loads through a real repository.</p></div>
+    <div><h4>You need</h4><p>A clone of aem-boilerplate, and DevTools.</p></div>
+    <div><h4>Time</h4><p>About 40 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open <code>head.html</code></b> and list what it loads.</div></li>
+    <li><div><b>Open <code>scripts.js</code></b> and find the three phases.</div></li>
+    <li><div><b>Read <code>consent-check.js</code></b> and run a page with <code>?consent=accept</code>.</div></li>
+    <li><div><b>Open the Network panel</b> and match requests to files.</div></li>
+    <li><div><b>Write a <code>.hlxignore</code> entry</b> for a test file.</div></li>
+    <li><div><b>Confirm</b> the file is no longer served after you push.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A one-page diagram of what loads and when.</p></div>
+    <div><h4>How to verify</h4><p>Each request in the Network panel matches something in your diagram.</p></div>
+    <div><h4>Stretch</h4><p>Compare with the xwalk template and list the differences.</p></div>
+  </div>
+  <ul class="checklist" data-id="c2-lab">
+    <li>Traced head.html</li>
+    <li>Found the three phases</li>
+    <li>Tested the consent gate</li>
+    <li>Excluded a file</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Block CSS 404s</td><td>File name does not match the folder</td><td>Use <code>blocks/x/x.css</code>.</td></tr>
+      <tr><td>Script loads twice</td><td>Added to head and imported</td><td>Keep one entry point.</td></tr>
+      <tr><td>Consented code never runs</td><td>Dummy CMP declines by default</td><td>Implement a CMP (module C9).</td></tr>
+      <tr><td>Generated file conflicts</td><td>Merged by hand</td><td>Regenerate with <code>build:json</code>.</td></tr>
+      <tr><td>Internal docs public</td><td>Not in <code>.hlxignore</code></td><td>Exclude them.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Upgrades.</b> Keep project logic out of <code>aem.js</code>, and track boilerplate changes deliberately.</p></aside>
+    <aside class="callout warning" data-label="CSP"><p>The boilerplate head includes a Content Security Policy. Check it before adding inline scripts or third-party sources.</p></aside>
+    <aside class="callout performance"><p>Each file in the head is on the critical path. Change <code>head.html</code> rarely.</p></aside>
+    <aside class="callout accessibility"><p>Set the page language in your loading code when you support several languages.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>head.html changes</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Model files</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Consent gate</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="c2-check"><script type="application/json">{"questions": [{"q": "What is head.html?", "options": ["A sitemap", "A block", "Injected into each page’s head"], "answer": 2, "explain": "Combined on the server with metadata."}, {"q": "What does .hlxignore do?", "options": ["Hides pages from search", "Stops files being served", "Ignores CSS errors"], "answer": 1, "explain": "Same format as .gitignore."}, {"q": "Where is site configuration managed now?", "options": ["head.html", "The Configuration Service", "package.json"], "answer": 1, "explain": "Older projects may have files."}, {"q": "Which files come with the current boilerplate? Choose all that apply.", "options": ["consented.js", "delayed.js", "consent-check.js", "scripts.js"], "answer": [0, 2, 3], "explain": "delayed.js is an older pattern."}, {"q": "What is the boilerplate’s default consent?", "options": ["Accept", "Decline", "Ask the CDN"], "answer": 1, "explain": "A real CMP must replace it."}, {"q": "Where does a font-face rule go?", "options": ["aem.js", "head.html", "fonts.css"], "answer": 2, "explain": "It should not block LCP."}, {"q": "Which file do you edit for hero’s fields?", "options": ["hero.css", "blocks/hero/_hero.json", "component-models.json"], "answer": 1, "explain": "The root file is generated."}, {"q": "A marketer asks you to paste a tag manager snippet into head.html. What do you do?", "options": ["Load it in the delayed phase, behind consent", "Paste it at the top of head.html", "Inline it in every block", "Put it in aem.js"], "answer": 0, "explain": "aem.live strongly advises against martech in head.html.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="c2-cards"><script type="application/json">{"cards": [["head.html", "Server-injected into the head."], ["aem.js", "Shared library; leave it unmodified."], ["scripts.js", "Project entry point."], ["consent-check.js", "Gate for delayed scripts."], ["consented.js", "Consent-dependent code."], ["styles.css", "Critical global CSS."], ["lazy-styles.css", "Non-critical global CSS."], [".hlxignore", "Files that are not served."], ["_hero.json", "Per-block model fragment."], ["build:json", "Merges model fragments."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>C2 · Project anatomy</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Folders</h4><ul><li>blocks/name/</li><li>scripts/</li><li>styles/</li></ul></div>
+      <div><h4>Special files</h4><ul><li>head.html</li><li>404.html</li><li>.hlxignore</li></ul></div>
+      <div><h4>Phases</h4><ul><li>loadEager</li><li>loadLazy</li><li>loadDelayed</li></ul></div>
+      <div><h4>Consent</h4><ul><li>consent-check.js</li><li>consented.js</li><li>Declines by default</li></ul></div>
+      <div><h4>UE</h4><ul><li>_name.json fragments</li><li>build:json</li><li>Three root files</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/anatomy-of-a-project" rel="noopener" target="_blank">aem.live: Anatomy of a project</a></li>
+    <li><a href="https://www.aem.live/developer/cmp-integration" rel="noopener" target="_blank">aem.live: Adding a CMP</a></li>
+    <li><a href="https://www.aem.live/developer/component-model-definitions" rel="noopener" target="_blank">aem.live: Content modeling</a></li>
+    <li><a href="https://github.com/adobe/aem-boilerplate" rel="noopener" target="_blank">GitHub: aem-boilerplate</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

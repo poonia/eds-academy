@@ -10,8 +10,8 @@ Run mode: AGENT. This log is the resume point for later runs.
 | 0 | Foundation: CSS, runtime, 14 components, syllabus, glossary, home, start here, components page | Done (30 Oct 2026) |
 | 1 | Category A: A1–A4 | Done (30 Oct 2026) |
 | 2 | Category B: B1–B10 | Done (8 Nov 2026) |
-| 3 | Category C: C1–C11 | Next: set `START AT: PHASE 3` |
-| 4 | Category D: D1–D10 | Not started |
+| 3 | Category C: C1–C11 | Done (8 Nov 2026) |
+| 4 | Category D: D1–D10 | Next: set `START AT: PHASE 4` |
 | 5 | Category E: E1–E10 | Not started |
 | 6 | Capstones 1–4, level exams 1–4, final exam | Not started |
 | 7 | Path pages, full glossary page, cheat sheets page, resources page, search | Not started (search works now from the generated index) |
@@ -103,12 +103,30 @@ taken from pages that could be opened:
   form-sheet, traffic-split. B2, B6 and B7 use hotspots; B8 uses scorer.
 - Sources read 8 Nov 2026: aem.live docs and developer pages, adobe/aem-boilerplate,
   adobe/aem-block-collection, adobe/aem-experimentation.
-- Glossary extended to 75 terms. Module `asOf` in the syllabus overrides the global date.
+- Glossary extended to 75 terms (85 after Category C). Module `asOf` in the syllabus overrides the global date.
 - The labs have not been run against a real site, AEM sandbox or da.live project.
 - VERIFY: B6 library and starter documents; B6 support terms; B7 feature exceptions on lifecycle
   pages; B10 plugin access and form block columns; B3 taxonomy on document-based sites is a convention.
 - B7: aem.live recommends Experience Workspace over Universal Editor for new projects. A4's decision
   tree does not reflect that yet.
+
+### C1–C11 Category C (built 8 Nov 2026)
+- All 59 syllabus topics written. New components: terminal-replay, file-tree, block-playground,
+  token-editor, waterfall, model-preview, query-playground, a11y-fixit, admin-request.
+  C3 and C9 use stepper, C10 also uses order.
+- Sources read 8 Nov 2026: aem.live developer docs, adobe/aem-boilerplate,
+  adobe-rnd/aem-boilerplate-xwalk, adobe/aem-block-collection.
+- The current boilerplate has no `delayed.js`; C2, C6 and C9 teach `consent-check.js` and `consented.js`.
+- Waterfall and fallback-font figures are teaching models, and are labelled as such.
+- Code samples and labs have not been run against a real project or AEM sandbox.
+- VERIFY: C7 full field type list and UE extension points; C9 CSP changes for specific tags;
+  C11 edge worker options per CDN; C11 prerequisite D2 is not built yet.
+
+### Review of phases 1 and 2 (8 Nov 2026)
+- Quiz answers were not evenly positioned (B modules about 80% first option). Options are now
+  permuted statically in all modules; new pages get the same treatment at authoring time.
+- A4 now notes aem.live's recommendation of Experience Workspace for new projects.
+- B7 corrected to `component-definition.json`. All 65 external links resolved.
 
 ## Coverage matrix (built modules)
 
@@ -133,5 +151,5 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
 
 ## Next run
 
-Set `START AT: PHASE 3`. Write C1–C11 with the same template, add their glossary terms and `asOf`,
+Set `START AT: PHASE 4`. Write D1–D10 with the same template, add their glossary terms and `asOf`,
 flip `built` to true in `data/syllabus.json`, run `npm run check && npm test`, and update this log.

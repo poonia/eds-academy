@@ -42,10 +42,10 @@
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="a1-ready" data-title="Three quick questions">
     <script type="application/json">{"questions":[
-      {"q":"In traditional AEM, what usually sits between the publish tier and the CDN?","options":["The Dispatcher","The Sites console","A Content Fragment model"],"answer":0,"explain":"The Dispatcher caches and protects the AEM publish tier. Keep it in mind: EDS removes this layer."},
-      {"q":"What does a headless CMS deliver to the front end?","options":["Finished HTML pages","Structured content, usually JSON, through an API","Only images"],"answer":1,"explain":"Headless systems hand over data and leave rendering to a separate app."},
-      {"q":"Which metric family does Google use to judge real-user page experience?","options":["Core Web Vitals","Lighthouse categories only","Bounce rate"],"answer":0,"explain":"Core Web Vitals (LCP, CLS, INP). Module A3 covers them in depth."}
-    ]}</script>
+    {"q": "In traditional AEM, what usually sits between the publish tier and the CDN?", "options": ["The Dispatcher", "The Sites console", "A Content Fragment model"], "answer": 0, "explain": "The Dispatcher caches and protects the AEM publish tier. Keep it in mind: EDS removes this layer."},
+    {"q": "What does a headless CMS deliver to the front end?", "options": ["Only images", "Structured content, usually JSON, through an API", "Finished HTML pages"], "answer": 1, "explain": "Headless systems hand over data and leave rendering to a separate app."},
+    {"q": "Which metric family does Google use to judge real-user page experience?", "options": ["Core Web Vitals", "Bounce rate", "Lighthouse categories only"], "answer": 0, "explain": "Core Web Vitals (LCP, CLS, INP). Module A3 covers them in depth."}
+  ]}</script>
   </div>
 </section>
 
@@ -206,7 +206,7 @@
     </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a1-t3"><script type="application/json">{"questions":[{"q":"A team needs the same product data in a mobile app and on public product pages that must rank well in search. What is a sensible split?","options":["Headless only, render everything in a framework","EDS for the public pages, a headless API for the app","EDS only; the app scrapes the HTML"],"answer":1,"explain":"Use each tool for what it does best: EDS for fast, crawlable pages; APIs for app data."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a1-t3"><script type="application/json">{"questions": [{"q": "A team needs the same product data in a mobile app and on public product pages that must rank well in search. What is a sensible split?", "options": ["Headless only, render everything in a framework", "EDS only; the app scrapes the HTML", "EDS for the public pages, a headless API for the app"], "answer": 2, "explain": "Use each tool for what it does best: EDS for fast, crawlable pages; APIs for app data."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -250,7 +250,7 @@
     <p class="muted" style="font-size:15px">Use the <a href="#signature">EDS fit scorer</a> to score one of your own sites.</p>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a1-t4"><script type="application/json">{"questions":[{"q":"Which site is the best first pilot for EDS?","options":["The logged-in client portal","A public campaign microsite launching next quarter","The internal HR intranet with single sign-on everywhere"],"answer":1,"explain":"Public, content-led, time-boxed and speed-sensitive: low risk and visible results."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a1-t4"><script type="application/json">{"questions": [{"q": "Which site is the best first pilot for EDS?", "options": ["The internal HR intranet with single sign-on everywhere", "A public campaign microsite launching next quarter", "The logged-in client portal"], "answer": 1, "explain": "Public, content-led, time-boxed and speed-sensitive: low risk and visible results."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -292,7 +292,7 @@
     <aside class="callout verify"><p>Contract terms differ between customers and change over time. Confirm entitlements, traffic tiers and support levels with your Adobe account team before you commit to a plan.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a1-t5"><script type="application/json">{"questions":[{"q":"You want to learn EDS this weekend with no purchase order. What can you do?","options":["Nothing until a licence is signed","Follow the free developer tutorial on aem.live with a GitHub account","Request a Cloud Manager program from Adobe Support"],"answer":1,"explain":"Development access is free; licensing applies to production sites."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a1-t5"><script type="application/json">{"questions": [{"q": "You want to learn EDS this weekend with no purchase order. What can you do?", "options": ["Nothing until a licence is signed", "Follow the free developer tutorial on aem.live with a GitHub account", "Request a Cloud Manager program from Adobe Support"], "answer": 1, "explain": "Development access is free; licensing applies to production sites."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -342,7 +342,7 @@
     <aside class="callout update"><p>Document Authoring is now presented as Experience Workspace. On 8 November 2026 aem.live showed it at lifecycle stage 3, Increasing use. That stage describes adoption, not a support commitment, so get Adobe's support terms in writing before you plan around it (module A4).</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a1-t6"><script type="application/json">{"questions":[{"q":"A feature you like is listed as being in its first product version and may change significantly. What is the right enterprise stance?","options":["Build all new sites on it immediately","Pilot it with an exit plan and avoid hard dependencies","Ignore it until it is removed"],"answer":1,"explain":"Young features can change. Pilot them, but keep critical paths on Mainstream features."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a1-t6"><script type="application/json">{"questions": [{"q": "A feature you like is listed as being in its first product version and may change significantly. What is the right enterprise stance?", "options": ["Build all new sites on it immediately", "Pilot it with an exit plan and avoid hard dependencies", "Ignore it until it is removed"], "answer": 1, "explain": "Young features can change. Pilot them, but keep critical paths on Mainstream features."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -443,14 +443,14 @@
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
   <div data-component="quiz" data-id="a1-check"><script type="application/json">{"questions":[
-    {"q":"Which statement best describes Edge Delivery Services?","options":["A headless CMS that only returns JSON","An edge publishing and delivery service that serves semantic HTML from a CDN","A new name for the Dispatcher"],"answer":1,"explain":"EDS turns authored content into semantic HTML served at the edge."},
-    {"q":"What did hlx.live become?","options":["aem.live","adobe.live","edge.page"],"answer":0,"explain":"hlx.page and hlx.live became aem.page and aem.live."},
-    {"q":"How does new block code reach an EDS site?","options":["Through a Maven build and Cloud Manager pipeline","By pushing to GitHub, synced by AEM Code Sync","By uploading a package in CRX"],"answer":1,"explain":"Code lives in GitHub; each push updates the matching branch environment."},
-    {"q":"Which ways can EDS expose data to a block? Choose all that apply.","options":["Spreadsheets published as JSON","Content Fragments published as semantic HTML","The JSON2HTML overlay","Only by scraping other pages"],"answer":[0,1,2],"explain":"Sheets, Content Fragments and JSON2HTML all bring structured data into EDS."},
-    {"q":"What licence does a production EDS site need, according to aem.live?","options":["None","An AEM Sites licence","A separate Edge licence unrelated to AEM"],"answer":1,"explain":"EDS is part of AEM Sites; development access is free."},
-    {"q":"Which adoption-arc stage means a feature is fully productized and proven?","options":["Increasing use","Mainstream","Repeatable"],"answer":1,"explain":"Mainstream is where every feature should end up."},
-    {"q":"Which of these is the weakest EDS fit?","options":["Public mortgage product pages","A spring campaign microsite","A logged-in portal with per-user server rendering"],"answer":2,"explain":"Per-user, logged-in server logic gains least from edge delivery."},
-    {"q":"Your VP wants to move the entire public site plus the client portal to EDS in one release. What do you recommend?","options":["Agree: move everything at once","Start with a public pilot, keep the portal on its stack or plan a hybrid, and check feature dependencies","Refuse EDS entirely"],"answer":1,"explain":"Reduce risk with a public, content-led pilot and a hybrid for logged-in areas.","scenario":true}
+    {"q": "Which statement best describes Edge Delivery Services?", "options": ["A new name for the Dispatcher", "A headless CMS that only returns JSON", "An edge publishing and delivery service that serves semantic HTML from a CDN"], "answer": 2, "explain": "EDS turns authored content into semantic HTML served at the edge."},
+    {"q": "What did hlx.live become?", "options": ["edge.page", "aem.live", "adobe.live"], "answer": 1, "explain": "hlx.page and hlx.live became aem.page and aem.live."},
+    {"q": "How does new block code reach an EDS site?", "options": ["Through a Maven build and Cloud Manager pipeline", "By uploading a package in CRX", "By pushing to GitHub, synced by AEM Code Sync"], "answer": 2, "explain": "Code lives in GitHub; each push updates the matching branch environment."},
+    {"q": "Which ways can EDS expose data to a block? Choose all that apply.", "options": ["Only by scraping other pages", "The JSON2HTML overlay", "Spreadsheets published as JSON", "Content Fragments published as semantic HTML"], "answer": [1, 2, 3], "explain": "Sheets, Content Fragments and JSON2HTML all bring structured data into EDS."},
+    {"q": "What licence does a production EDS site need, according to aem.live?", "options": ["A separate Edge licence unrelated to AEM", "An AEM Sites licence", "None"], "answer": 1, "explain": "EDS is part of AEM Sites; development access is free."},
+    {"q": "Which adoption-arc stage means a feature is fully productized and proven?", "options": ["Mainstream", "Repeatable", "Increasing use"], "answer": 0, "explain": "Mainstream is where every feature should end up."},
+    {"q": "Which of these is the weakest EDS fit?", "options": ["A spring campaign microsite", "A logged-in portal with per-user server rendering", "Public mortgage product pages"], "answer": 1, "explain": "Per-user, logged-in server logic gains least from edge delivery."},
+    {"q": "Your VP wants to move the entire public site plus the client portal to EDS in one release. What do you recommend?", "options": ["Refuse EDS entirely", "Start with a public pilot, keep the portal on its stack or plan a hybrid, and check feature dependencies", "Agree: move everything at once"], "answer": 1, "explain": "Reduce risk with a public, content-led pilot and a hybrid for logged-in areas.", "scenario": true}
   ]}</script></div>
 </section>
 
