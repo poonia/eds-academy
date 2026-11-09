@@ -120,7 +120,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c4-t2"><script type="application/json">{"questions": [{"q": "Why move child nodes rather than copying text?", "options": ["CSS requires it", "It is shorter", "Links and formatting survive"], "answer": 2, "explain": "Authored semantics stay intact."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c4-t2"><script type="application/json">{"questions": [{"q": "Why move child nodes rather than copying text?", "options": ["CSS requires it", "It keeps the CSS selectors shorter and easier to lint", "Links and formatting survive"], "answer": 2, "explain": "Authored semantics stay intact."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -287,7 +287,7 @@ export default async function decorate(block) {
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c4-t6"><script type="application/json">{"questions": [{"q": "Why use textContent for fetched titles?", "options": ["To prevent HTML injection", "It is required by ESLint", "It looks better"], "answer": 0, "explain": "Treat data as text."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c4-t6"><script type="application/json">{"questions": [{"q": "Why use textContent for fetched titles?", "options": ["To prevent HTML injection", "It is required by ESLint", "innerHTML is not allowed in block code"], "answer": 0, "explain": "Treat data as text."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -393,7 +393,7 @@ export default async function decorate(block) {
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c4-t9"><script type="application/json">{"questions": [{"q": "What is the main risk of a large web component library?", "options": ["Payload and performance", "Git size", "Search ranking of CSS"], "answer": 0, "explain": "See aem.live’s performance concerns."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c4-t9"><script type="application/json">{"questions": [{"q": "What is the main risk of a large web component library?", "options": ["Payload and performance", "Git size", "Longer clone times for the Git repository"], "answer": 0, "explain": "See aem.live’s performance concerns."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -473,7 +473,7 @@ export default async function decorate(block) {
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c4-check"><script type="application/json">{"questions": [{"q": "A block named Hero Banner loads which file?", "options": ["blocks/HeroBanner.js", "blocks/hero-banner/hero-banner.js", "hero.js"], "answer": 1, "explain": "Names are normalized."}, {"q": "What is block.children?", "options": ["The rows", "The sections", "The cells"], "answer": 0, "explain": "Each row’s children are cells."}, {"q": "Which function reads name and value rows?", "options": ["buildBlock", "decorateBlocks", "readBlockConfig"], "answer": 2, "explain": "It returns an object."}, {"q": "Is deconstructing a block into a client-rendered DOM best practice?", "options": ["Always in the hero", "Yes", "No"], "answer": 2, "explain": "aem.live says it is not best practice."}, {"q": "Which are in the Block Collection? Choose all that apply.", "options": ["carousel", "tabs", "datagrid", "modal"], "answer": [0, 1, 3], "explain": "See the repository."}, {"q": "Which element is best for an accordion?", "options": ["table", "marquee", "details"], "answer": 2, "explain": "It is native."}, {"q": "Which are web component standards? Choose all that apply.", "options": ["HTML templates", "Custom elements", "Shadow DOM", "Service Bus"], "answer": [0, 1, 2], "explain": "Custom elements are the most relevant for AEM projects."}, {"q": "A team proposes one giant “Page” block with 30 settings, to save authors from learning blocks. What do you advise?", "options": ["Add 30 more settings", "Approve it: fewer blocks are simpler", "Use default content and focused blocks instead", "Nest all blocks in it"], "answer": 2, "explain": "Simple content models serve authors best.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c4-check"><script type="application/json">{"questions": [{"q": "A block named Hero Banner loads which file?", "options": ["blocks/HeroBanner.js", "blocks/hero-banner/hero-banner.js", "blocks/hero-banner/hero-banner-decorate.js"], "answer": 1, "explain": "Names are normalized."}, {"q": "What is block.children?", "options": ["The rows", "The sections", "The cells"], "answer": 0, "explain": "Each row’s children are cells."}, {"q": "Which function reads name and value rows?", "options": ["buildBlock", "decorateBlocks", "readBlockConfig"], "answer": 2, "explain": "It returns an object."}, {"q": "Is deconstructing a block into a client-rendered DOM best practice?", "options": ["Always in the hero", "Yes", "No"], "answer": 2, "explain": "aem.live says it is not best practice."}, {"q": "Which are in the Block Collection? Choose all that apply.", "options": ["carousel", "tabs", "datagrid", "modal"], "answer": [0, 1, 3], "explain": "See the repository."}, {"q": "Which element is best for an accordion?", "options": ["table", "marquee", "details"], "answer": 2, "explain": "It is native."}, {"q": "Which are web component standards? Choose all that apply.", "options": ["HTML templates", "Custom elements", "Shadow DOM", "Service Bus"], "answer": [0, 1, 2], "explain": "Custom elements are the most relevant for AEM projects."}, {"q": "A team proposes one giant “Page” block with 30 settings, to save authors from learning blocks. What do you advise?", "options": ["Add 30 more settings", "Approve it, since fewer blocks are simpler for authors to learn and for developers to maintain", "Use default content and focused blocks instead", "Nest all blocks in it"], "answer": 2, "explain": "Simple content models serve authors best.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

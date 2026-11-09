@@ -106,7 +106,7 @@
     <aside class="callout tip"><p>If a variant appears on under 1% of pages, ask whether it can be dropped.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d6-t2"><script type="application/json">{"questions": [{"q": "The old site has 40 components. What is a good aim?", "options": ["Far fewer blocks, with more default content", "Exactly 40 blocks", "One block for each page"], "answer": 0, "explain": "Simplify the model during migration."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d6-t2"><script type="application/json">{"questions": [{"q": "The old site has 40 components. What is a good aim?", "options": ["Far fewer blocks, with more default content", "Exactly 40 blocks, so each old component keeps its name", "One block for each page"], "answer": 0, "explain": "Simplify the model during migration."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -153,7 +153,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d6-t3"><script type="application/json">{"questions": [{"q": "Bulk import crashes after about 80 pages of a heavy single-page app. What can you try first?", "options": ["Use Firefox", "Disable JavaScript execution if the content is in the markup", "Add a CDN"], "answer": 1, "explain": "Those pages may not release memory."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d6-t3"><script type="application/json">{"questions": [{"q": "Bulk import crashes after about 80 pages of a heavy single-page app. What can you try first?", "options": ["Run the import in Firefox, as the importer is more stable there with heavy pages", "Disable JavaScript execution if the content is in the markup", "Add a CDN"], "answer": 1, "explain": "Those pages may not release memory."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -187,7 +187,7 @@
     <aside class="callout warning" data-label="Home-page redirects"><p>Do not redirect every retired URL to the home page. Search engines may treat those as soft 404s, and visitors do not get what they wanted.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d6-t4"><script type="application/json">{"questions": [{"q": "Which source best identifies URLs that deserve redirects?", "options": ["The CSS file", "Search Console backlinks and analytics", "The robots.txt alone"], "answer": 1, "explain": "Base redirects on real use."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d6-t4"><script type="application/json">{"questions": [{"q": "Which source best identifies URLs that deserve redirects?", "options": ["The CSS file", "Search Console backlinks and analytics", "The old site's robots.txt and CSS asset list"], "answer": 1, "explain": "Base redirects on real use."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -232,7 +232,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d6-t5"><script type="application/json">{"questions": [{"q": "Why cut over in path groups?", "options": ["It avoids all testing", "It is required by DNS", "You can monitor and reverse a smaller change"], "answer": 2, "explain": "The CDN can route some paths to each origin."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d6-t5"><script type="application/json">{"questions": [{"q": "Why cut over in path groups?", "options": ["It avoids all testing", "DNS only allows one path group to be moved in any 24-hour period", "You can monitor and reverse a smaller change"], "answer": 2, "explain": "The CDN can route some paths to each origin."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -358,7 +358,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="d6-check"><script type="application/json">{"questions": [{"q": "Which command starts the importer?", "options": ["aem migrate", "npm run import", "aem import"], "answer": 2, "explain": "See Importing Content."}, {"q": "Which browsers does the importer support?", "options": ["Safari only", "Chrome-based browsers", "Any browser"], "answer": 1, "explain": "See Importing Content."}, {"q": "Which file holds your transformation rules?", "options": ["fstab.yaml", "import.js", "head.html"], "answer": 1, "explain": "It reloads in the Workbench."}, {"q": "What should you check in a redirect list? Choose all that apply.", "options": ["Chains", "Font sizes", "Loops"], "answer": [0, 2], "explain": "Also check redirects into 404s."}, {"q": "Where do assets for a JCR package come from?", "options": ["asset-mapping.json and Import Helper", "A hidden binary in the package", "The CDN"], "answer": 0, "explain": "The package is binaryless."}, {"q": "When should Operational Telemetry be added to the old site?", "options": ["Never", "Only after launch", "As early as possible"], "answer": 2, "explain": "See Go-Live Checklist."}, {"q": "Which option lets part of a domain go to EDS while AEMaaCS serves the rest?", "options": ["Bulk metadata", "A Sidekick plugin", "Origin selectors"], "answer": 2, "explain": "See Adobe Managed CDN."}, {"q": "A stakeholder wants all 8,000 retired URLs to redirect to the home page. What should you advise?", "options": ["Redirect those with value to relevant pages, and let the rest 404", "Disallow them in robots.txt", "Add a wildcard to the sheet", "Do it, it is simplest"], "answer": 0, "explain": "Redirect based on actual usage.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="d6-check"><script type="application/json">{"questions": [{"q": "Which command starts the importer?", "options": ["aem migrate", "npm run import", "aem import"], "answer": 2, "explain": "See Importing Content."}, {"q": "Which browsers does the importer support?", "options": ["Safari only", "Chrome-based browsers", "Any browser, once the importer extension is installed"], "answer": 1, "explain": "See Importing Content."}, {"q": "Which file holds your transformation rules?", "options": ["fstab.yaml", "import.js", "head.html"], "answer": 1, "explain": "It reloads in the Workbench."}, {"q": "What should you check in a redirect list? Choose all that apply.", "options": ["Chains", "Font sizes", "Loops"], "answer": [0, 2], "explain": "Also check redirects into 404s."}, {"q": "Where do assets for a JCR package come from?", "options": ["asset-mapping.json and Import Helper", "A hidden binary folder inside the JCR package", "The CDN"], "answer": 0, "explain": "The package is binaryless."}, {"q": "When should Operational Telemetry be added to the old site?", "options": ["Never", "Only after launch, so that old numbers do not skew results", "As early as possible"], "answer": 2, "explain": "See Go-Live Checklist."}, {"q": "Which option lets part of a domain go to EDS while AEMaaCS serves the rest?", "options": ["Bulk metadata", "A Sidekick plugin", "Origin selectors"], "answer": 2, "explain": "See Adobe Managed CDN."}, {"q": "A stakeholder wants all 8,000 retired URLs to redirect to the home page. What should you advise?", "options": ["Redirect those with value to relevant pages, and let the rest 404", "Disallow them in robots.txt", "Add a wildcard to the sheet", "Do it, as every redirect to the home page keeps the old URL's search value intact for years"], "answer": 0, "explain": "Redirect based on actual usage.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

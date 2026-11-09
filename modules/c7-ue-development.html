@@ -120,7 +120,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c7-t2"><script type="application/json">{"questions": [{"q": "What does a property named linkText do when link exists?", "options": ["Nothing", "Sets that link’s text", "Creates a new field"], "answer": 1, "explain": "The suffix collapses it."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c7-t2"><script type="application/json">{"questions": [{"q": "What does a property named linkText do when link exists?", "options": ["Nothing", "Sets that link’s text", "Creates a separate rich text field for the label"], "answer": 1, "explain": "The suffix collapses it."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -159,7 +159,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c7-t3"><script type="application/json">{"questions": [{"q": "A new block will not appear in Add. What is most likely?", "options": ["It is not in the filter", "CSS is broken", "The sitemap is stale"], "answer": 0, "explain": "Add its id to the filter."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c7-t3"><script type="application/json">{"questions": [{"q": "A new block will not appear in Add. What is most likely?", "options": ["It is not in the filter", "CSS is broken", "The block's CSS has not been merged into main yet"], "answer": 0, "explain": "Add its id to the filter."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -237,7 +237,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c7-t5"><script type="application/json">{"questions": [{"q": "How does a child render in the block’s markup?", "options": ["As metadata", "As a row, with properties as columns", "As a section"], "answer": 1, "explain": "Item properties become columns."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c7-t5"><script type="application/json">{"questions": [{"q": "How does a child render in the block’s markup?", "options": ["As metadata", "As a row, with properties as columns", "As its own block, with its own class name"], "answer": 1, "explain": "Item properties become columns."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -309,7 +309,7 @@
     <aside class="callout verify"><p>Extension APIs change. Check Experience League for the current extension points before you plan one.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c7-t7"><script type="application/json">{"questions": [{"q": "What should you try before building an extension?", "options": ["A fork of the editor", "A model field or plugin", "A new CDN"], "answer": 1, "explain": "Choose the smallest thing that works."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c7-t7"><script type="application/json">{"questions": [{"q": "What should you try before building an extension?", "options": ["A fork of the editor", "A model field or plugin", "A fork of the editor hosted in your own App Builder project"], "answer": 1, "explain": "Choose the smallest thing that works."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -389,7 +389,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c7-check"><script type="application/json">{"questions": [{"q": "Which resource type is a block item?", "options": ["core/wcm/button", "block/item/v2", "core/franklin/components/block/v1/block/item"], "answer": 2, "explain": "See _cards.json."}, {"q": "Which suffixes collapse? Choose all that apply.", "options": ["Title", "Color", "Alt", "Type"], "answer": [0, 2, 3], "explain": "Also MimeType and Text."}, {"q": "What separates a group and a property?", "options": ["An underscore", "A dash", "A dot"], "answer": 0, "explain": "teaserText_title."}, {"q": "What does the classes property become?", "options": ["A new block", "Block options", "A filter"], "answer": 1, "explain": "It adds style options."}, {"q": "Which file do you add a block to for a section?", "options": ["sitemap.xml", "head.html", "component-filters.json, through its fragment"], "answer": 2, "explain": "Add its id."}, {"q": "In a container, what does each child become?", "options": ["A page", "A row", "A section"], "answer": 1, "explain": "Properties become columns."}, {"q": "Why move instrumentation?", "options": ["For SEO", "So the editor can still find the content", "To speed up CSS"], "answer": 1, "explain": "It connects the DOM to content."}, {"q": "A team wants to rename a heavily used field. What do you recommend?", "options": ["Edit generated JSON by hand", "Rename it and tell nobody", "Plan a migration so existing content is not orphaned", "Delete all pages"], "answer": 2, "explain": "Models are a contract with content.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c7-check"><script type="application/json">{"questions": [{"q": "Which resource type is a block item?", "options": ["core/wcm/button", "core/franklin/components/block/v2/block-item/container", "core/franklin/components/block/v1/block/item"], "answer": 2, "explain": "See _cards.json."}, {"q": "Which suffixes collapse? Choose all that apply.", "options": ["Title", "Color", "Alt", "Type"], "answer": [0, 2, 3], "explain": "Also MimeType and Text."}, {"q": "What separates a group and a property?", "options": ["An underscore", "A dash", "A dot"], "answer": 0, "explain": "teaserText_title."}, {"q": "What does the classes property become?", "options": ["A new block", "Block options", "A filter"], "answer": 1, "explain": "It adds style options."}, {"q": "Which file do you add a block to for a section?", "options": ["sitemap.xml", "component-models.json, directly in the generated file", "component-filters.json, through its fragment"], "answer": 2, "explain": "Add its id."}, {"q": "In a container, what does each child become?", "options": ["A page", "A row", "A section"], "answer": 1, "explain": "Properties become columns."}, {"q": "Why move instrumentation?", "options": ["So the page's search snippets keep the block's fields", "So the editor can still find the content", "To speed up CSS"], "answer": 1, "explain": "It connects the DOM to content."}, {"q": "A team wants to rename a heavily used field. What do you recommend?", "options": ["Edit the generated JSON by hand, so that old pages pick up the new name automatically", "Rename it and tell nobody", "Plan a migration so existing content is not orphaned", "Delete all pages"], "answer": 2, "explain": "Models are a contract with content.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

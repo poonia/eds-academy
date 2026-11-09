@@ -78,7 +78,7 @@ curl -X POST https://admin.hlx.page/config/acme/sites/website/access/preview.jso
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d4-t1"><script type="application/json">{"questions": [{"q": "You need only /members to be private. Is site authentication enough?", "options": ["No, it applies to the whole site", "Yes, it works per path", "Yes, with a robots rule"], "answer": 0, "explain": "Consider Closed User Groups at the CDN."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d4-t1"><script type="application/json">{"questions": [{"q": "You need only /members to be private. Is site authentication enough?", "options": ["No, it applies to the whole site", "Yes, it works per path", "Yes, if you add a robots rule for /members as well"], "answer": 0, "explain": "Consider Closed User Groups at the CDN."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -162,7 +162,7 @@ curl -X POST https://admin.hlx.page/config/acme/sites/website/access/preview.jso
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d4-t3"><script type="application/json">{"questions": [{"q": "A CSP is in place. Does that mean developers can skip input sanitization?", "options": ["No, CSP is a last line of defence", "Only on mobile", "Yes, CSP replaces it"], "answer": 0, "explain": "Adobe’s guide says so directly."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d4-t3"><script type="application/json">{"questions": [{"q": "A CSP is in place. Does that mean developers can skip input sanitization?", "options": ["No, CSP is a last line of defence", "Only on mobile", "Yes, since CSP blocks injected markup before it can render"], "answer": 0, "explain": "Adobe’s guide says so directly."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -196,7 +196,7 @@ curl -X POST https://admin.hlx.page/config/acme/sites/website/access/preview.jso
     <aside class="callout warning" data-label="CORS and Sidekick"><p><code>access-control-allow-origin: *</code> can expose protected preview and live environments to CSRF attacks against signed-in authors. Limit it to specific origins and URLs.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d4-t4"><script type="application/json">{"questions": [{"q": "A SharePoint author cannot sign in and sees a consent message. Who can resolve it?", "options": ["A tenant administrator", "A website visitor", "The CDN vendor"], "answer": 0, "explain": "An admin grants consent for the organization."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d4-t4"><script type="application/json">{"questions": [{"q": "A SharePoint author cannot sign in and sees a consent message. Who can resolve it?", "options": ["A tenant administrator", "A website visitor", "The CDN vendor, through a certificate change"], "answer": 0, "explain": "An admin grants consent for the organization."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -316,7 +316,7 @@ password: ${{JANE_DOE_PASSWORD}}</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="d4-check"><script type="application/json">{"questions": [{"q": "What does site authentication not provide?", "options": ["A 401 for missing tokens", "Authorization", "Preview protection"], "answer": 1, "explain": "See Limitations."}, {"q": "Which path protects preview only?", "options": ["access/preview.json", "access/live.json", "access/robots.json"], "answer": 0, "explain": "See Configuring Site Authentication."}, {"q": "Which header can test a CSP without enforcing it?", "options": ["x-frame-options", "cache-control", "content-security-policy-report-only"], "answer": 2, "explain": "It gives no protection."}, {"q": "What does nonce=\"aem\" become?", "options": ["A user ID", "A random value generated at render", "The word aem forever"], "answer": 1, "explain": "It stays the same while cached."}, {"q": "Which role has all permissions?", "options": ["admin", "view", "author"], "answer": 0, "explain": "See Roles."}, {"q": "Who signs in with Google for Sidekick?", "options": ["Only Adobe staff", "All visitors", "Authors on Google Drive projects"], "answer": 2, "explain": "The content source decides."}, {"q": "Which configuration value disables enforced sign-in while keeping roles?", "options": ["requireAuth: false", "roles: none", "requireAuth: auto"], "answer": 0, "explain": "See Configuring Authentication for Authors."}, {"q": "A security team wants a WAF they control. What fits?", "options": ["Adding a block", "A longer password on Sidekick", "A BYO CDN in front of delivery", "A metadata rule"], "answer": 2, "explain": "Traffic ends on your CDN, under your rules.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="d4-check"><script type="application/json">{"questions": [{"q": "What does site authentication not provide?", "options": ["A 401 for missing tokens", "Authorization", "Preview protection"], "answer": 1, "explain": "See Limitations."}, {"q": "Which path protects preview only?", "options": ["access/preview.json", "access/live.json", "access/robots.json"], "answer": 0, "explain": "See Configuring Site Authentication."}, {"q": "Which header can test a CSP without enforcing it?", "options": ["x-frame-options", "cache-control", "content-security-policy-report-only"], "answer": 2, "explain": "It gives no protection."}, {"q": "What does nonce=\"aem\" become?", "options": ["A user ID", "A random value generated at render", "A fixed value set in the site configuration"], "answer": 1, "explain": "It stays the same while cached."}, {"q": "Which role has all permissions?", "options": ["admin", "view", "author"], "answer": 0, "explain": "See Roles."}, {"q": "Who signs in with Google for Sidekick?", "options": ["Only Adobe staff", "All visitors to sites that require authentication", "Authors on Google Drive projects"], "answer": 2, "explain": "The content source decides."}, {"q": "Which configuration value disables enforced sign-in while keeping roles?", "options": ["requireAuth: false", "roles: none", "requireAuth: auto"], "answer": 0, "explain": "See Configuring Authentication for Authors."}, {"q": "A security team wants a WAF they control. What fits?", "options": ["Adding a block", "A longer password on Sidekick", "A BYO CDN in front of delivery", "A metadata rule applied through bulk metadata"], "answer": 2, "explain": "Traffic ends on your CDN, under your rules.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

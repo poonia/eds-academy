@@ -79,7 +79,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b3-t1"><script type="application/json">{"questions": [{"q": "A workbook has sheets “notes”, “shared-data” and “shared-prices”. What is delivered?", "options": ["shared-data and shared-prices in multi-sheet format", "All three", "Only notes"], "answer": 0, "explain": "Only shared- sheets are delivered."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b3-t1"><script type="application/json">{"questions": [{"q": "A workbook has sheets “notes”, “shared-data” and “shared-prices”. What is delivered?", "options": ["shared-data and shared-prices in multi-sheet format", "All three, since a workbook is always delivered whole", "Only notes"], "answer": 0, "explain": "Only shared- sheets are delivered."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -231,7 +231,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b3-t5"><script type="application/json">{"questions": [{"q": "A previewed page is missing from the article list. Why?", "options": ["Lists need a code release", "The index is broken", "Only published pages are indexed"], "answer": 2, "explain": "Indexes contain published pages only."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b3-t5"><script type="application/json">{"questions": [{"q": "A previewed page is missing from the article list. Why?", "options": ["Lists only refresh after a new code release is merged to main", "The index is broken", "Only published pages are indexed"], "answer": 2, "explain": "Indexes contain published pages only."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -271,7 +271,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b3-t6"><script type="application/json">{"questions": [{"q": "Why does your aem.live URL not appear in Google?", "options": ["The sitemap is too small", "It is a bug", "Those hosts are protected from crawlers by design"], "answer": 2, "explain": "Only your production domain is meant to be indexed."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b3-t6"><script type="application/json">{"questions": [{"q": "Why does your aem.live URL not appear in Google?", "options": ["aem.live URLs are only crawled after the first 1,000 page views are recorded", "It is a bug", "Those hosts are protected from crawlers by design"], "answer": 2, "explain": "Only your production domain is meant to be indexed."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -309,7 +309,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b3-t7"><script type="application/json">{"questions": [{"q": "Why does an AEM project need a taxonomy page for the Universal Editor?", "options": ["The editor works only with tag IDs, so it needs their descriptions", "To publish pages faster", "To replace the sitemap"], "answer": 0, "explain": "The page exposes tag descriptions in all languages."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b3-t7"><script type="application/json">{"questions": [{"q": "Why does an AEM project need a taxonomy page for the Universal Editor?", "options": ["The editor works only with tag IDs, so it needs their descriptions", "To let the editor generate the sitemap and publish pages in the right language", "To replace the sitemap"], "answer": 0, "explain": "The page exposes tag descriptions in all languages."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -389,7 +389,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b3-check"><script type="application/json">{"questions": [{"q": "Which sheet is delivered in a multi-sheet workbook?", "options": ["All", "Those prefixed shared-", "The first"], "answer": 1, "explain": "The prefix controls delivery."}, {"q": "What is the JSON type of a single sheet?", "options": ["table", "sheet", "multi-sheet"], "answer": 1, "explain": "See the :type property."}, {"q": "What does /** in the metadata URL column match?", "options": ["Nothing", "Only the home page", "The whole site"], "answer": 2, "explain": "It is the site-wide pattern."}, {"q": "Which beats bulk metadata?", "options": ["Sitemap", "Nothing", "Page Metadata block"], "answer": 2, "explain": "The page wins."}, {"q": "Are wildcards allowed in the redirects sheet?", "options": ["Only at the end", "No", "Yes"], "answer": 1, "explain": "CDN-level rules are a separate topic."}, {"q": "When is a page added to the query index?", "options": ["When published", "When previewed", "When saved"], "answer": 0, "explain": "Indexing follows publishing."}, {"q": "How do you keep a page out of the sitemap?", "options": ["robots: noindex", "Add a redirect", "Rename it"], "answer": 0, "explain": "Index and sitemap respect robots."}, {"q": "A workbook has two tabs: shared-branches, with public branch details, and staff, with employee phone numbers. What is delivered, and what would you still change?", "options": ["Neither tab is delivered, so nothing needs to change", "Only staff is delivered, so rename it", "Only shared-branches is delivered, but the staff list should still move out of this workbook", "Both tabs are delivered, so delete the workbook"], "answer": 2, "explain": "Only shared- sheets are delivered, but one mistaken rename would expose personal data. Keep it out of delivered workbooks.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b3-check"><script type="application/json">{"questions": [{"q": "Which sheet is delivered in a multi-sheet workbook?", "options": ["All", "Those prefixed shared-", "The first"], "answer": 1, "explain": "The prefix controls delivery."}, {"q": "What is the JSON type of a single sheet?", "options": ["table", "sheet", "multi-sheet"], "answer": 1, "explain": "See the :type property."}, {"q": "What does /** in the metadata URL column match?", "options": ["Nothing", "Only the home page", "The whole site"], "answer": 2, "explain": "It is the site-wide pattern."}, {"q": "Which beats bulk metadata?", "options": ["Sitemap", "Nothing", "Page Metadata block"], "answer": 2, "explain": "The page wins."}, {"q": "Are wildcards allowed in the redirects sheet?", "options": ["Only at the end", "No", "Yes"], "answer": 1, "explain": "CDN-level rules are a separate topic."}, {"q": "When is a page added to the query index?", "options": ["When published", "When previewed", "When saved"], "answer": 0, "explain": "Indexing follows publishing."}, {"q": "How do you keep a page out of the sitemap?", "options": ["robots: noindex", "Add a redirect", "Rename it"], "answer": 0, "explain": "Index and sitemap respect robots."}, {"q": "A workbook has two tabs: shared-branches, with public branch details, and staff, with employee phone numbers. What is delivered, and what would you still change?", "options": ["Neither tab is delivered, so nothing needs to change", "Only staff is delivered, so rename it", "Only shared-branches is delivered, but the staff list should still move out of this workbook", "Both tabs are delivered as a multi-sheet response, so the whole workbook should be deleted today"], "answer": 2, "explain": "Only shared- sheets are delivered, but one mistaken rename would expose personal data. Keep it out of delivered workbooks.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

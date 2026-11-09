@@ -59,7 +59,7 @@
     2
    ],
    "pre": [],
-   "hours": 4,
+   "hours": 2,
    "topics": [
     {
      "id": "origins-and-naming",
@@ -114,7 +114,7 @@
    "pre": [
     "A1"
    ],
-   "hours": 6,
+   "hours": 2.5,
    "topics": [
     {
      "id": "content-sources",
@@ -174,7 +174,7 @@
    "pre": [
     "A1"
    ],
-   "hours": 4,
+   "hours": 2.5,
    "topics": [
     {
      "id": "core-web-vitals",
@@ -224,7 +224,7 @@
    "pre": [
     "A2"
    ],
-   "hours": 4,
+   "hours": 2.5,
    "topics": [
     {
      "id": "document-based-authoring",
@@ -277,7 +277,7 @@
    "pre": [
     "A4"
    ],
-   "hours": 5,
+   "hours": 2,
    "topics": [
     {
      "id": "default-content",
@@ -340,7 +340,7 @@
    "pre": [
     "B1"
    ],
-   "hours": 3,
+   "hours": 1.5,
    "topics": [
     {
      "id": "install-and-add-a-project",
@@ -388,7 +388,7 @@
    "pre": [
     "B2"
    ],
-   "hours": 6,
+   "hours": 2.5,
    "topics": [
     {
      "id": "spreadsheets-as-json",
@@ -446,7 +446,7 @@
    "pre": [
     "B1"
    ],
-   "hours": 3,
+   "hours": 1.5,
    "topics": [
     {
      "id": "navigation-and-footer",
@@ -484,7 +484,7 @@
    "pre": [
     "B1"
    ],
-   "hours": 4,
+   "hours": 1.5,
    "topics": [
     {
      "id": "images-in-content",
@@ -528,7 +528,7 @@
     "B2",
     "A4"
    ],
-   "hours": 6,
+   "hours": 1.5,
    "topics": [
     {
      "id": "editor-basics",
@@ -582,7 +582,7 @@
     "B1",
     "A4"
    ],
-   "hours": 8,
+   "hours": 2.5,
    "topics": [
     {
      "id": "editor-interface",
@@ -640,7 +640,7 @@
    "pre": [
     "B2"
    ],
-   "hours": 5,
+   "hours": 1.5,
    "topics": [
     {
      "id": "preview-review-publish",
@@ -689,7 +689,7 @@
     "B3",
     "B4"
    ],
-   "hours": 5,
+   "hours": 1.5,
    "topics": [
     {
      "id": "locale-folder-strategy",
@@ -727,7 +727,7 @@
    "pre": [
     "B3"
    ],
-   "hours": 5,
+   "hours": 2,
    "topics": [
     {
      "id": "spreadsheet-based-forms",
@@ -770,7 +770,7 @@
    "pre": [
     "A2"
    ],
-   "hours": 4,
+   "hours": 2,
    "topics": [
     {
      "id": "boilerplates",
@@ -818,7 +818,7 @@
    "pre": [
     "C1"
    ],
-   "hours": 3,
+   "hours": 1.5,
    "topics": [
     {
      "id": "folder-layout",
@@ -862,7 +862,7 @@
     "C2",
     "B1"
    ],
-   "hours": 4,
+   "hours": 1.5,
    "topics": [
     {
      "id": "delivered-markup",
@@ -905,7 +905,7 @@
    "pre": [
     "C3"
    ],
-   "hours": 12,
+   "hours": 3,
    "topics": [
     {
      "id": "block-contract",
@@ -973,7 +973,7 @@
    "pre": [
     "C2"
    ],
-   "hours": 6,
+   "hours": 2,
    "topics": [
     {
      "id": "design-tokens",
@@ -1022,7 +1022,7 @@
     "C4",
     "A3"
    ],
-   "hours": 8,
+   "hours": 2.5,
    "topics": [
     {
      "id": "eager-lazy-delayed-in-code",
@@ -1076,7 +1076,7 @@
     "C4",
     "B7"
    ],
-   "hours": 10,
+   "hours": 3,
    "topics": [
     {
      "id": "component-definitions",
@@ -1135,7 +1135,7 @@
     "C4",
     "B3"
    ],
-   "hours": 8,
+   "hours": 2,
    "topics": [
     {
      "id": "spreadsheet-json",
@@ -1183,7 +1183,7 @@
    "pre": [
     "C6"
    ],
-   "hours": 8,
+   "hours": 1.5,
    "topics": [
     {
      "id": "analytics-and-tags",
@@ -1226,7 +1226,7 @@
    "pre": [
     "C4"
    ],
-   "hours": 6,
+   "hours": 2.5,
    "topics": [
     {
      "id": "pr-workflow",
@@ -1275,7 +1275,7 @@
     "C8",
     "D2"
    ],
-   "hours": 10,
+   "hours": 2,
    "topics": [
     {
      "id": "sidekick-customization",
@@ -1323,7 +1323,7 @@
    "pre": [
     "A2"
    ],
-   "hours": 4,
+   "hours": 2.5,
    "topics": [
     {
      "id": "creating-a-site",
@@ -1366,7 +1366,7 @@
    "pre": [
     "D1"
    ],
-   "hours": 6,
+   "hours": 1.5,
    "topics": [
     {
      "id": "site-and-org-config",
@@ -1410,7 +1410,7 @@
     "D2",
     "A2"
    ],
-   "hours": 10,
+   "hours": 3,
    "topics": [
     {
      "id": "adobe-managed-cdn",
@@ -1463,7 +1463,7 @@
    "pre": [
     "D2"
    ],
-   "hours": 6,
+   "hours": 3,
    "topics": [
     {
      "id": "site-authentication",
@@ -1512,7 +1512,7 @@
     "D1",
     "C10"
    ],
-   "hours": 4,
+   "hours": 2.5,
    "topics": [
     {
      "id": "branch-based-environments",
@@ -1557,7 +1557,7 @@
     "C4",
     "B1"
    ],
-   "hours": 14,
+   "hours": 4,
    "topics": [
     {
      "id": "discovery-and-inventory",
@@ -1611,7 +1611,7 @@
     "D1",
     "A3"
    ],
-   "hours": 5,
+   "hours": 2,
    "topics": [
     {
      "id": "operational-telemetry-rum",
@@ -1660,7 +1660,7 @@
     "B3",
     "D1"
    ],
-   "hours": 4,
+   "hours": 1.5,
    "topics": [
     {
      "id": "robots-txt-and-sitemaps",
@@ -1699,7 +1699,7 @@
     "D5",
     "B8"
    ],
-   "hours": 6,
+   "hours": 2.5,
    "topics": [
     {
      "id": "block-catalog-governance",
@@ -1749,7 +1749,7 @@
     "D6",
     "D3"
    ],
-   "hours": 10,
+   "hours": 3,
    "topics": [
     {
      "id": "multi-brand-and-multi-site",
@@ -1800,7 +1800,7 @@
     "B10",
     "C6"
    ],
-   "hours": 5,
+   "hours": 2,
    "topics": [
     {
      "id": "experimentation-plugin",
@@ -1836,7 +1836,7 @@
     "E1",
     "C9"
    ],
-   "hours": 6,
+   "hours": 2,
    "topics": [
     {
      "id": "audiences-and-campaigns",
@@ -1871,7 +1871,7 @@
     "C8",
     "C9"
    ],
-   "hours": 14,
+   "hours": 2.5,
    "topics": [
     {
      "id": "commerce-storefront-on-eds",
@@ -1907,7 +1907,7 @@
     "B10",
     "C4"
    ],
-   "hours": 8,
+   "hours": 2.5,
    "topics": [
     {
      "id": "aem-forms-on-eds",
@@ -1943,7 +1943,7 @@
     "C8",
     "B7"
    ],
-   "hours": 6,
+   "hours": 2.5,
    "topics": [
     {
      "id": "content-fragments-as-html",
@@ -1978,7 +1978,7 @@
    "pre": [
     "C11"
    ],
-   "hours": 8,
+   "hours": 2.5,
    "topics": [
     {
      "id": "aem-mcp-servers",
@@ -2018,7 +2018,7 @@
     "C4",
     "B8"
    ],
-   "hours": 5,
+   "hours": 2.5,
    "topics": [
     {
      "id": "accessible-complex-blocks",
@@ -2046,7 +2046,7 @@
    "pre": [
     "C11"
    ],
-   "hours": 8,
+   "hours": 2.5,
    "topics": [
     {
      "id": "sidekick-da-and-ue-extensions",
@@ -2075,7 +2075,7 @@
     "C6",
     "D7"
    ],
-   "hours": 5,
+   "hours": 2,
    "topics": [
     {
      "id": "portfolio-performance-program",
@@ -2103,7 +2103,7 @@
    "pre": [
     "C4"
    ],
-   "hours": 3,
+   "hours": 2,
    "topics": [
     {
      "id": "block-collection-and-open-source",

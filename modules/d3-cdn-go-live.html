@@ -166,7 +166,7 @@ data:
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d3-t3"><script type="application/json">{"questions": [{"q": "You publish a page but the production domain stays old, while aem.live is new. What should you check first?", "options": ["The GitHub branch name of a feature", "Push invalidation configuration and header", "The block CSS"], "answer": 1, "explain": "aem.live shows the origin is fine."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d3-t3"><script type="application/json">{"questions": [{"q": "You publish a page but the production domain stays old, while aem.live is new. What should you check first?", "options": ["The GitHub branch name of the feature you merged most recently to main", "Push invalidation configuration and header", "The block CSS"], "answer": 1, "explain": "aem.live shows the origin is fine."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -204,7 +204,7 @@ data:
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d3-t4"><script type="application/json">{"questions": [{"q": "Why are A records used for the apex with an Adobe-managed CDN?", "options": ["CNAMEs are insecure", "Apex names generally cannot be CNAMEs", "They are faster"], "answer": 1, "explain": "That rule is part of DNS itself."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d3-t4"><script type="application/json">{"questions": [{"q": "Why are A records used for the apex with an Adobe-managed CDN?", "options": ["CNAMEs are insecure", "Apex names generally cannot be CNAMEs", "CNAME records are not supported by the Adobe-managed CDN"], "answer": 1, "explain": "That rule is part of DNS itself."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -255,7 +255,7 @@ data:
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d3-t5"><script type="application/json">{"questions": [{"q": "A team wants /old/* to go to /new/* in the redirects sheet. What is the problem?", "options": ["The sheet does not support wildcards", "The sheet is limited to 10 rows", "Sheets cannot redirect"], "answer": 0, "explain": "Use usage-based entries or a tested CDN rule."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d3-t5"><script type="application/json">{"questions": [{"q": "A team wants /old/* to go to /new/* in the redirects sheet. What is the problem?", "options": ["The sheet does not support wildcards", "The sheet is limited to 10 rows", "The sheet needs a matching CDN rule before any redirect can work"], "answer": 0, "explain": "Use usage-based entries or a tested CDN rule."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -301,7 +301,7 @@ data:
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d3-t6"><script type="application/json">{"questions": [{"q": "Which metric should stay flat after a like-for-like launch?", "options": ["Analytics page views", "Analytics bounce rate", "Transactions recorded in operational systems"], "answer": 2, "explain": "Analytics baselines may move. Operational systems are not affected."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d3-t6"><script type="application/json">{"questions": [{"q": "Which metric should stay flat after a like-for-like launch?", "options": ["Analytics page views, compared with the old tag's numbers", "Analytics bounce rate", "Transactions recorded in operational systems"], "answer": 2, "explain": "Analytics baselines may move. Operational systems are not affected."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -383,7 +383,7 @@ data:
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="d3-check"><script type="application/json">{"questions": [{"q": "Which is required on a BYO CDN? Choose all that apply.", "options": ["Forward query parameters", "Remove all compression", "Include query parameters in the cache key"], "answer": [0, 2], "explain": "See BYO CDN Setup."}, {"q": "What must happen to the Age header?", "options": ["Double it", "Suppress it or set it to 0", "Pass it through unchanged"], "answer": 1, "explain": "See BYO CDN Setup."}, {"q": "Which CDN plan has no key-based purging?", "options": ["Cloudflare Enterprise", "Akamai", "Cloudflare Free"], "answer": 2, "explain": "Some updates purge the whole site."}, {"q": "What does X-Push-Invalidation: enabled allow?", "options": ["Image resizing", "Author sign-in", "Long cache TTLs"], "answer": 2, "explain": "It is the opt-in header."}, {"q": "Which address receives the CNAME for www with the Adobe-managed CDN?", "options": ["cdn.adobeaemcloud.com", "www.aem.live", "admin.hlx.page"], "answer": 0, "explain": "See Adobe Managed CDN."}, {"q": "Where does a redirects sheet live?", "options": ["In a block folder", "In the root of the content folder", "In GitHub issues"], "answer": 1, "explain": "See Redirects."}, {"q": "How many redirects does a site support?", "options": ["Up to 100,000", "Up to 100", "Unlimited, by contract only"], "answer": 0, "explain": "See Large Sites."}, {"q": "It is 30 minutes before launch. A developer wants to change the site’s code location. What do you do?", "options": ["Stop the change and keep the configuration frozen", "Allow it, and test after launch", "Change content location too", "Purge the CDN and hope"], "answer": 0, "explain": "Adobe advises against last-minute location changes.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="d3-check"><script type="application/json">{"questions": [{"q": "Which is required on a BYO CDN? Choose all that apply.", "options": ["Forward query parameters", "Remove all compression", "Include query parameters in the cache key"], "answer": [0, 2], "explain": "See BYO CDN Setup."}, {"q": "What must happen to the Age header?", "options": ["Increase it to match the CDN's own TTL", "Suppress it or set it to 0", "Pass it through unchanged"], "answer": 1, "explain": "See BYO CDN Setup."}, {"q": "Which CDN plan has no key-based purging?", "options": ["Cloudflare Enterprise", "Akamai", "Cloudflare Free"], "answer": 2, "explain": "Some updates purge the whole site."}, {"q": "What does X-Push-Invalidation: enabled allow?", "options": ["Image resizing", "Author sign-in", "Long cache TTLs"], "answer": 2, "explain": "It is the opt-in header."}, {"q": "Which address receives the CNAME for www with the Adobe-managed CDN?", "options": ["cdn.adobeaemcloud.com", "www.aem.live", "admin.hlx.page"], "answer": 0, "explain": "See Adobe Managed CDN."}, {"q": "Where does a redirects sheet live?", "options": ["In a block folder", "In the root of the content folder", "In the repository root, next to robots.txt"], "answer": 1, "explain": "See Redirects."}, {"q": "How many redirects does a site support?", "options": ["Up to 100,000", "Up to 100", "Unlimited, by contract only"], "answer": 0, "explain": "See Large Sites."}, {"q": "It is 30 minutes before launch. A developer wants to change the site’s code location. What do you do?", "options": ["Stop the change and keep the configuration frozen", "Allow it, as code location changes take effect only after the CDN cache expires", "Change content location too", "Purge the CDN and hope"], "answer": 0, "explain": "Adobe advises against last-minute location changes.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

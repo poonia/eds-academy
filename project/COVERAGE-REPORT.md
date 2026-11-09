@@ -19,7 +19,7 @@ The course is complete against its syllabus: **45 of 45 modules** and **199 of 1
 | Interactive component instances in modules | 406, built from 49 components |
 | Graded questions in modules | 687 |
 | Lab steps | 316 |
-| Estimated study time | 284 hours |
+| Estimated study time | 99.5 hours (calculated by `tools/estimate-hours.py`), plus capstones and exams |
 
 ## Checks
 

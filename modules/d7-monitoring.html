@@ -76,7 +76,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d7-t1"><script type="application/json">{"questions": [{"q": "Why can OpTel not follow a visitor across pages?", "options": ["Browsers forbid it", "Sampling is per page view, with no visitor ID", "It runs only on the home page"], "answer": 1, "explain": "It has no concept of sessions by design."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d7-t1"><script type="application/json">{"questions": [{"q": "Why can OpTel not follow a visitor across pages?", "options": ["Browsers block beacons when a visitor moves to another page", "Sampling is per page view, with no visitor ID", "It runs only on the home page"], "answer": 1, "explain": "It has no concept of sessions by design."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -109,7 +109,7 @@
     <aside class="callout tip"><p>Check mobile separately. An all-devices average can hide a problem on phones.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d7-t2"><script type="application/json">{"questions": [{"q": "You filter to one small landing page, and LCP looks 20% worse. What should you check first?", "options": ["The sample size and margin of error", "Your robots.txt", "The DNS TTL"], "answer": 0, "explain": "Filtering increases uncertainty."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d7-t2"><script type="application/json">{"questions": [{"q": "You filter to one small landing page, and LCP looks 20% worse. What should you check first?", "options": ["The sample size and margin of error", "Your robots.txt", "The DNS TTL and the last CDN purge for that domain"], "answer": 0, "explain": "Filtering increases uncertainty."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -143,7 +143,7 @@
     <div data-component="match" data-title="Triage a 404 report"><script type="application/json">{"prompt": "Pick the right response.", "pairs": [["/old-product gets 800 views", "Redirect to its replacement"], ["/wp-admin probes", "Ignore"], ["/pricng linked from your nav", "Fix the link"], ["/campaign-2019 with no replacement", "Leave as 404"]], "explain": "Base the action on demand and intent."}</script></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="d7-t3"><script type="application/json">{"questions": [{"q": "Where does the 404 page come from?", "options": ["The Admin API", "404.html at the repository root", "A metadata block"], "answer": 1, "explain": "The boilerplate includes one."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="d7-t3"><script type="application/json">{"questions": [{"q": "Where does the 404 page come from?", "options": ["The Admin API", "404.html at the repository root", "A metadata block on a page named /404 in the content source"], "answer": 1, "explain": "The boilerplate includes one."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -296,7 +296,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="d7-check"><script type="application/json">{"questions": [{"q": "What is the usual sampling rate?", "options": ["Every page view", "One in a million", "One in 100 page views"], "answer": 2, "explain": "See Operational Telemetry."}, {"q": "What does weight mean?", "options": ["Page size", "Image dimensions", "The inverse of the sampling rate"], "answer": 2, "explain": "A weight of 100 means one in 100."}, {"q": "How is data sent?", "options": ["Tracking pixels", "navigator.sendBeacon", "Cookies"], "answer": 1, "explain": "See Privacy."}, {"q": "What is needed to view most domains?", "options": ["A domain key", "A password for GitHub", "A site token"], "answer": 0, "explain": "See Explorer."}, {"q": "What does a webhook provide?", "options": ["A certificate", "New content", "A token to read changes from the log"], "answer": 2, "explain": "See Webhook."}, {"q": "What does filtering do to uncertainty?", "options": ["Increases it", "Removes it", "Has no effect"], "answer": 0, "explain": "Smaller samples mean wider margins."}, {"q": "Where do multi-tenant incidents usually appear?", "options": ["robots.txt", "GitHub stars", "status.adobe.com"], "answer": 2, "explain": "See Go-Live Checklist."}, {"q": "Authors report a page disappearing at 02:00. What do you do first?", "options": ["Rebuild the page", "Search the audit log around that time", "Disable Sidekick", "Change the CDN"], "answer": 1, "explain": "The log shows the operation and user, if authenticated.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="d7-check"><script type="application/json">{"questions": [{"q": "What is the usual sampling rate?", "options": ["Every page view", "One in a million", "One in 100 page views"], "answer": 2, "explain": "See Operational Telemetry."}, {"q": "What does weight mean?", "options": ["The size of the page in kilobytes", "Image dimensions", "The inverse of the sampling rate"], "answer": 2, "explain": "A weight of 100 means one in 100."}, {"q": "How is data sent?", "options": ["Tracking pixels", "navigator.sendBeacon", "Cookies"], "answer": 1, "explain": "See Privacy."}, {"q": "What is needed to view most domains?", "options": ["A domain key", "A password for GitHub", "A site token"], "answer": 0, "explain": "See Explorer."}, {"q": "What does a webhook provide?", "options": ["A certificate", "New content pushed to the site when an author publishes", "A token to read changes from the log"], "answer": 2, "explain": "See Webhook."}, {"q": "What does filtering do to uncertainty?", "options": ["Increases it", "Removes it", "Has no effect"], "answer": 0, "explain": "Smaller samples mean wider margins."}, {"q": "Where do multi-tenant incidents usually appear?", "options": ["The site's own audit log", "The project's GitHub issues", "status.adobe.com"], "answer": 2, "explain": "See Go-Live Checklist."}, {"q": "Authors report a page disappearing at 02:00. What do you do first?", "options": ["Rebuild the page from the source, and republish it right away", "Search the audit log around that time", "Disable Sidekick", "Change the CDN"], "answer": 1, "explain": "The log shows the operation and user, if authenticated.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

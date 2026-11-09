@@ -83,7 +83,7 @@
     </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a2-t1"><script type="application/json">{"questions": [{"q": "Your compliance team needs approval workflows and structured fields. Which source suits them best?", "options": ["AEM with Universal Editor", "Google Drive", "Markdown files in GitHub"], "answer": 0, "explain": "AEM brings workflows and structured, governed authoring. GitHub markdown is no longer a supported source."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a2-t1"><script type="application/json">{"questions": [{"q": "Your compliance team needs approval workflows and structured fields. Which source suits them best?", "options": ["AEM with Universal Editor", "Google Drive", "Markdown files in GitHub, reviewed through pull requests"], "answer": 0, "explain": "AEM brings workflows and structured, governed authoring. GitHub markdown is no longer a supported source."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -213,7 +213,7 @@
     </div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a2-t3"><script type="application/json">{"questions": [{"q": "An author renames a block table from 'Cards' to 'Card'. What happens on the page?", "options": ["The class becomes 'card', so the cards block code no longer loads", "The CDN rejects the page", "Nothing changes"], "answer": 0, "explain": "The block name maps to the class and to blocks/<name>/. A different name looks for different code."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a2-t3"><script type="application/json">{"questions": [{"q": "An author renames a block table from 'Cards' to 'Card'. What happens on the page?", "options": ["The class becomes 'card', so the cards block code no longer loads", "The CDN rejects the page", "Nothing changes, because block names are matched without regard to singular or plural"], "answer": 0, "explain": "The block name maps to the class and to blocks/<name>/. A different name looks for different code."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -372,7 +372,7 @@
     <aside class="callout warning" data-label="Load testing"><p>Edge Delivery Services rate-limits a single client to 200 requests per second per <code>aem.page</code> or <code>aem.live</code> host name. Point load tests at your production CDN, not at those hosts.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="a2-t6"><script type="application/json">{"questions": [{"q": "Your bank already runs Akamai with WAF rules for every public site. What is the likely setup?", "options": ["No CDN; visitors hit .aem.live directly", "BYO CDN: Akamai in front of the .aem.live origin, with push invalidation", "Two CDNs chained for redundancy"], "answer": 1, "explain": "Bring your own CDN keeps existing security policy while EDS remains the origin."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="a2-t6"><script type="application/json">{"questions": [{"q": "Your bank already runs Akamai with WAF rules for every public site. What is the likely setup?", "options": ["No CDN; visitors hit .aem.live directly", "BYO CDN: Akamai in front of the .aem.live origin, with push invalidation", "Two CDNs chained for redundancy, with Akamai's WAF rules copied into the Adobe-managed tier"], "answer": 1, "explain": "Bring your own CDN keeps existing security policy while EDS remains the origin."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -527,16 +527,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="a2-check"><script type="application/json">{"questions":[
-    {"q": "Which bus stores images under a content hash with a media_ prefix?", "options": ["Media Bus", "Content Bus", "Code Bus"], "answer": 0, "explain": "The Media Bus is content-addressed, so assets are immutable."},
-    {"q": "Which bus can only the API service read?", "options": ["Code Bus", "Config Bus", "Source Bus"], "answer": 2, "explain": "The Source Bus holds authored originals and is not read by delivery."},
-    {"q": "What is the preview host for branch 'promo' of site 'rates' in org 'acme'?", "options": ["promo--rates--acme.aem.page", "rates.acme.aem.page/promo", "acme--rates--promo.aem.page"], "answer": 0, "explain": "{branch}--{site}--{org}.aem.page."},
-    {"q": "Which request unpublishes a page?", "options": ["GET /status/...", "POST /preview/...", "DELETE /live/..."], "answer": 2, "explain": "DELETE on the live resource removes it from live."},
-    {"q": "Why can media be cached permanently?", "options": ["The CDN ignores media", "Images are small", "Media never changes once uploaded under its hash URL"], "answer": 2, "explain": "A changed file gets a new hash and URL."},
-    {"q": "Which are true about EDS delivery? Choose all that apply.", "options": ["You can bring Akamai, Fastly, Cloudflare or CloudFront", "Publishing triggers push invalidation", "Two redundant delivery implementations run in parallel", "Every page is rebuilt on every request with no caching"], "answer": [0, 1, 2], "explain": "Caching is aggressive and refreshed by push invalidation, not disabled."},
-    {"q": "In the browser, what turns div.cards into a finished component?", "options": ["The cards block's JavaScript and CSS, loaded by scripts.js", "The Source Bus", "The CDN"], "answer": 0, "explain": "Decoration happens client-side, block by block."},
-    {"q": "After a TV ad, traffic spikes 20x and marketing must change a rate at the same time. What protects the site and keeps the rate fresh?", "options": ["High CDN cache hit rates plus publish-triggered push invalidation", "Ask visitors to refresh", "Disable the CDN during the campaign"], "answer": 0, "explain": "Caching absorbs the spike; publishing purges just the changed page.", "scenario": true}
-  ]}</script></div>
+  <div data-component="quiz" data-id="a2-check"><script type="application/json">{"questions": [{"q": "Which bus stores images under a content hash with a media_ prefix?", "options": ["Media Bus", "Content Bus", "Code Bus"], "answer": 0, "explain": "The Media Bus is content-addressed, so assets are immutable."}, {"q": "Which bus can only the API service read?", "options": ["Code Bus", "Config Bus", "Source Bus"], "answer": 2, "explain": "The Source Bus holds authored originals and is not read by delivery."}, {"q": "What is the preview host for branch 'promo' of site 'rates' in org 'acme'?", "options": ["promo--rates--acme.aem.page", "rates.acme.aem.page/promo", "acme--rates--promo.aem.page"], "answer": 0, "explain": "{branch}--{site}--{org}.aem.page."}, {"q": "Which request unpublishes a page?", "options": ["GET /status/...", "POST /preview/...", "DELETE /live/..."], "answer": 2, "explain": "DELETE on the live resource removes it from live."}, {"q": "Why can media be cached permanently?", "options": ["The CDN ignores media", "The CDN refreshes media automatically each time a page that uses it is published", "Media never changes once uploaded under its hash URL"], "answer": 2, "explain": "A changed file gets a new hash and URL."}, {"q": "Which are true about EDS delivery? Choose all that apply.", "options": ["You can bring Akamai, Fastly, Cloudflare or CloudFront", "Publishing triggers push invalidation", "Two redundant delivery implementations run in parallel", "Every page is rebuilt on every request with no caching"], "answer": [0, 1, 2], "explain": "Caching is aggressive and refreshed by push invalidation, not disabled."}, {"q": "In the browser, what turns div.cards into a finished component?", "options": ["The cards block's JavaScript and CSS, loaded by scripts.js", "The Source Bus", "An edge function that rewrites the HTML before it reaches the browser"], "answer": 0, "explain": "Decoration happens client-side, block by block."}, {"q": "After a TV ad, traffic spikes 20x and marketing must change a rate at the same time. What protects the site and keeps the rate fresh?", "options": ["High CDN cache hit rates plus publish-triggered push invalidation", "Turning off caching for the campaign, so every visitor gets the newest rate from the origin", "Disable the CDN during the campaign"], "answer": 0, "explain": "Caching absorbs the spike; publishing purges just the changed page.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

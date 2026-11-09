@@ -194,6 +194,13 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
   as no longer supported. B1, B8, D2, D3 and D5 were updated. Re-check https://www.aem.live/docs/deprecation at each content review.
 - Generated module pages are now edited directly: their original generator scripts were not kept in the repository.
 
+## Trust fixes (9 Nov 2026)
+- Home page build notes replaced with who the course is for, outcomes and method.
+- Study time recalculated from page content: 284 hours became 99.5. `tools/estimate-hours.py` owns the numbers.
+- 262 questions had options rewritten so length does not reveal the answer, and joke options were replaced.
+  `tools/check-quiz-quality.py` keeps the rate between 15 and 40%. Rewritten options have not been tried by learners.
+- Still open: expert modules are thin (E3, E7, E8, E9), and most "Try it" checks remain multiple choice.
+
 ## Next run
 
 All planned phases are complete. Remaining work is listed in `COVERAGE-REPORT.md`: real-project lab runs, assistive technology

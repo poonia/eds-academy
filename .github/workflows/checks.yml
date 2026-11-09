@@ -16,8 +16,12 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Check study hours are current
+        run: python3 tools/estimate-hours.py --check
       - name: Confirm the exam bank is current and valid
         run: python3 tools/build-exam-bank.py --check
+      - name: Check quiz answers cannot be guessed from length
+        run: python3 tools/check-quiz-quality.py
       - name: Confirm generated reference pages are current
         run: python3 tools/build-reference.py --check
       - name: Validate pages and rebuild the search index

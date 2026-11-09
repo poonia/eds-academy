@@ -75,7 +75,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b6-t1"><script type="application/json">{"questions": [{"q": "Does enabling Experience Workspace migrate your existing DA content?", "options": ["Yes, it must be moved", "Only published pages move", "No, it is an additive upgrade"], "answer": 2, "explain": "aem.live says nothing is migrated or altered."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b6-t1"><script type="application/json">{"questions": [{"q": "Does enabling Experience Workspace migrate your existing DA content?", "options": ["Yes, it must be moved", "Only published pages move, and drafts stay behind in DA", "No, it is an additive upgrade"], "answer": 2, "explain": "aem.live says nothing is migrated or altered."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -108,7 +108,7 @@
     <aside class="callout tip"><p>Make a named version before a large rewrite, so that you have a clear point to go back to.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b6-t2"><script type="application/json">{"questions": [{"q": "When are versions created automatically?", "options": ["On actions such as preview and publish", "Every keystroke", "Only by administrators"], "answer": 0, "explain": "You can also create them ad hoc."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b6-t2"><script type="application/json">{"questions": [{"q": "When are versions created automatically?", "options": ["On actions such as preview and publish", "Every keystroke", "Only when an administrator creates a named restore point"], "answer": 0, "explain": "You can also create them ad hoc."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -139,7 +139,7 @@
     <aside class="callout verify"><p>Library setup and template features change as Experience Workspace evolves. Check the administering section on aem.live for your version.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="b6-t3"><script type="application/json">{"questions": [{"q": "Why might two sites show different library blocks?", "options": ["One site is offline", "The library is set up per project", "A browser issue"], "answer": 1, "explain": "Library content depends on project setup."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="b6-t3"><script type="application/json">{"questions": [{"q": "Why might two sites show different library blocks?", "options": ["One site is offline", "The library is set up per project", "One site has not cleared its Sidekick extension cache"], "answer": 1, "explain": "Library content depends on project setup."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -328,7 +328,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="b6-check"><script type="application/json">{"questions": [{"q": "Where is version history?", "options": ["GitHub", "Sidekick", "Tools panel, under Versions"], "answer": 2, "explain": "Choose Versions in the panel."}, {"q": "Which mode is WYSIWYG?", "options": ["Content", "Source", "Layout"], "answer": 2, "explain": "Layout mode."}, {"q": "What do bulk tools accept?", "options": ["A PDF", "A ZIP file", "A list of URLs"], "answer": 2, "explain": "Share copies URLs."}, {"q": "Which are translation connectors? Choose all that apply.", "options": ["Dispatcher", "Google Translate", "Lionbridge", "Smartling"], "answer": [1, 2, 3], "explain": "Trados is also available."}, {"q": "What do snapshots do?", "options": ["Back up GitHub", "Coordinate grouped updates", "Compress images"], "answer": 1, "explain": "They let related changes go out together."}, {"q": "Which repository does Experience Workspace need?", "options": ["Any Git repository", "EDS document-based repository", "AEM Author"], "answer": 1, "explain": "Content in AEM would have to move."}, {"q": "What must you get in writing?", "options": ["Image widths", "Support terms", "Heading order"], "answer": 1, "explain": "Lifecycle stage is not a support promise."}, {"q": "A bank wants AI-assisted page drafting in Experience Workspace for regulated products. What do you require before go-live?", "options": ["Nothing, the tool handles compliance", "A new CDN", "Support terms in writing, human approval, and restricted publish rights", "Turning off versions"], "answer": 2, "explain": "Governance and support must be settled first.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="b6-check"><script type="application/json">{"questions": [{"q": "Where is version history?", "options": ["In the GitHub history for the content repository", "Sidekick", "Tools panel, under Versions"], "answer": 2, "explain": "Choose Versions in the panel."}, {"q": "Which mode is WYSIWYG?", "options": ["Content", "Source", "Layout"], "answer": 2, "explain": "Layout mode."}, {"q": "What do bulk tools accept?", "options": ["A PDF", "A ZIP file", "A list of URLs"], "answer": 2, "explain": "Share copies URLs."}, {"q": "Which are translation connectors? Choose all that apply.", "options": ["Dispatcher", "Google Translate", "Lionbridge", "Smartling"], "answer": [1, 2, 3], "explain": "Trados is also available."}, {"q": "What do snapshots do?", "options": ["Back up the code repository before each release", "Coordinate grouped updates", "Compress images"], "answer": 1, "explain": "They let related changes go out together."}, {"q": "Which repository does Experience Workspace need?", "options": ["Any Git repository connected through AEM Code Sync", "EDS document-based repository", "AEM Author"], "answer": 1, "explain": "Content in AEM would have to move."}, {"q": "What must you get in writing?", "options": ["Image widths", "Support terms", "Heading order"], "answer": 1, "explain": "Lifecycle stage is not a support promise."}, {"q": "A bank wants AI-assisted page drafting in Experience Workspace for regulated products. What do you require before go-live?", "options": ["Nothing extra, as the tool's built-in checks already meet regulated content rules", "A new CDN", "Support terms in writing, human approval, and restricted publish rights", "Turning off versions"], "answer": 2, "explain": "Governance and support must be settled first.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

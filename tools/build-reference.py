@@ -62,6 +62,7 @@ for path in syl['paths']:
     flat = path['phases']
     ids = [i for ph in flat for i in ph]
     hours = sum(modules[i]['hours'] for i in ids)
+    hours = int(hours) if float(hours).is_integer() else hours
     parts = []
     for n, phase in enumerate(flat, 1):
         rows = []

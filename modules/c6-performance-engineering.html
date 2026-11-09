@@ -117,7 +117,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c6-t2"><script type="application/json">{"questions": [{"q": "Which is most harmful before LCP?", "options": ["A connection to another origin", "A short heading", "Semantic HTML"], "answer": 0, "explain": "aem.live strongly discourages it."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c6-t2"><script type="application/json">{"questions": [{"q": "Which is most harmful before LCP?", "options": ["A connection to another origin", "A small inline SVG in the hero", "A 1 KB first-party rule added to styles.css"], "answer": 0, "explain": "aem.live strongly discourages it."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -193,7 +193,7 @@
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c6-t4"><script type="application/json">{"questions": [{"q": "A tag has no owner. What should happen?", "options": ["Keep it forever", "Move it to the head", "Remove it or assign an owner"], "answer": 2, "explain": "Unowned tags are pure risk."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c6-t4"><script type="application/json">{"questions": [{"q": "A tag has no owner. What should happen?", "options": ["Keep it, since removing it might break something someone relies on", "Move it to the head", "Remove it or assign an owner"], "answer": 2, "explain": "Unowned tags are pure risk."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -232,7 +232,7 @@
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c6-t5"><script type="application/json">{"questions": [{"q": "Which tool checks PRs by default?", "options": ["Selenium", "PageSpeed Insights", "JMeter"], "answer": 1, "explain": "AEM Code Sync runs it."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c6-t5"><script type="application/json">{"questions": [{"q": "Which tool checks PRs by default?", "options": ["A Lighthouse CI server you host", "PageSpeed Insights", "JMeter"], "answer": 1, "explain": "AEM Code Sync runs it."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -350,7 +350,7 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c6-check"><script type="application/json">{"questions": [{"q": "What is aem.live’s pre-LCP payload rule of thumb?", "options": ["Under 10 KB", "Under 1 MB", "Under 100 KB"], "answer": 2, "explain": "Results in a fast LCP."}, {"q": "Which function marks the first image eager?", "options": ["loadFonts", "getMetadata", "waitForFirstImage"], "answer": 2, "explain": "See aem.js."}, {"q": "Default picture widths?", "options": ["4000 and 2000", "2000 and 750", "1200 and 400"], "answer": 1, "explain": "See createOptimizedPicture."}, {"q": "Which are field data? Choose all that apply.", "options": ["Operational Telemetry", "A single lab run", "CrUX"], "answer": [0, 2], "explain": "Lab runs are simulations."}, {"q": "How is telemetry sent?", "options": ["A pixel with cookies", "navigator.sendBeacon", "Email"], "answer": 1, "explain": "See the privacy notes."}, {"q": "What is ideal for a PR’s score?", "options": ["Desktop only", "100 on mobile and desktop", "50 on mobile"], "answer": 1, "explain": "aem.live’s guidance."}, {"q": "Should you make a separate Lighthouse config?", "options": ["Yes, per page", "Prefer the default PageSpeed Insights measure", "Yes, per team"], "answer": 1, "explain": "It keeps comparisons meaningful."}, {"q": "A/B tool vendor says their snippet must be first in head. LCP would suffer. What do you do?", "options": ["Comply without testing", "Remove all images", "Hide the page until it loads", "Test alternatives such as native experimentation, and measure any exception"], "answer": 3, "explain": "aem.live points to its native capability first.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c6-check"><script type="application/json">{"questions": [{"q": "What is aem.live’s pre-LCP payload rule of thumb?", "options": ["Under 10 KB", "Under 1 MB", "Under 100 KB"], "answer": 2, "explain": "Results in a fast LCP."}, {"q": "Which function marks the first image eager?", "options": ["loadFonts", "getMetadata", "waitForFirstImage"], "answer": 2, "explain": "See aem.js."}, {"q": "Default picture widths?", "options": ["4000 and 2000", "2000 and 750", "1200 and 400"], "answer": 1, "explain": "See createOptimizedPicture."}, {"q": "Which are field data? Choose all that apply.", "options": ["Operational Telemetry", "A single lab run", "CrUX"], "answer": [0, 2], "explain": "Lab runs are simulations."}, {"q": "How is telemetry sent?", "options": ["A pixel with cookies", "navigator.sendBeacon", "Email"], "answer": 1, "explain": "See the privacy notes."}, {"q": "What is ideal for a PR’s score?", "options": ["Desktop only", "100 on mobile and desktop", "At least 90 on mobile and 100 on desktop"], "answer": 1, "explain": "aem.live’s guidance."}, {"q": "Should you make a separate Lighthouse config?", "options": ["Yes, per page", "Prefer the default PageSpeed Insights measure", "Yes, a separate config for each team and each template"], "answer": 1, "explain": "It keeps comparisons meaningful."}, {"q": "A/B tool vendor says their snippet must be first in head. LCP would suffer. What do you do?", "options": ["Comply, as vendors know best, and put the snippet at the top of head.html on every page of the site", "Remove all images", "Hide the page until it loads", "Test alternatives such as native experimentation, and measure any exception"], "answer": 3, "explain": "aem.live points to its native capability first.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">

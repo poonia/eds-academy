@@ -111,7 +111,7 @@ npm run lint:fix</textarea>
     </figure>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c10-t2"><script type="application/json">{"questions": [{"q": "Your PR reformats a whole CSS file and fixes one bug. What is wrong?", "options": ["CSS cannot be reformatted", "Nothing", "The diff hides the real change"], "answer": 2, "explain": "Refactor in a separate PR."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c10-t2"><script type="application/json">{"questions": [{"q": "Your PR reformats a whole CSS file and fixes one bug. What is wrong?", "options": ["Lint rules do not allow formatting changes to CSS files", "Nothing", "The diff hides the real change"], "answer": 2, "explain": "Refactor in a separate PR."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -153,7 +153,7 @@ test('calculates a monthly payment', () =&gt; {
   </table></div>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c10-t3"><script type="application/json">{"questions": [{"q": "What does a raw HTTP flood mostly prove on EDS?", "options": ["That the CDN serves cached responses", "That your blocks are correct", "That SEO is good"], "answer": 0, "explain": "See aem.live’s testing guide."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c10-t3"><script type="application/json">{"questions": [{"q": "What does a raw HTTP flood mostly prove on EDS?", "options": ["That the CDN serves cached responses", "That your blocks and scripts hold up under real user load", "That SEO is good"], "answer": 0, "explain": "See aem.live’s testing guide."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -185,7 +185,7 @@ test('calculates a monthly payment', () =&gt; {
     <aside class="callout accessibility"><p>A score of 100 means no detected issues. It does not mean no issues.</p></aside>
   </div>
   <div data-part="try">
-    <div data-component="quiz" data-variant="inline" data-id="c10-t4"><script type="application/json">{"questions": [{"q": "Lighthouse accessibility is 100. Are you finished?", "options": ["No: test manually too", "Yes", "Only on desktop"], "answer": 0, "explain": "Automation finds only some issues."}]}</script></div>
+    <div data-component="quiz" data-variant="inline" data-id="c10-t4"><script type="application/json">{"questions": [{"q": "Lighthouse accessibility is 100. Are you finished?", "options": ["No: test manually too", "Yes", "Yes, once the desktop score is also 100"], "answer": 0, "explain": "Automation finds only some issues."}]}</script></div>
   </div>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
@@ -304,7 +304,7 @@ test('calculates a monthly payment', () =&gt; {
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c10-check"><script type="application/json">{"questions": [{"q": "Which model does aem.live recommend?", "options": ["Long-lived release branches", "Scaled trunk-based development", "Direct push to main"], "answer": 1, "explain": "Small PRs, merged often."}, {"q": "What should a PR description include?", "options": ["A URL showing the change", "Nothing", "The author’s résumé"], "answer": 0, "explain": "So that reviewers can see it."}, {"q": "What is a draft PR for?", "options": ["Work in progress", "Production fixes", "Translations"], "answer": 0, "explain": "It prevents accidental merging."}, {"q": "Which are different test disciplines? Choose all that apply.", "options": ["Performance", "Load", "Penetration"], "answer": [0, 1, 2], "explain": "Each answers a different question."}, {"q": "Does a Lighthouse 100 guarantee accessibility?", "options": ["No", "Yes", "Only with ARIA"], "answer": 0, "explain": "Manual tests remain necessary."}, {"q": "Where do you exclude test files from serving?", "options": ["head.html", "robots.txt", ".hlxignore"], "answer": 2, "explain": "Repository files are otherwise served."}, {"q": "Which framework does EDS require?", "options": ["Cypress", "Jest", "None"], "answer": 2, "explain": "It is your choice."}, {"q": "An AI tool produced a 3,000-line refactor of all blocks. What do you do?", "options": ["Disable the reviews", "Merge it if lint passes", "Discuss with maintainers and split into small, understood PRs", "Push it to main"], "answer": 2, "explain": "aem.live emphasizes communicating first.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c10-check"><script type="application/json">{"questions": [{"q": "Which model does aem.live recommend?", "options": ["Long-lived release branches", "Scaled trunk-based development", "Direct push to main"], "answer": 1, "explain": "Small PRs, merged often."}, {"q": "What should a PR description include?", "options": ["A URL showing the change", "Nothing", "The Jira ticket number and nothing else"], "answer": 0, "explain": "So that reviewers can see it."}, {"q": "What is a draft PR for?", "options": ["Work in progress", "Production fixes", "Translations"], "answer": 0, "explain": "It prevents accidental merging."}, {"q": "Which are different test disciplines? Choose all that apply.", "options": ["Performance", "Load", "Penetration"], "answer": [0, 1, 2], "explain": "Each answers a different question."}, {"q": "Does a Lighthouse 100 guarantee accessibility?", "options": ["No", "Yes", "Only with ARIA"], "answer": 0, "explain": "Manual tests remain necessary."}, {"q": "Where do you exclude test files from serving?", "options": ["head.html", "robots.txt", ".hlxignore"], "answer": 2, "explain": "Repository files are otherwise served."}, {"q": "Which framework does EDS require?", "options": ["Cypress", "Jest", "None"], "answer": 2, "explain": "It is your choice."}, {"q": "An AI tool produced a 3,000-line refactor of all blocks. What do you do?", "options": ["Disable the reviews", "Merge it once lint passes and the Lighthouse score on one page stays at 100", "Discuss with maintainers and split into small, understood PRs", "Push it to main"], "answer": 2, "explain": "aem.live emphasizes communicating first.", "scenario": true}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
