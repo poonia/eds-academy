@@ -1,0 +1,29 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Validate pages and rebuild the search index
+        run: python3 tools/build-search-index.py
+      - name: Confirm the committed search index is current
+        run: git diff --exit-code data/search-index.json
+      - name: Confirm head tags and sitemap are current
+        run: python3 tools/build-site-meta.py --check
+      - name: Check local links
+        run: python3 tools/check-links.py
+      - run: npx playwright install --with-deps chromium
+      - name: Run browser smoke tests
+        run: npx playwright test

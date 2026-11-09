@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>A2 Core architecture · EDS Academy</title>
 <meta name="description" content="Module A2: content sources, the storage buses, the rendering pipeline, preview and live, the Admin API, delivery and CDN, and caching with push invalidation.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/a2-core-architecture.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="A2 Core architecture · EDS Academy">
+<meta property="og:description" content="Module A2: content sources, the storage buses, the rendering pipeline, preview and live, the Admin API, delivery and CDN, and caching with push invalidation.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/a2-core-architecture.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
 <link rel="stylesheet" href="../assets/css/academy.css">
@@ -139,7 +155,7 @@
   <h2>Rendering pipeline</h2>
   <div data-part="why"><p>Authors ask why a table in their document became a carousel, and developers ask where their block's HTML comes from. Both answers live in the rendering pipeline.</p></div>
   <div data-part="concept">
-    <p>When an author previews, the API service pulls the document, converts it to a normalized format and stores it in the Content Bus. When a visitor requests the page, edge delivery renders plain semantic HTML: page metadata becomes <code>&lt;meta&gt;</code> tags, each section becomes a <code>&lt;div&gt;</code> inside <code>&lt;main&gt;</code>, and each block table becomes nested <code>&lt;div&gt;</code>s with the block name as a class.</p>
+    <p>When an author previews, the API service pulls the document, converts it to a normalized format and stores it in the Content Bus. The architecture page does not name that format, but the Admin API reports the stored resource as a <code>.md</code> path. When a visitor requests the page, edge delivery renders plain semantic HTML: page metadata becomes <code>&lt;meta&gt;</code> tags, each section becomes a <code>&lt;div&gt;</code> inside <code>&lt;main&gt;</code>, and each block table becomes nested <code>&lt;div&gt;</code>s with the block name as a class.</p>
     <p>In the browser, the project's scripts take over. They decorate sections, build auto-blocks, then load each block's JavaScript and CSS, which turns the plain rows and cells into the finished component. That split, simple HTML from the edge and enhancement in the browser, is why pages are both crawlable and fast.</p>
   </div>
   <div data-part="visual">
@@ -308,7 +324,7 @@
       </ol>
       <figcaption><b>Expected result:</b> JSON responses with HTTP 200 and the page's preview and live URLs.</figcaption>
     </figure>
-    <aside class="callout verify"><p>aem.live's configuration examples authenticate with an <code>x-auth-token</code> header. How you obtain a token and which roles it carries are set per organization: check the authentication section of the Admin API reference before running these commands. Module C11 covers scripting in depth.</p></aside>
+    <aside class="callout warning" data-label="Treat tokens like passwords"><p>Send a token in the <code>x-auth-token</code> header. For one-off work, use the token issued when you sign in to the Admin API. For automation, create an API key limited to the roles it needs with <code>POST /config/{org}/sites/{site}/apiKeys.json</code>, which needs an admin role. Keys expire, and the value is shown only once, so plan to rotate them. Module C11 covers scripting in depth.</p></aside>
   </div>
   <div data-part="try">
     <div data-component="match"><script type="application/json">{"prompt":"Pick the request for each job","pairs":[["Unpublish a page","DELETE /live/{org}/{site}/{ref}/{path}"],["Preview a page","POST /preview/{org}/{site}/{ref}/{path}"],["See whether a page is published","GET /status/{org}/{site}/{ref}/{path}"],["Read the organization configuration","GET /config/{org}.json"]],"explain":"Preview and live share the same path shape; the HTTP method decides the action."}</script></div>
@@ -457,10 +473,10 @@
     <li><div><b>Find its branch URLs.</b> The aem.live site's code is in the <code>adobe/helix-website</code> repository, so its main branch preview host is <code>main--helix-website--adobe.aem.page</code>. Open the same path on <code>.aem.page</code> and <code>.aem.live</code>.</div></li>
     <li><div><b>Inspect an image.</b> In DevTools, find an image URL starting with <code>media_</code>. Note the hash and the width and format parameters.</div></li>
     <li><div><b>Read the response headers.</b> In the Network panel, select the HTML document and note cache-related headers. Compare with an image request.</div></li>
-    <li><div><b>Ask the Admin API for status.</b> Run <code>curl -s https://admin.hlx.page/status/adobe/helix-website/main/docs/architecture</code> and read the preview and live sections of the JSON.</div></li>
+    <li><div><b>Ask the Admin API for status.</b> Run <code>curl -i https://admin.hlx.page/status/adobe/helix-website/main/docs/architecture</code>. Expect <code>401</code>: this project does not allow anonymous status requests, so you are seeing access control at work. To read the preview and live sections of the JSON, run the same request against a site you can access and send your token in <code>x-auth-token</code>.</div></li>
     <li><div><b>Draw it.</b> Sketch the flow from source to browser and label which bus each observation came from.</div></li>
   </ol>
-  <aside class="callout verify"><p>Public sites may restrict status requests without authentication, and the repository name for aem.live may change. If a step returns 401 or 404, run it against your own tutorial site instead.</p></aside>
+  <aside class="callout update"><p>Checked on 8 November 2026: both <code>main--helix-website--adobe</code> hosts responded, and anonymous status requests returned 401. If a host stops responding, run the lab against your own tutorial site.</p></aside>
   <div class="lab-meta" style="margin-top:16px">
     <div><h4>Expected result</h4><p>Matching preview and live pages, a hashed media URL, and a status JSON with preview and live dates.</p></div>
     <div><h4>How to verify</h4><p>Your sketch shows Content, Media and Code buses meeting at edge delivery, with the CDN in front.</p></div>

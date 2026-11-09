@@ -9,8 +9,8 @@ Run mode: AGENT. This log is the resume point for later runs.
 | --- | --- | --- |
 | 0 | Foundation: CSS, runtime, 14 components, syllabus, glossary, home, start here, components page | Done (30 Oct 2026) |
 | 1 | Category A: A1–A4 | Done (30 Oct 2026) |
-| 2 | Category B: B1–B10 | Next: set `START AT: PHASE 2` |
-| 3 | Category C: C1–C11 | Not started |
+| 2 | Category B: B1–B10 | Done (8 Nov 2026) |
+| 3 | Category C: C1–C11 | Next: set `START AT: PHASE 3` |
 | 4 | Category D: D1–D10 | Not started |
 | 5 | Category E: E1–E10 | Not started |
 | 6 | Capstones 1–4, level exams 1–4, final exam | Not started |
@@ -27,6 +27,21 @@ taken from pages that could be opened:
   "Document Authoring is now Experience Workspace", markup sections and blocks.
 - Experience League: Cloud Manager 2026.4.0 release notes, authoring for EDS,
   commerce storefront performance practices.
+
+## Fact checks (8 Nov 2026)
+
+| Module | Item | Outcome |
+| --- | --- | --- |
+| A1 | Licence entitlements | Stays flagged: contract-specific |
+| A1 | `.plain.html` | Confirmed; home page is `/index.plain.html` |
+| A1, A4 | Experience Workspace support | Open: lifecycle stage 3 shown, no SLA stated on aem.live. Get terms from Adobe |
+| A2 | Admin API tokens | Resolved: `x-auth-token`, sign-in token or scoped API key |
+| A2 | Anonymous `/status` | Corrected: returns 401 for helix-website; lab updated |
+| A2 | `adobe/helix-website` hosts | Confirmed: both respond |
+| A2 | "Normalized format" | Clarified: Admin API reports a `.md` resource; the format name is not documented |
+| A3 | Boilerplate `scripts.js` | Corrected: `loadDelayed()` has no timer and imports `consent-check.js` |
+| A4 | Approval workflow | Updated: Request Publish exists and needs onboarding; compliance fit stays per customer |
+| A4 | Content Fragment markup | Confirmed: depends on mapping, overlay and JSON2HTML |
 
 ## Decisions
 
@@ -82,6 +97,19 @@ taken from pages that could be opened:
 - VERIFY: Experience Workspace support level; approval workflow fit for regulated content;
   Content Fragment HTML markup depends on mapping
 
+### B1–B10 Category B (built 8 Nov 2026)
+- All 52 syllabus topics written, each with why, concept, visual, show, try and pitfalls.
+- New components: doc-sim, sheet-json, nav-builder, image-explorer, filter-sandbox, hreflang-builder,
+  form-sheet, traffic-split. B2, B6 and B7 use hotspots; B8 uses scorer.
+- Sources read 8 Nov 2026: aem.live docs and developer pages, adobe/aem-boilerplate,
+  adobe/aem-block-collection, adobe/aem-experimentation.
+- Glossary extended to 75 terms. Module `asOf` in the syllabus overrides the global date.
+- The labs have not been run against a real site, AEM sandbox or da.live project.
+- VERIFY: B6 library and starter documents; B6 support terms; B7 feature exceptions on lifecycle
+  pages; B10 plugin access and form block columns; B3 taxonomy on document-based sites is a convention.
+- B7: aem.live recommends Experience Workspace over Universal Editor for new projects. A4's decision
+  tree does not reflect that yet.
+
 ## Coverage matrix (built modules)
 
 | Module | Topic id | Page anchor |
@@ -105,5 +133,5 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
 
 ## Next run
 
-Set `START AT: PHASE 2`. Write B1–B10 with the same template, add their glossary terms,
-flip `built` to true in `data/syllabus.json`, run the index builder, test, and update this log.
+Set `START AT: PHASE 3`. Write C1–C11 with the same template, add their glossary terms and `asOf`,
+flip `built` to true in `data/syllabus.json`, run `npm run check && npm test`, and update this log.

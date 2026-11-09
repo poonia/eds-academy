@@ -4,7 +4,7 @@ A self-paced, interactive course on Adobe Edge Delivery Services (EDS), covering
 development and implementation from beginner (L1) to expert (L4). It is a static site with
 no build step: plain HTML, CSS and ES modules, which mirrors how EDS projects are built.
 
-Content is as of **30 October 2026**. Build status and open items are listed in `BUILD-LOG.md`.
+Category A content is as of **30 October 2026** and Category B as of **8 November 2026**. Build status and open items are listed in `project/BUILD-LOG.md`.
 
 ## Open it locally
 
@@ -24,8 +24,28 @@ python3 -m http.server 8000      # or: npx serve .
 
 There is no build step on Pages: `.nojekyll` turns Jekyll off, so files are served as they are.
 All paths are relative, so the site also works under another repository name or a custom domain.
-Pages is case-sensitive, so file names and links must match exactly. After changing module
-content, run `python3 tools/build-search-index.py` and commit the regenerated index.
+`404.html` is the one exception: Pages serves it at any depth, so it uses `/eds-academy/` paths.
+If the repository is renamed or moved to a custom domain, update those paths, `SITE_URL` in
+`tools/build-site-meta.py` and `SITE_PATH` in `tools/check-links.py`.
+
+## Before you push
+
+After adding a page or changing content, run these and commit what they regenerate:
+
+```bash
+python3 tools/build-search-index.py && python3 tools/build-site-meta.py
+```
+
+The GitHub Action in `.github/workflows/checks.yml` repeats them on every push, checks every
+local link with exact-case matching (Pages is case-sensitive), and runs browser smoke tests
+under `/eds-academy/`. To run the same checks locally:
+
+```bash
+npm ci && npx playwright install chromium
+npm run check && npm test
+```
+
+Node and Playwright are used for these checks only. The published site has no dependencies.
 
 ## Folder layout
 
@@ -92,6 +112,14 @@ All are driven by markup and inline JSON (`<script type="application/json">`). S
 | `cwv-sim` | Core Web Vitals simulator | none |
 | `phases` | Eager, lazy, delayed visualizer with payload budget | `budget`, `resources[]` |
 | `tabs` | Before/after or option tabs | Children with `data-tab` |
+| `doc-sim` | Document syntax to delivered markup | `source` |
+| `sheet-json` | Sheet to JSON; `data-mode="redirects"` adds a path tester | `csv`, `path` |
+| `nav-builder` | Nav document with live header preview | `source` |
+| `image-explorer` | Which image rendition a viewport receives | none |
+| `filter-sandbox` | Universal Editor filter and its add menu | `container`, `components[]`, `allowed[]` |
+| `hreflang-builder` | Locale folders and sitemap hreflang entry | `domain`, `languages[]`, `path` |
+| `form-sheet` | Form sheet to form preview | `csv` |
+| `traffic-split` | Experiment split and visits per variant | `visits` |
 | `course-map`, `dashboard`, `progress-panel` | Home page widgets | Read the syllabus and progress |
 
 Other enhancements: `figure.code` (highlighting, file label, `data-lines` highlights, copy,

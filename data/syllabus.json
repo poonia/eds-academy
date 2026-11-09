@@ -317,7 +317,8 @@
     }
    ],
    "signature": "Document-to-HTML simulator",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B2",
@@ -364,7 +365,8 @@
     }
    ],
    "signature": "Sidekick mockup with lifecycle state diagram",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B3",
@@ -421,7 +423,8 @@
     }
    ],
    "signature": "Spreadsheet-to-JSON converter and redirects tester",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B4",
@@ -458,7 +461,8 @@
     }
    ],
    "signature": "Nav document builder with live preview",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B5",
@@ -500,7 +504,8 @@
     }
    ],
    "signature": "Responsive image explorer",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B6",
@@ -553,7 +558,8 @@
     }
    ],
    "signature": "Document Authoring editor tour",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B7",
@@ -611,7 +617,8 @@
     }
    ],
    "signature": "Universal Editor tour and filter sandbox",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B8",
@@ -658,7 +665,8 @@
     }
    ],
    "signature": "Pre-publish QA checker",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B9",
@@ -696,7 +704,8 @@
     }
    ],
    "signature": "Locale tree explorer and hreflang builder",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "B10",
@@ -738,7 +747,8 @@
     }
    ],
    "signature": "Form sheet to form preview and traffic-split visual",
-   "built": false
+   "built": true,
+   "asOf": "8 Nov 2026"
   },
   {
    "id": "C1",

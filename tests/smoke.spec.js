@@ -1,0 +1,99 @@
+const { test, expect } = require('@playwright/test');
+const syllabus = require('../data/syllabus.json');
+
+const built = syllabus.modules.filter((m) => m.built);
+const pages = ['index.html', 'start-here.html', 'reference/components.html', ...built.map((m) => m.page)];
+
+/* Records uncaught errors, runtime errors and failed same-origin requests. */
+function watch(page) {
+  const problems = [];
+  page.on('pageerror', (e) => problems.push(`uncaught: ${e.message}`));
+  page.on('console', (m) => { if (m.type() === 'error' && m.text().startsWith('[academy]')) problems.push(m.text()); });
+  page.on('response', (r) => {
+    if (r.status() >= 400 && r.url().startsWith('http://127.0.0.1')) problems.push(`${r.status()} ${r.url()}`);
+  });
+  return problems;
+}
+
+async function open(page, path) {
+  await page.goto(path);
+  await page.waitForSelector('html[data-ready="true"]');
+}
+
+for (const path of pages) {
+  test(`renders ${path}`, async ({ page }) => {
+    const problems = watch(page);
+    await open(page, path);
+    const report = await page.evaluate(() => ({
+      empty: [...document.querySelectorAll('[data-component]')].filter((e) => !e.children.length).map((e) => e.dataset.component),
+      diagramErrors: document.querySelectorAll('.diagram-error').length,
+      unrendered: [...document.querySelectorAll('pre.mermaid')].filter((e) => !e.querySelector('svg')).length,
+    }));
+    expect(report).toEqual({ empty: [], diagramErrors: 0, unrendered: 0 });
+    expect(problems).toEqual([]);
+  });
+
+  test(`has no sideways scroll at 360 px: ${path}`, async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 780 });
+    await open(page, path);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+}
+
+test('marking a topic done updates progress', async ({ page }) => {
+  await open(page, built[0].page);
+  await expect(page.locator('.progress-chip .pc-text')).toHaveText(/^0\//);
+  await page.getByRole('button', { name: /^Mark done/ }).first().click();
+  await expect(page.locator('.progress-chip .pc-text')).toHaveText(/^1\//);
+  await page.reload();
+  await page.waitForSelector('html[data-ready="true"]');
+  await expect(page.locator('.progress-chip .pc-text')).toHaveText(/^1\//);
+});
+
+test('search never links to a page that does not exist', async ({ page, request }) => {
+  await open(page, 'index.html');
+  await page.keyboard.press('/');
+  await page.locator('dialog[open] input').fill('performance');
+  await expect(page.locator('dialog[open] a[role=option]').first()).toBeVisible();
+  const links = await page.locator('dialog[open] a[role=option]').evaluateAll((all) => all.map((a) => a.href));
+  for (const link of new Set(links.map((l) => l.split('#')[0]))) {
+    expect((await request.get(link)).status(), link).toBe(200);
+  }
+});
+
+test('simulators respond to input', async ({ page }) => {
+  await open(page, 'modules/b1-page-structure.html');
+  const doc = page.locator('[data-component="doc-sim"]');
+  await doc.locator('textarea').fill('# Hello there\n\n| Columns (dark) |\n| a | b |');
+  await expect(doc.locator('pre')).toContainText('<h1 id="hello-there">');
+  await expect(doc.locator('pre')).toContainText('class="columns dark"');
+
+  await open(page, 'modules/b3-spreadsheets.html');
+  const redirects = page.locator('[data-component="sheet-json"][data-mode="redirects"]');
+  await redirects.locator('input').fill('/loop');
+  await expect(redirects.locator('.feedback')).toContainText('Loop');
+
+  await open(page, 'modules/b5-images-media.html');
+  const images = page.locator('[data-component="image-explorer"]');
+  await images.locator('input[type=range]').fill('800');
+  await expect(images.locator('pre')).toContainText('width=2000');
+
+  await open(page, 'modules/b10-forms-experiments.html');
+  const form = page.locator('[data-component="form-sheet"]');
+  await expect(form.locator('.form-preview label').first()).toContainText('Your name *');
+  await form.locator('.sim-text').fill('Name,Type,Label\nx,select,Pick');
+  await expect(form.locator('.sim-notes')).toContainText('needs Options');
+});
+
+test('a missing URL at any depth shows the styled 404 page', async ({ page }) => {
+  const problems = watch(page);
+  const response = await page.goto('/eds-academy/no/such/deep/page.html');
+  expect(response.status()).toBe(404);
+  problems.length = 0; // The document's own 404 is expected.
+  await page.waitForSelector('html[data-ready="true"]');
+  await expect(page.locator('h1')).toHaveText('We could not find that page');
+  await expect(page.locator('a.brand')).toHaveAttribute('href', /\/eds-academy\/index\.html$/);
+  expect(await page.evaluate(() => getComputedStyle(document.querySelector('.btn.primary')).borderRadius)).not.toBe('0px');
+  expect(problems).toEqual([]);
+});

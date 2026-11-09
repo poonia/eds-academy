@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>A1 What EDS is and where it fits · EDS Academy</title>
 <meta name="description" content="Module A1: what Adobe Edge Delivery Services is, how it differs from traditional AEM Sites and headless, when it fits, how it is licensed and how its features mature.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/a1-what-eds-is.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="A1 What EDS is and where it fits · EDS Academy">
+<meta property="og:description" content="Module A1: what Adobe Edge Delivery Services is, how it differs from traditional AEM Sites and headless, when it fits, how it is licensed and how its features mature.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/a1-what-eds-is.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
 <link rel="stylesheet" href="../assets/css/academy.css">
@@ -323,7 +339,7 @@
         <tr><td>Removed</td><td>No longer available or supported</td><td>Must be replaced</td></tr>
       </tbody>
     </table></div>
-    <aside class="callout update"><p>Document Authoring was described as early access and community-supported in 2025–early 2026, and is now presented as Experience Workspace. Check its current support terms before you plan around it (module A4).</p></aside>
+    <aside class="callout update"><p>Document Authoring is now presented as Experience Workspace. On 8 November 2026 aem.live showed it at lifecycle stage 3, Increasing use. That stage describes adoption, not a support commitment, so get Adobe's support terms in writing before you plan around it (module A4).</p></aside>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="a1-t6"><script type="application/json">{"questions":[{"q":"A feature you like is listed as being in its first product version and may change significantly. What is the right enterprise stance?","options":["Build all new sites on it immediately","Pilot it with an exit plan and avoid hard dependencies","Ignore it until it is removed"],"answer":1,"explain":"Young features can change. Pilot them, but keep critical paths on Mainstream features."}]}</script></div>
@@ -380,7 +396,7 @@
     <div><h4>How to verify</h4><p>Your memo cites at least two scorer reasons and one feature to check against aem.live.</p></div>
     <div><h4>Stretch</h4><p>Repeat steps 2–5 on one of your current AEM pages and compare.</p></div>
   </div>
-  <aside class="callout verify"><p>The <code>.plain.html</code> convention is used by the boilerplate's fragment block. If it does not respond on a given site, the site may restrict it; try another page.</p></aside>
+  <aside class="callout tip"><p>The boilerplate's fragment block fetches <code>.plain.html</code>, so this view is how fragments load. For a home page use <code>/index.plain.html</code>: <code>/.plain.html</code> returned 404 on aem.live when checked on 8 November 2026.</p></aside>
   <ul class="checklist" data-id="a1-lab">
     <li>Viewed source and found semantic sections inside <code>&lt;main&gt;</code></li>
     <li>Compared source with the decorated DOM</li>

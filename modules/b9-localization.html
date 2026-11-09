@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B9 Localization and multi-site content · EDS Academy</title>
+<meta name="description" content="Module B9: language-first folder strategy, translation workflows, multi-site authoring and hreflang in sitemaps.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b9-localization.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B9 Localization and multi-site content · EDS Academy">
+<meta property="og:description" content="Module B9: language-first folder strategy, translation workflows, multi-site authoring and hreflang in sitemaps.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b9-localization.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B9">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Design a language-first content structure.</li>
+    <li>Plan translation and in-language review.</li>
+    <li>Explain what repoless and MSM each share.</li>
+    <li>Configure the idea of hreflang through sitemaps.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b9-ready" data-title="Ready for localization and multi-site content?">
+    <script type="application/json">{"questions": [{"q": "What holds shared strings?", "options": ["Placeholders", "Variants", "Fragments only"], "answer": 0, "explain": "Covered in B3."}, {"q": "What does repoless share?", "options": ["Code", "Content", "Authors"], "answer": 0, "explain": "Covered in A4."}, {"q": "Which fragment holds the menu?", "options": ["/nav", "/footer", "/menu.json"], "answer": 0, "explain": "Covered in B4."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="locale-folder-strategy" data-level="2">
+  <h2>Locale folder strategy</h2>
+  <div data-part="why"><p>A bank is about to build /ca_en, /ca_fr and /us_en, each a full copy. aem.live’s advice would save years of duplicated work.</p></div>
+  <div data-part="concept">
+    <p>aem.live recommends a <b>language-first</b> structure in two tiers: language first, then market or region, such as <code>/en/</code>, <code>/en/us/</code>, <code>/es/mx/</code>. Market-first structures usually duplicate content, which pollutes search indexes and multiplies the work.</p>
+    <p>Use fallbacks where sensible, so a company focused on English-speaking US can serve that from <code>/</code>. Sheets work the same way: most placeholders live in the language folder and a market folder overrides some. Where markets share little, such as under differing regulation, market-based structures can be right.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    R["/"] --&gt; EN["/en/"]
+    R --&gt; ES["/es/"]
+    EN --&gt; ENUS["/en/us/"]
+    EN --&gt; ENCA["/en/ca/"]
+    ES --&gt; ESMX["/es/mx/"]</pre>
+      <figcaption><b>What to notice:</b> language comes first, and a market folder holds only what differs.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>From the root, /en/ and /es/ are language folders. Under /en/ are market folders for the US and Canada, and under /es/ is one for Mexico.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Market-first</th><th>Language-first</th></tr></thead>
+    <tbody>
+      <tr><td>/ca_en/, /ca_fr/, /us_en/</td><td>/en/, /fr/, /en/us/</td></tr>
+      <tr><td>Full copy for each market</td><td>One language source, with market overrides</td></tr>
+      <tr><td>Duplicate content in search</td><td>One canonical URL per language</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b9-t1"><script type="application/json">{"questions": [{"q": "When is a market-first structure reasonable?", "options": ["When markets share little content, such as under different regulation", "Always", "Never"], "answer": 0, "explain": "aem.live notes these exceptions."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>The same page ranks in several locales</td><td>Duplicated content</td><td>Consolidate by language and use hreflang.</td></tr>
+      <tr><td>Visitors are forced to a locale</td><td>Automatic redirects based on location</td><td>Let visitors choose and remember their choice.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="translation-workflows" data-level="3">
+  <h2>Translation workflows</h2>
+  <div data-part="why"><p>Translation is where cost, quality and timing collide. EDS leaves the mechanics to the tools you already chose.</p></div>
+  <div data-part="concept">
+    <p>EDS supports localization through the translation tools of your content source. In Experience Workspace, Google Translate is ready by default, with connectors for Lionbridge, Smartling and Trados. AEM authors use AEM’s translation tools and language masters.</p>
+    <p>Language detection should be a fallback only. A visitor arriving from a search result or a campaign is already in the right language, and aem.live notes that some legislation restricts geofencing. Always let people choose.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    S["Source language page"] --&gt; T["Translation tool"]
+    T --&gt; R["In-language review"]
+    R --&gt; P["Preview"]
+    P --&gt; L["Publish"]</pre>
+      <figcaption><b>What to notice:</b> translated pages go through the same preview and publish cycle.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A source language page goes through a translation tool and in-language review, then preview and publish.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Content type</th><th>Approach</th></tr></thead>
+    <tbody>
+      <tr><td>Legal and regulated</td><td>Human translation and review</td></tr>
+      <tr><td>Marketing headlines</td><td>Transcreation or human review</td></tr>
+      <tr><td>Long-tail support</td><td>Machine translation with sampling</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b9-t2"><script type="application/json">{"questions": [{"q": "Should you auto-redirect visitors arriving from a French search result?", "options": ["No: they are already in the right language", "Yes, always", "Only on Mondays"], "answer": 0, "explain": "Detection is only a fallback."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Translated page has English buttons</td><td>Placeholders were not translated</td><td>Translate the locale’s placeholders sheet.</td></tr>
+      <tr><td>Links go to English pages</td><td>Links were not localized</td><td>Update links in the translated documents.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="multi-site-authoring" data-level="3">
+  <h2>Multi-site authoring</h2>
+  <div data-part="why"><p>Several brands or regions want a shared platform, but their teams want autonomy. Be clear what is shared and what is not.</p></div>
+  <div data-part="concept">
+    <p>With <b>repoless</b>, many sites share one codebase. With AEM authoring, <b>MSM</b> can keep Live Copies in sync with central content; this requires repoless. On document-based projects, each site has its own content location.</p>
+    <p>Generate hreflang with a configured sitemap per language. Pages relate through a common path suffix: <code>/welcome</code> and <code>/fr/welcome</code>. Set <code>html-lang</code> through bulk metadata, but note aem.live’s point that Google ignores it, so hreflang in the sitemap is what counts.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="sitemap.yaml" data-lang="yaml">
+      <textarea class="src" hidden>sitemaps:
+  example:
+    lastmod: YYYY-MM-DD
+    languages:
+      en:
+        source: /en/query-index.json
+        destination: /sitemap-en.xml
+        hreflang: en
+      fr:
+        source: /fr/query-index.json
+        destination: /sitemap-fr.xml
+        hreflang: fr
+        alternate: /fr/{path}</textarea>
+      <figcaption><b>Result:</b> matching pages link to each other through hreflang entries.</figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Layer</th><th>Shared?</th><th>Tool</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td>Yes</td><td>Repoless</td></tr>
+      <tr><td>Content source</td><td>Per site</td><td>Site configuration</td></tr>
+      <tr><td>Inherited content</td><td>If using AEM</td><td>MSM Live Copies</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b9-t3"><script type="application/json">{"questions": [{"q": "How does the sitemap relate /welcome and /fr/welcome?", "options": ["Through their common suffix", "By publication date", "By author name"], "answer": 0, "explain": "Keep page names aligned across folders."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>No hreflang entries</td><td>Page names differ between languages</td><td>Align the path, or specify the primary language manually.</td></tr>
+      <tr><td>Wrong language tag</td><td><code>html-lang</code> not set</td><td>Add it in bulk metadata.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: locale tree and hreflang</h2>
+  <p>Switch languages on and off and change the path, then see the folders and the sitemap entry.</p>
+  <div data-component="hreflang-builder" data-title="Locale tree and hreflang builder"><script type="application/json">{"domain": "https://www.example.com", "path": "/welcome", "languages": [{"code": "en", "root": true}, {"code": "fr"}, {"code": "es"}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: design a localization plan</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Plan a real or fictional site in three languages and two markets.</p></div>
+    <div><h4>You need</h4><p>A site map, and someone who knows your markets.</p></div>
+    <div><h4>Time</h4><p>About 60 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>List languages and markets.</b></div></li>
+    <li><div><b>Find what truly differs</b> by market.</div></li>
+    <li><div><b>Draw the folder tree</b>, language first.</div></li>
+    <li><div><b>Decide translation methods</b> by content type.</div></li>
+    <li><div><b>Plan placeholders</b> and which keys need market overrides.</div></li>
+    <li><div><b>Define a language switcher</b> and how to remember the choice.</div></li>
+    <li><div><b>Draft the sitemap configuration</b> with hreflang.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A one-page plan with a folder tree, translation matrix and sitemap draft.</p></div>
+    <div><h4>How to verify</h4><p>Each market folder contains only what differs from its language folder.</p></div>
+    <div><h4>Stretch</h4><p>Estimate content volume under market-first and language-first structures.</p></div>
+  </div>
+  <ul class="checklist" data-id="b9-lab">
+    <li>Listed differences</li>
+    <li>Drew a language-first tree</li>
+    <li>Set translation methods</li>
+    <li>Planned placeholders</li>
+    <li>Drafted the sitemap</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Duplicate pages in search</td><td>Copies by market</td><td>Move to language-first.</td></tr>
+      <tr><td>Language switcher goes to 404</td><td>Page name differs</td><td>Align names, or map them.</td></tr>
+      <tr><td>hreflang is incomplete</td><td>Missing language</td><td>Add it to the sitemap configuration.</td></tr>
+      <tr><td>Local edits are lost</td><td>Live Copy inheritance</td><td>Manage inheritance as agreed.</td></tr>
+      <tr><td>Wrong locale forced</td><td>Aggressive geo detection</td><td>Remove forced redirects.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Operating model.</b> Decide who owns source content, translations and local exceptions, and document the handoffs.</p></aside>
+    <aside class="callout warning" data-label="Legal"><p>Geo-blocking and forced redirects may be restricted in some jurisdictions. Involve legal before you add them.</p></aside>
+    <aside class="callout accessibility"><p>Set the page language correctly so screen readers pronounce it properly, and write the language switcher in each language.</p></aside>
+    <aside class="callout performance"><p>Avoid blocking the first paint on a geo lookup. Let visitors choose, and remember the choice.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Folder structure</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Translation vendors</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Sitemap configuration</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b9-check"><script type="application/json">{"questions": [{"q": "What does aem.live recommend first in a URL?", "options": ["Language", "Market", "Year"], "answer": 0, "explain": "Then market as the second tier."}, {"q": "What is the problem with full market copies?", "options": ["Duplicate content and management work", "They are too fast", "Nothing"], "answer": 0, "explain": "See topic 1."}, {"q": "When should language be auto-detected?", "options": ["Only as a fallback", "Always", "On every page view"], "answer": 0, "explain": "People should choose."}, {"q": "Which translation connectors exist in Experience Workspace? Choose all that apply.", "options": ["Google Translate", "Lionbridge", "Smartling", "Trados"], "answer": [0, 1, 2, 3], "explain": "You can also build your own."}, {"q": "MSM on EDS needs?", "options": ["Repoless", "Folder mapping", "A second CDN"], "answer": 0, "explain": "See topic 3."}, {"q": "Google uses which for language targeting?", "options": ["hreflang", "html-lang", "The file name"], "answer": 0, "explain": "aem.live notes Google ignores the lang attribute."}, {"q": "Sitemap alternates rely on?", "options": ["A common path suffix", "Identical titles", "Identical images"], "answer": 0, "explain": "Or a manually specified primary language."}, {"q": "A company in Canada needs English and French, sharing almost all content, and a US English offer on one page. What is the best fit?", "options": ["/ca_en, /ca_fr and /us_en as full copies", "/en/ and /fr/, with an /en/us/ override for the one page", "Separate repositories for each", "One page with hidden languages"], "answer": 1, "explain": "Language-first, with a market override only where content differs.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b9-cards"><script type="application/json">{"cards": [["Language-first", "Language tier first, then market."], ["Market override", "A market folder holding only what differs."], ["hreflang", "Links equivalent pages across languages."], ["html-lang", "Metadata for the page lang attribute."], ["Live Copy", "MSM-managed synchronized copy."], ["Repoless", "Many sites, one codebase."], ["Language master", "Source content for a language."], ["Fallback", "Using a parent folder’s content."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B9 · Localization and multi-site content</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Structure</h4><ul><li>/en/, then /en/us/</li><li>Avoid full copies</li><li>Regulation may differ</li></ul></div>
+      <div><h4>Detection</h4><ul><li>Fallback only</li><li>Let people choose</li><li>Remember the choice</li></ul></div>
+      <div><h4>Translation</h4><ul><li>Tools of your source</li><li>Review by risk</li><li>Translate placeholders</li></ul></div>
+      <div><h4>Multi-site</h4><ul><li>Repoless shares code</li><li>MSM inherits content</li><li>Separate concerns</li></ul></div>
+      <div><h4>Search</h4><ul><li>hreflang in sitemap</li><li>Common path suffix</li><li>Google ignores html-lang</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/translation-and-localization" rel="noopener" target="_blank">aem.live: Translation and localization</a></li>
+    <li><a href="https://www.aem.live/developer/sitemap" rel="noopener" target="_blank">aem.live: Sitemaps</a></li>
+    <li><a href="https://www.aem.live/developer/repoless-multisite-manager" rel="noopener" target="_blank">aem.live: Multi site management</a></li>
+    <li><a href="https://www.aem.live/developer/multi-brand-sites" rel="noopener" target="_blank">aem.live: Multi-brand sites</a></li>
+    <li><a href="https://www.aem.live/docs/ew/administering/translation" rel="noopener" target="_blank">aem.live: Translation in Experience Workspace</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B5 Images, media and assets · EDS Academy</title>
+<meta name="description" content="Module B5: how images are stored and served, adding video and embeds, icons and SVGs, and integrating AEM Assets.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b5-images-media.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B5 Images, media and assets · EDS Academy">
+<meta property="og:description" content="Module B5: how images are stored and served, adding video and embeds, icons and SVGs, and integrating AEM Assets.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b5-images-media.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B5">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Explain which image rendition each visitor gets.</li>
+    <li>Add video without harming the page.</li>
+    <li>Use and update icons as content.</li>
+    <li>Choose the right route to approved AEM Assets.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b5-ready" data-title="Ready for images, media and assets?">
+    <script type="application/json">{"questions": [{"q": "Which metric is about the largest visible element?", "options": ["LCP", "CLS", "INP"], "answer": 0, "explain": "Covered in A3."}, {"q": "What is the Media Bus for?", "options": ["Images and video", "JavaScript", "Configuration"], "answer": 0, "explain": "Covered in A2."}, {"q": "What is default content?", "options": ["Text, images, lists and links", "Only blocks", "Only metadata"], "answer": 0, "explain": "Covered in B1."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="images-in-content" data-level="1">
+  <h2>Images in content</h2>
+  <div data-part="why"><p>An author uploads a 12 MB photo and worries the page will be slow. On EDS, the platform handles most of that, and the author’s job becomes alt text.</p></div>
+  <div data-part="concept">
+    <p>Drag or paste an image into a document. On preview it goes to the <b>Media Bus</b>, stored once with a unique hash in its <code>media_</code> URL, so it can be cached permanently. Resizing it in the document has no effect.</p>
+    <p>By default an image renders as a <code>&lt;picture&gt;</code> with a 750 px version for mobile and a 2000 px version for desktop, as WebP with a fallback to the original format. Images are lazy-loaded by default, and the boilerplate makes the first one eager because it is the likely LCP element. Always set alt text.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    D["Image in a document"] --&gt; P["Preview"]
+    P --&gt; M["Media Bus: media_hash"]
+    M --&gt; W["750 px or 2000 px"]
+    W --&gt; F["WebP, or the original format"]</pre>
+      <figcaption><b>What to notice:</b> the author supplies one image; the system produces the versions.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An image in a document is previewed into the Media Bus with a hash. It is served at 750 or 2000 pixels, as WebP or the original format.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Image request" data-lang="bash">
+      <textarea class="src" hidden>/media_1a2b3c.jpg?width=750&amp;format=webply&amp;optimize=medium</textarea>
+      <figcaption><b>Parameters:</b> <code>width</code>, <code>height</code>, <code>format</code> and <code>quality</code> are supported.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b5-t1"><script type="application/json">{"questions": [{"q": "What happens if you shrink an image in Word?", "options": ["The site image shrinks", "Nothing changes on the site", "The image is rejected"], "answer": 1, "explain": "Size on the page comes from renditions and CSS."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Image is stretched or wrong size</td><td>Expecting document sizing to apply</td><td>Let block CSS control display size.</td></tr>
+      <tr><td>Image is rejected on preview</td><td>It exceeds documented limits</td><td>Check the limits page and reduce it.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="video-and-embeds" data-level="2">
+  <h2>Video and embeds</h2>
+  <div data-part="why"><p>A product video should not delay the page or leak data to third parties before consent. How you add it matters.</p></div>
+  <div data-part="concept">
+    <p>Word and Google Docs do not take dragged videos directly. Add the MP4 through SharePoint or Drive, preview and publish it with Sidekick, and put the resulting URL as a link in a suitable block.</p>
+    <p>The block collection includes <b>Video</b> and <b>Embed</b> blocks. Which ones you have depends on your project. Third-party players carry cost and privacy implications, so check with your developers how consent and loading are handled.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    U["Upload MP4 to Drive or SharePoint"] --&gt; P["Preview and publish"]
+    P --&gt; L["Copy the URL"]
+    L --&gt; B["Link in a Video block"]</pre>
+      <figcaption><b>What to notice:</b> the video is its own published resource, and the page just links to it.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Upload an MP4 to Drive or SharePoint, preview and publish it, copy its URL, and add it as a link in a Video block.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><table class="blocktable"><tr><th colspan="1">Video</th></tr><tr><td>https://main--site--org.aem.live/media/intro.mp4</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b5-t2"><script type="application/json">{"questions": [{"q": "How do you add a video to a Google Doc page?", "options": ["Drag it into the document", "Publish it separately and link to it from a block", "Email it to Adobe"], "answer": 1, "explain": "Publish the file, then reference the URL."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Video link shows as text</td><td>Not inside a video block</td><td>Use your project’s Video or Embed block.</td></tr>
+      <tr><td>Video 404s</td><td>File was not published</td><td>Publish it with Sidekick.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="icons-and-svgs" data-level="2">
+  <h2>Icons and SVGs</h2>
+  <div data-part="why"><p>Marketing wants a new icon this week. Icons can be managed as content, without code changes.</p></div>
+  <div data-part="concept">
+    <p>Reference an icon by name with colons: <code>:phone:</code>. The boilerplate turns this into a span and inserts the matching SVG.</p>
+    <p>Icons used inside blocks usually live in code. Icons authors add and update can live with content in an <code>/icons/</code> folder in the content source, and are referenced the same way.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>In the document</th><th>Icon file</th></tr></thead>
+    <tbody>
+      <tr><td><code>:phone:</code></td><td><code>/icons/phone.svg</code></td></tr>
+      <tr><td><code>:tfsa-badge:</code></td><td><code>/icons/tfsa-badge.svg</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><p>:phone: Call us at 555-0100</p></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b5-t3"><script type="application/json">{"questions": [{"q": "What does :email: do?", "options": ["Displays that icon", "Sends an email", "Creates a block"], "answer": 0, "explain": "The colon notation references an icon."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Colons show as text</td><td>No matching icon, or a typo</td><td>Check the file name.</td></tr>
+      <tr><td>Icon has wrong colour</td><td>SVG has hard-coded fills</td><td>Ask a developer how icons are styled.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="aem-assets-integration" data-level="3">
+  <h2>AEM Assets integration</h2>
+  <div data-part="why"><p>Brand approved 40,000 images in AEM Assets. Authors need those, not copies from their desktops.</p></div>
+  <div data-part="concept">
+    <p>In Word or Google Docs, the <b>AEM Assets Sidekick plugin</b> adds a button, often called “My Assets”, for choosing approved assets. It supports AEM Assets as a Cloud Service and Assets Essentials, and authors must be entitled through a product profile.</p>
+    <p>With the Universal Editor, related assets are published with the page. A technical account needs access to the asset folder, and assets must fit Edge Delivery limits. Experience Workspace has its own AEM Assets integration (module B6).</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    AS["AEM Assets"] --&gt; SK["Sidekick plugin: Word or Docs"]
+    AS --&gt; UE["Universal Editor picker"]
+    AS --&gt; EW["Experience Workspace"]
+    SK --&gt; ED["EDS page"]
+    UE --&gt; ED
+    EW --&gt; ED</pre>
+      <figcaption><b>What to notice:</b> there is one approved library, reached through whichever tool authors use.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>AEM Assets feeds the Sidekick plugin for Word or Docs, the Universal Editor picker, and Experience Workspace. All three lead to an Edge Delivery page.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Authoring tool</th><th>How assets get in</th><th>Watch for</th></tr></thead>
+    <tbody>
+      <tr><td>Word or Docs</td><td>Sidekick plugin</td><td>Product profile entitlement</td></tr>
+      <tr><td>Universal Editor</td><td>Asset picker</td><td>Technical account access and size limits</td></tr>
+      <tr><td>Experience Workspace</td><td>Built-in integration</td><td>Setup by administrators</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b5-t4"><script type="application/json">{"questions": [{"q": "Images fail to publish from the Universal Editor, and the folder is private. What is the likely cause?", "options": ["The technical account cannot access the folder", "WebP is unsupported", "The sitemap is wrong"], "answer": 0, "explain": "The publishing account needs access to the folder."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>“My Assets” is missing</td><td>Plugin not configured</td><td>Ask developers to set up the plugin.</td></tr>
+      <tr><td>Asset picker is empty</td><td>User is not entitled</td><td>Assign the product profile.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: responsive image explorer</h2>
+  <p>Move the slider across the 600 px breakpoint, and toggle WebP and first-image behaviour.</p>
+  <div data-component="image-explorer" data-title="Responsive image explorer"><script type="application/json">{}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: audit a page’s media</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Check how real images are delivered and fix authoring issues.</p></div>
+    <div><h4>You need</h4><p>A published page with images, and browser DevTools.</p></div>
+    <div><h4>Time</h4><p>About 40 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open a page</b> and the Network panel, filtered to images.</div></li>
+    <li><div><b>Find a <code>media_</code> URL</b> and note its width and format.</div></li>
+    <li><div><b>Resize the browser</b> below and above 600 px, then reload.</div></li>
+    <li><div><b>Check the first image</b> has <code>loading="eager"</code>.</div></li>
+    <li><div><b>Check alt text</b> on every image.</div></li>
+    <li><div><b>Add one icon</b> using the colon notation and preview it.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A list of each image, its rendition and whether it has useful alt text.</p></div>
+    <div><h4>How to verify</h4><p>You can state why each visitor receives the rendition they do.</p></div>
+    <div><h4>Stretch</h4><p>Rename a media URL for a friendlier “Save as” file name.</p></div>
+  </div>
+  <ul class="checklist" data-id="b5-lab">
+    <li>Found media_ URLs</li>
+    <li>Compared breakpoints</li>
+    <li>Confirmed first image is eager</li>
+    <li>Audited alt text</li>
+    <li>Added an icon</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Image is blurry on a large screen</td><td>Block requested a small rendition</td><td>Ask a developer to review its breakpoints.</td></tr>
+      <tr><td>Same image, different hash</td><td>The image file changed</td><td>This is expected: the hash follows the binary.</td></tr>
+      <tr><td>Page is slow to LCP</td><td>Hero is heavy or lazy</td><td>Keep the hero image first and simple.</td></tr>
+      <tr><td>SVG fails to preview</td><td>File or format problem</td><td>Check file type limits.</td></tr>
+      <tr><td>Video does not play</td><td>Not published, or unsupported</td><td>Publish an MP4 and check limits.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Brand control.</b> Source images from AEM Assets where brand or rights approval matters, and record usage rights.</p></aside>
+    <aside class="callout accessibility"><p>Describe what an image communicates. Decorative images need no description; charts need the data in text.</p></aside>
+    <aside class="callout performance"><p>Media is same-origin and cached permanently because its URL is content-based. Keep video off the top of the page.</p></aside>
+    <aside class="callout warning" data-label="Media and privacy"><p>Removing an image from a document does not recall URLs already shared. Use your takedown process for sensitive media.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Alt text</td><td>Responsible</td><td>Informed</td><td>Consulted</td></tr>
+      <tr><td>Breakpoints</td><td>Informed</td><td>Responsible</td><td>Consulted</td></tr>
+      <tr><td>Assets access</td><td>Informed</td><td>Consulted</td><td>Responsible</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b5-check"><script type="application/json">{"questions": [{"q": "What are the default widths?", "options": ["750 and 2000", "320 and 640", "1024 only"], "answer": 0, "explain": "See the picture element."}, {"q": "What sets the breakpoint between them in the boilerplate?", "options": ["min-width: 600px", "min-width: 1200px", "The author"], "answer": 0, "explain": "See createOptimizedPicture."}, {"q": "Why are media URLs safe to cache forever?", "options": ["The hash comes from the file’s content", "They expire nightly", "They never change"], "answer": 0, "explain": "New content gets a new URL."}, {"q": "Which formats does the Media Bus serve for images and video? Choose all that apply.", "options": ["JPG", "PNG", "MP4", "GIF"], "answer": [0, 1, 2], "explain": "See the supported file types on the Limits page."}, {"q": "How do you reference an icon?", "options": [":name:", "{name}", "#name#"], "answer": 0, "explain": "Colon notation."}, {"q": "Where can authored icons live?", "options": ["/icons in the content source", "/etc", "A CDN rule"], "answer": 0, "explain": "They can be managed as content."}, {"q": "Who needs a product profile for the Assets plugin?", "options": ["Authors using it", "Page visitors", "Search engines"], "answer": 0, "explain": "Authors must be entitled."}, {"q": "A hero video is planned above the fold, and LCP is already marginal. What do you recommend?", "options": ["Autoplay a large file first", "Lead with a lightweight image and place video lower or load it after interaction", "Inline the video in HTML", "Resize the video in Word"], "answer": 1, "explain": "Protect the critical path.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b5-cards"><script type="application/json">{"cards": [["Media Bus", "Stores images and video by content hash."], ["media_ URL", "Hash-based, immutable address."], ["webply", "Format value for lossy WebP."], ["750 / 2000", "Default mobile and desktop widths."], ["Alt text", "Text alternative set in the document."], ["Lazy loading", "Default for images."], [":icon:", "Notation that inserts an icon."], ["/icons", "Content folder for authored icons."], ["My Assets", "Typical Sidekick button for AEM Assets."], ["Technical account", "Publishes assets for AEM authoring."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B5 · Images, media and assets</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Images</h4><ul><li>Paste into document</li><li>Sizing there is ignored</li><li>Always add alt text</li></ul></div>
+      <div><h4>Renditions</h4><ul><li>750 below 600 px</li><li>2000 from 600 px</li><li>WebP plus fallback</li></ul></div>
+      <div><h4>Video</h4><ul><li>Publish MP4 separately</li><li>Link from a block</li><li>Check consent</li></ul></div>
+      <div><h4>Icons</h4><ul><li>:name: notation</li><li>/icons as content</li><li>SVG</li></ul></div>
+      <div><h4>AEM Assets</h4><ul><li>Sidekick plugin</li><li>UE picker</li><li>EW integration</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/media" rel="noopener" target="_blank">aem.live: Media assets</a></li>
+    <li><a href="https://www.aem.live/docs/authoring" rel="noopener" target="_blank">aem.live: Authoring and publishing content</a></li>
+    <li><a href="https://www.aem.live/developer/block-collection/icons" rel="noopener" target="_blank">aem.live: Icons</a></li>
+    <li><a href="https://www.aem.live/docs/aem-assets-sidekick-plugin" rel="noopener" target="_blank">aem.live: AEM Assets Sidekick plugin</a></li>
+    <li><a href="https://www.aem.live/docs/universal-editor-assets" rel="noopener" target="_blank">aem.live: Publishing pages with AEM Assets</a></li>
+    <li><a href="https://www.aem.live/docs/limits" rel="noopener" target="_blank">aem.live: Limits</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

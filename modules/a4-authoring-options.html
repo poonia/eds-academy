@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>A4 Authoring options landscape · EDS Academy</title>
 <meta name="description" content="Module A4: document-based authoring, Document Authoring (now Experience Workspace), Universal Editor with AEM Sites, Content Fragments, choosing an option, and repoless sites.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/a4-authoring-options.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="A4 Authoring options landscape · EDS Academy">
+<meta property="og:description" content="Module A4: document-based authoring, Document Authoring (now Experience Workspace), Universal Editor with AEM Sites, Content Fragments, choosing an option, and repoless sites.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/a4-authoring-options.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
 <link rel="stylesheet" href="../assets/css/academy.css">
@@ -114,7 +130,7 @@
         <tr class="choose"><th>Choose when</th><td>Teams live in Microsoft 365 or Google</td><td>You want a light CMS made for EDS</td><td>You want visual and AI-assisted authoring on documents</td></tr>
       </tbody>
     </table></div>
-    <aside class="callout verify"><p>In 2025 and early 2026, DA was described as early access and community-supported without an Adobe SLA. The Experience Workspace announcement does not state its support level. Confirm support terms with Adobe before an enterprise commitment.</p></aside>
+    <aside class="callout verify"><p>On 8 November 2026 aem.live showed Experience Workspace at lifecycle stage 3, Increasing use, but no aem.live page we found states its support terms or SLA. Lifecycle stage is not a support commitment, so get the terms from Adobe in writing before an enterprise commitment.</p></aside>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="a4-t2"><script type="application/json">{"questions":[{"q":"A business unit authors in AEM with the Universal Editor and wants Experience Workspace's AI canvas. What must happen?","options":["Nothing; it works on AEM content directly","Content would need to move to the EDS document-based repository","They need a new GitHub repo"],"answer":1,"explain":"aem.live says Experience Workspace only works with the document-based repository."}]}</script></div>
@@ -182,7 +198,7 @@
   <h2>Content Fragments to EDS</h2>
   <div data-part="why"><p>Product details, rates, advisor bios and disclaimers are reused across pages and channels. Typing them into each page invites mistakes; structured fragments keep one source of truth.</p></div>
   <div data-part="concept">
-    <p>Content Fragments are structured content in AEM, defined by a model (fields such as product name, rate, disclaimer). aem.live lists the Content Fragment Editor as an authoring choice designed for headless needs, generating JSON for Edge Delivery Services among other uses. Content Fragments can also be published to EDS as semantic HTML, which makes them crawlable and fast.</p>
+    <p>Content Fragments are structured content in AEM, defined by a model (fields such as product name, rate, disclaimer). aem.live lists the Content Fragment Editor as an authoring choice designed for headless needs, generating JSON for Edge Delivery Services among other uses. Content Fragments can also be published to EDS as semantic HTML, which makes them crawlable and fast. The HTML you get depends on the path mapping and overlay in your site configuration and on the JSON2HTML rendering behind them, so review the output for each model.</p>
     <p>A related capability, JSON2HTML, renders EDS-friendly HTML pages from Content Fragments or any JSON endpoint. Together they let you generate many similar pages, such as product or location pages, from structured data.</p>
   </div>
   <div data-part="visual">
@@ -269,7 +285,7 @@
       <tbody>
         <tr><th>Author training</th><td class="yes">Minimal</td><td class="yes">Low</td><td class="part">Moderate</td></tr>
         <tr><th>Structured fields</th><td class="no">Limited</td><td class="part">Some</td><td class="yes">Strong (models)</td></tr>
-        <tr><th>Approval workflows</th><td class="no">Outside the tool</td><td class="part">Available, verify fit</td><td class="yes">AEM workflows</td></tr>
+        <tr><th>Approval workflows</th><td class="no">Outside the tool</td><td class="part">Request Publish, after onboarding</td><td class="yes">AEM workflows</td></tr>
         <tr><th>Multi-site, translation</th><td class="part">Folder conventions</td><td class="part">Translation tools</td><td class="yes">MSM, translation</td></tr>
         <tr><th>Support model</th><td>Adobe (EDS)</td><td class="part">Verify current terms</td><td>Adobe (AEM + EDS)</td></tr>
         <tr class="choose"><th>Choose when</th><td>Speed, small teams, campaigns</td><td>Light CMS on documents, AI-assisted authoring</td><td>Regulated content, many sites, existing AEM</td></tr>
@@ -369,7 +385,7 @@
       "q5":{"q":"Do they want visual layout editing or AI-assisted authoring on top of documents?","options":[{"label":"Yes","next":"rEW"},{"label":"No, a clean document editor is enough","next":"rDA"}]},
       "rUE":{"result":"Universal Editor with AEM Sites","why":"Approvals, structured fields, multi-site and translation come from AEM, while EDS delivers the pages. Define component models and filters early.","link":"#universal-editor-with-aem-sites","linkText":"Review topic 3"},
       "rUEnew":{"result":"Universal Editor with AEM (plan the AEM investment)","why":"Your governance needs point to AEM. Weigh licence and setup effort against regulatory risk with your platform team.","link":"#choosing-an-option","linkText":"Review the criteria"},
-      "rEWverify":{"result":"Experience Workspace, after verifying support and workflow fit","why":"It adds scheduling and workflows on document-based content. Confirm Adobe's support terms and that its approval flow meets your compliance needs.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
+      "rEWverify":{"result":"Experience Workspace, after verifying support and workflow fit","why":"It adds scheduling and workflows on document-based content. Its Request Publish approval flow needs onboarding by Adobe. Confirm support terms and that the flow meets your compliance needs.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
       "rEW":{"result":"Experience Workspace","why":"Visual canvas, AI assistant and collaboration on the EDS document repository. Check current support terms before committing.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
       "rDA":{"result":"Document Authoring (da.live)","why":"A light, document-style CMS made for EDS, with versions, bulk operations and translation.","link":"#document-authoring-da-live","linkText":"Review topic 2"},
       "rDocs":{"result":"Document-based authoring (Word or Google Docs)","why":"Authors keep their tools and publish with Sidekick. Fastest to adopt; add governance through process.","link":"#document-based-authoring","linkText":"Review topic 1"}

@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B3 Spreadsheets and structured content · EDS Academy</title>
+<meta name="description" content="Module B3: spreadsheets served as JSON, bulk metadata, redirects, placeholders, query indexes, sitemaps, and taxonomy.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b3-spreadsheets.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B3 Spreadsheets and structured content · EDS Academy">
+<meta property="og:description" content="Module B3: spreadsheets served as JSON, bulk metadata, redirects, placeholders, query indexes, sitemaps, and taxonomy.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b3-spreadsheets.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B3">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Predict the JSON a workbook produces.</li>
+    <li>Apply metadata to many pages with a bulk sheet.</li>
+    <li>Manage redirects and foresee their side effects.</li>
+    <li>Maintain placeholders for shared strings.</li>
+    <li>Explain how query indexes and sitemaps are built and what they exclude.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b3-ready" data-title="Ready for spreadsheets and structured content?">
+    <script type="application/json">{"questions": [{"q": "What does Preview do to a document?", "options": ["Updates aem.page", "Publishes it", "Deletes it"], "answer": 0, "explain": "Covered in B2."}, {"q": "Where does page metadata go?", "options": ["A Metadata table", "A Section Metadata table", "The file name"], "answer": 0, "explain": "Covered in B1."}, {"q": "Must a change be published before visitors see it?", "options": ["Yes", "No", "Only for images"], "answer": 0, "explain": "Visitors see live only."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="spreadsheets-as-json" data-level="2">
+  <h2>Spreadsheets as JSON</h2>
+  <div data-part="why"><p>The branch finder needs 400 locations that change weekly. A spreadsheet the operations team already understands can be the data source, with no database.</p></div>
+  <div data-part="concept">
+    <p>Preview a spreadsheet and EDS serves it as JSON at the matching <code>.json</code> path. A single sheet comes back in <em>sheet</em> format, with <code>total</code>, <code>offset</code>, <code>limit</code>, <code>columns</code> and <code>data</code>. The first row supplies the column names.</p>
+    <p>In a workbook with several sheets, only those prefixed <code>shared-</code> are delivered, so working sheets stay private. <code>shared-default</code> is delivered as a single sheet, and <code>?sheet=name</code> requests <code>shared-name</code>. Several <code>shared-</code> sheets with no default use multi-sheet format. A response cannot exceed 6 MB compressed, so large data needs <code>limit</code> and <code>offset</code>.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    W["Workbook"] --&gt; A{"Sheets"}
+    A --&gt;|One| S["Single sheet JSON"]
+    A --&gt;|shared-default| S
+    A --&gt;|Several shared-| M["Multi-sheet JSON"]
+    A --&gt;|No shared- prefix| H["Not delivered"]</pre>
+      <figcaption><b>What to notice:</b> the shared- prefix decides what becomes public.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A workbook with one sheet or a shared-default sheet returns single sheet JSON. Several shared- sheets return multi-sheet JSON. In a multi-sheet workbook, other sheets are not delivered.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="/branches.json?limit=1" data-lang="json">
+      <textarea class="src" hidden>{
+  "total": 400,
+  "offset": 0,
+  "limit": 1,
+  "columns": ["City", "Phone"],
+  "data": [{ "City": "Halifax", "Phone": "555-0100" }],
+  ":type": "sheet"
+}</textarea>
+      <figcaption><b>Result:</b> <code>total</code> shows all rows, even when <code>limit</code> returns one.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b3-t1"><script type="application/json">{"questions": [{"q": "A workbook has sheets “notes”, “shared-data” and “shared-prices”. What is delivered?", "options": ["All three", "shared-data and shared-prices in multi-sheet format", "Only notes"], "answer": 1, "explain": "Only shared- sheets are delivered."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Internal notes are public</td><td>Single-sheet workbook is always delivered</td><td>Add a sheet so <code>shared-</code> applies, or move the notes.</td></tr>
+      <tr><td>Data is cut off</td><td>A default limit or the 6 MB ceiling</td><td>Page through with <code>limit</code> and <code>offset</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="bulk-metadata" data-level="2">
+  <h2>Bulk metadata</h2>
+  <div data-part="why"><p>Every page in the insights section needs the same theme and share image. Setting it once beats editing 300 documents.</p></div>
+  <div data-part="concept">
+    <p>Create a sheet named <code>metadata</code> (or <code>metadata.xlsx</code> in SharePoint) in the content root. A <code>URL</code> column holds a pattern such as <code>/docs/**</code>; every other column is a metadata property.</p>
+    <p>The sheet is read from top to bottom, and site-wide rows set to <code>**</code> must come before more specific ones. A page’s own Metadata block beats the sheet. Use <code>""</code> as a value to explicitly remove a property. Preview and publish the sheet for changes to take effect.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    G["** site-wide row"] --&gt; SP["/insights/** row"]
+    SP --&gt; PG["Page Metadata block"]
+    PG --&gt; R["Final tags"]</pre>
+      <figcaption><b>What to notice:</b> more specific rows follow general ones, and the page itself has the final say.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A site-wide row applies first, then a row for the insights section, then the page Metadata block, producing the final tags.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>URL</th><th>image</th><th>robots</th><th>theme</th></tr></thead>
+    <tbody>
+      <tr><td>/**</td><td>/share.png</td><td></td><td></td></tr>
+      <tr><td>/insights/**</td><td></td><td></td><td>dark</td></tr>
+      <tr><td>/experiments/**</td><td></td><td>noindex,nofollow</td><td></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b3-t2"><script type="application/json">{"questions": [{"q": "A page has a Metadata block title and the sheet sets another title for its path. Which appears?", "options": ["The sheet’s", "The page’s", "Neither"], "answer": 1, "explain": "Page-level metadata takes precedence."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Bulk value is ignored</td><td>Sheet not published, or a page value overrides it</td><td>Publish the sheet and check the page.</td></tr>
+      <tr><td>General row overrides a specific one</td><td>Rows are in the wrong order</td><td>Put <code>**</code> first.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="redirects" data-level="2">
+  <h2>Redirects</h2>
+  <div data-part="why"><p>A renamed product page is linked from three years of emails. A redirect keeps those links and their search value.</p></div>
+  <div data-part="concept">
+    <p>Manage redirects in a sheet called <code>redirects</code> (<code>redirects.xlsx</code> in SharePoint) in the project root, with <code>Source</code> and <code>Destination</code> columns. A source is a relative path; a destination is a relative path or a full URL.</p>
+    <p>Redirects take precedence over content, so a redirect hides a page at the same URL. In a multi-sheet workbook, only the sheet called <code>helix-default</code> is used. Wildcards are not supported in this sheet; aem.live recommends creating redirects from real usage data.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    V["Visitor requests /old"] --&gt; C{"Redirect row?"}
+    C --&gt;|Yes| D["301 to destination"]
+    C --&gt;|No| P{"Published page?"}
+    P --&gt;|Yes| PG["Page"]
+    P --&gt;|No| N["404"]</pre>
+      <figcaption><b>What to notice:</b> the redirect is checked before the page.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visitor requests a path. If a redirect row matches, they are redirected to the destination. Otherwise a published page is served, or a 404.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Source</th><th>Destination</th><th>Valid?</th></tr></thead>
+    <tbody>
+      <tr><td>/old-tfsa</td><td>/savings/tfsa</td><td>Yes</td></tr>
+      <tr><td>/promo</td><td>https://partner.example.com</td><td>Yes</td></tr>
+      <tr><td>/blog/*</td><td>/insights/</td><td>No: no wildcards</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b3-t3"><script type="application/json">{"questions": [{"q": "You add a redirect from /rates to /savings, but a page exists at /rates. What do visitors get?", "options": ["The page", "The redirect", "A 404"], "answer": 1, "explain": "Redirects win over content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Page has mysteriously “gone”</td><td>A redirect row hides it</td><td>Remove the row to restore it.</td></tr>
+      <tr><td>Redirect not working live</td><td>Sheet previewed but not published</td><td>Publish the sheet.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="placeholders" data-level="2">
+  <h2>Placeholders</h2>
+  <div data-part="why"><p>The “Apply now” button appears in 40 places and in French. Placeholders let a team change the text once.</p></div>
+  <div data-part="concept">
+    <p><b>Placeholders</b> are site-wide strings managed in a sheet named <code>placeholders</code> (<code>placeholders.xlsx</code> in SharePoint), in the root or a locale’s root folder. It needs <code>Key</code> and <code>Text</code> columns.</p>
+    <p>Developers read the values in code. Placeholder support now lives in the block collection rather than the boilerplate, so check that your project uses it.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Key</th><th>Text</th></tr></thead>
+    <tbody>
+      <tr><td>Apply now</td><td>Apply now</td></tr>
+      <tr><td>Search results</td><td>Search results</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout tip"><p>Keep one placeholders sheet per language. A market folder can override individual keys from the language folder (module B9).</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b3-t4"><script type="application/json">{"questions": [{"q": "Which columns must a placeholders sheet have?", "options": ["Key and Text", "Source and Destination", "URL and Title"], "answer": 0, "explain": "Key is the identifier, Text is the string."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Button shows no text</td><td>Key was renamed, but code uses the old key</td><td>Keep keys stable and change only Text.</td></tr>
+      <tr><td>Change is not visible</td><td>Sheet not published</td><td>Preview, test, then publish.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="query-index" data-level="2">
+  <h2>Query index</h2>
+  <div data-part="why"><p>The insights landing page must list the latest articles by itself. The query index is what makes that possible.</p></div>
+  <div data-part="concept">
+    <p>A <b>query index</b> keeps a list of published pages, usually at <code>/query-index.json</code>, for lists, feeds, search and filtering. The easiest way to set one up is the Index Admin tool, where you name the properties to extract, such as title, image, description and lastModified.</p>
+    <p>Pages are indexed when they are published, and unpublishing removes them. Previewed-only pages are never included. Spreadsheet-based indexing works only with Google Drive or SharePoint, not with Document Authoring, AEM Sites or BYOM sources.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    P["Publish a page"] --&gt; X["Properties extracted from its HTML"]
+    X --&gt; J["/query-index.json"]
+    J --&gt; B["Blocks list, filter, search"]</pre>
+      <figcaption><b>What to notice:</b> the index reads the rendered head tags, so good metadata makes good lists.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Publishing a page extracts properties from its HTML into query-index.json, which blocks use to list, filter and search.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Property</th><th>Comes from</th></tr></thead>
+    <tbody>
+      <tr><td>title</td><td><code>og:title</code> meta</td></tr>
+      <tr><td>image</td><td><code>og:image</code> meta</td></tr>
+      <tr><td>description</td><td><code>description</code> meta</td></tr>
+      <tr><td>tags</td><td><code>article:tag</code> meta, as an array</td></tr>
+      <tr><td>lastModified</td><td><code>Last-Modified</code> response header</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b3-t5"><script type="application/json">{"questions": [{"q": "A previewed page is missing from the article list. Why?", "options": ["The index is broken", "Only published pages are indexed", "Lists need a code release"], "answer": 1, "explain": "Indexes contain published pages only."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>New property is empty</td><td>Index was not rebuilt</td><td>Use Reindex in the Index Admin tool.</td></tr>
+      <tr><td>Old article is still listed</td><td>It was not unpublished</td><td>Unpublish the page.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="sitemaps" data-level="2">
+  <h2>Sitemaps</h2>
+  <div data-part="why"><p>Search engines find new pages faster with an accurate sitemap, and EDS keeps one up to date by itself.</p></div>
+  <div data-part="concept">
+    <p>With no configuration, every site gets a <code>/sitemap.xml</code> of its published documents. For custom needs, you can generate one from an index or configure <code>sitemap.yaml</code> through the configuration service. A single sitemap is limited to 50,000 URLs and 50 MB uncompressed.</p>
+    <p>Setting <code>robots</code> metadata to <code>noindex</code> keeps a page out of the sitemap. The domain comes from <code>cdn.prod.host</code> in site configuration. <code>robots.txt</code> is set in site configuration and is only served on your production domain; aem.page and aem.live hosts are blocked from crawlers.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    P["Published pages"] --&gt; F{"robots: noindex?"}
+    F --&gt;|No| S["sitemap.xml"]
+    F --&gt;|Yes| X["Left out"]
+    R["robots.txt on production"] -.links to.-&gt; S</pre>
+      <figcaption><b>What to notice:</b> one metadata value controls whether a page is listed.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Published pages without robots noindex go into sitemap.xml, and those with it are left out. The robots.txt on production links to the sitemap.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Approach</th></tr></thead>
+    <tbody>
+      <tr><td>Basic site</td><td>Default sitemap</td></tr>
+      <tr><td>Exclude a section</td><td><code>robots: noindex</code> in bulk metadata</td></tr>
+      <tr><td>Languages</td><td>Configured sitemap with hreflang (module B9)</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b3-t6"><script type="application/json">{"questions": [{"q": "Why does your aem.live URL not appear in Google?", "options": ["It is a bug", "Those hosts are protected from crawlers by design", "The sitemap is too small"], "answer": 1, "explain": "Only your production domain is meant to be indexed."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Sitemap URLs use the wrong domain</td><td><code>cdn.prod.host</code> is not set</td><td>Set it in site configuration.</td></tr>
+      <tr><td>Test pages are in the sitemap</td><td>No robots value</td><td>Add <code>noindex</code> in bulk metadata.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="taxonomy-and-tags" data-level="3">
+  <h2>Taxonomy and tags</h2>
+  <div data-part="why"><p>Without agreed tags, “RRSP”, “RRSPs” and “Retirement Savings” fragment the article filters. A taxonomy gives everyone one list.</p></div>
+  <div data-part="concept">
+    <p>A <b>taxonomy</b> is a controlled list of tags. In AEM authoring, you create tags in the Tagging Console, then a page from the <em>Taxonomy</em> template exposes their descriptions in every language, because the Universal Editor works only with tag IDs.</p>
+    <p>On document-based sites, teams commonly keep the approved list in a spreadsheet served as JSON and set tags in metadata. That is a project convention, so agree on it with your developers. Tags reach the query index through the <code>article:tag</code> meta tag.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    T["Approved tag list"] --&gt; A["Authors set tags in metadata"]
+    A --&gt; I["Query index: tags array"]
+    I --&gt; F["Filters and related content"]</pre>
+      <figcaption><b>What to notice:</b> consistent input is what makes the filters trustworthy.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An approved tag list guides authors setting tags in metadata. Tags enter the query index as an array and power filters and related content.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Without a taxonomy</th><th>With a taxonomy</th></tr></thead>
+    <tbody>
+      <tr><td>RRSP, RRSPs, retirement</td><td>One tag: rrsp</td></tr>
+      <tr><td>Filters that grow forever</td><td>A reviewed list with an owner</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b3-t7"><script type="application/json">{"questions": [{"q": "Why does an AEM project need a taxonomy page for the Universal Editor?", "options": ["The editor works only with tag IDs, so it needs their descriptions", "To replace the sitemap", "To publish pages faster"], "answer": 0, "explain": "The page exposes tag descriptions in all languages."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Filter shows duplicates</td><td>Free-text tags</td><td>Use the approved list and clean up old values.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: sheet to JSON, and a redirects tester</h2>
+  <p>Edit either sheet. See the JSON EDS would serve, then test a path against your redirects.</p>
+  <div data-component="sheet-json" data-title="Spreadsheet-to-JSON converter"><script type="application/json">{"csv": "City,Phone,Hours\nHalifax,555-0100,9-5\nRegina,555-0101,9-6"}</script></div>
+  <div data-component="sheet-json" data-title="Redirects tester" data-mode="redirects"><script type="application/json">{"csv": "Source,Destination\n/old-tfsa,/savings/tfsa\n/promo,https://partner.example.com\n/loop,/loop", "path": "/old-tfsa"}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: run a section from spreadsheets</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Control metadata, redirects and a list from sheets.</p></div>
+    <div><h4>You need</h4><p>A tutorial site you can publish to.</p></div>
+    <div><h4>Time</h4><p>About 75 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Create a data sheet</b>, preview it, and open its <code>.json</code> URL.</div></li>
+    <li><div><b>Add a second sheet</b> and see how the <code>shared-</code> prefix changes the response.</div></li>
+    <li><div><b>Add a bulk metadata row</b> for one folder, then publish it.</div></li>
+    <li><div><b>Add a redirect</b> for a renamed page and test it on preview.</div></li>
+    <li><div><b>Create a query index</b> with title, description and image.</div></li>
+    <li><div><b>Publish two pages</b> and open <code>/query-index.json</code>.</div></li>
+    <li><div><b>Open <code>/sitemap.xml</code></b> and find them.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>JSON, metadata, a redirect and an index that all reflect your sheets.</p></div>
+    <div><h4>How to verify</h4><p>Each change appears at the URL you expected, and a noindex page is missing from the sitemap.</p></div>
+    <div><h4>Stretch</h4><p>Use <code>limit</code> and <code>offset</code> to page through your data.</p></div>
+  </div>
+  <ul class="checklist" data-id="b3-lab">
+    <li>Sheet is served as JSON</li>
+    <li>shared- behaviour observed</li>
+    <li>Bulk metadata applied</li>
+    <li>Redirect tested</li>
+    <li>Index and sitemap checked</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>JSON returns 404</td><td>Sheet not previewed</td><td>Preview or activate it.</td></tr>
+      <tr><td>Redirect loops</td><td>Destination matches another source</td><td>Follow the chain and fix the row.</td></tr>
+      <tr><td>Index is empty</td><td>No published pages match, or it needs a reindex</td><td>Publish a page, then reindex.</td></tr>
+      <tr><td>Sitemap misses a page</td><td>Page has noindex or is unpublished</td><td>Check metadata and status.</td></tr>
+      <tr><td>Response too large</td><td>Over the 6 MB limit</td><td>Use <code>limit</code> and <code>offset</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Change control.</b> Redirect and metadata sheets affect many URLs. Treat edits like releases, and name an owner.</p></aside>
+    <aside class="callout warning" data-label="Data exposure"><p>Anything in a delivered sheet is public. Never store personal or internal data there.</p></aside>
+    <aside class="callout performance"><p>Fetch only the rows you need. Large indexes slow every page that loads them.</p></aside>
+    <aside class="callout accessibility"><p>Shared strings in placeholders are also what screen reader users hear. Review them for clarity.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Redirect sheet</td><td>Responsible</td><td>Informed</td><td>Accountable</td></tr>
+      <tr><td>Index definition</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Tag list</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b3-check"><script type="application/json">{"questions": [{"q": "Which sheet is delivered in a multi-sheet workbook?", "options": ["Those prefixed shared-", "The first", "All"], "answer": 0, "explain": "The prefix controls delivery."}, {"q": "What is the JSON type of a single sheet?", "options": ["sheet", "multi-sheet", "table"], "answer": 0, "explain": "See the :type property."}, {"q": "What does /** in the metadata URL column match?", "options": ["The whole site", "Only the home page", "Nothing"], "answer": 0, "explain": "It is the site-wide pattern."}, {"q": "Which beats bulk metadata?", "options": ["Page Metadata block", "Nothing", "Sitemap"], "answer": 0, "explain": "The page wins."}, {"q": "Are wildcards allowed in the redirects sheet?", "options": ["No", "Yes", "Only at the end"], "answer": 0, "explain": "CDN-level rules are a separate topic."}, {"q": "When is a page added to the query index?", "options": ["When published", "When previewed", "When saved"], "answer": 0, "explain": "Indexing follows publishing."}, {"q": "How do you keep a page out of the sitemap?", "options": ["robots: noindex", "Rename it", "Add a redirect"], "answer": 0, "explain": "Index and sitemap respect robots."}, {"q": "A team stores staff phone numbers in a tab of the same workbook as a public branch list. The workbook has only that tab and “public”. What is the risk?", "options": ["None: tabs are always private", "Without the shared- prefix, nothing is delivered, but a mistaken rename would expose them", "The sitemap will list them", "The redirect will fail"], "answer": 1, "explain": "In a multi-sheet workbook only shared- sheets are delivered. Keep sensitive data out of delivered workbooks.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b3-cards"><script type="application/json">{"cards": [["Single sheet", "JSON with total, offset, limit, columns and data."], ["shared-", "Prefix that makes a sheet deliverable."], ["shared-default", "Delivered as a single sheet."], ["Bulk metadata", "A sheet applying metadata by URL pattern."], ["Redirects sheet", "Source and Destination columns."], ["helix-default", "The redirect sheet used in a multi-sheet workbook."], ["Placeholders", "Key and Text strings used by code."], ["Query index", "JSON list of published pages."], ["cdn.prod.host", "Production domain for sitemaps and canonicals."], ["noindex", "Keeps a page out of the sitemap."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B3 · Spreadsheets and structured content</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>JSON</h4><ul><li>First row is columns</li><li>shared- to deliver</li><li>6 MB compressed limit</li></ul></div>
+      <div><h4>Bulk metadata</h4><ul><li>Root sheet: metadata</li><li>URL column</li><li>** first, page wins</li></ul></div>
+      <div><h4>Redirects</h4><ul><li>Source, Destination</li><li>Beat content</li><li>No wildcards</li></ul></div>
+      <div><h4>Index</h4><ul><li>Published pages only</li><li>Reads head tags</li><li>Reindex after changes</li></ul></div>
+      <div><h4>Sitemap</h4><ul><li>Automatic</li><li>50,000 URLs max</li><li>robots.txt on production</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/spreadsheets" rel="noopener" target="_blank">aem.live: Spreadsheets and JSON</a></li>
+    <li><a href="https://www.aem.live/docs/bulk-metadata" rel="noopener" target="_blank">aem.live: Bulk metadata</a></li>
+    <li><a href="https://www.aem.live/docs/redirects" rel="noopener" target="_blank">aem.live: Redirects</a></li>
+    <li><a href="https://www.aem.live/docs/placeholders" rel="noopener" target="_blank">aem.live: Placeholders</a></li>
+    <li><a href="https://www.aem.live/developer/indexing" rel="noopener" target="_blank">aem.live: Indexing</a></li>
+    <li><a href="https://www.aem.live/developer/sitemap" rel="noopener" target="_blank">aem.live: Sitemaps</a></li>
+    <li><a href="https://www.aem.live/docs/authoring-taxonomy" rel="noopener" target="_blank">aem.live: Managing taxonomy data</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

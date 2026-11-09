@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B10 Forms and experimentation for authors · EDS Academy</title>
+<meta name="description" content="Module B10: spreadsheet-based forms, AEM Forms on Edge Delivery Services, experiments, audiences and campaigns.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b10-forms-experiments.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B10 Forms and experimentation for authors · EDS Academy">
+<meta property="og:description" content="Module B10: spreadsheet-based forms, AEM Forms on Edge Delivery Services, experiments, audiences and campaigns.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b10-forms-experiments.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B10">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Define a simple form in a spreadsheet.</li>
+    <li>Choose between document-based and WYSIWYG forms.</li>
+    <li>Set up an experiment with control and challengers.</li>
+    <li>Explain audiences and campaigns, and when they need developers.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b10-ready" data-title="Ready for forms and experimentation for authors?">
+    <script type="application/json">{"questions": [{"q": "What does a sheet become after preview?", "options": ["JSON", "PDF", "A workflow"], "answer": 0, "explain": "Covered in B3."}, {"q": "How do you keep a page out of search?", "options": ["robots: noindex", "Delete its images", "Add a variant"], "answer": 0, "explain": "Covered in B3."}, {"q": "What can be applied across a folder?", "options": ["Bulk metadata", "Heading styles", "Alt text"], "answer": 0, "explain": "Covered in B3."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="spreadsheet-based-forms" data-level="2">
+  <h2>Spreadsheet-based forms</h2>
+  <div data-part="why"><p>A branch needs a “Book a consultation” form this week. A spreadsheet can define it without a form-building project.</p></div>
+  <div data-part="concept">
+    <p>With <b>document-based authoring</b>, each row of a spreadsheet defines a form field and a block on the page renders it. This suits simple forms with basic fields and quick data connectivity. The Forms Submission Service can save submissions to OneDrive, SharePoint or Google Sheets, even if the spreadsheet is not otherwise managed by EDS.</p>
+    <p>Available columns and field types depend on the form block in your project. Use of Edge Delivery Services for AEM Forms requires a valid AEM Forms license.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    S["Form definition sheet"] --&gt; B["Form block renders fields"]
+    B --&gt; V["Visitor submits"]
+    V --&gt; R["Submissions sheet or email"]</pre>
+      <figcaption><b>What to notice:</b> the definition and the submissions are two separate things.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A form definition sheet is rendered by a form block. A visitor submits, and data goes to a submissions sheet or email.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Name</th><th>Type</th><th>Label</th><th>Mandatory</th></tr></thead>
+    <tbody>
+      <tr><td>email</td><td>email</td><td>Email</td><td>x</td></tr>
+      <tr><td>topic</td><td>select</td><td>Topic</td><td></td></tr>
+      <tr><td>send</td><td>submit</td><td>Book</td><td></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b10-t1"><script type="application/json">{"questions": [{"q": "What does one row of a form sheet represent?", "options": ["A field", "A page", "A submission"], "answer": 0, "explain": "Rows define fields."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Field is unlabeled</td><td>Label column is empty</td><td>Add a label: it is essential for accessibility.</td></tr>
+      <tr><td>Submissions go nowhere</td><td>Submission target is not configured</td><td>Check the submission setup.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="aem-forms-on-eds" data-level="3">
+  <h2>AEM Forms on EDS</h2>
+  <div data-part="why"><p>A mortgage application has branching logic, attachments and archival rules. A simple spreadsheet will not stretch that far.</p></div>
+  <div data-part="concept">
+    <p><b>WYSIWYG authoring</b> with the Universal Editor suits complex forms that need multiple panels, business logic, data integration and AEM Workflows. It adds an advanced rules editor, a document of record for tamper-proof archives, and reCAPTCHA integration.</p>
+    <p>Both routes offer accessible components, rules and validations, file attachments, custom components and submission to spreadsheets or email, with performance monitored through Operational Telemetry.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Feature</th><th>Document-based</th><th>WYSIWYG</th></tr></thead>
+    <tbody>
+      <tr><td>Accessible components</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Rules and validation</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>File attachments</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Advanced rules editor</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Document of record</td><td>No</td><td>Yes</td></tr>
+      <tr><td>reCAPTCHA</td><td>No</td><td>Yes</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div data-component="decision-tree" data-title="Which forms route?"><script type="application/json">{"start": "a", "nodes": {"a": {"q": "Does the form need complex logic or several panels?", "options": [{"label": "Yes", "next": "w"}, {"label": "No", "next": "b"}]}, "b": {"q": "Do you need a tamper-proof archive or AEM Workflows?", "options": [{"label": "Yes", "next": "w"}, {"label": "No", "next": "d"}]}, "w": {"result": "WYSIWYG authoring", "why": "Complex logic, archival and workflows belong in the Universal Editor route."}, "d": {"result": "Document-based authoring", "why": "A simple spreadsheet definition is quicker to create and change."}}}</script></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b10-t2"><script type="application/json">{"questions": [{"q": "Which route provides a document of record?", "options": ["WYSIWYG", "Document-based", "Neither"], "answer": 0, "explain": "It is listed for WYSIWYG authoring."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Rule is too complex for a sheet</td><td>Wrong authoring route</td><td>Move to WYSIWYG authoring.</td></tr>
+      <tr><td>Spam submissions</td><td>No protection</td><td>Use reCAPTCHA in the WYSIWYG route, or add server-side checks.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="experiments" data-level="3">
+  <h2>Experiments</h2>
+  <div data-part="why"><p>Two headlines, one argument. An experiment replaces opinion with evidence.</p></div>
+  <div data-part="concept">
+    <p>In an experiment, the <b>control</b> is the current page and a <b>challenger</b> is a variation. By convention, put challengers in <code>/experiments/&lt;id&gt;/</code>. On the control page, add <code>Experiment</code> and <code>Experiment Variants</code> metadata rows.</p>
+    <p>Traffic splits evenly by default, and can be overridden. The preview shows an overlay for switching variants. Publish the control and every challenger to start, and exclude challengers from search with <code>noindex,nofollow</code>. Measurement uses real user data.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    C["Copy control to /experiments/opt-0134/"] --&gt; E["Edit challenger and publish"]
+    E --&gt; M["Add metadata to control"]
+    M --&gt; P["Preview with overlay"]
+    P --&gt; L["Publish control and challengers"]</pre>
+      <figcaption><b>What to notice:</b> experiments are set up in the same tools authors already use.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Copy the control to an experiments folder, edit and publish the challenger, add metadata to the control, preview with the overlay and publish everything.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Experiment</td><td>opt-0134</td></tr><tr><td>Experiment Variants</td><td>https://www.example.com/experiments/opt-0134/challenger-1</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b10-t3"><script type="application/json">{"questions": [{"q": "With two challengers, what share does each variant get by default?", "options": ["A third", "Half", "10 percent"], "answer": 0, "explain": "Even distribution across all variants."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Challenger appears in search</td><td>No noindex</td><td>Add it in bulk metadata for <code>/experiments/**</code>.</td></tr>
+      <tr><td>No clear winner</td><td>Too little traffic</td><td>Reduce challengers or run longer.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="audiences-and-campaigns" data-level="3">
+  <h2>Audiences and campaigns</h2>
+  <div data-part="why"><p>An email offer should land on the matching page, and a phone visitor may need something different.</p></div>
+  <div data-part="concept">
+    <p>Adobe’s experimentation plugin can serve variations by <b>audience</b> or <b>campaign</b>. Developers define audiences in code as functions that return true or false, such as mobile or desktop. A <code>Campaign: Xmas</code> metadata row points to a variant, chosen with <code>?campaign=xmas</code> or <code>?utm_campaign=xmas</code>.</p>
+    <p>The plugin’s documentation says it is available in collaboration with AEM Engineering, so confirm access first. Audiences that rely on external services delay rendering, so favour what the browser already knows.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    U["Visit with ?utm_campaign=xmas"] --&gt; C{"Campaign row?"}
+    C --&gt;|Yes| V["Xmas variant"]
+    C --&gt;|No| D["Default page"]</pre>
+      <figcaption><b>What to notice:</b> the URL parameter chooses the variant, so links in email and social are enough.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visit with a utm_campaign of xmas is matched to a campaign row. If one exists, the Xmas variant is served; otherwise the default page.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Campaign: Xmas</td><td>https://www.example.com/my-page-for-xmas</td></tr><tr><td>Campaign: Halloween</td><td>https://www.example.com/my-page-for-halloween</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b10-t4"><script type="application/json">{"questions": [{"q": "Which link shows the xmas campaign?", "options": ["?utm_campaign=xmas", "?theme=xmas", "#xmas"], "answer": 0, "explain": "<code>campaign<\/code> also works by default."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Campaign does not display</td><td>Parameter or name mismatch</td><td>Match the metadata name.</td></tr>
+      <tr><td>Page is slow for some users</td><td>Audience waits on an external service</td><td>Use browser signals where possible.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactives: form sheet and traffic split</h2>
+  <p>Edit the sheet to change the form. Then see how traffic and challengers affect each variant.</p>
+  <div data-component="form-sheet" data-title="Form sheet to form preview"><script type="application/json">{"csv": "Name,Type,Label,Mandatory,Options\nname,text,Your name,x,\nemail,email,Email,x,\ntopic,select,Topic,,Savings;Mortgages;Retirement\nnotes,textarea,Anything else?,,\nsend,submit,Book a consultation,,"}</script></div>
+  <div data-component="traffic-split" data-title="Traffic split"><script type="application/json">{"visits": 5000}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: build a form and plan an experiment</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Create a form definition and an experiment plan.</p></div>
+    <div><h4>You need</h4><p>The simulators above, and a tutorial site if available.</p></div>
+    <div><h4>Time</h4><p>About 60 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Sketch the form</b> and remove any field you do not need.</div></li>
+    <li><div><b>Build the sheet</b> in the simulator, and resolve every issue it shows.</div></li>
+    <li><div><b>Decide the route</b> with the decision tree.</div></li>
+    <li><div><b>Write a hypothesis</b>: “Changing X will improve Y because Z.”</div></li>
+    <li><div><b>Create an experiment ID</b> and folder name.</div></li>
+    <li><div><b>Draft the control page metadata.</b></div></li>
+    <li><div><b>Estimate traffic</b> with the split visual.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A validated form definition, and an experiment plan with metadata.</p></div>
+    <div><h4>How to verify</h4><p>The form has labels for every field, and the plan names one measure of success.</p></div>
+    <div><h4>Stretch</h4><p>Run the experiment on a tutorial site and use the preview overlay.</p></div>
+  </div>
+  <ul class="checklist" data-id="b10-lab">
+    <li>Form has no issues</li>
+    <li>Route chosen</li>
+    <li>Hypothesis written</li>
+    <li>Metadata drafted</li>
+    <li>Traffic estimated</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Field is missing</td><td>Row malformed</td><td>Check Name and Type.</td></tr>
+      <tr><td>Form submits nowhere</td><td>Target not configured</td><td>Configure submissions.</td></tr>
+      <tr><td>Overlay is absent</td><td>Viewing live, or metadata is wrong</td><td>Preview the control page.</td></tr>
+      <tr><td>Variant never appears</td><td>Challenger not published</td><td>Publish every challenger.</td></tr>
+      <tr><td>Experiment results are noisy</td><td>Low traffic</td><td>Run longer, or test a bigger change.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Experiment log.</b> Record the hypothesis, dates, result and decision so learning is kept.</p></aside>
+    <aside class="callout warning" data-label="Privacy"><p>Collect only the data you need, and publish a privacy notice. Do not expose submission sheets publicly. Check consent requirements before experiments.</p></aside>
+    <aside class="callout accessibility"><p>Every field needs a visible label and clear error messages. Test forms with a keyboard.</p></aside>
+    <aside class="callout performance"><p>aem.live warns that slow experimentation can cost more than it gains. Avoid blocking calls.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Form fields</td><td>Responsible</td><td>Consulted</td><td>Consulted</td></tr>
+      <tr><td>Experiment decision</td><td>Responsible</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Audience definitions</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b10-check"><script type="application/json">{"questions": [{"q": "Which suits a simple contact form?", "options": ["Document-based authoring", "WYSIWYG only", "Neither"], "answer": 0, "explain": "Spreadsheets are quick for simple forms."}, {"q": "What license is needed?", "options": ["A valid AEM Forms license", "None", "Only a GitHub license"], "answer": 0, "explain": "See aem.live."}, {"q": "What does a challenger differ from?", "options": ["The control", "The sitemap", "The nav"], "answer": 0, "explain": "Challengers compete with the control."}, {"q": "Which metadata rows define an experiment? Choose all that apply.", "options": ["Experiment", "Experiment Variants", "Section Metadata"], "answer": [0, 1], "explain": "Both go on the control page."}, {"q": "Default traffic with one challenger?", "options": ["50/50", "90/10", "100/0"], "answer": 0, "explain": "Even split."}, {"q": "How do you stop challengers being indexed?", "options": ["noindex,nofollow", "Rename the file", "Leave it"], "answer": 0, "explain": "By folder in bulk metadata, or per page."}, {"q": "Which is a default campaign parameter?", "options": ["utm_campaign", "utm_size", "lang"], "answer": 0, "explain": "<code>campaign<\/code> also works."}, {"q": "A team wants to test 4 challengers on a page with 2,000 visits a month. What do you advise?", "options": ["Run all 4 for a week", "Test one big change, for longer, and check significance", "Declare a winner by opinion", "Turn off real user data"], "answer": 1, "explain": "Too little traffic split too thin gives no reliable answer.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b10-cards"><script type="application/json">{"cards": [["Form sheet", "Rows define form fields."], ["Forms Submission Service", "Saves submissions to spreadsheets."], ["WYSIWYG forms", "Universal Editor route for complex forms."], ["Document of record", "Tamper-proof archive of a submission."], ["Control", "The experience prior to the experiment."], ["Challenger", "A variation being tested."], ["Significance", "Evidence that a result is not luck."], ["Experiment ID", "A unique identifier such as opt-0134."], ["Audience", "Group defined in code."], ["Campaign", "Variant chosen by a URL parameter."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B10 · Forms and experimentation for authors</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Forms</h4><ul><li>Sheet: one row per field</li><li>WYSIWYG for complexity</li><li>License required</li></ul></div>
+      <div><h4>Experiment</h4><ul><li>Control and challengers</li><li>Experiment, Experiment Variants</li><li>Publish all pages</li></ul></div>
+      <div><h4>Traffic</h4><ul><li>Even by default</li><li>More variants, thinner data</li><li>Check significance</li></ul></div>
+      <div><h4>Search</h4><ul><li>noindex,nofollow</li><li>Use /experiments/**</li></ul></div>
+      <div><h4>Campaigns</h4><ul><li>Campaign: Name metadata</li><li>?campaign or ?utm_campaign</li><li>Audiences in code</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/forms" rel="noopener" target="_blank">aem.live: Forms</a></li>
+    <li><a href="https://www.aem.live/docs/experimentation" rel="noopener" target="_blank">aem.live: Experimentation</a></li>
+    <li><a href="https://github.com/adobe/aem-experimentation/blob/main/documentation/audiences.md" rel="noopener" target="_blank">Adobe on GitHub: Audiences</a></li>
+    <li><a href="https://github.com/adobe/aem-experimentation/blob/main/documentation/campaigns.md" rel="noopener" target="_blank">Adobe on GitHub: Campaigns</a></li>
+    <li><a href="https://github.com/adobe/aem-experimentation/blob/main/documentation/experiments.md" rel="noopener" target="_blank">Adobe on GitHub: Experiments</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview" rel="noopener" target="_blank">Experience League: Forms on Edge Delivery Services</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

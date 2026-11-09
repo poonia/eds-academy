@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B6 Document Authoring (da.live) · EDS Academy</title>
+<meta name="description" content="Module B6: the Document Authoring and Experience Workspace editor, versions and restore, library, bulk and translation tools, Universal Editor on da.live, and support.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b6-document-authoring.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B6 Document Authoring (da.live) · EDS Academy">
+<meta property="og:description" content="Module B6: the Document Authoring and Experience Workspace editor, versions and restore, library, bulk and translation tools, Universal Editor on da.live, and support.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b6-document-authoring.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B6">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Navigate the editor and its modes.</li>
+    <li>Find and restore an earlier version.</li>
+    <li>Use the library and starter documents.</li>
+    <li>Run bulk operations and start translation.</li>
+    <li>Explain the support questions to settle before committing.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b6-ready" data-title="Ready for document Authoring (da.live)?">
+    <script type="application/json">{"questions": [{"q": "What did Document Authoring become?", "options": ["Experience Workspace", "Sidekick", "Universal Editor"], "answer": 0, "explain": "Covered in A4."}, {"q": "Where does its content live?", "options": ["EDS document-based repository", "SharePoint", "GitHub"], "answer": 0, "explain": "Covered in A4."}, {"q": "What does a block table’s first row hold?", "options": ["Its name", "Its author", "Its URL"], "answer": 0, "explain": "Covered in B1."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="editor-basics" data-level="2">
+  <h2>Editor basics</h2>
+  <div data-part="why"><p>A team likes documents but is outgrowing shared drives. Document Authoring keeps the feel of a document, in a browser tool built for EDS.</p></div>
+  <div data-part="concept">
+    <p><b>Document Authoring</b> (DA) at <code>da.live</code> is a browser editor for EDS, and aem.live now presents it as <b>Experience Workspace</b>. You can enable the upgrade on an existing project when ready: nothing is migrated, and existing work and integrations keep working. This module uses both names.</p>
+    <p>The editor has a menu at the top, the editing area, and a toolbar. Menus are contextual, palettes stay open and menus close after a click. Experience Workspace adds <b>Layout</b> mode for WYSIWYG editing, alongside <b>Content</b> mode. The blocks you can pick depend on your project’s library.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    B["Content browser"] --&gt; E["Editor"]
+    E --&gt; P["Preview"]
+    P --&gt; L["Publish"]
+    E --&gt; T["Tools: versions, library, assistant"]</pre>
+      <figcaption><b>What to notice:</b> you never leave the browser to go from finding a page to publishing it.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The content browser opens the editor. The editor leads to preview and publish and offers tools for versions, the library and the assistant.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Pattern</th><th>What it means for you</th></tr></thead>
+    <tbody>
+      <tr><td>Contextual menus</td><td>Click into a table to see Edit Table</td></tr>
+      <tr><td>Palettes stay open</td><td>Larger tools stay visible as you work</td></tr>
+      <tr><td>Menus close</td><td>Text menus close after one click</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b6-t1"><script type="application/json">{"questions": [{"q": "Does enabling Experience Workspace migrate your existing DA content?", "options": ["Yes, it must be moved", "No, it is an additive upgrade", "Only published pages move"], "answer": 1, "explain": "aem.live says nothing is migrated or altered."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>A block is missing</td><td>It is not in your project’s library</td><td>Ask a developer to add it.</td></tr>
+      <tr><td>No Layout mode</td><td>Experience Workspace is not enabled</td><td>An administrator can enable it.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="versions-and-restore" data-level="2">
+  <h2>Versions and restore</h2>
+  <div data-part="why"><p>A well-meaning edit removed a legal paragraph last week. Version history shows who did it, and restores it.</p></div>
+  <div data-part="concept">
+    <p>Versions are created automatically on actions such as preview, publish, translation or rollout, and Snapshot Launches. You can also make your own at any time.</p>
+    <p>Open the tools panel and choose <b>Versions</b> to see the history in reverse chronological order, including who edited and when, and to restore an earlier version. The current version is shown in a file’s details in the content browser.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    E["Edits"] --&gt; P["Preview: version"]
+    P --&gt; L["Publish: version"]
+    L --&gt; R["Restore an older version"]
+    R --&gt; N["Preview and publish again"]</pre>
+      <figcaption><b>What to notice:</b> restoring changes the source, so the site changes only after you preview and publish.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Edits lead to a preview version and a publish version. Restoring an older version requires another preview and publish.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <aside class="callout tip"><p>Make a named version before a large rewrite, so that you have a clear point to go back to.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b6-t2"><script type="application/json">{"questions": [{"q": "When are versions created automatically?", "options": ["On actions such as preview and publish", "Every keystroke", "Only by administrators"], "answer": 0, "explain": "You can also create them ad hoc."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Restored text is not on the site</td><td>Not previewed and published</td><td>Preview and publish after restoring.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="library-and-templates" data-level="2">
+  <h2>Library and templates</h2>
+  <div data-part="why"><p>Authors should begin from approved blocks and page starters, not a blank page or a guess.</p></div>
+  <div data-part="concept">
+    <p>The <b>library</b> palette gives authors the blocks and other items set up for the project, and library plugins can add tools such as tag pickers. Because the library is configured per project, what you see depends on your setup.</p>
+    <p>Starter documents give new pages the right structure. Agree with your team where they live and who owns them. The <code>template</code> metadata property is separate: it tells code how to treat a page (module B4).</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Item</th><th>Purpose</th><th>Who maintains it</th></tr></thead>
+    <tbody>
+      <tr><td>Block in the library</td><td>Insert approved structures</td><td>Developers</td></tr>
+      <tr><td>Starter document</td><td>Begin a new page correctly</td><td>Content leads</td></tr>
+      <tr><td>template metadata</td><td>Drive layout through code</td><td>Developers define; authors set</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout verify"><p>Library setup and template features change as Experience Workspace evolves. Check the administering section on aem.live for your version.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b6-t3"><script type="application/json">{"questions": [{"q": "Why might two sites show different library blocks?", "options": ["The library is set up per project", "A browser issue", "One site is offline"], "answer": 0, "explain": "Library content depends on project setup."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Inserted block looks wrong</td><td>Example in the library is out of date</td><td>Update the library example.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="bulk-and-translation-tools" data-level="3">
+  <h2>Bulk and translation tools</h2>
+  <div data-part="why"><p>Forty pages need publishing and translating for a launch. Doing it one at a time invites mistakes.</p></div>
+  <div data-part="concept">
+    <p>The <b>Bulk Operations</b> app (under Apps) acts on a list of URLs. In the content browser, select pages and use <b>Share</b> to copy their URLs, or use the Traverse tool to list content below a folder.</p>
+    <p>Translation uses Google Translate out of the box with no configuration. Connectors exist for Lionbridge, Smartling and Trados, and you can build your own. <b>Snapshots</b> group changes so that they can be reviewed and go live together.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    S["Select pages"] --&gt; U["Share: copy URLs"]
+    U --&gt; B["Bulk Operations"]
+    U --&gt; T["Translation project"]
+    T --&gt; R["Review"]
+    R --&gt; B</pre>
+      <figcaption><b>What to notice:</b> URLs are the common input for these tools.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Selecting pages copies their URLs, which feed bulk operations or a translation project. Translated work is reviewed, then goes to bulk operations.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Connector</th><th>Offers</th></tr></thead>
+    <tbody>
+      <tr><td>Google Translate</td><td>Default machine translation</td></tr>
+      <tr><td>Lionbridge, Smartling, Trados</td><td>AI, human and machine translation</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b6-t4"><script type="application/json">{"questions": [{"q": "Which translation service works with no setup?", "options": ["Google Translate", "Trados", "Smartling"], "answer": 0, "explain": "It is the default connector."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Bulk tool finds nothing</td><td>List contains the wrong kind of URL</td><td>Copy URLs with Share.</td></tr>
+      <tr><td>Machine translation is off-brand</td><td>No review step</td><td>Add human review for key pages.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="da-with-universal-editor" data-level="3">
+  <h2>DA with Universal Editor</h2>
+  <div data-part="why"><p>Some teams want documents with a more visual, form-driven editor. aem.live now has a clear recommendation for where to begin.</p></div>
+  <div data-part="concept">
+    <p>Universal Editor can be set up on a da.live site. It needs a DX Handle with Universal Editor enabled (currently requiring AEM Sites credits), Author Bus-compatible instrumentation, and component model files such as <code>component-models.json</code>.</p>
+    <p>aem.live recommends Experience Workspace rather than Universal Editor for new projects. Existing Universal Editor customers do not have to change, and can move at any time.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+    Q{"New project?"}
+    Q --&gt;|Yes| EW["Start with Experience Workspace"]
+    Q --&gt;|No, using UE today| UE["No change required; move when ready"]</pre>
+      <figcaption><b>What to notice:</b> the recommendation is for new projects and does not force existing teams to move.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>If it is a new project, start with Experience Workspace. If you already use Universal Editor, no change is required and you can move when ready.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Requirement</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>DX Handle</td><td>Found in your experience.adobe.com URL</td></tr>
+      <tr><td>Enablement</td><td>Universal Editor enabled for the org</td></tr>
+      <tr><td>Site</td><td>A site on da.live</td></tr>
+      <tr><td>Instrumentation</td><td>Author Bus-compatible, with component models</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b6-t5"><script type="application/json">{"questions": [{"q": "What does aem.live recommend for new projects?", "options": ["Experience Workspace", "Universal Editor", "Google Docs only"], "answer": 0, "explain": "See the set-up page for Universal Editor."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Editor is unavailable</td><td>Org is not enabled</td><td>Confirm enablement and AEM Sites credits.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="support-model" data-level="2">
+  <h2>Support model</h2>
+  <div data-part="why"><p>A vice president asks, “If this breaks at 2 a.m., who answers?” Have an answer before the launch, not after.</p></div>
+  <div data-part="concept">
+    <p>aem.live uses a seven-stage adoption arc. On 8 November 2026, Experience Workspace was shown at stage 3, <b>Increasing use</b>. That describes adoption and does not promise a support level. We found no aem.live page that states its SLA, so ask Adobe and keep the answer in writing.</p>
+    <p>Two limits are worth recording. Experience Workspace works only with the EDS document-based repository, so AEM-authored content would have to move. Features such as Request Publish need onboarding with your Adobe contact.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    F["Feature"] --&gt; L["Check lifecycle stage"]
+    L --&gt; T["Get support terms in writing"]
+    T --&gt; D["Record in your decision log"]
+    D --&gt; R["Set a review date"]</pre>
+      <figcaption><b>What to notice:</b> lifecycle stage and support terms are two separate checks.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>For each feature, check its lifecycle stage, get support terms in writing, record the decision and set a review date.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <aside class="callout verify"><p>Support terms vary and change. Confirm them with your Adobe account team, and record the date you checked.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b6-t6"><script type="application/json">{"questions": [{"q": "Does “Increasing use” guarantee an SLA?", "options": ["Yes", "No", "Only for enterprise accounts"], "answer": 1, "explain": "Lifecycle stage is not a support commitment."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>No path when something fails</td><td>Support model was never checked</td><td>Get terms in writing and log them.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: editor tour</h2>
+  <p>Step through the main areas of the editor.</p>
+  <div data-component="hotspots" data-title="Document Authoring and Experience Workspace editor"><div class="hs-stage"><div class="doc-page"><p data-hotspot="Editor menu" data-text="At the top. Switch modes and show or hide the assistant and tool panels."><b>Layout | Content</b> &nbsp; Assistant · Tools</p><h5 data-hotspot="Editor" data-text="Where you edit. Layout mode is WYSIWYG; Content mode follows the underlying page.">Save sooner with a TFSA</h5><table class="blocktable"><tr><th colspan="2">Cards</th></tr><tr><td><span data-hotspot="Contextual menu" data-text="Menus change with your selection. Clicking a table exposes Edit Table.">Flexible</span></td><td>Withdraw any time</td></tr></table><p data-hotspot="Tools panel" data-text="Stays open while you work. Includes Versions for history and restore."><b>Tools ▾</b> Versions · Library</p><p data-hotspot="Publish controls" data-text="Move content to preview and live. Scheduling and approval can be added as plugins."><b>Preview · Publish</b></p></div></div></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: author, recover and bulk publish</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Practise the daily loop and recovery in the browser editor.</p></div>
+    <div><h4>You need</h4><p>Access to a da.live project, or a walkthrough with a teammate.</p></div>
+    <div><h4>Time</h4><p>About 45 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open a test page</b> from the content browser.</div></li>
+    <li><div><b>Insert a block</b> from the library.</div></li>
+    <li><div><b>Make a named version</b>, then change the page.</div></li>
+    <li><div><b>Open Versions</b> and restore your version.</div></li>
+    <li><div><b>Preview and publish</b> the restored page.</div></li>
+    <li><div><b>Select three pages</b>, use Share and run a bulk preview.</div></li>
+    <li><div><b>Log the support model</b> for your site, with today’s date.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A restored page, a bulk run, and a recorded support decision.</p></div>
+    <div><h4>How to verify</h4><p>The live page matches the restored version.</p></div>
+    <div><h4>Stretch</h4><p>Create a snapshot of two pages and review them together.</p></div>
+  </div>
+  <ul class="checklist" data-id="b6-lab">
+    <li>Inserted a block</li>
+    <li>Restored a version</li>
+    <li>Ran a bulk action</li>
+    <li>Recorded support terms</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Restore seems to do nothing</td><td>Not previewed</td><td>Preview and publish.</td></tr>
+      <tr><td>Cannot see a tool</td><td>Plugin or role is missing</td><td>Ask an administrator.</td></tr>
+      <tr><td>Request Publish is unavailable</td><td>Site not onboarded</td><td>Contact your Adobe representative.</td></tr>
+      <tr><td>Bulk run reports failures</td><td>Some URLs are invalid</td><td>Fix the list and rerun.</td></tr>
+      <tr><td>Spreadsheet index does not work</td><td>Spreadsheet-based indexing is not supported in DA</td><td>Use the Index Admin tool.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Decision record.</b> For each site, log the authoring tool, lifecycle stage, support terms, owner and next review date.</p></aside>
+    <aside class="callout warning" data-label="AI and content risk"><p>AI assistants can draft quickly and be wrong. Require human review for regulated content, and control who can publish.</p></aside>
+    <aside class="callout accessibility"><p>Layout mode shows appearance, not heading order. Check structure in Content mode as well.</p></aside>
+    <aside class="callout performance"><p>The editor does not change delivery. Page speed depends on blocks and images.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Enable Experience Workspace</td><td>Consulted</td><td>Consulted</td><td>Responsible</td></tr>
+      <tr><td>Translation connector</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Support terms</td><td>Informed</td><td>Informed</td><td>Responsible</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b6-check"><script type="application/json">{"questions": [{"q": "Where is version history?", "options": ["Tools panel, under Versions", "Sidekick", "GitHub"], "answer": 0, "explain": "Choose Versions in the panel."}, {"q": "Which mode is WYSIWYG?", "options": ["Layout", "Content", "Source"], "answer": 0, "explain": "Layout mode."}, {"q": "What do bulk tools accept?", "options": ["A list of URLs", "A ZIP file", "A PDF"], "answer": 0, "explain": "Share copies URLs."}, {"q": "Which are translation connectors? Choose all that apply.", "options": ["Google Translate", "Lionbridge", "Smartling", "Dispatcher"], "answer": [0, 1, 2], "explain": "Trados is also available."}, {"q": "What do snapshots do?", "options": ["Coordinate grouped updates", "Back up GitHub", "Compress images"], "answer": 0, "explain": "They let related changes go out together."}, {"q": "Which repository does Experience Workspace need?", "options": ["EDS document-based repository", "AEM Author", "Any Git repository"], "answer": 0, "explain": "Content in AEM would have to move."}, {"q": "What must you get in writing?", "options": ["Support terms", "Heading order", "Image widths"], "answer": 0, "explain": "Lifecycle stage is not a support promise."}, {"q": "A bank wants AI-assisted page drafting in Experience Workspace for regulated products. What do you require before go-live?", "options": ["Nothing, the tool handles compliance", "Support terms in writing, human approval, and restricted publish rights", "A new CDN", "Turning off versions"], "answer": 1, "explain": "Governance and support must be settled first.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b6-cards"><script type="application/json">{"cards": [["da.live", "Address of Document Authoring."], ["Experience Workspace", "DA upgraded with visual editing, AI assistance and MCP."], ["Layout mode", "WYSIWYG editing."], ["Content mode", "Editing based on the underlying page."], ["Versions", "History and restore, in the tools panel."], ["Bulk Operations", "Acts on a list of URLs."], ["Snapshot", "A group of changes reviewed and released together."], ["Request Publish", "Approval workflow that needs onboarding."], ["Stage 3", "Increasing use: an adoption stage."], ["DX Handle", "Identifier needed for Universal Editor setup."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B6 · Document Authoring (da.live)</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Editor</h4><ul><li>Menu, editor, toolbar</li><li>Layout and Content</li><li>Blocks from the library</li></ul></div>
+      <div><h4>Versions</h4><ul><li>Automatic on actions</li><li>Add your own</li><li>Restore, then publish</li></ul></div>
+      <div><h4>Bulk</h4><ul><li>Share copies URLs</li><li>Traverse a folder</li><li>Bulk Operations app</li></ul></div>
+      <div><h4>Translation</h4><ul><li>Google by default</li><li>Lionbridge, Smartling, Trados</li><li>Review key pages</li></ul></div>
+      <div><h4>Support</h4><ul><li>Lifecycle is not SLA</li><li>Get terms in writing</li><li>Set review dates</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/ew/about" rel="noopener" target="_blank">aem.live: About Experience Workspace</a></li>
+    <li><a href="https://www.aem.live/docs/ew/da-is-ew" rel="noopener" target="_blank">aem.live: Document Authoring is now Experience Workspace</a></li>
+    <li><a href="https://www.aem.live/docs/ew/authoring/editing-docs" rel="noopener" target="_blank">aem.live: Authoring pages</a></li>
+    <li><a href="https://www.aem.live/docs/ew/authoring/version-history" rel="noopener" target="_blank">aem.live: Versioning and history</a></li>
+    <li><a href="https://www.aem.live/docs/ew/authoring/bulk-operations" rel="noopener" target="_blank">aem.live: Bulk operations</a></li>
+    <li><a href="https://www.aem.live/docs/ew/administering/translation" rel="noopener" target="_blank">aem.live: Translation</a></li>
+    <li><a href="https://www.aem.live/docs/ew/authoring/snapshots" rel="noopener" target="_blank">aem.live: Snapshots</a></li>
+    <li><a href="https://www.aem.live/docs/ew/administering/set-up-universal-editor" rel="noopener" target="_blank">aem.live: Set up the Universal Editor</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

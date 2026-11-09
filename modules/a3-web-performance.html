@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>A3 Web performance fundamentals · EDS Academy</title>
 <meta name="description" content="Module A3: Core Web Vitals, the Lighthouse 100 target, three-phase loading, why EDS uses no framework and no build, and payload budgets.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/a3-web-performance.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="A3 Web performance fundamentals · EDS Academy">
+<meta property="og:description" content="Module A3: Core Web Vitals, the Lighthouse 100 target, three-phase loading, why EDS uses no framework and no build, and payload budgets.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/a3-web-performance.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
 <link rel="stylesheet" href="../assets/css/academy.css">
@@ -125,7 +141,7 @@
   <div data-part="why"><p>Marketing needs analytics, consent, chat and personalization. Performance needs a tiny critical path. Three-phase loading is how EDS gives both, by deciding <em>when</em> each thing loads.</p></div>
   <div data-part="concept">
     <p>aem.live divides a page's payload and execution into three phases. <b>Eager</b> contains everything needed to reach LCP: decorating the DOM, the first section and the LCP candidate. <b>Lazy</b> contains everything the project controls and serves mostly from the same origin: later sections, remaining images, header and footer, non-blocking libraries and fonts. <b>Delayed</b> contains everything else, such as third-party tags, consent and analytics, which are not material to the first experience.</p>
-    <p>aem.live advises that the delayed phase should start at least three seconds after LCP. Recent boilerplate versions no longer enforce that with a hard-coded timer, so add one yourself if your project needs the minimum.</p>
+    <p>aem.live advises that the delayed phase should start at least three seconds after LCP. The current boilerplate has no timer: on 8 November 2026 its <code>loadDelayed()</code> ran straight after the lazy phase and imported <code>consent-check.js</code>. Add a timer yourself if your project needs the minimum.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -167,7 +183,7 @@
 
       function loadDelayed() {
         // aem.live: start the delayed phase at least 3 s after LCP.
-        // Newer boilerplate versions do not hard-code this; add a timer if you need it.
+        // The boilerplate has no timer and no delayed.js by default: this is one way to add them.
         window.setTimeout(() => import('./delayed.js'), 3000);
       }
 

@@ -578,3 +578,28 @@ dialog.search-dlg::backdrop { background: rgb(10 14 20 / 45%); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+
+/* Authoring simulators (modules B1 to B10) */
+.sim-io { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 14px; }
+.sim-io > div { min-width: 0; }
+.sim-label { display: block; font: 600 13px var(--f-mono); color: var(--muted); margin: 0 0 6px; }
+.sim-text, .sim-input { width: 100%; box-sizing: border-box; font: 14px/1.5 var(--f-mono); color: var(--ink); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 8px; padding: 10px; }
+.sim-out { margin: 0; max-height: 340px; overflow: auto; font: 13px/1.5 var(--f-mono); color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px; white-space: pre; }
+.sim-notes { margin: 8px 0 0; padding-left: 20px; font-size: 15px; }
+.sim-checks { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 10px 0; }
+.ix input[type="range"] { width: 100%; }
+.ie-frame { min-width: 88px; margin: 10px 0; transition: width 0.1s; }
+.ie-bar { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; padding: 18px 8px; text-align: center; font: 600 13px var(--f-mono); white-space: nowrap; }
+.nav-preview { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px 20px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.nav-menu { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0; padding: 0; }
+.nav-menu ul { list-style: none; margin: 4px 0 0; padding: 0 0 0 8px; font-size: 14px; color: var(--muted); }
+.nav-tools { margin-left: auto; font-size: 14px; }
+.form-preview { display: grid; gap: 10px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.form-row { display: grid; gap: 4px; }
+.form-row input, .form-row select, .form-row textarea { width: 100%; box-sizing: border-box; padding: 6px 8px; }
+.form-preview .btn { width: fit-content; }
+.ts-bars { display: flex; gap: 4px; margin: 14px 0; }
+.ts-bar { display: grid; gap: 2px; min-width: 0; padding: 12px 4px; text-align: center; font-size: 13px; background: var(--accent-soft); border-radius: 6px; }
+.ts-bar.control { background: var(--surface-3); }
+
+.blocktable td, .blocktable th { overflow-wrap: anywhere; }

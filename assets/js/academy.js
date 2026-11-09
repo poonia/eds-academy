@@ -16,6 +16,9 @@ const COMPONENTS = {
   order: 'order.js', match: 'match.js', 'decision-tree': 'decision-tree.js', scorer: 'scorer.js',
   explorer: 'explorer.js', 'cwv-sim': 'cwv-sim.js', phases: 'phases.js', tabs: 'tabs.js',
   'course-map': 'course-map.js', dashboard: 'dashboard.js',
+  'doc-sim': 'doc-sim.js', 'sheet-json': 'sheet-json.js', 'nav-builder': 'nav-builder.js', 'image-explorer': 'image-explorer.js',
+  'hreflang-builder': 'hreflang-builder.js', 'form-sheet': 'form-sheet.js', 'traffic-split': 'traffic-split.js',
+  'filter-sandbox': 'filter-sandbox.js',
 };
 
 /* ---------- small helpers ---------- */
@@ -171,7 +174,7 @@ function buildHeader(syl) {
     mnav);
   document.body.prepend(h('a', { class: 'skip', href: '#main' }, 'Skip to content'), head);
   const foot = h('footer', { class: 'site-foot' }, h('div', { class: 'wrap' },
-    h('p', {}, `EDS Academy · Content as of ${AS_OF}. Edge Delivery Services changes continuously: items marked Verify need checking against aem.live before you rely on them.`),
+    h('p', {}, `EDS Academy · Content as of ${(syl.byId[document.body.dataset.module] || {}).asOf || AS_OF}. Edge Delivery Services changes continuously: items marked Verify need checking against aem.live before you rely on them.`),
     h('p', {}, 'Learning resource, not official Adobe documentation. Examples use fictional companies.')));
   document.body.append(foot);
   document.addEventListener('keydown', (e) => {
@@ -213,7 +216,7 @@ function buildModule(syl) {
     h('div', { class: 'mod-meta' }, h('span', { class: 'badges' }, levelBadges(m.levels, syl)), h('span', { class: 'badges' }, trackTags(m.tracks, syl)), h('span', { class: 'sep', 'aria-hidden': 'true' }), h('span', {}, `About ${m.hours} hours`), h('span', {}, `${m.topics.length} topics`)),
     pre,
     h('div', { style: 'display:grid;gap:6px;margin-top:16px;max-width:360px' }, progText, h('div', { class: 'meter' }, meterSpan)),
-    h('p', { class: 'asof' }, `Content as of ${AS_OF}. Signature interactive: ${m.signature}.`));
+    h('p', { class: 'asof' }, `Content as of ${m.asOf || AS_OF}. Signature interactive: ${m.signature}.`));
   main.prepend(hero);
   const paintProg = () => { const p = moduleProgress(m); meterSpan.style.width = `${(p.done / p.total) * 100}%`; progText.textContent = `${p.done} of ${p.total} topics done${p.complete ? ' · module complete' : ''}`; };
 

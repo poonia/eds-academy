@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B1 Page structure fundamentals · EDS Academy</title>
+<meta name="description" content="Module B1: default content, sections, blocks and variants, Section Metadata, the Metadata block, auto-blocking, and how folders become URLs.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b1-page-structure.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B1 Page structure fundamentals · EDS Academy">
+<meta property="og:description" content="Module B1: default content, sections, blocks and variants, Section Metadata, the Metadata block, auto-blocking, and how folders become URLs.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b1-page-structure.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B1">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Author a page using default content wherever possible.</li>
+    <li>Divide a page into sections and style one with Section Metadata.</li>
+    <li>Use blocks and variants correctly, without nesting.</li>
+    <li>Set page metadata and predict what the head tags will be.</li>
+    <li>Recognize auto-blocking and predict the URL of any file.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b1-ready" data-title="Ready for page structure fundamentals?">
+    <script type="application/json">{"questions": [{"q": "Where do authors write in document-based authoring?", "options": ["Word or Google Docs", "GitHub", "The CDN"], "answer": 0, "explain": "Covered in A4."}, {"q": "What publishes a document?", "options": ["AEM Sidekick", "A pull request", "Saving the file"], "answer": 0, "explain": "Authors preview and publish with Sidekick."}, {"q": "Where does block code live?", "options": ["GitHub", "Each document", "The metadata sheet"], "answer": 0, "explain": "Code lives in the repository."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="default-content" data-level="1">
+  <h2>Default content</h2>
+  <div data-part="why"><p>A branch manager asks why the new savings page needs a developer. Most of it does not: headings, paragraphs, lists, links and images are ordinary document formatting, and EDS already knows what to do with them.</p></div>
+  <div data-part="concept">
+    <p><b>Default content</b> is what an author would naturally type: headings, body text, lists, images, links and emphasis. Word, Google Docs, Markdown and HTML all share these meanings, so EDS maps them straight to semantic HTML.</p>
+    <p>aem.live advises keeping as much of a page as possible in default content, because it is the most natural way for authors to work. Each heading also gets an automatic ID: lower case with spaces turned into dashes, so “Our History” can be linked as <code>#our-history</code>.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    H["Heading 1 style"] --&gt; H1["h1 with an automatic id"]
+    P["Normal text"] --&gt; PP["p"]
+    L["Bulleted list"] --&gt; UL["ul and li"]
+    I["Pasted image"] --&gt; IM["picture with renditions"]</pre>
+      <figcaption><b>What to notice:</b> each document feature has one HTML meaning, so real styles matter more than how text looks.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Four document features map to HTML: a Heading 1 style to an h1 with an automatic id, normal text to a paragraph, a bulleted list to ul and li elements, and a pasted image to a picture element with renditions.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div data-component="hotspots" data-title="Default content in a document"><div class="hs-stage"><div class="doc-page"><h5 data-hotspot="Heading style" data-text="A real heading becomes an h1 to h6. Bold, large text stays a paragraph.">Save sooner with a TFSA</h5><p data-hotspot="Paragraph" data-text="Plain text becomes a p element and needs no block.">Grow your savings tax-free and withdraw when you need to.</p><p data-hotspot="Link" data-text="Enter the full URL of a page on your site. EDS adjusts same-site links to be relative."><u>Compare accounts</u></p></div></div></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b1-t1"><script type="application/json">{"questions": [{"q": "An author makes a line bold and 20 point so it looks like a heading. What will EDS output?", "options": ["An h2", "A paragraph", "A block"], "answer": 1, "explain": "Only a real heading style produces a heading element."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Screen reader skips a “heading”</td><td>Styled text, not a heading style</td><td>Apply the document tool’s heading style.</td></tr>
+      <tr><td>A resized image is the wrong size on the site</td><td>Resizing in the document has no effect</td><td>Let the site’s CSS and renditions control size.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="sections" data-level="1">
+  <h2>Sections</h2>
+  <div data-part="why"><p>Marketing wants the rates table on a tinted band below the intro. Sections are how an author groups content so a part of the page can look or behave differently.</p></div>
+  <div data-part="concept">
+    <p>A <b>section</b> groups default content and blocks. Authors add a break with three hyphens (<code>---</code>) on a line of their own; in Google Docs a horizontal line also works.</p>
+    <p>Everything is always in a section, even with no breaks at all. Most section breaks exist because of a visual change, such as a different background colour.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TB
+    D["Document"] --&gt; S1["Section 1: intro and hero"]
+    D --&gt; S2["Section 2: rates on a tinted band"]
+    D --&gt; S3["Section 3: help and contact"]
+    S1 -.- B["--- between each section"]</pre>
+      <figcaption><b>What to notice:</b> one document becomes a list of sibling divs inside main, one per section.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A document splits into three sections: an intro and hero, rates on a tinted band, and help and contact. Three hyphens separate each one.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Delivered markup (simplified)" data-lang="xml">
+      <textarea class="src" hidden>&lt;main&gt;
+  &lt;div&gt;&lt;h1 id="savings"&gt;Savings&lt;/h1&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;h2 id="rates"&gt;Rates&lt;/h2&gt;&lt;/div&gt;
+&lt;/main&gt;</textarea>
+      <figcaption><b>Result:</b> two sections, each a <code>div</code> directly inside <code>main</code>.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b1-t2"><script type="application/json">{"questions": [{"q": "A document has no section breaks. How many sections does it have?", "options": ["None", "One", "One per heading"], "answer": 1, "explain": "Content is always wrapped in a section."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>A blank band appears on the page</td><td>Two section breaks in a row, or one at the end</td><td>Remove the extra <code>---</code>.</td></tr>
+      <tr><td>Three hyphens appear as text</td><td>Other characters on the line</td><td>Put only <code>---</code> on the line.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="blocks" data-level="1">
+  <h2>Blocks</h2>
+  <div data-part="why"><p>A plain table cannot be a card carousel. Blocks let an author ask for richer behaviour without leaving the document, while developers keep the code in one place.</p></div>
+  <div data-part="concept">
+    <p>A <b>block</b> is authored as a table whose merged first row names it. The cells carry content, settings or references, and the block’s code decides how to use them. Which blocks exist depends on what your developers have built; the only block common to every site is Metadata.</p>
+    <p>Blocks live inside sections, and a section can hold several. aem.live is firm that blocks should never be nested, because it makes pages very hard for authors to work with.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    T["Table: first row says Cards"] --&gt; M["div class=cards with rows and cells"]
+    M --&gt; C["Code in blocks/cards loads"]
+    C --&gt; U["Finished cards on the page"]</pre>
+      <figcaption><b>What to notice:</b> the name in row one connects the author’s table to a developer’s folder.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A table with Cards in its first row becomes a div with class cards holding rows and cells. Code from blocks/cards then loads and produces the finished cards.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Cards</th></tr><tr><td>Flexible</td><td>Withdraw any time</td></tr><tr><td>Tax-free growth</td><td>No tax on gains</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b1-t3"><script type="application/json">{"questions": [{"q": "Which table turns into a block?", "options": ["Any table with a header colour", "A table whose first row holds the block name", "A table at the end of a page"], "answer": 1, "explain": "The first row names the block."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Block appears as plain content</td><td>Name misspelled, or no such block in this project</td><td>Copy the table from the block library (module B2).</td></tr>
+      <tr><td>Author puts Cards inside Tabs</td><td>Nested blocks</td><td>Redesign the content: blocks should not be nested.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="block-variants" data-level="1">
+  <h2>Block variants</h2>
+  <div data-part="why"><p>The same columns block needs a dark version for one campaign. A variant reuses the block rather than asking developers for a new one.</p></div>
+  <div data-part="concept">
+    <p>A <b>variant</b> is written in parentheses after the block name, such as <code>Columns (dark, wide)</code>. Each one becomes an extra CSS class on the block, which developers use to change its layout or style.</p>
+    <p>Variants only do something if the project supports them. Keep a list of the ones your site offers, because an unknown class changes nothing and gives no error.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Authored name</th><th>Delivered classes</th></tr></thead>
+    <tbody>
+      <tr><td>Columns</td><td><code>columns</code></td></tr>
+      <tr><td>Columns (dark)</td><td><code>columns dark</code></td></tr>
+      <tr><td>Columns (dark, wide)</td><td><code>columns dark wide</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Columns (dark, wide)</th></tr><tr><td>Left text</td><td>Right text</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b1-t4"><script type="application/json">{"questions": [{"q": "What does Hero (centered) add to the block?", "options": ["A centered class", "A new block named centered", "Inline CSS"], "answer": 0, "explain": "Parentheses become classes that code can style."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Variant has no effect</td><td>The project has no CSS for it</td><td>Check the block library or ask a developer.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="section-metadata" data-level="1">
+  <h2>Section Metadata</h2>
+  <div data-part="why"><p>Sections get styled through a small table. It is powerful, but each one is another thing an author has to remember and can get wrong.</p></div>
+  <div data-part="concept">
+    <p><b>Section Metadata</b> is a special two-column table placed in the section it describes. A <code>Style</code> row becomes CSS classes on the section, an <code>Id</code> row sets its ID for anchor links, and other rows become <code>data-*</code> attributes.</p>
+    <p>aem.live recommends avoiding it until it is really needed, because it adds complexity for authors. IDs must also be unique within the page, so authors need to watch for collisions.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Row</th><th>Result on the section</th></tr></thead>
+    <tbody>
+      <tr><td>Style: highlight</td><td><code>class="highlight"</code></td></tr>
+      <tr><td>Id: rates</td><td><code>id="rates"</code></td></tr>
+      <tr><td>Background: teal</td><td><code>data-background="teal"</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><p>Rates are reviewed weekly.</p><table class="blocktable"><tr><th colspan="2">Section Metadata</th></tr><tr><td>Style</td><td>highlight</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b1-t5"><script type="application/json">{"questions": [{"q": "Which row creates anchor links to a section?", "options": ["Style", "Id", "Anchor"], "answer": 1, "explain": "Id sets the section’s id attribute."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Anchor link jumps to the wrong place</td><td>Two elements share an ID</td><td>Make each section ID unique on the page.</td></tr>
+      <tr><td>Style changes the wrong band</td><td>Table is in the wrong section</td><td>Move it inside the section it describes.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="page-metadata-block" data-level="1">
+  <h2>Page Metadata block</h2>
+  <div data-part="why"><p>The page’s search result and social card come from metadata. If authors skip it, EDS has to guess.</p></div>
+  <div data-part="concept">
+    <p>The <b>Metadata</b> table has the word Metadata in its first row, then one row per property: name on the left, value on the right. It becomes tags in the page head and never appears in the body. Use one per page, by convention at the bottom.</p>
+    <p>Common properties are <code>title</code>, <code>description</code> and <code>image</code>. <code>template</code> and <code>theme</code> become body classes in the boilerplate. If you omit a description, EDS uses the first paragraph with ten or more words. To remove a value, keep the name and leave its value empty.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    M["Metadata table"] --&gt; H["Tags in head"]
+    H --&gt; T["title and og:title"]
+    H --&gt; D["description and og:description"]
+    M --&gt; B["template and theme: body classes"]</pre>
+      <figcaption><b>What to notice:</b> the table is consumed by the service, so it never shows on the page.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The Metadata table becomes tags in the page head, including title, og:title, description and og:description. Template and theme become body classes.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><p>Page content above.</p><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Title</td><td>TFSA savings | Acme Bank</td></tr><tr><td>Description</td><td>Grow savings tax-free.</td></tr><tr><td>Template</td><td>product</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b1-t6"><script type="application/json">{"questions": [{"q": "Both a page Metadata table and the bulk metadata sheet set a title. Which wins?", "options": ["The page table", "The bulk sheet", "Whichever was published last"], "answer": 0, "explain": "Page-level metadata takes precedence over bulk metadata (module B3)."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Wrong text in search results</td><td>No description, so the first long paragraph was used</td><td>Add a description row.</td></tr>
+      <tr><td>Table shows as content</td><td>First row is not exactly Metadata</td><td>Correct the first row.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="auto-blocking" data-level="2">
+  <h2>Auto-blocking</h2>
+  <div data-part="why"><p>Every article needs the same author and date banner. If each author had to build that table, they would forget it. Auto-blocking lets code build it for them.</p></div>
+  <div data-part="concept">
+    <p><b>Auto-blocking</b> turns default content and metadata into blocks, with no table in the document. It runs very early in page decoration, before blocks load, and creates the same structure a block would have had from the server.</p>
+    <p>It often pairs with the <code>template</code> metadata property. As an author you see a simple document, while the page still gets a structured banner. You need to know it exists so you do not add a block by hand that code already creates.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    D["Simple document with template: article"] --&gt; S["scripts.js checks template"]
+    S --&gt; B["Code builds the article header block"]
+    B --&gt; L["Block loads as usual"]</pre>
+      <figcaption><b>What to notice:</b> authors write less, and the rule lives in one place in code.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A simple document with template article is checked by scripts.js, code builds the article header block, and the block loads as usual.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Without auto-blocking</th><th>With auto-blocking</th></tr></thead>
+    <tbody>
+      <tr><td>Author adds an Article Header table on every post</td><td>Author writes a heading and sets Template to article</td></tr>
+      <tr><td>Mistakes vary per page</td><td>Consistent result from code</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b1-t7"><script type="application/json">{"questions": [{"q": "A hero appears on a page, but the document has no Hero table. What is the likely reason?", "options": ["An error", "Auto-blocking", "A cached old page"], "answer": 1, "explain": "Code can build blocks from default content and metadata."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>The banner appears twice</td><td>Author added a block that code also creates</td><td>Remove the manual table.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="topic" id="folder-and-url-mapping" data-level="1">
+  <h2>Folder and URL mapping</h2>
+  <div data-part="why"><p>A document called “RRSP Guide (2026).docx” is about to become a public URL for years. Knowing the rules avoids an ugly one.</p></div>
+  <div data-part="concept">
+    <p>With document-based authoring, the folder path and file name become the URL path, starting from your root folder. A <code>/</code> at the end of a path refers to the <code>index</code> document in that folder.</p>
+    <p>URLs keep only lower-case letters, numbers and dashes. Every other character is replaced by a single dash, and leading and trailing dashes are removed. The full path should not exceed 900 characters.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Source file</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>/index</td><td>/</td></tr>
+      <tr><td>/savings/index</td><td>/savings/</td></tr>
+      <tr><td>/savings/RRSP Guide (2026)</td><td>/savings/rrsp-guide-2026</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout warning" data-label="Do not confuse with folder mapping"><p>The <em>folder mapping</em> feature, which serves one page for a whole range of URLs, is different. aem.live feature-flags it and warns against it for sites with SEO needs, because it creates an effectively infinite URL space that always returns 200.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b1-t8"><script type="application/json">{"questions": [{"q": "What URL does /Products/Home Loans get?", "options": ["/Products/Home Loans", "/products/home-loans", "/products/homeloans"], "answer": 1, "explain": "Lower case, with other characters replaced by a dash."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Old links break after a rename</td><td>File name is the URL</td><td>Add a redirect (module B3).</td></tr>
+      <tr><td>Two files clash</td><td>Names normalize to the same URL</td><td>Rename one file.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: document to HTML</h2>
+  <p>Change the document and watch the markup update. Try adding a variant, a second section or a Metadata row.</p>
+  <div data-component="doc-sim" data-title="Document-to-HTML simulator"><script type="application/json">{"source": "# Save sooner with a TFSA\n\nGrow your savings **tax-free**. [Compare accounts](/compare)\n\n- Withdraw any time\n- No tax on gains\n\n---\n\n## Rates\n\n| Cards (dark) |\n| Flexible | Withdraw any time |\n| Growth | No tax on gains |\n\n| Section Metadata |\n| Style | highlight |\n\n---\n\n| Metadata |\n| Title | TFSA savings |\n| Description | Grow savings tax-free. |"}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: author and inspect a real page</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Author a page using every structural feature and confirm the delivered HTML.</p></div>
+    <div><h4>You need</h4><p>A tutorial site and Sidekick, or the simulator above if you have no site yet.</p></div>
+    <div><h4>Time</h4><p>About 60 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Outline the page</b> on paper: what is default content and what truly needs a block?</div></li>
+    <li><div><b>Author it</b> with headings, a list, a link and an image with alt text.</div></li>
+    <li><div><b>Add two section breaks</b> and one block with a variant.</div></li>
+    <li><div><b>Add a Metadata table</b> with a title, a description and an image.</div></li>
+    <li><div><b>Preview it</b>, then open View Source and find each section, the block’s classes and your head tags.</div></li>
+    <li><div><b>Add <code>.plain.html</code></b> to the preview URL and compare it with the full page.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A previewed page whose source shows your sections, block classes and metadata.</p></div>
+    <div><h4>How to verify</h4><p>Each authored feature can be matched to a line in View Source.</p></div>
+    <div><h4>Stretch</h4><p>Remove the description and find which paragraph EDS used instead.</p></div>
+  </div>
+  <ul class="checklist" data-id="b1-lab">
+    <li>Most content is default content</li>
+    <li>Sections are divided on purpose</li>
+    <li>A block and a variant are in use</li>
+    <li>Metadata appears in the head</li>
+    <li>The URL matches the rules</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Block renders as plain text</td><td>Name misspelled or the block does not exist</td><td>Copy it from the block library.</td></tr>
+      <tr><td>Change does not appear</td><td>The page was saved but not previewed</td><td>Preview again from Sidekick.</td></tr>
+      <tr><td>Preview is right but live is old</td><td>Not published</td><td>Publish from Sidekick.</td></tr>
+      <tr><td>Metadata shows on the page</td><td>First row is wrong</td><td>Set the first row to exactly Metadata.</td></tr>
+      <tr><td>Unexpected URL</td><td>Special characters in the file name</td><td>Rename the file and add a redirect if it was public.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Governance.</b> Publish a list of approved blocks and variants, and name who may add new ones.</p></aside>
+    <aside class="callout accessibility"><p>Real headings in order, one h1, meaningful link text and alt text all start in the document (module B8).</p></aside>
+    <aside class="callout performance"><p>The first section usually holds the LCP element. Keep it simple and avoid heavy blocks at the top.</p></aside>
+    <aside class="callout warning" data-label="Security"><p>Anyone with edit rights can change what gets published. Keep site folders restricted to authors.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Block catalogue</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>URL conventions</td><td>Responsible</td><td>Informed</td><td>Accountable</td></tr>
+      <tr><td>New block request</td><td>Responsible</td><td>Responsible</td><td>Consulted</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b1-check"><script type="application/json">{"questions": [{"q": "What is default content?", "options": ["Headings, text, lists, images and links", "Any block", "Only metadata"], "answer": 0, "explain": "It uses shared document semantics."}, {"q": "How do you add a section break?", "options": ["Three hyphens on their own line", "A page break", "Heading 6"], "answer": 0, "explain": "Three hyphens, or a horizontal line in Google Docs."}, {"q": "What identifies a block?", "options": ["The first row of a table", "A comment", "The file name"], "answer": 0, "explain": "Row one names the block."}, {"q": "What does Columns (dark) do?", "options": ["Adds a dark class", "Creates a new block", "Nothing, ever"], "answer": 0, "explain": "Variants add classes."}, {"q": "Which Section Metadata row becomes classes?", "options": ["Style", "Id", "Name"], "answer": 0, "explain": "Style becomes CSS classes."}, {"q": "Which become body classes in the boilerplate? Choose all that apply.", "options": ["template", "theme", "description"], "answer": [0, 1], "explain": "Description becomes a meta tag."}, {"q": "When does auto-blocking run?", "options": ["Early in decoration, before blocks load", "During publish", "After the footer loads"], "answer": 0, "explain": "It builds block structure before block loading."}, {"q": "Marketing wants a “New” banner on 200 product pages, and authors keep forgetting the table. What do you suggest?", "options": ["Add the table to all pages by hand", "Auto-block it from metadata or a template", "Nest it in another block", "Use folder mapping"], "answer": 1, "explain": "Code can create it consistently.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b1-cards"><script type="application/json">{"cards": [["Default content", "Text, headings, lists, images and links with no block."], ["Section", "A group of content, separated by three hyphens."], ["Block", "A table whose first row names it."], ["Variant", "Words in parentheses that become CSS classes."], ["Section Metadata", "A table that adds classes, an ID or data attributes to its section."], ["Metadata block", "A table that sets head tags."], ["template", "Metadata that becomes a body class and often drives auto-blocking."], ["Auto-blocking", "Code builds blocks from default content and metadata."], ["index", "The document served at a folder’s trailing-slash URL."], ["Folder mapping", "A restricted feature serving one page for many URLs."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B1 · Page structure fundamentals</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Structure</h4><ul><li>Default content first</li><li>--- makes a section</li><li>Never nest blocks</li></ul></div>
+      <div><h4>Blocks</h4><ul><li>Row one is the name</li><li>Name (a, b) adds classes</li><li>Copy from the library</li></ul></div>
+      <div><h4>Section Metadata</h4><ul><li>Style: classes</li><li>Id: anchor</li><li>Other: data-*</li></ul></div>
+      <div><h4>Metadata</h4><ul><li>One per page, at the end</li><li>title, description, image</li><li>Page beats bulk</li></ul></div>
+      <div><h4>URLs</h4><ul><li>a-z, 0-9, dash</li><li>index is the folder URL</li><li>Rename needs a redirect</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/markup-sections-blocks" rel="noopener" target="_blank">aem.live: Markup, sections, blocks and auto blocking</a></li>
+    <li><a href="https://www.aem.live/docs/authoring" rel="noopener" target="_blank">aem.live: Authoring and publishing content</a></li>
+    <li><a href="https://www.aem.live/docs/metadata" rel="noopener" target="_blank">aem.live: Page metadata</a></li>
+    <li><a href="https://www.aem.live/docs/special-metadata-properties" rel="noopener" target="_blank">aem.live: Special metadata properties</a></li>
+    <li><a href="https://www.aem.live/developer/block-collection/section-metadata" rel="noopener" target="_blank">aem.live: Section Metadata</a></li>
+    <li><a href="https://www.aem.live/docs/limits" rel="noopener" target="_blank">aem.live: Limits</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

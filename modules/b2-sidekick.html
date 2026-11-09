@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B2 AEM Sidekick · EDS Academy</title>
+<meta name="description" content="Module B2: install AEM Sidekick, preview, publish, unpublish and delete content, run bulk operations, use the block library, and manage sign-in and permissions.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b2-sidekick.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B2 AEM Sidekick · EDS Academy">
+<meta property="og:description" content="Module B2: install AEM Sidekick, preview, publish, unpublish and delete content, run bulk operations, use the block library, and manage sign-in and permissions.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b2-sidekick.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B2">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Install Sidekick and add a project.</li>
+    <li>Choose correctly between preview, publish, unpublish and delete.</li>
+    <li>Run bulk actions safely.</li>
+    <li>Use the block library to copy correct blocks.</li>
+    <li>Explain which roles each action requires.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b2-ready" data-title="Ready for AEM Sidekick?">
+    <script type="application/json">{"questions": [{"q": "What is a block authored as?", "options": ["A table", "A comment", "A style"], "answer": 0, "explain": "Covered in B1."}, {"q": "Which host shows preview content?", "options": ["aem.page", "aem.live", "github.com"], "answer": 0, "explain": "aem.page is for review."}, {"q": "Do document saves appear on the site automatically?", "options": ["Yes", "No", "Only at night"], "answer": 1, "explain": "Preview and publish move content forward."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="install-and-add-a-project" data-level="1">
+  <h2>Install and add a project</h2>
+  <div data-part="why"><p>A new publisher opens a preview and sees no toolbar. Almost always, the extension is missing or the project has not been added.</p></div>
+  <div data-part="concept">
+    <p><b>AEM Sidekick</b> is a browser extension for Chrome and Chromium-based browsers, installed from the Chrome Web Store. In Microsoft Edge, first turn on <em>Allow extensions from other stores</em> at <code>edge://extensions</code>.</p>
+    <p>Once installed, it hovers near the bottom of pages authored with AEM. Add projects from its menu. A project must be added to your configuration for Sidekick to work on your production, custom preview or custom live URLs.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    I["Install from Chrome Web Store"] --&gt; O["Open a site page or document"]
+    O --&gt; A["Menu: add the project"]
+    A --&gt; W["Toolbar appears"]</pre>
+      <figcaption><b>What to notice:</b> adding the project is a separate step from installing the extension.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Install from the Chrome Web Store, open a site page or document, add the project from the menu, and the toolbar appears.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Sidekick can run on</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Preview URL</td><td><code>main--site--org.aem.page</code></td></tr>
+      <tr><td>Live URL</td><td><code>main--site--org.aem.live</code></td></tr>
+      <tr><td>Production URL</td><td>Your public host, once the project is added</td></tr>
+      <tr><td>Online editors</td><td>Google Docs and Sheets, Word and Excel, depending on setup</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b2-t1"><script type="application/json">{"questions": [{"q": "Which browser needs an extra setting before installing?", "options": ["Chrome", "Microsoft Edge", "Neither"], "answer": 1, "explain": "Edge must allow extensions from other stores."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>No toolbar on the public site</td><td>Project not added to your configuration</td><td>Add the project from the Sidekick menu.</td></tr>
+      <tr><td>Toolbar is hidden</td><td>Toggled off with the X</td><td>Click the Sidekick icon by the address bar.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="preview-publish-unpublish-delete" data-level="1">
+  <h2>Preview, publish, unpublish, delete</h2>
+  <div data-part="why"><p>An outdated rate must come down now, without losing the draft. Choosing unpublish rather than delete is the difference between a quick fix and lost work.</p></div>
+  <div data-part="concept">
+    <p><b>Preview</b> regenerates the page from the source. <b>Publish</b> makes the preview version available in live and production. Visitors see nothing until you publish.</p>
+    <p><b>Unpublish</b> removes a page from live and production but keeps it on preview, and needs the <code>publish</code> role. <b>Delete</b> removes it from every environment, and needs the <code>publish</code> or <code>author</code> role. You must be signed in for both, delete is only offered from preview, and neither can be undone.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">stateDiagram-v2
+    [*] --&gt; Draft
+    Draft --&gt; Previewed: Preview
+    Previewed --&gt; Previewed: Update
+    Previewed --&gt; Published: Publish
+    Published --&gt; Previewed: Unpublish
+    Previewed --&gt; [*]: Delete
+    Published --&gt; [*]: Delete</pre>
+      <figcaption><b>What to notice:</b> unpublishing keeps the preview, while delete removes the page everywhere and cannot be undone.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A draft is previewed. Preview can be updated. Previewed content can be published. Unpublish returns it to preview only. Delete removes it from all environments.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Action</th><th>aem.page</th><th>aem.live and production</th></tr></thead>
+    <tbody>
+      <tr><td>Preview or Update</td><td>Refreshed</td><td>Unchanged</td></tr>
+      <tr><td>Publish</td><td>Unchanged</td><td>Refreshed</td></tr>
+      <tr><td>Unpublish</td><td>Kept</td><td>Removed</td></tr>
+      <tr><td>Delete</td><td>Removed</td><td>Removed</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b2-t2"><script type="application/json">{"questions": [{"q": "A promotion ended but may return next year. What should you do?", "options": ["Delete", "Unpublish", "Rename the file"], "answer": 1, "explain": "Unpublish takes it off the site and keeps it on preview."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Unpublish is missing</td><td>Not signed in, or hidden in the ellipsis menu</td><td>Sign in and open the ellipsis.</td></tr>
+      <tr><td>A page returned after deletion</td><td>Source document still exists and was previewed</td><td>Remove the source document too.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="bulk-operations" data-level="2">
+  <h2>Bulk operations</h2>
+  <div data-part="why"><p>A rebrand touches 80 documents. Opening each one takes the afternoon; a bulk action takes a minute, and can publish a mistake just as quickly.</p></div>
+  <div data-part="concept">
+    <p>Open Sidekick in Google Drive or SharePoint and select files to preview or publish them together, or copy their URLs. Sidekick shows the count, asks you to confirm and then reports the status. Green means done; red means some failed and <em>Details</em> explains why.</p>
+    <p>You can also bulk preview and publish media files. In SharePoint, selections of more than 60 files may not be available to Sidekick, so split them into smaller batches.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    S["Select files in Drive or SharePoint"] --&gt; C["Confirm count"]
+    C --&gt; R{"Result"}
+    R --&gt;|Green| U["Copy or open URLs"]
+    R --&gt;|Red| D["Details, then retry"]</pre>
+      <figcaption><b>What to notice:</b> always read the count before you confirm.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Select files, confirm the count, then green leads to copying or opening URLs, and red leads to details and a retry.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <aside class="callout tip"><p>Bulk preview first, spot-check with <em>Open URLs</em>, then bulk publish.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b2-t3"><script type="application/json">{"questions": [{"q": "How many files should you select at once in SharePoint to avoid problems?", "options": ["60 or fewer", "Up to 1,000", "Exactly 100"], "answer": 0, "explain": "Larger selections may not reach Sidekick."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Only part of a selection acts</td><td>More than 60 files in SharePoint</td><td>Work in smaller batches.</td></tr>
+      <tr><td>Bulk result is red</td><td>Some files failed</td><td>Open Details, fix them, then retry those files.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="block-library" data-level="2">
+  <h2>Block library</h2>
+  <div data-part="why"><p>Authors should not need to remember that it is Cards (dark) and not Dark Cards. The library lets them browse and copy the right table.</p></div>
+  <div data-part="concept">
+    <p>The <b>Sidekick Library</b> extension shows authors a browsable list of blocks and their variations. Developers set it up with a workbook, commonly at <code>/tools/sidekick/library</code>.</p>
+    <p>Each sheet in the workbook is a plugin, and its name must start with <code>helix-</code>, so the blocks plugin uses a sheet called <code>helix-blocks</code>. Each block needs its own example document.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    W["library workbook"] --&gt; S["helix-blocks sheet"]
+    S --&gt; D["One example document per block"]
+    D --&gt; L["Authors browse and copy"]</pre>
+      <figcaption><b>What to notice:</b> the library is content, so it can be updated without a code release.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A library workbook has a helix-blocks sheet that lists one example document per block, which authors browse and copy from.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Item</th><th>Convention</th></tr></thead>
+    <tbody>
+      <tr><td>Folder</td><td><code>/tools/sidekick</code></td></tr>
+      <tr><td>Workbook</td><td><code>library</code></td></tr>
+      <tr><td>Blocks sheet</td><td><code>helix-blocks</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b2-t4"><script type="application/json">{"questions": [{"q": "What must a library sheet name begin with?", "options": ["tools-", "helix-", "shared-"], "answer": 1, "explain": "The sheet name decides the plugin, for example helix-tags."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Plugin is not listed</td><td>Sheet name lacks the prefix</td><td>Rename it with <code>helix-</code>.</td></tr>
+      <tr><td>Example block looks wrong</td><td>Example document is out of date</td><td>Update and preview the example.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="sign-in-and-permissions" data-level="2">
+  <h2>Sign-in and permissions</h2>
+  <div data-part="why"><p>By default anyone with access to a document can preview and publish it. Regulated teams need to narrow that.</p></div>
+  <div data-part="concept">
+    <p>By default authors do not need to sign in to use Sidekick. Adding access statements to the site configuration turns on authentication, with the provider following your setup: Adobe for AEM or Document Authoring, Google for Drive, Microsoft for SharePoint.</p>
+    <p>Roles are assigned under <code>access/admin</code>, to individuals or wildcard domains. The first Microsoft sign-in may need consent from a directory administrator.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="POST /config/acme/sites/website/access/admin.json" data-lang="json">
+      <textarea class="src" hidden>{
+  "role": {
+    "author": ["*@example.com"],
+    "publish": ["some.user@example.com"]
+  }
+}</textarea>
+      <figcaption><b>Result:</b> everyone at example.com can author, and one person can publish.</figcaption>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>You want to</th><th>Role needed</th></tr></thead>
+    <tbody>
+      <tr><td>Unpublish</td><td><code>publish</code></td></tr>
+      <tr><td>Delete</td><td><code>publish</code> or <code>author</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b2-t5"><script type="application/json">{"questions": [{"q": "A SharePoint user sees a consent message when signing in. Who can resolve it?", "options": ["Any author", "A directory administrator", "Adobe support only"], "answer": 1, "explain": "An administrator can grant consent for the organization."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Everyone can publish</td><td>No access statements yet</td><td>Have the platform team configure roles.</td></tr>
+      <tr><td>“Sign in” appears for the first time</td><td>Authentication was just enabled</td><td>Sign in with your work account.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: Sidekick and the content lifecycle</h2>
+  <p>Tour the toolbar, then check the state diagram to see where each action takes a page.</p>
+  <div data-component="hotspots" data-title="Sidekick toolbar in preview mode"><div class="hs-stage"><div class="doc-page" style="display:flex;flex-wrap:wrap;gap:28px;align-items:center;font-size:14px;padding-top:22px"><span data-hotspot="Drag handle" data-text="Moves the toolbar if it covers content. The position is not saved.">⠿</span><span data-hotspot="Environment switcher" data-text="Jumps between source, preview, live and production. Preview shows a blue label."><b>Preview ▾</b></span><span data-hotspot="Actions" data-text="Buttons change by mode. In preview you can Edit, Update and Publish.">Update · Publish</span><span data-hotspot="Ellipsis menu" data-text="Holds Unpublish and Delete. You must be signed in, and neither can be undone.">⋯</span><span data-hotspot="Menu" data-text="Add or manage projects, change theme and open help.">☰</span><span data-hotspot="Sign in" data-text="Required when author access is enabled, and always for unpublish and delete.">Sign in</span></div></div></div>
+  <figure class="diagram">
+      <pre class="mermaid">stateDiagram-v2
+    [*] --&gt; Draft
+    Draft --&gt; Previewed: Preview
+    Previewed --&gt; Previewed: Update
+    Previewed --&gt; Published: Publish
+    Published --&gt; Previewed: Unpublish
+    Previewed --&gt; [*]: Delete
+    Published --&gt; [*]: Delete</pre>
+      <figcaption><b>What to notice:</b> unpublishing keeps the preview, while delete removes the page everywhere and cannot be undone.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A draft is previewed. Preview can be updated. Previewed content can be published. Unpublish returns it to preview only. Delete removes it from all environments.</p></details>
+    </figure>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: take a page through its full lifecycle</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Move one test page through every state and observe each environment.</p></div>
+    <div><h4>You need</h4><p>Sidekick and a tutorial site you can publish to.</p></div>
+    <div><h4>Time</h4><p>About 40 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Install Sidekick</b> and add your project.</div></li>
+    <li><div><b>Preview</b> a test document and open the aem.page URL.</div></li>
+    <li><div><b>Change a sentence</b>, then compare preview before and after Update.</div></li>
+    <li><div><b>Publish</b> and check aem.live.</div></li>
+    <li><div><b>Unpublish</b>, then confirm aem.live no longer has it but aem.page does.</div></li>
+    <li><div><b>Bulk preview</b> three documents and copy their URLs.</div></li>
+    <li><div><b>Delete</b> the test page only.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>You have seen the page in each state.</p></div>
+    <div><h4>How to verify</h4><p>The aem.page and aem.live URLs match the table in topic 2 after every action.</p></div>
+    <div><h4>Stretch</h4><p>Set up a library with one block example.</p></div>
+  </div>
+  <ul class="checklist" data-id="b2-lab">
+    <li>Installed and added the project</li>
+    <li>Previewed and published</li>
+    <li>Unpublished and confirmed</li>
+    <li>Ran a bulk action</li>
+    <li>Deleted the test page</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Toolbar absent</td><td>Extension off or project not added</td><td>Turn it on and add the project.</td></tr>
+      <tr><td>Publish button disabled</td><td>No permission or nothing previewed yet</td><td>Preview first, then check your role.</td></tr>
+      <tr><td>403 error on an action</td><td>Your role does not permit it</td><td>Ask for the role you need.</td></tr>
+      <tr><td>Page is unchanged after Publish</td><td>A newer edit was not previewed</td><td>Update, then Publish.</td></tr>
+      <tr><td>Bulk fails in part</td><td>Some files are unsupported or too large</td><td>Check Details and the limits page.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Separation of duties.</b> Give most authors the <code>author</code> role and a smaller group <code>publish</code>.</p></aside>
+    <aside class="callout warning" data-label="Irreversible actions"><p>Unpublish and delete cannot be undone. Double-check the URL first.</p></aside>
+    <aside class="callout accessibility"><p>Review the preview with a keyboard before you publish.</p></aside>
+    <aside class="callout performance"><p>Publishing triggers cache purges for what changed, so publish in deliberate batches during a large migration.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Role assignments</td><td>Informed</td><td>Consulted</td><td>Responsible</td></tr>
+      <tr><td>Library upkeep</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Removing live content</td><td>Responsible</td><td>Informed</td><td>Consulted</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b2-check"><script type="application/json">{"questions": [{"q": "Where do you install Sidekick?", "options": ["Chrome Web Store", "npm", "GitHub"], "answer": 0, "explain": "It is a browser extension."}, {"q": "What does Publish copy to live?", "options": ["The current preview version", "The latest saved document", "Only images"], "answer": 0, "explain": "Live gets what is in preview."}, {"q": "What stays after Unpublish?", "options": ["The preview", "Nothing", "Only the live page"], "answer": 0, "explain": "The page remains on preview."}, {"q": "Which role can delete? Choose all that apply.", "options": ["publish", "author", "None, anyone can without signing in"], "answer": [0, 1], "explain": "And you must be signed in."}, {"q": "Bulk actions start from where?", "options": ["Google Drive or SharePoint", "The CDN", "GitHub"], "answer": 0, "explain": "Select files, then use Sidekick."}, {"q": "Which prefix do library sheets need?", "options": ["helix-", "lib-", "shared-"], "answer": 0, "explain": "For example helix-blocks."}, {"q": "By default, must authors sign in to preview?", "options": ["No", "Always", "Only on weekends"], "answer": 0, "explain": "Only after access statements are added."}, {"q": "A publisher published a page containing an unapproved rate 2 minutes ago. The content may be reused next quarter. What should they do first?", "options": ["Delete the page and the document", "Unpublish it, then correct the source", "Purge the CDN only", "Wait for the next deployment"], "answer": 1, "explain": "Unpublish removes it from the public site and keeps the page for correction.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b2-cards"><script type="application/json">{"cards": [["Sidekick", "Browser toolbar for preview and publish."], ["Update", "Refreshes the preview from the source."], ["Publish", "Copies preview to live and production."], ["Unpublish", "Removes from live; keeps preview."], ["Delete", "Removes from all environments."], ["Bulk action", "Preview, publish or copy URLs for many files."], ["Block library", "A browsable catalogue of blocks."], ["helix-blocks", "Sheet name for the blocks plugin."], ["access/admin", "Configuration that assigns roles."], ["Environment switcher", "Moves between source, preview, live and production."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B2 · AEM Sidekick</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Install</h4><ul><li>Chrome Web Store</li><li>Edge: allow other stores</li><li>Add the project</li></ul></div>
+      <div><h4>Lifecycle</h4><ul><li>Preview updates aem.page</li><li>Publish updates live</li><li>Visitors need Publish</li></ul></div>
+      <div><h4>Removing</h4><ul><li>Unpublish: keep preview</li><li>Delete: gone everywhere</li><li>Both irreversible</li></ul></div>
+      <div><h4>Bulk</h4><ul><li>Start in Drive or SharePoint</li><li>Read the count</li><li>60 files max in SharePoint</li></ul></div>
+      <div><h4>Access</h4><ul><li>No login by default</li><li>access/admin roles</li><li>Wildcards allowed</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/sidekick" rel="noopener" target="_blank">aem.live: Using AEM Sidekick</a></li>
+    <li><a href="https://www.aem.live/docs/sidekick-library" rel="noopener" target="_blank">aem.live: Sidekick Library</a></li>
+    <li><a href="https://www.aem.live/docs/authentication-setup-authoring" rel="noopener" target="_blank">aem.live: Configuring authentication for authors</a></li>
+    <li><a href="https://www.aem.live/docs/sidekick-errors" rel="noopener" target="_blank">aem.live: Sidekick errors</a></li>
+    <li><a href="https://www.aem.live/docs/limits" rel="noopener" target="_blank">aem.live: Limits</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

@@ -88,6 +88,17 @@
    "module": "A2"
   },
   {
+   "id": "auto-blocking",
+   "term": "Auto-blocking",
+   "full": "",
+   "def": "Code that turns default content and metadata into blocks early in page decoration.",
+   "match": [
+    "auto-blocking",
+    "Auto-blocking"
+   ],
+   "module": "B1"
+  },
+  {
    "id": "block",
    "term": "Block",
    "full": "",
@@ -119,6 +130,17 @@
     "branch URLs"
    ],
    "module": "A2"
+  },
+  {
+   "id": "bulk-metadata",
+   "term": "Bulk metadata",
+   "full": "",
+   "def": "A sheet that applies metadata to pages by URL pattern.",
+   "match": [
+    "bulk metadata",
+    "Bulk metadata"
+   ],
+   "module": "B3"
   },
   {
    "id": "byo-cdn",
@@ -153,6 +175,17 @@
    "module": "A2"
   },
   {
+   "id": "challenger",
+   "term": "Challenger",
+   "full": "",
+   "def": "A variation tested against the current experience, the control.",
+   "match": [
+    "challenger",
+    "Challenger"
+   ],
+   "module": "B10"
+  },
+  {
    "id": "cloud-manager",
    "term": "Cloud Manager",
    "full": "",
@@ -182,6 +215,17 @@
     "Code Bus"
    ],
    "module": "A2"
+  },
+  {
+   "id": "component-model",
+   "term": "Component model",
+   "full": "",
+   "def": "Field definitions that drive the Universal Editor Properties panel.",
+   "match": [
+    "component model",
+    "Component model"
+   ],
+   "module": "B7"
   },
   {
    "id": "config-bus",
@@ -350,6 +394,16 @@
    "module": "A3"
   },
   {
+   "id": "fragment-block",
+   "term": "Fragment block",
+   "full": "",
+   "def": "A block that places a separately published piece of content on a page.",
+   "match": [
+    "Fragment block"
+   ],
+   "module": "B4"
+  },
+  {
    "id": "franklin",
    "term": "Franklin",
    "full": "",
@@ -388,6 +442,16 @@
     "Helix"
    ],
    "module": "A1"
+  },
+  {
+   "id": "hreflang",
+   "term": "hreflang",
+   "full": "",
+   "def": "Links equivalent pages across languages, generated through the sitemap on EDS.",
+   "match": [
+    "hreflang"
+   ],
+   "module": "B9"
   },
   {
    "id": "inp",
@@ -452,6 +516,17 @@
    "module": "A2"
   },
   {
+   "id": "live-copy",
+   "term": "Live Copy",
+   "full": "",
+   "def": "Content kept in sync with its source by Multi Site Manager.",
+   "match": [
+    "Live Copy",
+    "Live Copies"
+   ],
+   "module": "B7"
+  },
+  {
    "id": "mcp",
    "term": "MCP",
    "full": "Model Context Protocol",
@@ -483,6 +558,16 @@
    "module": "A4"
   },
   {
+   "id": "noindex",
+   "term": "noindex",
+   "full": "",
+   "def": "A robots value that keeps a page out of search results and the sitemap.",
+   "match": [
+    "noindex"
+   ],
+   "module": "B3"
+  },
+  {
    "id": "psi",
    "term": "PageSpeed Insights",
    "full": "PSI",
@@ -494,6 +579,17 @@
    "module": "A3"
   },
   {
+   "id": "path-mapping",
+   "term": "Path mapping",
+   "full": "",
+   "def": "Configuration that relates AEM content paths to public URLs.",
+   "match": [
+    "path mapping",
+    "Path mapping"
+   ],
+   "module": "B7"
+  },
+  {
    "id": "payload",
    "term": "Payload",
    "full": "",
@@ -502,6 +598,17 @@
     "payload"
    ],
    "module": "A3"
+  },
+  {
+   "id": "placeholders",
+   "term": "Placeholders",
+   "full": "",
+   "def": "Site-wide strings kept in a sheet with Key and Text columns.",
+   "match": [
+    "placeholders",
+    "Placeholders"
+   ],
+   "module": "B3"
   },
   {
    "id": "preview",
@@ -534,6 +641,17 @@
    "module": "A2"
   },
   {
+   "id": "query-index",
+   "term": "Query index",
+   "full": "",
+   "def": "A JSON list of published pages used for lists, feeds, search and filters.",
+   "match": [
+    "query index",
+    "Query index"
+   ],
+   "module": "B3"
+  },
+  {
    "id": "repoless",
    "term": "Repoless",
    "full": "",
@@ -543,6 +661,16 @@
     "Repoless"
    ],
    "module": "A4"
+  },
+  {
+   "id": "request-publish",
+   "term": "Request Publish",
+   "full": "",
+   "def": "An Experience Workspace approval workflow that needs onboarding by Adobe.",
+   "match": [
+    "Request Publish"
+   ],
+   "module": "B8"
   },
   {
    "id": "rum",
@@ -567,6 +695,16 @@
    "module": "B1"
   },
   {
+   "id": "section-metadata",
+   "term": "Section Metadata",
+   "full": "",
+   "def": "A table inside a section that adds classes, an ID or data attributes to it.",
+   "match": [
+    "Section Metadata"
+   ],
+   "module": "B1"
+  },
+  {
    "id": "semantic-html",
    "term": "Semantic HTML",
    "full": "",
@@ -577,6 +715,17 @@
    "module": "A1"
   },
   {
+   "id": "sidekick-library",
+   "term": "Sidekick Library",
+   "full": "",
+   "def": "A Sidekick extension that lets authors browse and copy blocks.",
+   "match": [
+    "Sidekick Library",
+    "block library"
+   ],
+   "module": "B2"
+  },
+  {
    "id": "tti",
    "term": "Single host rule",
    "full": "",
@@ -585,6 +734,17 @@
     "single host"
    ],
    "module": "A3"
+  },
+  {
+   "id": "snapshot",
+   "term": "Snapshot",
+   "full": "",
+   "def": "A group of content changes that are reviewed and released together.",
+   "match": [
+    "Snapshots",
+    "snapshots"
+   ],
+   "module": "B6"
   },
   {
    "id": "source-bus",

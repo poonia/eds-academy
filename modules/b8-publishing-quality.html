@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B8 Publishing workflow and quality · EDS Academy</title>
+<meta name="description" content="Module B8: preview and review practice, authoring for search and accessibility, scheduled and approved publishing, and a content QA checklist.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b8-publishing-quality.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B8 Publishing workflow and quality · EDS Academy">
+<meta property="og:description" content="Module B8: preview and review practice, authoring for search and accessibility, scheduled and approved publishing, and a content QA checklist.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b8-publishing-quality.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B8">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Run a dependable preview, review and publish cycle.</li>
+    <li>Write metadata and structure for search.</li>
+    <li>Apply author-level accessibility practices.</li>
+    <li>Choose scheduling and approval tools by authoring option.</li>
+    <li>Use a pre-publish checklist.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b8-ready" data-title="Ready for publishing workflow and quality?">
+    <script type="application/json">{"questions": [{"q": "Which host do reviewers use?", "options": ["aem.page", "aem.live", "localhost"], "answer": 0, "explain": "Covered in B2."}, {"q": "What does Update do?", "options": ["Refreshes the preview", "Publishes", "Deletes"], "answer": 0, "explain": "Covered in B2."}, {"q": "Where are title and description set?", "options": ["Metadata table", "A Cards block", "Nav"], "answer": 0, "explain": "Covered in B1."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="preview-review-publish" data-level="1">
+  <h2>Preview, review, publish</h2>
+  <div data-part="why"><p>Most content errors are caught by the second pair of eyes. Preview is what makes that possible without risking the live site.</p></div>
+  <div data-part="concept">
+    <p>The standard flow is simple: edit, <b>preview</b>, send the <code>aem.page</code> URL to reviewers, then <b>publish</b>. Preview shows the page with the current code, and visitors cannot see changes until you publish.</p>
+    <p>Check shared resources too. Publishing a page does not publish a nav, a fragment or a metadata sheet it depends on.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    E["Edit"] --&gt; P["Preview"]
+    P --&gt; R{"Review"}
+    R --&gt;|Changes| E
+    R --&gt;|Approved| L["Publish"]
+    L --&gt; C["Check production"]</pre>
+      <figcaption><b>What to notice:</b> review sits before publish and loops back, and a check follows publish.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Edit, preview, then review. Changes go back to edit. Approved work is published and then checked on production.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Who</th><th>Looks at</th></tr></thead>
+    <tbody>
+      <tr><td>Author</td><td>Content and structure</td></tr>
+      <tr><td>Reviewer</td><td>Accuracy and tone</td></tr>
+      <tr><td>Compliance</td><td>Regulated claims</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b8-t1"><script type="application/json">{"questions": [{"q": "Your page uses an updated fragment. What else must be published?", "options": ["The fragment", "The sitemap", "Nothing"], "answer": 0, "explain": "Shared resources publish separately."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Reviewer sees old content</td><td>Update was not run after edits</td><td>Click Update, then resend the URL.</td></tr>
+      <tr><td>Live differs from what was reviewed</td><td>Edits were made after review</td><td>Preview again and re-check.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="seo-authoring" data-level="2">
+  <h2>SEO authoring</h2>
+  <div data-part="why"><p>A page nobody finds might as well not exist. Much of search performance is in the author’s hands.</p></div>
+  <div data-part="concept">
+    <p>Write a unique title and description, and use real headings. EDS serves a page’s canonical content in its initial HTML, which is what search engines first read. Set <code>robots</code> to <code>noindex</code> for pages that should not be found.</p>
+    <p>Canonical URLs are generated from <code>cdn.prod.host</code> unless you set <code>canonical</code>. The default description is the first paragraph with at least ten words. Use <code>title:suffix</code> style properties to add consistent branding from bulk metadata.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    T["Title and description"] --&gt; S["Search result"]
+    H["Headings and text"] --&gt; R["Relevance"]
+    M["Sitemap and canonical"] --&gt; D["Discovery"]</pre>
+      <figcaption><b>What to notice:</b> each authored element serves a different part of search.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Title and description shape the search result, headings and text shape relevance, and the sitemap and canonical shape discovery.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Property</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td>title</td><td>Title and og:title</td></tr>
+      <tr><td>description</td><td>Description and og:description</td></tr>
+      <tr><td>canonical</td><td>Overrides the automatic canonical</td></tr>
+      <tr><td>robots</td><td>For example noindex</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b8-t2"><script type="application/json">{"questions": [{"q": "Why keep main content in the page instead of a fragment?", "options": ["So it is in the initial HTML", "To make the page bigger", "To avoid metadata"], "answer": 0, "explain": "Search engines first read the initial HTML."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Duplicate titles in search</td><td>Generic title on many pages</td><td>Write unique titles.</td></tr>
+      <tr><td>Challenger page is indexed</td><td>No noindex</td><td>Add <code>noindex,nofollow</code> by folder.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="accessibility-authoring" data-level="2">
+  <h2>Accessibility authoring</h2>
+  <div data-part="why"><p>An inaccessible page excludes people and, for many Canadian organizations, raises AODA obligations. Authors control much of it.</p></div>
+  <div data-part="concept">
+    <p>Developers build accessible blocks, but authors supply the meaning. Use one <code>h1</code> and keep heading levels in order. Write alt text that conveys what an image communicates. Make link text meaningful out of context, and do not rely on colour alone.</p>
+    <p>Test with a keyboard, and check that a table is really tabular data. WCAG sets the standard, and your legal team decides what applies to your organization.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Instead of</th><th>Write</th></tr></thead>
+    <tbody>
+      <tr><td>“Click here”</td><td>“Compare TFSA rates”</td></tr>
+      <tr><td>Alt: image123.jpg</td><td>Alt: Advisor reviewing a plan with a client</td></tr>
+      <tr><td>Bold text as a heading</td><td>A real heading style</td></tr>
+      <tr><td>“Red items are overdue”</td><td>Add the word “Overdue”</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <aside class="callout accessibility"><p>Automated checks find only some problems. Pair them with keyboard and screen reader review on important pages.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b8-t3"><script type="application/json">{"questions": [{"q": "What is good alt text for a decorative flourish?", "options": ["Empty or marked decorative", "“Decorative image of flourish”", "The file name"], "answer": 0, "explain": "Decorative images need no description."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Screen reader reads a file name</td><td>Alt text is missing</td><td>Add alt text in the document.</td></tr>
+      <tr><td>Heading jumps from h2 to h5</td><td>Chosen for looks</td><td>Pick by structure; let CSS handle looks.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="scheduled-and-approved-publishing" data-level="3">
+  <h2>Scheduled and approved publishing</h2>
+  <div data-part="why"><p>A rate change must go live at exactly 9:00 on the first of the month, after sign-off. The tools depend on how you author.</p></div>
+  <div data-part="concept">
+    <p>With Experience Workspace, Schedule Publish queues a page for a future time once it has been enabled, and <b>Request Publish</b> sends approvers an email with a link to review. Request Publish needs onboarding.</p>
+    <p>Other setups can register with Adobe’s scheduling service to schedule snapshots and pages. AEM authors can use Manage Publication. A <code>crontab</code> sheet in <code>.helix</code> can also run tasks; its times are in UTC.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Authoring</th><th>Schedule</th><th>Approve</th></tr></thead>
+    <tbody>
+      <tr><td>Experience Workspace</td><td>Schedule Publish</td><td>Request Publish</td></tr>
+      <tr><td>AEM</td><td>Manage Publication</td><td>AEM workflows</td></tr>
+      <tr><td>Word or Docs</td><td>Scheduling service or crontab</td><td>Your own process</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file=".helix/crontab" data-lang="text">
+      <textarea class="src" hidden>when                                command
+at 3:00 pm on the 18th day of May in 2027    publish /rates</textarea>
+      <figcaption><b>Watch out:</b> leave out the year, and the job repeats every year.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b8-t4"><script type="application/json">{"questions": [{"q": "You schedule “at 9:00 am” in the crontab sheet for a Toronto launch. What is the risk?", "options": ["Times are UTC, so it runs at the wrong local time", "Crontab does not exist", "It needs a new block"], "answer": 0, "explain": "Convert from local time to UTC."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Scheduled job runs every year</td><td>Year was left out</td><td>Add the year.</td></tr>
+      <tr><td>Approvers get no email</td><td>Site is not onboarded or domain not allowed</td><td>Check the setup with Adobe.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="content-qa-checklist" data-level="2">
+  <h2>Content QA checklist</h2>
+  <div data-part="why"><p>A checklist turns good intentions into habits, and catches what tired people miss.</p></div>
+  <div data-part="concept">
+    <p>Use a short, consistent list before each publish. Cover structure, metadata, links, images, mobile rendering and approval. Keep it short enough that people actually use it.</p>
+    <p>Teams can tailor it by content type: a blog post needs less than a regulated product page. The signature interactive below works as a starting point.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    S["Structure"] --&gt; M["Metadata"]
+    M --&gt; L["Links and images"]
+    L --&gt; V["Mobile"]
+    V --&gt; A["Approval"]</pre>
+      <figcaption><b>What to notice:</b> the order moves from what you can fix alone to what needs others.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Check structure, then metadata, then links and images, then mobile, then approval.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Content type</th><th>Extra checks</th></tr></thead>
+    <tbody>
+      <tr><td>Regulated product</td><td>Compliance sign-off, disclosures</td></tr>
+      <tr><td>Campaign</td><td>Tracking, expiry date</td></tr>
+      <tr><td>Article</td><td>Tags and author</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b8-t5"><script type="application/json">{"questions": [{"q": "What makes a checklist work?", "options": ["It is short and used every time", "It has 200 items", "Only managers read it"], "answer": 0, "explain": "Length kills adoption."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Checklist is ignored</td><td>Too long</td><td>Reduce it to what catches real errors.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: pre-publish QA checker</h2>
+  <p>Answer for a real page. The checker tells you what is left to do.</p>
+  <div data-component="scorer" data-title="Pre-publish QA checker"><script type="application/json">{"intro": "Answer for a page that you are about to publish.", "questions": [{"q": "Does the page have exactly one h1, with headings in order?", "options": [{"label": "Yes", "score": 2}, {"label": "No", "score": 0, "note": "Fix the heading structure."}]}, {"q": "Do meaningful images have alt text?", "options": [{"label": "Yes", "score": 2}, {"label": "No", "score": 0, "note": "Add alt text."}]}, {"q": "Is link text meaningful without its surroundings?", "options": [{"label": "Yes", "score": 2}, {"label": "No", "score": 0, "note": "Replace “click here” with descriptive text."}]}, {"q": "Are the title and description written for this page?", "options": [{"label": "Yes", "score": 2}, {"label": "No", "score": 0, "note": "Add them in the Metadata table."}]}, {"q": "Have you reviewed the preview URL on a phone?", "options": [{"label": "Yes", "score": 2}, {"label": "No", "score": 0, "note": "Check the aem.page URL on a small screen."}]}, {"q": "Do all links work?", "options": [{"label": "Yes", "score": 2}, {"label": "No", "score": 0, "note": "Test the links."}]}, {"q": "Have required approvers signed off on the preview?", "options": [{"label": "Yes", "score": 2}, {"label": "No", "score": 0, "note": "Do not publish regulated content without sign-off."}]}, {"q": "If the URL changed, is there a redirect?", "options": [{"label": "Yes, or not applicable", "score": 2}, {"label": "No", "score": 0, "note": "Add a redirect row and publish the sheet."}]}], "bands": [{"min": 0, "verdict": "Do not publish", "text": "Several checks have failed."}, {"min": 12, "verdict": "Almost ready", "text": "Fix the items below, then check again."}, {"min": 16, "verdict": "Ready to publish", "text": "All checks pass."}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: QA a page before it goes live</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Find and fix issues on a real or sample page.</p></div>
+    <div><h4>You need</h4><p>A preview URL, a keyboard, and DevTools or an accessibility tool.</p></div>
+    <div><h4>Time</h4><p>About 50 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open the preview URL</b> on desktop and a phone.</div></li>
+    <li><div><b>Run the checker</b> above.</div></li>
+    <li><div><b>Review the heading outline.</b></div></li>
+    <li><div><b>Tab through the page</b> and check that focus is visible.</div></li>
+    <li><div><b>Check View Source</b> for your title, description and canonical.</div></li>
+    <li><div><b>Fix the problems</b> in the source and Update.</div></li>
+    <li><div><b>Publish</b>, then confirm on production.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A page that passes every item, with notes on what you fixed.</p></div>
+    <div><h4>How to verify</h4><p>The checker shows Ready to publish and the head tags are correct.</p></div>
+    <div><h4>Stretch</h4><p>Tailor the checklist for your organization’s content types.</p></div>
+  </div>
+  <ul class="checklist" data-id="b8-lab">
+    <li>Reviewed on a phone</li>
+    <li>Checked headings and alt text</li>
+    <li>Tabbed through the page</li>
+    <li>Confirmed head tags</li>
+    <li>Published and confirmed</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Wrong canonical</td><td><code>cdn.prod.host</code> unset</td><td>Set it in configuration.</td></tr>
+      <tr><td>Page missing from Google</td><td>noindex, or too new</td><td>Check robots and sitemap.</td></tr>
+      <tr><td>Focus is invisible</td><td>CSS issue</td><td>Report it to developers.</td></tr>
+      <tr><td>Scheduled job did not run</td><td>UTC or registration problem</td><td>Check the time zone and setup.</td></tr>
+      <tr><td>Approval email is missing</td><td>Allowed domains</td><td>Check onboarding details.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Audit.</b> Keep evidence of who approved regulated content and when. aem.live also has an audit log.</p></aside>
+    <aside class="callout accessibility"><p>Add accessibility checks to the definition of done, not as a final step.</p></aside>
+    <aside class="callout performance"><p>A very large image or an extra block at the top of the page can cost LCP. Review new heroes for speed.</p></aside>
+    <aside class="callout warning" data-label="No staging by default"><p>Publishing is immediate. A scheduled release must be tested on preview first.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Checklist</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Approval rules</td><td>Responsible</td><td>Informed</td><td>Accountable</td></tr>
+      <tr><td>Accessibility of blocks</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b8-check"><script type="application/json">{"questions": [{"q": "What do reviewers open?", "options": ["The aem.page URL", "The live site", "The Word file only"], "answer": 0, "explain": "Preview URLs exist for review."}, {"q": "Publishing a page publishes its fragment too. True or false?", "options": ["False", "True"], "answer": 0, "explain": "Shared resources are separate."}, {"q": "What creates canonical URLs by default?", "options": ["cdn.prod.host", "The author", "A redirect"], "answer": 0, "explain": "Set in site configuration."}, {"q": "Which help accessibility? Choose all that apply.", "options": ["Real headings", "Alt text", "Meaningful link text", "Colour as the only signal"], "answer": [0, 1, 2], "explain": "Colour alone excludes people."}, {"q": "Times in crontab are in?", "options": ["UTC", "Local time", "The author’s time zone"], "answer": 0, "explain": "Convert first."}, {"q": "Which tool sends approvers a link in Experience Workspace?", "options": ["Request Publish", "Bulk Operations", "Traverse"], "answer": 0, "explain": "It needs onboarding."}, {"q": "How should a blog and a regulated page differ in QA?", "options": ["The regulated page needs extra approval checks", "They should be identical", "The blog needs more"], "answer": 0, "explain": "Tailor by risk."}, {"q": "A campaign must launch at 9:00 Eastern on Monday, with legal sign-off on Friday. You author in Google Docs. What do you do?", "options": ["Publish Friday and hope", "Get sign-off on the preview, then use the scheduling service or an accurately converted UTC schedule", "Ask users to refresh at 9:00", "Publish at 9:00 from a phone with no plan"], "answer": 1, "explain": "Separate approval from timed release, and convert the time.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b8-cards"><script type="application/json">{"cards": [["Preview URL", "aem.page address for review."], ["Canonical", "The preferred URL for a page."], ["noindex", "Keeps a page out of search."], ["Alt text", "Text alternative for an image."], ["Heading order", "Levels without skipping."], ["Schedule Publish", "EW plugin that queues publication."], ["Request Publish", "EW approval workflow."], ["Manage Publication", "AEM option with scheduling."], ["crontab sheet", "Scheduled tasks, with times in UTC."], ["AODA", "Ontario accessibility legislation."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B8 · Publishing workflow and quality</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Flow</h4><ul><li>Edit, preview, review</li><li>Publish, then check</li><li>Shared resources separately</li></ul></div>
+      <div><h4>SEO</h4><ul><li>Unique title and description</li><li>Real headings</li><li>noindex when needed</li></ul></div>
+      <div><h4>Accessibility</h4><ul><li>One h1, in order</li><li>Alt text</li><li>Meaningful links</li></ul></div>
+      <div><h4>Timing</h4><ul><li>EW Schedule Publish</li><li>AEM Manage Publication</li><li>crontab uses UTC</li></ul></div>
+      <div><h4>Approvals</h4><ul><li>Request Publish</li><li>AEM workflows</li><li>Keep evidence</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/authoring" rel="noopener" target="_blank">aem.live: Authoring and publishing content</a></li>
+    <li><a href="https://www.aem.live/docs/seo-geo" rel="noopener" target="_blank">aem.live: SEO and GEO best practices</a></li>
+    <li><a href="https://www.aem.live/docs/special-metadata-properties" rel="noopener" target="_blank">aem.live: Special metadata properties</a></li>
+    <li><a href="https://www.aem.live/docs/scheduling" rel="noopener" target="_blank">aem.live: Scheduling</a></li>
+    <li><a href="https://www.aem.live/developer/scheduling" rel="noopener" target="_blank">aem.live: Scheduled publishing</a></li>
+    <li><a href="https://www.aem.live/docs/ew/administering/schedule-publish" rel="noopener" target="_blank">aem.live: Schedule Publish</a></li>
+    <li><a href="https://www.aem.live/docs/ew/administering/request-publish" rel="noopener" target="_blank">aem.live: Request Publish</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

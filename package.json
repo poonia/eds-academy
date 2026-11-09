@@ -1,0 +1,12 @@
+{
+  "name": "eds-academy",
+  "private": true,
+  "description": "Development checks only. The site itself has no dependencies and no build step.",
+  "scripts": {
+    "check": "python3 tools/build-search-index.py && python3 tools/build-site-meta.py --check && python3 tools/check-links.py",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.49.1"
+  }
+}

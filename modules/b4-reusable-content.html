@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B4 Shared and reusable content · EDS Academy</title>
+<meta name="description" content="Module B4: site navigation and footer documents, reusable fragments, and how templates work on Edge Delivery Services.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b4-reusable-content.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B4 Shared and reusable content · EDS Academy">
+<meta property="og:description" content="Module B4: site navigation and footer documents, reusable fragments, and how templates work on Edge Delivery Services.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b4-reusable-content.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B4">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Edit the site navigation and footer safely.</li>
+    <li>Decide when a fragment is the right tool.</li>
+    <li>Apply a template to a page or folder.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b4-ready" data-title="Ready for shared and reusable content?">
+    <script type="application/json">{"questions": [{"q": "What separates sections in a document?", "options": ["Three hyphens", "A heading", "A table"], "answer": 0, "explain": "Covered in B1."}, {"q": "Which table sets template?", "options": ["Metadata", "Cards", "Section Metadata"], "answer": 0, "explain": "Template is page metadata."}, {"q": "What must happen before visitors see a change?", "options": ["Publish", "Save", "Reload"], "answer": 0, "explain": "Covered in B2."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="navigation-and-footer" data-level="1">
+  <h2>Navigation and footer</h2>
+  <div data-part="why"><p>Adding “Mortgages” to the menu should not need a release, or edits to every page. On EDS, the menu is one document that authors own.</p></div>
+  <div data-part="concept">
+    <p>The site header and footer come from their own documents, <code>/nav</code> and <code>/footer</code>. They are published separately from pages and loaded in the lazy phase, so a change reaches every page once you preview and publish that one document.</p>
+    <p>In the boilerplate, the nav document has three sections, in order: <b>brand</b>, <b>sections</b> and <b>tools</b>. A page can point to a different nav document with <code>nav</code> metadata.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    N["/nav document"] --&gt; B["Section 1: brand"]
+    N --&gt; S["Section 2: menu"]
+    N --&gt; T["Section 3: tools"]
+    B --&gt; H["Header on every page"]
+    S --&gt; H
+    T --&gt; H</pre>
+      <figcaption><b>What to notice:</b> section order matters, because the code assigns meaning by position.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The nav document has three sections: brand, menu, and tools. They combine to make the header on every page.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><p><b>Acme Bank</b></p><div class="doc-hr">---</div><ul><li>Savings<ul><li>TFSA</li><li>RRSP</li></ul></li><li>Mortgages</li></ul><div class="doc-hr">---</div><p>Sign in</p></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b4-t1"><script type="application/json">{"questions": [{"q": "The tools have appeared in the menu area. What is the likely cause?", "options": ["A missing section break in /nav", "A CDN issue", "The wrong theme"], "answer": 0, "explain": "Sections are read by position."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Menu change is not on the site</td><td>/nav was not published</td><td>Preview and publish the nav document.</td></tr>
+      <tr><td>Header is empty</td><td>/nav is missing or unpublished</td><td>Create and publish it.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="fragments" data-level="2">
+  <h2>Fragments</h2>
+  <div data-part="why"><p>Legal updates a disclosure that appears on 60 product pages. With a fragment, they change it once.</p></div>
+  <div data-part="concept">
+    <p>A <b>fragment</b> is reusable content, authored as its own document or spreadsheet and referenced from many pages. Header and footer are fragments that the boilerplate loads for you. Code can also load fragments based on metadata, and authors can place a Fragment block that points to one.</p>
+    <p>Fragments are delivered as separate resources, so they cache independently. They are not part of the page’s initial HTML, so do not use them for the page’s main content. aem.live describes correct use as non-canonical content that appears on many pages.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    F["/fragments/disclosure"] --&gt; P1["Product page 1"]
+    F --&gt; P2["Product page 2"]
+    F --&gt; P3["Product page 60"]</pre>
+      <figcaption><b>What to notice:</b> one published source feeds every page that references it.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>One fragment document at /fragments/disclosure feeds product pages one through sixty.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><table class="blocktable"><tr><th colspan="1">Fragment</th></tr><tr><td>https://main--site--org.aem.page/fragments/disclosure</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b4-t2"><script type="application/json">{"questions": [{"q": "Which content is the best fit for a fragment?", "options": ["A disclosure on 60 pages", "The main article text of one page", "A page’s h1"], "answer": 0, "explain": "Reuse across many pages is the point."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Page ranks poorly for its main topic</td><td>Main content lives in a fragment</td><td>Move it into the page.</td></tr>
+      <tr><td>Old text still appears</td><td>Fragment not published</td><td>Publish the fragment.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="templates" data-level="2">
+  <h2>Templates</h2>
+  <div data-part="why"><p>All article pages should share a layout, without authors rebuilding it every time. On EDS, “template” means something simpler than in traditional AEM.</p></div>
+  <div data-part="concept">
+    <p>Set <code>template</code> metadata and the boilerplate adds it as a class on <code>&lt;body&gt;</code>. Developers use that class for styling and auto-blocking. Set it on one page, or across a folder with bulk metadata.</p>
+    <p>Starter documents are a separate idea: a document to copy, so that new pages begin with the right structure. Experience Workspace also offers library templates (module B6).</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    M["Metadata: template = article"] --&gt; B["body class: article"]
+    B --&gt; C["CSS styles the layout"]
+    B --&gt; A["Auto-block builds the header"]</pre>
+      <figcaption><b>What to notice:</b> a template is a label that code responds to, not a locked page structure.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Metadata sets template to article, which becomes a body class. CSS then styles the layout and auto-blocking builds the header.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Traditional AEM template</th><th>EDS template</th></tr></thead>
+    <tbody>
+      <tr><td>Defines page structure in the CMS</td><td>A metadata value</td></tr>
+      <tr><td>Created by developers in AEM</td><td>Interpreted by project code</td></tr>
+      <tr><td>Locks components by policy</td><td>Authors can still edit the document freely</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b4-t3"><script type="application/json">{"questions": [{"q": "How do you apply a template to a whole folder?", "options": ["Bulk metadata", "Rename the folder", "A redirect"], "answer": 0, "explain": "Add a template column for that URL pattern."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Template has no effect</td><td>Value does not match the code</td><td>Use the exact name that developers defined.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: nav document builder</h2>
+  <p>Edit the document and watch the header. Remove a section break to see what goes wrong.</p>
+  <div data-component="nav-builder" data-title="Nav document builder"><script type="application/json">{"source": "Acme Bank\n---\n- Savings\n  - TFSA\n  - RRSP\n- Mortgages\n- Advice\n---\nSign in\nFind a branch"}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: build a reusable site frame</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Create the header, footer and a shared fragment, then apply a template.</p></div>
+    <div><h4>You need</h4><p>A tutorial site you can publish to.</p></div>
+    <div><h4>Time</h4><p>About 45 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Open /nav</b> and add a menu item with a dropdown.</div></li>
+    <li><div><b>Preview and publish</b> it, then check two pages.</div></li>
+    <li><div><b>Edit /footer</b> and publish it.</div></li>
+    <li><div><b>Create a fragment</b> at <code>/fragments/disclosure</code>.</div></li>
+    <li><div><b>Reference it</b> with a Fragment block on two pages.</div></li>
+    <li><div><b>Set a template</b> and confirm the class on <code>&lt;body&gt;</code> in DevTools.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>One change to the fragment or nav updates every page that uses it.</p></div>
+    <div><h4>How to verify</h4><p>Update the fragment once, publish it, and see the new text on both pages.</p></div>
+    <div><h4>Stretch</h4><p>Use <code>nav</code> metadata to give one page an alternative menu.</p></div>
+  </div>
+  <ul class="checklist" data-id="b4-lab">
+    <li>Nav updated and published</li>
+    <li>Footer updated</li>
+    <li>Fragment reused on two pages</li>
+    <li>Template class confirmed</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Header is missing</td><td>/nav not published</td><td>Publish it.</td></tr>
+      <tr><td>Dropdown is not nested</td><td>List not indented</td><td>Use a nested list.</td></tr>
+      <tr><td>Fragment area is blank</td><td>Path is wrong or it is unpublished</td><td>Check the path and publish.</td></tr>
+      <tr><td>Change is only on preview</td><td>Not published</td><td>Publish the shared document.</td></tr>
+      <tr><td>Wrong menu on a page</td><td><code>nav</code> metadata set</td><td>Remove or correct it.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Ownership.</b> Name owners for nav, footer and legal fragments, because one edit affects the whole site.</p></aside>
+    <aside class="callout warning" data-label="Wide blast radius"><p>A nav or fragment publish goes live on every page at once. Review it on preview across several templates.</p></aside>
+    <aside class="callout performance"><p>Header and footer load after the critical path. Avoid putting heavy media in them.</p></aside>
+    <aside class="callout accessibility"><p>Keep menu labels short and link text meaningful. Test dropdowns with a keyboard.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Nav structure</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Legal fragments</td><td>Responsible</td><td>Informed</td><td>Consulted</td></tr>
+      <tr><td>Template definitions</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b4-check"><script type="application/json">{"questions": [{"q": "What are the three nav sections, in order?", "options": ["Brand, sections, tools", "Tools, sections, brand", "Header, body, footer"], "answer": 0, "explain": "The boilerplate reads them by position."}, {"q": "When does the header load?", "options": ["Lazy phase", "Eager phase", "Before HTML"], "answer": 0, "explain": "It is not on the critical path to LCP."}, {"q": "What overrides the default nav path?", "options": ["nav metadata", "A redirect", "A variant"], "answer": 0, "explain": "The header code reads it."}, {"q": "How can a fragment be referenced? Choose all that apply.", "options": ["By the boilerplate", "By code using metadata", "By a Fragment block", "Only by the CDN"], "answer": [0, 1, 2], "explain": "Three routes exist."}, {"q": "Why avoid fragments for main content?", "options": ["It is not in the page’s initial HTML", "They cost more", "They cannot hold text"], "answer": 0, "explain": "Canonical content belongs in the page."}, {"q": "What does template metadata become?", "options": ["A body class", "A new block", "A URL"], "answer": 0, "explain": "Code then responds to it."}, {"q": "A template locks the page structure. True or false?", "options": ["False", "True"], "answer": 0, "explain": "It is a label for code."}, {"q": "A regulator requires a disclaimer update on all mortgage pages by noon. It is pasted into 45 documents today. What is your best long-term fix?", "options": ["Keep editing 45 documents", "Create one fragment and reference it from those pages", "Put it in the footer of every page on the site", "Add it to placeholders as a long paragraph"], "answer": 1, "explain": "A fragment gives one source of truth for that content.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b4-cards"><script type="application/json">{"cards": [["/nav", "Document that supplies the header."], ["/footer", "Document that supplies the footer."], ["Brand", "First nav section."], ["Tools", "Third nav section."], ["Fragment", "Reusable content, separately delivered."], ["Fragment block", "Author-placed reference to a fragment."], ["template", "Metadata that becomes a body class."], ["nav metadata", "Points a page to another nav document."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B4 · Shared and reusable content</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Nav</h4><ul><li>/nav document</li><li>brand, sections, tools</li><li>Publish it</li></ul></div>
+      <div><h4>Footer</h4><ul><li>/footer document</li><li>Loads in lazy phase</li><li>Publish it</li></ul></div>
+      <div><h4>Fragments</h4><ul><li>One source, many pages</li><li>Not for main content</li><li>Cached separately</li></ul></div>
+      <div><h4>Templates</h4><ul><li>template metadata</li><li>Becomes a body class</li><li>Bulk apply by folder</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/fragments" rel="noopener" target="_blank">aem.live: Fragments</a></li>
+    <li><a href="https://www.aem.live/docs/seo-geo" rel="noopener" target="_blank">aem.live: SEO and GEO best practices</a></li>
+    <li><a href="https://www.aem.live/docs/metadata" rel="noopener" target="_blank">aem.live: Page metadata</a></li>
+    <li><a href="https://www.aem.live/docs/bulk-metadata" rel="noopener" target="_blank">aem.live: Bulk metadata</a></li>
+    <li><a href="https://www.aem.live/developer/block-collection/header" rel="noopener" target="_blank">aem.live: Header block</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

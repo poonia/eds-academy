@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B7 Universal Editor with AEM Sites · EDS Academy</title>
+<meta name="description" content="Module B7: the Universal Editor, the Sites console for Edge Delivery, components and filters, publishing, Content Fragments, MSM and workflows.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/b7-universal-editor.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="B7 Universal Editor with AEM Sites · EDS Academy">
+<meta property="og:description" content="Module B7: the Universal Editor, the Sites console for Edge Delivery, components and filters, publishing, Content Fragments, MSM and workflows.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/b7-universal-editor.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="B7">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Move around the Universal Editor and Sites console.</li>
+    <li>Explain definitions, models and filters.</li>
+    <li>Predict the effect of each publish option.</li>
+    <li>Describe how Content Fragments reach EDS.</li>
+    <li>Explain what MSM needs on EDS.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="b7-ready" data-title="Ready for universal Editor with AEM Sites?">
+    <script type="application/json">{"questions": [{"q": "Where does AEM-authored content live?", "options": ["In AEM", "In SharePoint", "In GitHub"], "answer": 0, "explain": "Covered in A4."}, {"q": "Who renders semantic HTML on publish?", "options": ["AEM", "The browser", "The CDN"], "answer": 0, "explain": "Covered in A4."}, {"q": "What is a section?", "options": ["A group of content", "A workflow", "A tag"], "answer": 0, "explain": "Covered in B1."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="editor-interface" data-level="2">
+  <h2>Editor interface</h2>
+  <div data-part="why"><p>An AEM-experienced author moves to EDS and wonders what changed. Most of the mental model transfers, but some words differ.</p></div>
+  <div data-part="concept">
+    <p>With AEM authoring, the <b>Universal Editor</b> edits content that lives in AEM, on a canvas that shows the real page. The same concepts of sections and blocks apply, and the editor calls blocks <em>components</em>.</p>
+    <p>Details of a component are set in the Properties panel. aem.live now recommends Experience Workspace for new projects (module B6). Existing Universal Editor projects need not change.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    S["Sites console"] --&gt; U["Universal Editor"]
+    U --&gt; C["Canvas: select an element"]
+    C --&gt; P["Properties panel"]
+    P --&gt; A["Saved in AEM"]</pre>
+      <figcaption><b>What to notice:</b> content stays in AEM, and only delivery is on EDS.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>From the Sites console you open the Universal Editor, select an element on the canvas, edit it in the Properties panel and save it in AEM.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Document authoring term</th><th>Universal Editor term</th></tr></thead>
+    <tbody>
+      <tr><td>Block</td><td>Component</td></tr>
+      <tr><td>Table cells</td><td>Properties panel fields</td></tr>
+      <tr><td>Three hyphens</td><td>Section component</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b7-t1"><script type="application/json">{"questions": [{"q": "What does the Universal Editor call blocks?", "options": ["Components", "Fragments", "Templates"], "answer": 0, "explain": "Same idea, different label."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Canvas looks unstyled</td><td>Code on EDS is not reachable</td><td>Check the site’s code configuration and branch.</td></tr>
+      <tr><td>Panel has no fields</td><td>Component model missing</td><td>Ask a developer to check the model.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="sites-console-for-eds" data-level="2">
+  <h2>Sites console for EDS</h2>
+  <div data-part="why"><p>Page creation, moves and organization still happen where AEM authors expect.</p></div>
+  <div data-part="concept">
+    <p>The AEM <b>Sites console</b> is used for content management, such as creating pages, Experience Fragments and Content Fragments. A project needs <b>path mapping</b> to relate AEM content paths to public URLs.</p>
+    <p>Spreadsheets are also authored in AEM, and Sidekick’s preview adds a table view of sheet data, with a <em>Show changes</em> diff since the last publication.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    C["/content/acme/en/savings"] --&gt; M["Path mapping"]
+    M --&gt; U["/savings"]</pre>
+      <figcaption><b>What to notice:</b> the internal path and the public URL are different things.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The internal path /content/acme/en/savings passes through path mapping to the public URL /savings.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Task</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td>Create or move a page</td><td>Sites console</td></tr>
+      <tr><td>Edit page content</td><td>Universal Editor</td></tr>
+      <tr><td>Create tabular data</td><td>Sites console, using sheets</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b7-t2"><script type="application/json">{"questions": [{"q": "What connects /content/acme/en/savings to /savings?", "options": ["Path mapping", "A variant", "Block library"], "answer": 0, "explain": "Mapping defines the relationship."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Public URL includes /content/</td><td>Path mapping is incomplete</td><td>Have developers correct it.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="components-and-filters" data-level="2">
+  <h2>Components and filters</h2>
+  <div data-part="why"><p>If authors can drop anything anywhere, consistency goes first. Filters decide what can be added where.</p></div>
+  <div data-part="concept">
+    <p>Three files define the authoring experience: <code>component-definitions.json</code> lists what can be added, <code>component-models.json</code> defines each one’s fields, and <code>component-filters.json</code> controls what each container allows.</p>
+    <p>In Adobe’s AEM authoring boilerplate, each block keeps a JSON fragment, and a pre-commit step compiles them into those files. Adding a block to a section’s filter list makes it available there.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    D["Definitions: what exists"] --&gt; A["Add menu"]
+    F["Filters: what is allowed here"] --&gt; A
+    M["Models: which fields"] --&gt; P["Properties panel"]</pre>
+      <figcaption><b>What to notice:</b> three files answer three different questions.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Definitions say what exists and filters say what is allowed here; both shape the add menu. Models say which fields appear in the Properties panel.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="component-filters.json" data-lang="json">
+      <textarea class="src" hidden>[
+  {
+    "id": "section",
+    "components": ["text", "image", "title", "teaser"]
+  }
+]</textarea>
+      <figcaption><b>Result:</b> authors can add these four components to a section.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b7-t3"><script type="application/json">{"questions": [{"q": "Authors need a new field on a teaser. Which file changes?", "options": ["component-models.json", "component-filters.json", "robots.txt"], "answer": 0, "explain": "Models define fields."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>New block is not in Add</td><td>Not in the container’s filter</td><td>Add its ID to the filter list.</td></tr>
+      <tr><td>File changes do not apply</td><td>Fragments were not compiled</td><td>Run the project’s build step and commit.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="publishing-to-eds" data-level="2">
+  <h2>Publishing to EDS</h2>
+  <div data-part="why"><p>Authors must know exactly what each publish choice does to preview and live.</p></div>
+  <div data-part="concept">
+    <p>In the Universal Editor, Publish offers two destinations: <b>Preview</b> or <b>Live</b>. From the Sites console, <b>Quick Publish</b> has the same effect as Live, and <b>Manage Publication</b> offers Preview or Live and scheduling.</p>
+    <p>Edge Delivery runs pre-publish checks. If one fails, the operation stops with an error, though a few checks silently exclude the affected resource. Related AEM Assets publish with the page, using a technical account.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    P["Publish"] --&gt; C{"Pre-publish checks"}
+    C --&gt;|Fail| E["Error, or a resource is excluded"]
+    C --&gt;|Pass| D{"Destination"}
+    D --&gt;|Preview| PV["aem.page only"]
+    D --&gt;|Live| LV["aem.page and aem.live"]</pre>
+      <figcaption><b>What to notice:</b> publishing to Live also refreshes preview.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Publishing runs pre-publish checks. A failure gives an error or excludes a resource. On success, a Preview destination updates aem.page only, and Live updates aem.page and aem.live.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Action</th><th>aem.page</th><th>aem.live</th></tr></thead>
+    <tbody>
+      <tr><td>Publish to Live</td><td>Added or refreshed</td><td>Added or refreshed</td></tr>
+      <tr><td>Publish to Preview</td><td>Added or refreshed</td><td>Unchanged</td></tr>
+      <tr><td>Unpublish from Live</td><td>Removed</td><td>Removed</td></tr>
+      <tr><td>Unpublish from Preview</td><td>Removed</td><td>Unchanged</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b7-t4"><script type="application/json">{"questions": [{"q": "What happens to aem.page when you unpublish from Live?", "options": ["It is unchanged", "The page is removed", "It is republished"], "answer": 1, "explain": "Unlike unpublishing in Sidekick, this also removes the preview page."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Publishing is aborted</td><td>A pre-publish check failed</td><td>Read the error and consult the checks list.</td></tr>
+      <tr><td>Image is missing live</td><td>Asset folder is private or over limits</td><td>Grant technical account access and resize.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="content-fragments-in-ue" data-level="3">
+  <h2>Content Fragments in UE</h2>
+  <div data-part="why"><p>Product data is already modelled as Content Fragments. EDS pages should use it without retyping it.</p></div>
+  <div data-part="concept">
+    <p>Earlier approaches published only a reference to a fragment, which limited what search engines and LLM agents could read. The overlay approach publishes Content Fragments to EDS as self-contained semantic HTML.</p>
+    <p>You define path mapping and an overlay in site configuration, instead of GraphQL endpoints and queries, and the JSON2HTML service generates the HTML. The result depends on that configuration, so review the output for each model.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    CF["Content Fragment"] --&gt; O["Overlay and path mapping"]
+    O --&gt; J["JSON2HTML"]
+    J --&gt; H["Semantic HTML on EDS"]</pre>
+      <figcaption><b>What to notice:</b> the fragment’s content ends up in the page HTML, not behind a reference.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A Content Fragment passes through an overlay and path mapping to JSON2HTML, producing semantic HTML on EDS.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Older pattern</th><th>Overlay pattern</th></tr></thead>
+    <tbody>
+      <tr><td>Reference on a page</td><td>Full content in HTML</td></tr>
+      <tr><td>GraphQL query per model</td><td>Mapping in site configuration</td></tr>
+      <tr><td>Block per model</td><td>Generated page</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b7-t5"><script type="application/json">{"questions": [{"q": "Why publish fragments as semantic HTML?", "options": ["Crawlers and agents can read the full content", "It disables caching", "It removes the need for models"], "answer": 0, "explain": "No JavaScript is needed to read the content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Fragment page is unstyled</td><td>Mapping or rendering is incomplete</td><td>Review overlay and template configuration.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="msm-language-copies-launches" data-level="3">
+  <h2>MSM, language copies, launches</h2>
+  <div data-part="why"><p>One global site becomes twelve. AEM’s multi-site features carry over, with one extra requirement.</p></div>
+  <div data-part="concept">
+    <p>aem.live states that AEM features such as workflows, MSM, translation and Launches are available when you author with AEM. <b>Multi Site Manager</b> keeps Live Copies in sync with their source while allowing local variation.</p>
+    <p>On EDS, using MSM requires the <b>repoless</b> feature, so that localized sites share central code. A typical structure keeps language masters under <code>/content/website/language-masters/en</code> and so on.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    LM["Language master: en"] --&gt; LC1["Live Copy: ch/en"]
+    LM --&gt; LC2["Live Copy: de/en"]
+    LC1 --&gt; R["Sites share one codebase through repoless"]
+    LC2 --&gt; R</pre>
+      <figcaption><b>What to notice:</b> content inheritance and code sharing are two separate layers.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A language master feeds Live Copies for Switzerland and Germany. Those sites share one codebase through repoless.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <aside class="callout verify"><p>aem.live’s lifecycle pages track any exceptions by feature. Check each MSM, translation or Launch behaviour that you depend on.</p></aside>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b7-t6"><script type="application/json">{"questions": [{"q": "What must be enabled to use MSM with EDS?", "options": ["Repoless", "Folder mapping", "Bulk metadata"], "answer": 0, "explain": "Localized sites share central code."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Local edits are overwritten</td><td>Inheritance was not cancelled</td><td>Follow your live copy rules for that component.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="workflows-and-tagging" data-level="3">
+  <h2>Workflows and tagging</h2>
+  <div data-part="why"><p>Regulated content needs approval trails, and AEM already provides them.</p></div>
+  <div data-part="concept">
+    <p>AEM workflows remain available for approval and governance when you author with AEM, and scheduling is available in Manage Publication. Define the workflow before go-live, and test that it covers publishing to EDS.</p>
+    <p>Tags are created in the Tagging Console. Because the Universal Editor works with tag IDs, create a <b>Taxonomy</b> page to expose their descriptions in every language (module B3).</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    A["Author submits"] --&gt; R["Reviewer approves"]
+    R --&gt; C["Compliance approves"]
+    C --&gt; P["Publish to Live"]</pre>
+      <figcaption><b>What to notice:</b> each step has one named owner.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An author submits, a reviewer approves, compliance approves, then the page is published to Live.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Tool</th></tr></thead>
+    <tbody>
+      <tr><td>Approval</td><td>AEM workflows</td></tr>
+      <tr><td>Timed release</td><td>Manage Publication</td></tr>
+      <tr><td>Consistent labels</td><td>Tagging Console and a Taxonomy page</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="b7-t7"><script type="application/json">{"questions": [{"q": "Why does a taxonomy page exist?", "options": ["To expose tag descriptions to the Universal Editor", "To replace workflows", "To speed up images"], "answer": 0, "explain": "The editor uses IDs."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Tags show as IDs</td><td>Taxonomy page is missing or unpublished</td><td>Create and publish it.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactives: editor tour and filter sandbox</h2>
+  <p>Tour the editor, then decide what a section allows and see the Add menu change.</p>
+  <div data-component="hotspots" data-title="Universal Editor"><div class="hs-stage"><div class="doc-page"><p data-hotspot="Top bar" data-text="Holds the page location, Preview and Publish. Publish offers a Preview or Live destination."><b>/content/acme/en/savings</b> &nbsp; Publish ▾</p><h5 data-hotspot="Canvas" data-text="Shows the real page. Select any element to edit it in place.">Save sooner with a TFSA</h5><p data-hotspot="Add control" data-text="Lists only the components that the current container allows. Filters decide this."><b>+ Add</b> Text · Image · Teaser</p><p data-hotspot="Properties panel" data-text="Fields defined by the component’s model. Blocks are called components here."><b>Properties</b> Title · Image · Link</p><p data-hotspot="Content tree" data-text="Shows sections and components, which helps you select nested items."><b>Tree</b> Section &gt; Teaser</p></div></div></div>
+  <div data-component="filter-sandbox" data-title="Filter sandbox"><script type="application/json">{"container": "section", "allowed": ["text", "image", "title"], "components": [{"id": "text", "label": "Text"}, {"id": "image", "label": "Image"}, {"id": "title", "label": "Title"}, {"id": "button", "label": "Button"}, {"id": "teaser", "label": "Teaser"}, {"id": "cards", "label": "Cards"}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: edit and publish a page in the Universal Editor</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Author a page, compare publish destinations and control what can be added.</p></div>
+    <div><h4>You need</h4><p>An AEM sandbox with an Edge Delivery site, or a walkthrough.</p></div>
+    <div><h4>Time</h4><p>About 75 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Create a page</b> in the Sites console.</div></li>
+    <li><div><b>Open it</b> in the Universal Editor and add a section and component.</div></li>
+    <li><div><b>Set fields</b> in the Properties panel.</div></li>
+    <li><div><b>Publish to Preview</b> and compare aem.page and aem.live.</div></li>
+    <li><div><b>Publish to Live</b> and compare again.</div></li>
+    <li><div><b>Find a filter</b> in the repository and explain what it allows.</div></li>
+    <li><div><b>Unpublish from Live</b> and check both hosts.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A table of what each action did on each host.</p></div>
+    <div><h4>How to verify</h4><p>Your observations match the table in topic 4.</p></div>
+    <div><h4>Stretch</h4><p>Add a component to a section’s filter on a branch.</p></div>
+  </div>
+  <ul class="checklist" data-id="b7-lab">
+    <li>Created and edited a page</li>
+    <li>Used both destinations</li>
+    <li>Read a filter</li>
+    <li>Unpublished and confirmed</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Component is not in Add</td><td>Filter does not allow it</td><td>Update the filter.</td></tr>
+      <tr><td>Publish error about permissions</td><td>Technical account issue</td><td>See the pre-publish checks list.</td></tr>
+      <tr><td>Stale code in the editor</td><td>Wrong branch or cache</td><td>Check the branch in the URL or configuration.</td></tr>
+      <tr><td>Live Copy not updating</td><td>Rollout not run</td><td>Run the rollout, then publish.</td></tr>
+      <tr><td>Asset missing</td><td>Folder is private</td><td>Grant the technical account access.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Model governance.</b> Review model and filter changes like code, because they change every author’s options.</p></aside>
+    <aside class="callout warning" data-label="Security"><p>The technical account publishes on behalf of authors. Keep its permissions limited, and monitor them.</p></aside>
+    <aside class="callout accessibility"><p>Make alt text and heading level fields required where possible in component models.</p></aside>
+    <aside class="callout performance"><p>AEM authoring does not change EDS delivery. Keep models simple, so that blocks remain lightweight.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Component models</td><td>Consulted</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Workflow design</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Path mapping</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="b7-check"><script type="application/json">{"questions": [{"q": "Which file controls what a container allows?", "options": ["component-filters.json", "component-models.json", "sitemap.xml"], "answer": 0, "explain": "Filters control placement."}, {"q": "Which defines the fields?", "options": ["component-models.json", "component-filters.json", "robots.txt"], "answer": 0, "explain": "Models drive the panel."}, {"q": "Quick Publish is the same as which destination?", "options": ["Live", "Preview", "Neither"], "answer": 0, "explain": "See the docs."}, {"q": "What happens when a pre-publish check fails?", "options": ["Publishing stops or the resource is excluded", "It always publishes", "The page is deleted"], "answer": 0, "explain": "Most checks show an error."}, {"q": "What publishes assets to EDS?", "options": ["A technical account", "The visitor", "Google"], "answer": 0, "explain": "It needs folder access."}, {"q": "Which capabilities are stated as available? Choose all that apply.", "options": ["Workflows", "MSM", "Launches", "Translation"], "answer": [0, 1, 2, 3], "explain": "Check lifecycle pages for exceptions."}, {"q": "What does aem.live recommend for new projects?", "options": ["Experience Workspace", "Universal Editor only", "Static site generators"], "answer": 0, "explain": "See module B6."}, {"q": "A multinational insurer already runs MSM and translation in AEM, with heavy workflows. They want EDS speed. What is the most suitable authoring route for now?", "options": ["Rewrite everything in Google Docs", "Stay on AEM authoring with Universal Editor, enable repoless, and validate features", "Use spreadsheets only", "Use folder mapping"], "answer": 1, "explain": "Keep working workflows, and verify each dependency.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="b7-cards"><script type="application/json">{"cards": [["Universal Editor", "WYSIWYG editor for AEM-authored EDS sites."], ["Component", "What the editor calls a block."], ["component-definitions.json", "What can be added."], ["component-models.json", "What fields each has."], ["component-filters.json", "What each container allows."], ["Path mapping", "Maps AEM paths to public URLs."], ["Quick Publish", "Same effect as Live."], ["Manage Publication", "Offers destination and scheduling."], ["Live Copy", "MSM-synchronized copy of a source."], ["Taxonomy page", "Exposes tag descriptions."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>B7 · Universal Editor with AEM Sites</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Files</h4><ul><li>Definitions: what exists</li><li>Models: which fields</li><li>Filters: where allowed</li></ul></div>
+      <div><h4>Publish</h4><ul><li>Live: both hosts</li><li>Preview: aem.page</li><li>Checks run first</li></ul></div>
+      <div><h4>Unpublish</h4><ul><li>From Live: both removed</li><li>From Preview: aem.page only</li></ul></div>
+      <div><h4>Fragments</h4><ul><li>Overlay and mapping</li><li>JSON2HTML</li><li>Semantic HTML</li></ul></div>
+      <div><h4>Scale</h4><ul><li>MSM needs repoless</li><li>Check lifecycle pages</li><li>New: consider EW</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/aem-authoring" rel="noopener" target="_blank">aem.live: Authoring with AEM</a></li>
+    <li><a href="https://www.aem.live/developer/component-model-definitions" rel="noopener" target="_blank">aem.live: Content modeling</a></li>
+    <li><a href="https://www.aem.live/developer/universal-editor-blocks" rel="noopener" target="_blank">aem.live: Creating blocks for the Universal Editor</a></li>
+    <li><a href="https://www.aem.live/docs/publishing-from-authoring" rel="noopener" target="_blank">aem.live: Publishing from AEM</a></li>
+    <li><a href="https://www.aem.live/developer/content-fragment-overlay" rel="noopener" target="_blank">aem.live: Publishing Content Fragments</a></li>
+    <li><a href="https://www.aem.live/developer/repoless-multisite-manager" rel="noopener" target="_blank">aem.live: Multi site management</a></li>
+    <li><a href="https://www.aem.live/docs/authoring-taxonomy" rel="noopener" target="_blank">aem.live: Managing taxonomy data</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>
