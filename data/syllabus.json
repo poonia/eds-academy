@@ -1810,7 +1810,8 @@
     }
    ],
    "signature": "Experiment results explorer",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E2",
@@ -1845,7 +1846,8 @@
     }
    ],
    "signature": "Personalization flow and flicker timeline",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E3",
@@ -1879,7 +1881,8 @@
     }
    ],
    "signature": "Commerce storefront architecture explorer",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E4",
@@ -1914,7 +1917,8 @@
     }
    ],
    "signature": "Form rules builder",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E5",
@@ -1949,7 +1953,8 @@
     }
    ],
    "signature": "Content Fragment JSON to HTML simulator",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E6",
@@ -1988,7 +1993,8 @@
     }
    ],
    "signature": "AI automation pipeline and MCP sequence",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E7",
@@ -2017,7 +2023,8 @@
     }
    ],
    "signature": "Accessible tabs, accordion and carousel demos",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E8",
@@ -2044,7 +2051,8 @@
     }
    ],
    "signature": "Extension points map",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E9",
@@ -2072,7 +2080,8 @@
     }
    ],
    "signature": "Portfolio performance dashboard",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "E10",
@@ -2099,7 +2108,8 @@
     }
    ],
    "signature": "Contribution flow",
-   "built": false
+   "built": true,
+   "asOf": "9 Nov 2026"
   }
  ],
  "gates": [

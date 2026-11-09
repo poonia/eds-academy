@@ -86,6 +86,16 @@
    "module": "A2"
   },
   {
+   "id": "agents-md",
+   "term": "AGENTS.md",
+   "full": "",
+   "def": "A file that tells coding agents about a project’s structure and conventions.",
+   "match": [
+    "AGENTS.md"
+   ],
+   "module": "E6"
+  },
+  {
    "id": "aoda",
    "term": "AODA",
    "full": "Accessibility for Ontarians with Disabilities Act",
@@ -116,6 +126,16 @@
     "App Builder"
    ],
    "module": "C9"
+  },
+  {
+   "id": "app-sdk",
+   "term": "App SDK",
+   "full": "",
+   "def": "The Experience Workspace toolkit for fullscreen apps and library plugins.",
+   "match": [
+    "App SDK"
+   ],
+   "module": "E8"
   },
   {
    "id": "audit-log",
@@ -457,6 +477,19 @@
    "module": "D7"
   },
   {
+   "id": "drop-in",
+   "term": "Drop-in",
+   "full": "",
+   "def": "A ready-made package that provides the interface and logic for one Commerce shopper job.",
+   "match": [
+    "Drop-in",
+    "drop-in",
+    "drop-ins",
+    "Drop-ins"
+   ],
+   "module": "E3"
+  },
+  {
    "id": "eager",
    "term": "Eager phase",
    "full": "",
@@ -705,6 +738,16 @@
    "module": "A4"
   },
   {
+   "id": "mustache",
+   "term": "Mustache",
+   "full": "",
+   "def": "A simple template language used to turn JSON into HTML.",
+   "match": [
+    "Mustache"
+   ],
+   "module": "E5"
+  },
+  {
    "id": "noindex",
    "term": "noindex",
    "full": "",
@@ -735,6 +778,16 @@
     "Origin selectors"
    ],
    "module": "D3"
+  },
+  {
+   "id": "overlay",
+   "term": "Overlay",
+   "full": "",
+   "def": "A second content source that is checked before the primary source.",
+   "match": [
+    "Overlay"
+   ],
+   "module": "E5"
   },
   {
    "id": "psi",
@@ -852,6 +905,16 @@
    "module": "B8"
   },
   {
+   "id": "rule-editor",
+   "term": "Rule Editor",
+   "full": "",
+   "def": "A no-code tool for adding conditions and actions to forms.",
+   "match": [
+    "Rule Editor"
+   ],
+   "module": "E4"
+  },
+  {
    "id": "rum",
    "term": "RUM",
    "full": "Real user monitoring",
@@ -903,6 +966,17 @@
     "block library"
    ],
    "module": "B2"
+  },
+  {
+   "id": "significance",
+   "term": "Significance",
+   "full": "",
+   "def": "A check of whether a difference between variants could be luck.",
+   "match": [
+    "Significance",
+    "significance"
+   ],
+   "module": "E1"
   },
   {
    "id": "tti",
@@ -986,6 +1060,17 @@
     "Web SDK"
    ],
    "module": "C9"
+  },
+  {
+   "id": "widget",
+   "term": "Widget",
+   "full": "",
+   "def": "A self-contained, application-like feature, as distinct from a content block.",
+   "match": [
+    "Widget",
+    "widget"
+   ],
+   "module": "E10"
   }
  ]
 }

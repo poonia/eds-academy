@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E8 Authoring tool extensions · EDS Academy</title>
+<meta name="description" content="Module E8: extending Sidekick, Experience Workspace and Universal Editor, and choosing the right extension point.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/e8-tool-extensions.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="E8 Authoring tool extensions · EDS Academy">
+<meta property="og:description" content="Module E8: extending Sidekick, Experience Workspace and Universal Editor, and choosing the right extension point.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/e8-tool-extensions.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="E8">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Choose the right extension point.</li>
+    <li>Configure a Sidekick plugin.</li>
+    <li>Compare an app and a library plugin.</li>
+    <li>Plan a Universal Editor extension.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="e8-ready" data-title="Ready for authoring tool extensions?">
+    <script type="application/json">{"questions": [{"q": "Where do Sidekick plugins get configured?", "options": ["In site configuration", "In the sitemap", "In robots.txt"], "answer": 0, "explain": "Covered in C11."}, {"q": "What is the App SDK based on?", "options": ["FTP", "WebUSB", "PostMessage"], "answer": 2, "explain": "Covered in C11."}, {"q": "What is App Builder?", "options": ["Adobe’s serverless platform", "A Word add-in", "A browser"], "answer": 0, "explain": "Covered in C9."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="sidekick-da-and-ue-extensions" data-level="4">
+  <h2>Sidekick, DA and UE extensions</h2>
+  <div data-part="why"><p>Authors often need a tool that does not exist. Knowing the right extension point saves building the wrong thing.</p></div>
+  <div data-part="concept">
+    <p><b>Sidekick</b> takes plugins from a <code>sidekick</code> object in site configuration. A plugin can open a URL, display a popover, or fire a custom event, and is limited by <code>environments</code> and paths. Sidekick also emits events such as <code>sidekick-ready</code>, <code>previewed</code>, <code>published</code> and <code>custom:&lt;name&gt;</code>.</p>
+    <p><b>Experience Workspace</b>, also called DA, has an App SDK based on the PostMessage API. A <b>fullscreen app</b> is a first-class tool. A <b>library plugin</b> integrates with the library and document editor. Each is a page and script in your repository, so it follows your normal code lifecycle.</p>
+    <p><b>Universal Editor</b> extensions are JavaScript applications built with Adobe App Builder. They can add buttons and actions to the header and properties panel, and can create events. Extension Manager enables them per instance, and Adobe supplies ready-made ones, including Generate Variations and Forms Rule Editor.</p>
+    <p>Choose the point closest to where the author is working. Prefer a ready-made extension. Then design access, because a tool can act with the signed-in user’s rights.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Extension point</th></tr></thead>
+    <tbody>
+      <tr><td>Button on preview or live pages</td><td>Sidekick plugin</td></tr>
+      <tr><td>Full tool for authors</td><td>Experience Workspace fullscreen app</td></tr>
+      <tr><td>Insert data while writing</td><td>Experience Workspace library plugin</td></tr>
+      <tr><td>Button in properties panel</td><td>Universal Editor extension with App Builder</td></tr>
+      <tr><td>React to publish in your page</td><td>Sidekick event</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Sidekick plugin in site configuration" data-lang="json">
+      <textarea class="src" hidden>{
+  "plugins": [
+    {
+      "id": "audit",
+      "title": "Audit page",
+      "environments": ["preview"],
+      "url": "/tools/audit.html",
+      "isPopover": true,
+      "popoverRect": "width:400px; height:400px",
+      "passConfig": true
+    }
+  ]
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e8-t1"><script type="application/json">{"questions": [{"q": "You need a custom action in the Universal Editor properties panel. What do you build?", "options": ["A UI extension with App Builder", "A robots.txt rule", "A metadata sheet"], "answer": 0, "explain": "See Extending the Universal Editor."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Plugin not displayed</td><td><code>environments</code> excludes it</td><td>Adjust it.</td></tr>
+      <tr><td>App gets no context</td><td>SDK not imported first</td><td>Import the SDK in HTML.</td></tr>
+      <tr><td>Extension missing</td><td>Not enabled</td><td>Use Extension Manager.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: extension points map</h2>
+  <p>Select where the author is working, and follow it to what you would build.</p>
+  <div data-component="explorer" data-title="Extension points map"><script type="application/json">{"start": "sk", "columns": [{"name": "Where the author is", "nodes": [{"id": "page", "label": "Preview or live page", "sub": "Site in the browser", "detail": "Authors review a page here, with Sidekick available.", "to": ["sk"]}, {"id": "ew", "label": "Experience Workspace", "sub": "Document editor", "detail": "Authors write here. Apps and library plugins extend it.", "to": ["app", "lib"]}, {"id": "ue", "label": "Universal Editor", "sub": "In-context editor", "detail": "Authors edit in context. The header and properties panel can be extended.", "to": ["uix"]}]}, {"name": "Extension point", "nodes": [{"id": "sk", "label": "Sidekick plugin", "sub": "Configuration and events", "detail": "Configured in the site’s sidekick object. It opens a URL, shows a popover, or fires a custom event.", "to": ["tool"]}, {"id": "app", "label": "Fullscreen app", "sub": "App SDK", "detail": "A first-class tool that uses the PostMessage-based App SDK.", "to": ["tool"]}, {"id": "lib", "label": "Library plugin", "sub": "App SDK", "detail": "Integrates into the library and document editor.", "to": ["tool"]}, {"id": "uix", "label": "UI extension", "sub": "App Builder", "detail": "A JavaScript application that adds buttons, actions and events. Enable it in Extension Manager.", "to": ["backend"]}]}, {"name": "What runs", "nodes": [{"id": "tool", "label": "Page and script in your repository", "sub": "Normal code lifecycle", "detail": "A file such as /tools/tags.html, which ships through pull requests.", "to": []}, {"id": "backend", "label": "App Builder app", "sub": "Serverless", "detail": "Runs extension code and any server-side actions.", "to": []}]}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: add a Sidekick plugin</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Ship one useful, access-aware plugin.</p></div>
+    <div><h4>You need</h4><p>A test site with configuration access.</p></div>
+    <div><h4>Time</h4><p>About 2 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Name</b> the author problem.</div></li>
+    <li><div><b>Pick</b> the extension point.</div></li>
+    <li><div><b>Create</b> <code>/tools/audit.html</code>.</div></li>
+    <li><div><b>Add</b> the plugin to site configuration.</div></li>
+    <li><div><b>Limit</b> it to the right environment.</div></li>
+    <li><div><b>Test</b> with an author role.</div></li>
+    <li><div><b>Check</b> it by keyboard.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A plugin visible only where it applies.</p></div>
+    <div><h4>How to verify</h4><p>It works as an author, and is absent in other environments.</p></div>
+    <div><h4>Stretch</h4><p>Turn it into an Experience Workspace app.</p></div>
+  </div>
+  <ul class="checklist" data-id="e8-lab">
+    <li>Problem stated</li>
+    <li>Environment limited</li>
+    <li>Author tested</li>
+    <li>Keyboard tested</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Popover too small</td><td><code>popoverRect</code></td><td>Set a size.</td></tr>
+      <tr><td>Tool shows no data</td><td>No authenticated context</td><td>Pass the right configuration or use the SDK.</td></tr>
+      <tr><td>UE extension absent</td><td>Extension Manager off</td><td>Enable it.</td></tr>
+      <tr><td>Works only for admin</td><td>Role differences</td><td>Test each role.</td></tr>
+      <tr><td>Tool code slows site</td><td>Loaded for visitors</td><td>Keep it in tools paths.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Inventory extensions.</b> Record owner, purpose and credentials for each.</p></aside>
+    <aside class="callout warning" data-label="Security"><p>A custom tool acts with its user’s access. Validate inputs, and avoid broad backend credentials.</p></aside>
+    <aside class="callout accessibility"><p>Tools for authors need the same accessibility as tools for customers.</p></aside>
+    <aside class="callout performance"><p>Authors work in these tools all day. Keep them fast too.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Extension choice</td><td>Consulted</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Tool code</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Enabling extensions</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Tool access</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="e8-check"><script type="application/json">{"questions": [{"q": "Which event tells code Sidekick is ready?", "options": ["init", "loaded", "sidekick-ready"], "answer": 2, "explain": "On the document."}, {"q": "Which plugin option limits where it appears?", "options": ["environments", "theme", "redirect"], "answer": 0, "explain": "See Sidekick development."}, {"q": "Which fires when Publish is clicked?", "options": ["done", "sent", "published"], "answer": 2, "explain": "See Sidekick events."}, {"q": "What are UE extensions built with?", "options": ["HTL", "Excel", "App Builder"], "answer": 2, "explain": "See Extending the Universal Editor."}, {"q": "Where do you enable UE extensions?", "options": ["A metadata block", "Extension Manager", "Cloud DNS"], "answer": 1, "explain": "Per instance."}, {"q": "Which Experience Workspace option suits inserting content while writing?", "options": ["Fullscreen app only", "CDN worker", "Library plugin"], "answer": 2, "explain": "See Developing apps and plugins."}, {"q": "What is the prefix for custom Sidekick events?", "options": ["custom:", "event.", "plugin-"], "answer": 0, "explain": "See Sidekick development."}, {"q": "Authors want a Sidekick button that publishes all pages in a folder. What should you consider first?", "options": ["Whether roles, confirmation and limits are safe", "Colour of the button", "Removing authentication", "Adding a carousel"], "answer": 0, "explain": "Tools inherit user rights and can cause bulk damage.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="e8-cards"><script type="application/json">{"cards": [["Sidekick plugin", "Configured button or popover."], ["custom:<name>", "Plugin event."], ["Fullscreen app", "A first-class tool."], ["Library plugin", "Integrates with the editor."], ["App SDK", "Experience Workspace integration."], ["App Builder", "Builds UE extensions."], ["Extension Manager", "Enables extensions."], ["/tools/", "Common location for tools."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>E8 · Authoring tool extensions</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Sidekick</h4><ul><li>Site config</li><li>environments</li><li>Events</li></ul></div>
+      <div><h4>Experience Workspace</h4><ul><li>App SDK</li><li>App or library</li><li>In your repo</li></ul></div>
+      <div><h4>Universal Editor</h4><ul><li>App Builder</li><li>Extension Manager</li><li>Panel or header</li></ul></div>
+      <div><h4>Always</h4><ul><li>Least access</li><li>Test roles</li><li>Accessible</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/sidekick-development" rel="noopener" target="_blank">aem.live: Extending the Sidekick</a></li>
+    <li><a href="https://www.aem.live/docs/ew/developing/apps-plugins" rel="noopener" target="_blank">aem.live: Developing apps and plugins</a></li>
+    <li><a href="https://www.aem.live/docs/ew/developing/micro-frontends" rel="noopener" target="_blank">aem.live: Micro-frontends tutorial</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/extending" rel="noopener" target="_blank">Adobe: Extending the Universal Editor</a></li>
+    <li><a href="https://developer.adobe.com/uix/docs/services/aem-universal-editor/" rel="noopener" target="_blank">Adobe Developer: Universal Editor extensions</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E1 Experimentation · EDS Academy</title>
+<meta name="description" content="Module E1: the AEM experimentation plugin, running A/B tests, measuring results and judging significance on sampled data.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/e1-experimentation.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="E1 Experimentation · EDS Academy">
+<meta property="og:description" content="Module E1: the AEM experimentation plugin, running A/B tests, measuring results and judging significance on sampled data.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/e1-experimentation.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="E1">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Set up an experiment with metadata.</li>
+    <li>Control the traffic split.</li>
+    <li>Choose a primary metric and guardrails.</li>
+    <li>Judge significance on sampled data.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="e1-ready" data-title="Ready for experimentation?">
+    <script type="application/json">{"questions": [{"q": "What is a challenger?", "options": ["A user role", "A CDN rule", "A variant that differs from the control"], "answer": 2, "explain": "Covered in B10."}, {"q": "What is the usual OpTel sampling rate?", "options": ["Every view", "1 in 100", "1 in 10 million"], "answer": 1, "explain": "Covered in D7."}, {"q": "What keeps a page out of search?", "options": ["noindex", "A longer title", "A larger image"], "answer": 0, "explain": "Covered in D8."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="experimentation-plugin" data-level="3">
+  <h2>Experimentation plugin</h2>
+  <div data-part="why"><p>Experiments fail when they are too rare, too slow or too complex to set up. EDS tries to remove those obstacles.</p></div>
+  <div data-part="concept">
+    <p>In an experiment, the existing page is the <b>control</b>, and a changed version is a <b>challenger</b>. Both are <b>variants</b>. Authors copy the page into a folder such as <code>/experiments/ccx0076/</code>, edit it, then add two metadata rows to the control: <code>Experiment</code> and <code>Experiment Variants</code>. Then they publish the control and each challenger.</p>
+    <p>Traffic splits evenly by default. <code>Experiment Split</code> overrides it. For example, <code>10, 20, 30</code> gives the control the remaining 40%. A page has one page-level experiment, each section can run one, and fragment-level experiments use a manifest. Keep the same experiment ID across pages for a multi-page test.</p>
+    <p><b>Check access first.</b> The plugin’s README says it is available to customers in collaboration with AEM Engineering through co-innovation VIP projects. It installs into <code>plugins/experimentation</code> with <code>git subtree</code>, and it needs a loader script and changes to <code>scripts.js</code>. Variants should be excluded from search with <code>noindex,nofollow</code>.</p>
+  </div>
+  <div data-part="visual">
+    <div class="doc-page"><p>Control page ends with:</p><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Experiment</td><td>CCX0076</td></tr><tr><td>Experiment Variants</td><td>https://main--site--org.aem.page/experiments/ccx0076/challenger-1</td></tr><tr><td>Experiment Split</td><td>30</td></tr></table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Bulk metadata row" data-lang="text">
+      <textarea class="src" hidden>URL               robots
+/experiments/**   noindex,nofollow</textarea>
+      <figcaption><b>Note:</b> this keeps variants out of search results.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e1-t1"><script type="application/json">{"questions": [{"q": "A page has an experiment with two challengers and no split. What traffic does each variant receive?", "options": ["About a third each", "Half to the control and a quarter each", "Nothing until a split is set"], "answer": 0, "explain": "The split is even across control and challengers."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Variant appears in search</td><td>Not excluded</td><td>Add <code>noindex,nofollow</code>.</td></tr>
+      <tr><td>No overlay in preview</td><td>Plugin not set up</td><td>Check the loader and scripts.</td></tr>
+      <tr><td>Control never shown</td><td>Split sums to 100</td><td>Leave room for the control.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="measuring-results" data-level="3">
+  <h2>Measuring results</h2>
+  <div data-part="why"><p>Stopping a test the moment it looks good is the most common way to learn the wrong thing.</p></div>
+  <div data-part="concept">
+    <p>Data comes from Operational Telemetry. By default, the engine treats any <code>click</code> as a conversion. For a more specific goal, the plugin integrates with the RUM conversion plugin through a <code>Conversion Name</code> property. Decide on one primary metric <b>before</b> launching.</p>
+    <p><b>Significance</b> asks whether a difference could be luck. Telemetry is sampled, so the sample behind your numbers is what counts: 50,000 estimated views at a weight of 100 are only about 500 samples. That is why a low-traffic test may never settle.</p>
+    <p>Fix the duration in advance, and include full weekly cycles. Do not stop as soon as a result crosses significance. Also watch guardrails such as LCP and errors. A winning conversion rate with a much slower page is a warning.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td>Keep the challenger</td><td>Significant, planned duration reached, guardrails fine</td></tr>
+      <tr><td>Keep the control</td><td>Challenger worse, or guardrails failed</td></tr>
+      <tr><td>Inconclusive</td><td>Not significant: write down what you learned</td></tr>
+      <tr><td>Keep running</td><td>Too few samples, planned duration not reached</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    H["Hypothesis and metric"] --&gt; S["Sample size and duration"]
+    S --&gt; R["Run without peeking"]
+    R --&gt; A["Analyse with guardrails"]
+    A --&gt; D["Decide and record"]</pre>
+      <figcaption><b>What to notice:</b> the decisions are set before the data arrives.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A hypothesis and metric lead to sample size and duration, running without peeking, analysing with guardrails, then deciding and recording.</p></details>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e1-t2"><script type="application/json">{"questions": [{"q": "Estimated views are 20,000 with one-in-100 sampling. How many sampled views do you really have?", "options": ["20,000", "2,000,000", "About 200"], "answer": 2, "explain": "Divide by the weight."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Result flips daily</td><td>Few samples</td><td>Keep running to the plan.</td></tr>
+      <tr><td>Winner hurt speed</td><td>No guardrail</td><td>Check LCP.</td></tr>
+      <tr><td>Conversions inflated</td><td>Every click counts</td><td>Define a specific conversion.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: experiment results explorer</h2>
+  <p>Change the numbers and sampling. Try the same totals at 1 in 100 and at every view: only the sampled counts change the verdict.</p>
+  <div data-component="experiment-results" data-title="Experiment results explorer"><script type="application/json">{"control": [50000, 1500], "challenger": [50000, 1650], "weight": 100}</script></div><div data-component="order" data-title="Run an experiment"><script type="application/json">{"prompt": "Put the experiment steps in order.", "items": ["Write a hypothesis, and pick one metric", "Create the experiment ID and challenger page", "Add metadata to the control", "Preview and check the overlay", "Publish control and challengers", "Run for the planned duration", "Decide, record, and remove the experiment"], "explain": "A clean finish matters as well: leftover variants become clutter."}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: plan a real experiment</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Produce a test plan someone could run.</p></div>
+    <div><h4>You need</h4><p>A page with enough traffic, plus access to the plugin if you will run it.</p></div>
+    <div><h4>Time</h4><p>About 75 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Choose</b> a page and write a hypothesis.</div></li>
+    <li><div><b>Define</b> one primary metric and two guardrails.</div></li>
+    <li><div><b>Estimate</b> traffic, and divide by the sampling weight.</div></li>
+    <li><div><b>Set</b> a duration of full weeks.</div></li>
+    <li><div><b>Create</b> the challenger in an experiments folder.</div></li>
+    <li><div><b>Add</b> metadata, and exclude variants from search.</div></li>
+    <li><div><b>Write</b> the decision rule in advance.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A signed-off experiment plan.</p></div>
+    <div><h4>How to verify</h4><p>Someone else can state what result would change your decision.</p></div>
+    <div><h4>Stretch</h4><p>If you have plugin access, run it and record the result.</p></div>
+  </div>
+  <ul class="checklist" data-id="e1-lab">
+    <li>Hypothesis written</li>
+    <li>Metric chosen</li>
+    <li>Duration fixed</li>
+    <li>Variants noindexed</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Experiment does not start</td><td>Metadata not published</td><td>Publish control and challengers.</td></tr>
+      <tr><td>Split seems off</td><td>Random variation</td><td>Check totals over time.</td></tr>
+      <tr><td>Overlay absent on production</td><td>Normal for visitors</td><td>Use preview.</td></tr>
+      <tr><td>Multi-page test mismatched</td><td>Variant order differs</td><td>Keep challengers in the same order.</td></tr>
+      <tr><td>No results data</td><td>Needs a domain key</td><td>Ask your administrator.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Keep a test log.</b> Hypotheses, results and decisions are worth more than any one winner.</p></aside>
+    <aside class="callout warning" data-label="Availability"><p>The plugin’s availability is limited. Confirm access with Adobe before you plan around it.</p></aside>
+    <aside class="callout accessibility"><p>Challengers must meet the same accessibility standard as the control.</p></aside>
+    <aside class="callout performance"><p>Experiments should not delay the first paint. Measure LCP for each variant.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Hypothesis</td><td>Accountable</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Plugin set-up</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Decision on winner</td><td>Accountable</td><td>Consulted</td><td>Consulted</td></tr>
+      <tr><td>Removing variants</td><td>Accountable</td><td>Consulted</td><td>Informed</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="e1-check"><script type="application/json">{"questions": [{"q": "What are control and challenger together called?", "options": ["Sections", "Variants", "Blocks"], "answer": 1, "explain": "See Experimentation."}, {"q": "With Experiment Split 10, 20, 30, what does the control get?", "options": ["0%", "10%", "40%"], "answer": 2, "explain": "The remainder."}, {"q": "How many page-level experiments can a page have?", "options": ["Five", "One", "Unlimited"], "answer": 1, "explain": "Sections and fragments can have more."}, {"q": "What counts as a conversion by default?", "options": ["Any click", "A page view", "A purchase only"], "answer": 0, "explain": "Use a Conversion Name to narrow it."}, {"q": "Which query parameter simulates a variant?", "options": ["token", "experiment", "lang"], "answer": 1, "explain": "For example ?experiment=hero-test/challenger-1."}, {"q": "Which folder is recommended for challengers?", "options": ["/experiments/<id>/", "/blocks/", "/tools/"], "answer": 0, "explain": "Use the lowercase experiment ID."}, {"q": "What should you do about challengers and search?", "options": ["Exclude them", "Add them to the sitemap", "Disallow them only"], "answer": 0, "explain": "Use noindex,nofollow."}, {"q": "After six days the challenger is significantly ahead, but your plan said 14 days. What do you do?", "options": ["Delete the control", "Double the split", "Keep running to the planned duration", "Stop immediately and ship"], "answer": 2, "explain": "Early stopping inflates false positives.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="e1-cards"><script type="application/json">{"cards": [["Control", "The existing experience."], ["Challenger", "A changed variant."], ["Experiment Split", "Percentages for challengers."], ["Significance", "Whether it could be luck."], ["Weight", "Inverse of the sampling rate."], ["Conversion Name", "A specific goal."], ["Guardrail", "A metric that must not get worse."], ["?experiment=", "Simulates a variant."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>E1 · Experimentation</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Set up</h4><ul><li>/experiments/id</li><li>Experiment + Variants</li><li>Publish all</li></ul></div>
+      <div><h4>Split</h4><ul><li>Even by default</li><li>Split metadata</li><li>Control gets the rest</li></ul></div>
+      <div><h4>Measure</h4><ul><li>One metric</li><li>Sampled counts</li><li>Guardrails</li></ul></div>
+      <div><h4>Finish</h4><ul><li>Planned duration</li><li>Record</li><li>Clean up</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/docs/experimentation" rel="noopener" target="_blank">aem.live: Experimentation</a></li>
+    <li><a href="https://github.com/adobe/aem-experimentation" rel="noopener" target="_blank">GitHub: aem-experimentation</a></li>
+    <li><a href="https://github.com/adobe/aem-experimentation/blob/main/documentation/experiments.md" rel="noopener" target="_blank">GitHub: Experiments documentation</a></li>
+    <li><a href="https://www.aem.live/docs/optel-explorer" rel="noopener" target="_blank">aem.live: Operational Telemetry explorer</a></li>
+    <li><a href="https://www.aem.live/docs/ew/developing/set-up-experimentation" rel="noopener" target="_blank">aem.live: Set up experimentation in Experience Workspace</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E9 Performance at scale · EDS Academy</title>
+<meta name="description" content="Module E9: running a performance program across a portfolio of Edge Delivery sites.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/e9-performance-at-scale.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="E9 Performance at scale · EDS Academy">
+<meta property="og:description" content="Module E9: running a performance program across a portfolio of Edge Delivery sites.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/e9-performance-at-scale.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="E9">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Set shared performance budgets.</li>
+    <li>Combine lab and field data.</li>
+    <li>Prioritize by affected traffic.</li>
+    <li>Prevent regressions at scale.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="e9-ready" data-title="Ready for performance at scale?">
+    <script type="application/json">{"questions": [{"q": "Where can you see field data for a site?", "options": ["A Word doc", "robots.txt", "Operational Telemetry explorer"], "answer": 2, "explain": "Covered in D7."}, {"q": "Which check runs on pull requests?", "options": ["Spellcheck only", "PageSpeed", "DNS"], "answer": 1, "explain": "Covered in C10."}, {"q": "What can repoless share?", "options": ["Author passwords", "Domains", "One code fix across sites"], "answer": 2, "explain": "Covered in D2."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="portfolio-performance-program" data-level="4">
+  <h2>Portfolio performance program</h2>
+  <div data-part="why"><p>One fast site is a project. Fifty fast sites require a program, or standards erode.</p></div>
+  <div data-part="concept">
+    <p>Keep an inventory of each site, owner and traffic. Use one set of budgets: Lighthouse 100 on <code>.aem.live</code> as Adobe’s stated expectation, and field results that meet Core Web Vitals for real users. Lab data finds problems before release. Field data shows what visitors experienced.</p>
+    <p>Prioritize by <b>affected traffic</b>, not by the worst score. Fix common causes centrally. With repoless, one fix to shared code improves every site. Watch third parties, which commonly take over budgets after launch. Keep them late, measured and owned.</p>
+    <p>Enforce with the tools you have: the pull request PageSpeed check, protected branches, and telemetry reviews. Have a regular review with named owners. Report in business terms, with care: only claim a link between speed and revenue that you have measured.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    I["Inventory"] --&gt; B["Budgets"]
+    B --&gt; M["Measure lab and field"]
+    M --&gt; P["Prioritize by traffic"]
+    P --&gt; F["Fix shared causes"]
+    F --&gt; G["Guard with PR checks"]
+    G --&gt; M</pre>
+      <figcaption><b>What to notice:</b> it is a loop, and the guard stops regressions.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Inventory, budgets, measuring lab and field data, prioritizing by traffic, fixing shared causes, guarding with pull request checks, then measuring again.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Budget</th><th>Target</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Lighthouse</td><td>100 on mobile and desktop</td><td>Lab</td></tr>
+      <tr><td>LCP</td><td>2.5 s or less</td><td>Field</td></tr>
+      <tr><td>CLS</td><td>0.1 or less</td><td>Field</td></tr>
+      <tr><td>INP</td><td>200 ms or less</td><td>Field</td></tr>
+      <tr><td>Third parties</td><td>Each with owner and review date</td><td>Inventory</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e9-t1"><script type="application/json">{"questions": [{"q": "Site A has LCP 4.0 s with 5,000 views. Site B has LCP 2.8 s with 3 million views. Where do you start?", "options": ["Usually Site B, as more visitors are affected", "Neither", "Always Site A"], "answer": 0, "explain": "Weigh severity with reach."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Scores slowly decline</td><td>New tags</td><td>Require review of each tag.</td></tr>
+      <tr><td>Lab good, field poor</td><td>Real devices and third parties</td><td>Investigate field data.</td></tr>
+      <tr><td>Nobody acts</td><td>No owner</td><td>Name one per site.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: portfolio performance dashboard</h2>
+  <p>Change the LCP budget, and see how priorities change. The sites are invented.</p>
+  <div data-component="portfolio-dash" data-title="Portfolio performance"><script type="application/json">{"sites": [{"name": "Retail", "views": 3200000, "lcp": 2800, "cls": 0.05, "inp": 190}, {"name": "Business", "views": 900000, "lcp": 2300, "cls": 0.14, "inp": 160}, {"name": "Careers", "views": 80000, "lcp": 4100, "cls": 0.2, "inp": 260}, {"name": "Investors", "views": 60000, "lcp": 1800, "cls": 0.02, "inp": 90}, {"name": "Newsroom", "views": 300000, "lcp": 2100, "cls": 0.04, "inp": 230}]}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: build a program one-pager</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Set up a repeatable review for several sites.</p></div>
+    <div><h4>You need</h4><p>Access to telemetry for two or more sites, or sample data.</p></div>
+    <div><h4>Time</h4><p>About 90 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>List</b> sites, owners and traffic.</div></li>
+    <li><div><b>Set</b> budgets.</div></li>
+    <li><div><b>Collect</b> lab and field numbers.</div></li>
+    <li><div><b>Rank</b> by traffic affected.</div></li>
+    <li><div><b>Identify</b> one shared cause.</div></li>
+    <li><div><b>Propose</b> one guard against regression.</div></li>
+    <li><div><b>Set</b> a review cadence.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A one-page program plan.</p></div>
+    <div><h4>How to verify</h4><p>Each top issue has an owner and a date.</p></div>
+    <div><h4>Stretch</h4><p>Report before and after for one fix.</p></div>
+  </div>
+  <ul class="checklist" data-id="e9-lab">
+    <li>Owners named</li>
+    <li>Budgets set</li>
+    <li>Ranked by traffic</li>
+    <li>Review scheduled</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Numbers disagree</td><td>Lab versus field</td><td>Use each for its purpose.</td></tr>
+      <tr><td>Budget ignored</td><td>No gate</td><td>Require the check.</td></tr>
+      <tr><td>Vendor resists</td><td>No contract terms</td><td>Add performance to procurement.</td></tr>
+      <tr><td>Data too thin</td><td>Low traffic</td><td>Use longer ranges.</td></tr>
+      <tr><td>Fix helped one brand only</td><td>Theme-specific cause</td><td>Check per brand.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Put performance in procurement.</b> Vendors should accept budgets before tags go live.</p></aside>
+    <aside class="callout warning" data-label="Claims"><p>Do not credit revenue changes to speed unless you measured them.</p></aside>
+    <aside class="callout accessibility"><p>Do not remove accessible features to win points.</p></aside>
+    <aside class="callout performance"><p>Mobile field data usually shows the largest problems.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Budgets</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Third-party approval</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Fixes in shared code</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Portfolio report</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="e9-check"><script type="application/json">{"questions": [{"q": "What is Adobe’s stated Lighthouse expectation on aem.live?", "options": ["100", "50", "70"], "answer": 0, "explain": "See the Go-Live Checklist."}, {"q": "What does lab data help with?", "options": ["Measuring revenue", "Knowing every visitor’s experience", "Catching issues before release"], "answer": 2, "explain": "Field data covers real visits."}, {"q": "What is the INP good threshold?", "options": ["2 s", "200 ms", "5 s"], "answer": 1, "explain": "Covered in A3."}, {"q": "How should you prioritize sites?", "options": ["Alphabetically", "By severity and affected traffic", "By newest site"], "answer": 1, "explain": "Reach matters."}, {"q": "Which stops a regression from merging?", "options": ["A newsletter", "A required status check", "A longer title"], "answer": 1, "explain": "Protect main."}, {"q": "What is a common cause of slow erosion?", "options": ["Fewer images", "Shorter headings", "Third-party tags"], "answer": 2, "explain": "Own and review them."}, {"q": "Where does a shared code fix have most reach?", "options": ["A copied repository", "Repoless", "A local branch"], "answer": 1, "explain": "One codebase, many sites."}, {"q": "A vendor tag adds 800 ms of LCP, and marketing insists. What do you do?", "options": ["Hide it from Lighthouse", "Remove all analytics", "Measure it, then load it later or reconsider it with an owner", "Accept it silently"], "answer": 2, "explain": "Decide on evidence, without gaming the score.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="e9-cards"><script type="application/json">{"cards": [["Budget", "A limit a team agrees to."], ["Lab data", "Controlled test."], ["Field data", "Real visits."], ["Affected traffic", "Views on failing pages."], ["Status check", "Required before merge."], ["Tag owner", "Answers for one tag."], ["Regression", "Something got worse."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>E9 · Performance at scale</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Set</h4><ul><li>Inventory</li><li>Budgets</li><li>Owners</li></ul></div>
+      <div><h4>Measure</h4><ul><li>Lab</li><li>Field</li><li>Mobile</li></ul></div>
+      <div><h4>Act</h4><ul><li>Traffic first</li><li>Shared fixes</li><li>Tags</li></ul></div>
+      <div><h4>Guard</h4><ul><li>PR checks</li><li>Reviews</li><li>Procurement</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/keeping-it-100" rel="noopener" target="_blank">aem.live: Keeping it 100</a></li>
+    <li><a href="https://www.aem.live/docs/optel-explorer" rel="noopener" target="_blank">aem.live: Telemetry explorer</a></li>
+    <li><a href="https://www.aem.live/docs/go-live-checklist" rel="noopener" target="_blank">aem.live: Go-live checklist</a></li>
+    <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development good practices</a></li>
+    <li><a href="https://web.dev/articles/vitals" rel="noopener" target="_blank">web.dev: Web Vitals</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E2 Personalization · EDS Academy</title>
+<meta name="description" content="Module E2: audiences, campaigns, Adobe Target with Web SDK, edge personalization and the cost of each approach.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/e2-personalization.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="E2 Personalization · EDS Academy">
+<meta property="og:description" content="Module E2: audiences, campaigns, Adobe Target with Web SDK, edge personalization and the cost of each approach.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/e2-personalization.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="E2">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Define audiences and campaigns.</li>
+    <li>Integrate Adobe Target with the right trade-offs.</li>
+    <li>Compare browser, Target and edge approaches.</li>
+    <li>Protect privacy and performance.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="e2-ready" data-title="Ready for personalization?">
+    <script type="application/json">{"questions": [{"q": "What is a good LCP?", "options": ["1 minute", "2.5 seconds or less", "10 seconds"], "answer": 1, "explain": "Covered in A3."}, {"q": "Which library does Web SDK refer to?", "options": ["A CSS grid", "A Git tool", "Adobe Experience Platform’s client library"], "answer": 2, "explain": "Covered in C9."}, {"q": "Should personal data be stored in shared cache?", "options": ["No", "Yes", "Only at night"], "answer": 0, "explain": "Covered in C11."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="audiences-and-campaigns" data-level="3">
+  <h2>Audiences and campaigns</h2>
+  <div data-part="why"><p>A visitor from a paid campaign or on a slow connection may need something different. The plugin handles many of those cases with metadata.</p></div>
+  <div data-part="concept">
+    <p>Developers define <b>audiences</b> in project code, as named functions that return a boolean, such as <code>mobile</code> or <code>eu</code>. Authors then add rows such as <code>Audience: Mobile</code> to page metadata, with the URL of that audience’s page. An external service can resolve an audience too, but it blocks rendering until it responds.</p>
+    <p><b>Campaigns</b> work in the same way: <code>Campaign: Xmas</code> names a page, and visitors get it through <code>?campaign=xmas</code> or <code>?utm_campaign=xmas</code>. A campaign can be limited to audiences.</p>
+    <p>The plugin also includes consent support for privacy rules. Its availability is limited in the same way as experiments, so check first. Keep audience data out of URLs and shared caches, and avoid very small audiences that could identify someone.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="code" data-file="scripts/scripts.js" data-lang="javascript">
+      <textarea class="src" hidden>const AUDIENCES = {
+  mobile: () =&gt; window.innerWidth &lt; 600,
+  desktop: () =&gt; window.innerWidth &gt;= 600,
+};
+
+const { loadEager } = await import('../plugins/experimentation/src/index.js');
+await loadEager(document, { audiences: AUDIENCES });</textarea>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><p>Page metadata:</p><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Audience: Mobile</td><td>/offers/mobile</td></tr><tr><td>Campaign: Xmas</td><td>/offers/xmas</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e2-t1"><script type="application/json">{"questions": [{"q": "Which URL reaches the xmas campaign variant?", "options": ["/page?utm_campaign=xmas", "/xmas--page", "/page?audience=xmas"], "answer": 0, "explain": "campaign= works too."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Everyone sees default</td><td>Audience function false</td><td>Test the function in the console.</td></tr>
+      <tr><td>Slow first paint</td><td>Audience uses external API</td><td>Resolve in the browser or edge where possible.</td></tr>
+      <tr><td>Campaign has no effect</td><td>Query name differs</td><td>Use <code>campaign</code> or <code>utm_campaign</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="adobe-target-and-edge-personalization" data-level="4">
+  <h2>Adobe Target and edge personalization</h2>
+  <div data-part="why"><p>Target is powerful, and its page changes arrive after the page exists. You must plan for that cost.</p></div>
+  <div data-part="concept">
+    <p>Adobe supports two Target integrations. The <b>Web SDK</b> approach, also called alloy, is the recommended, future-proof route. Legacy <b>at.js</b> is also supported. Target’s Visual Experience Composer returns a list of modifications, which apply to the final markup, after blocks are decorated.</p>
+    <p>The call happens in the eager phase, and affects LCP. In Adobe’s tests on mobile, the first call added about 1.3 s of LCP, and later calls about 0.1 s. Desktop added 0.5 s, then 0.3 to 0.5 s. Enable it only where needed, for example with a <code>Target: on</code> metadata flag.</p>
+    <p>Complex snippets can cause flicker. Blocks that react to Target’s changes need a <code>MutationObserver</code>. Adobe’s sample calls <code>sendEvent</code> with <code>renderDecisions: false</code>, then applies propositions as blocks finish decorating.</p>
+    <p>Personalization at the CDN edge can choose content before the HTML arrives, but it must vary the cache carefully and keep personal data out of shared responses.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Approach</th><th>When it applies</th><th>Main cost</th></tr></thead>
+    <tbody>
+      <tr><td>Plugin audience</td><td>Before decoration</td><td>Authoring and code set-up</td></tr>
+      <tr><td>Target Web SDK</td><td>After decoration</td><td>LCP on the page, possible flicker</td></tr>
+      <tr><td>Edge</td><td>Before delivery</td><td>Cache complexity</td></tr>
+      <tr><td>Client API after LCP</td><td>Late</td><td>Late appearance, but not LCP</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Feature flag in loadEager (sketch)" data-lang="javascript">
+      <textarea class="src" hidden>if (getMetadata('target') === 'on') {
+  await initWebSDK('./alloy.js', { orgId, datastreamId });
+}</textarea>
+      <figcaption><b>Simplified.</b> See Adobe’s integration guide for the full code.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e2-t2"><script type="application/json">{"questions": [{"q": "Why limit Target to selected pages?", "options": ["Its instrumentation adds overhead, including to LCP", "It needs one licence per page", "It only works on the home page"], "answer": 0, "explain": "Adobe suggests a metadata flag."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Flicker</td><td>Heavy page modifications</td><td>Simplify the snippet.</td></tr>
+      <tr><td>Block ignores Target’s change</td><td>Applied after decoration</td><td>Use a MutationObserver.</td></tr>
+      <tr><td>LCP worse on every page</td><td>Enabled sitewide</td><td>Use a metadata flag.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: personalization flow and flicker timeline</h2>
+  <p>Choose an approach and device, then compare the effect. Figures for Target are from Adobe’s tests. The others are labelled teaching estimates.</p>
+  <div data-component="flicker-timeline" data-title="Personalization flicker timeline"><script type="application/json">{}</script></div><figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    R["Request"] --&gt; E{"Decided where?"}
+    E --&gt;|"Edge"| H["Chosen HTML"]
+    E --&gt;|"Browser, before decoration"| P["Plugin swaps source"]
+    E --&gt;|"After decoration"| T["Target applies changes"]</pre>
+      <figcaption><b>What to notice:</b> the later the decision, the more visible the change can be.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A request is decided at the edge, returning chosen HTML; in the browser before decoration, where the plugin swaps the source; or after decoration, where Target applies changes.</p></details>
+    </figure>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: choose a personalization approach</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Recommend one approach for a real use case.</p></div>
+    <div><h4>You need</h4><p>A use case, and access to analytics or telemetry.</p></div>
+    <div><h4>Time</h4><p>About 75 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Describe</b> the use case and audience.</div></li>
+    <li><div><b>Decide</b> what data identifies the audience.</div></li>
+    <li><div><b>Check</b> consent requirements.</div></li>
+    <li><div><b>Compare</b> approaches in the timeline.</div></li>
+    <li><div><b>Estimate</b> LCP effect on your pages.</div></li>
+    <li><div><b>Pick</b> which pages should run it.</div></li>
+    <li><div><b>Write</b> how you will measure success.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A short recommendation.</p></div>
+    <div><h4>How to verify</h4><p>It states the expected LCP cost and the consent basis.</p></div>
+    <div><h4>Stretch</h4><p>Implement a <code>Target: on</code> flag in a branch.</p></div>
+  </div>
+  <ul class="checklist" data-id="e2-lab">
+    <li>Audience defined</li>
+    <li>Consent checked</li>
+    <li>Cost estimated</li>
+    <li>Pages limited</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Target changes are missing</td><td>Wrong selector after decoration</td><td>Check the final DOM.</td></tr>
+      <tr><td>Double page views</td><td>Both analytics and SDK fire</td><td>Consolidate.</td></tr>
+      <tr><td>Consent ignored</td><td>SDK loads first</td><td>Wait for consent.</td></tr>
+      <tr><td>CDN hit rate falls</td><td>Too many variants</td><td>Reduce what varies.</td></tr>
+      <tr><td>Audience flickers</td><td>Late resolution</td><td>Resolve earlier, or simplify.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Measure it.</b> A personalization program needs evidence that it beats the speed it costs.</p></aside>
+    <aside class="callout warning" data-label="Privacy"><p>Personalization may need consent, depending on the data used and where visitors are.</p></aside>
+    <aside class="callout accessibility"><p>Late changes must not move focus or surprise screen reader users.</p></aside>
+    <aside class="callout performance"><p>Compare LCP with and without personalization using real-user data.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Audience definitions</td><td>Consulted</td><td>Accountable</td><td>Informed</td></tr>
+      <tr><td>Target activities</td><td>Accountable</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Consent</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Performance budget</td><td>Informed</td><td>Consulted</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="e2-check"><script type="application/json">{"questions": [{"q": "Which Target integration does Adobe call future-proof?", "options": ["at.js", "A pixel", "Web SDK"], "answer": 2, "explain": "See Target integration."}, {"q": "When are Target’s page changes applied?", "options": ["Before the HTML exists", "In the CDN only", "After blocks are decorated"], "answer": 2, "explain": "See Considerations."}, {"q": "What did the first mobile Target call add in Adobe’s tests?", "options": ["About 10 s", "About 10 ms", "About 1.3 s of LCP"], "answer": 2, "explain": "See the baseline table."}, {"q": "Where are audience definitions written?", "options": ["In robots.txt", "In project code", "In a Word table only"], "answer": 1, "explain": "See the audiences documentation."}, {"q": "Which option turns an audience variant into a redirect?", "options": ["Audience Split", "Audience Key", "Audience Resolution: redirect"], "answer": 2, "explain": "See the audiences documentation."}, {"q": "Which suits a block that reacts to Target’s changes?", "options": ["crontab", "MutationObserver", "A sitemap"], "answer": 1, "explain": "See Considerations."}, {"q": "Why not resolve audiences from an API by default?", "options": ["It deletes content", "APIs are not allowed", "It blocks page rendering until it responds"], "answer": 2, "explain": "See the audiences documentation."}, {"q": "Marketing wants Target on all 40,000 pages for one banner on the home page. What do you suggest?", "options": ["Replace the page with an image", "Move Target to head.html for all", "Enable it only where the activity runs", "Enable everywhere"], "answer": 2, "explain": "Limit the overhead.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="e2-cards"><script type="application/json">{"cards": [["Audience", "A named group, resolved by code."], ["Campaign", "Variant by query parameter."], ["utm_campaign", "Also selects a campaign."], ["Web SDK", "Recommended Target route."], ["VEC", "Visual Experience Composer."], ["Proposition", "A decision to apply."], ["Target: on", "Example metadata flag."], ["MutationObserver", "Watches DOM changes."], ["Flicker", "Visible content swap."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>E2 · Personalization</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Plugin</h4><ul><li>Audience functions</li><li>Campaign metadata</li><li>Limited availability</li></ul></div>
+      <div><h4>Target</h4><ul><li>Web SDK</li><li>Flag by page</li><li>After decoration</li></ul></div>
+      <div><h4>Costs</h4><ul><li>LCP</li><li>Flicker</li><li>Cache</li></ul></div>
+      <div><h4>Trust</h4><ul><li>Consent</li><li>No personal data in cache</li><li>Accessible changes</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/target-integration" rel="noopener" target="_blank">aem.live: Target integration</a></li>
+    <li><a href="https://github.com/adobe/aem-experimentation/blob/main/documentation/audiences.md" rel="noopener" target="_blank">GitHub: Audiences</a></li>
+    <li><a href="https://github.com/adobe/aem-experimentation/blob/main/documentation/campaigns.md" rel="noopener" target="_blank">GitHub: Campaigns</a></li>
+    <li><a href="https://www.aem.live/developer/martech-integration" rel="noopener" target="_blank">aem.live: Martech integration</a></li>
+    <li><a href="https://www.aem.live/developer/cmp-integration" rel="noopener" target="_blank">aem.live: Consent management</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

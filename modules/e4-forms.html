@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E4 Forms · EDS Academy</title>
+<meta name="description" content="Module E4: AEM Forms on Edge Delivery Services, choosing an authoring method, rules, submission and enterprise form design.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/e4-forms.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="E4 Forms · EDS Academy">
+<meta property="og:description" content="Module E4: AEM Forms on Edge Delivery Services, choosing an authoring method, rules, submission and enterprise form design.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/e4-forms.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="E4">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Choose document-based or WYSIWYG authoring.</li>
+    <li>Build conditional form rules.</li>
+    <li>Choose a submission target.</li>
+    <li>Design enterprise forms responsibly.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="e4-ready" data-title="Ready for forms?">
+    <script type="application/json">{"questions": [{"q": "What can a form sheet define?", "options": ["Fields and labels", "API keys", "CDN rules"], "answer": 0, "explain": "Covered in B10."}, {"q": "Where do blocks live?", "options": ["/content", "/blocks", "/config.json"], "answer": 1, "explain": "Covered in C4."}, {"q": "Can browser code hold secrets?", "options": ["Only in forms", "Yes", "No"], "answer": 2, "explain": "Covered in D4."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="aem-forms-on-eds" data-level="3">
+  <h2>AEM Forms on EDS</h2>
+  <div data-part="why"><p>Forms are where visitors become customers. Forms that load slowly, or are hard to complete, lose them.</p></div>
+  <div data-part="concept">
+    <p>Edge Delivery Services for AEM Forms uses plain HTML, CSS and JavaScript, with no pipeline to wait for. A valid <b>AEM Forms licence</b> is required. There are two authoring methods.</p>
+    <p><b>Document-based authoring</b> builds simple forms in Excel or Google Sheets, with rules and validation, attachments, and submission to a spreadsheet or email. <b>WYSIWYG authoring</b>, using Universal Editor, adds the advanced rule editor, client-side extensibility, reCAPTCHA, document of record, Form Data Model and many submission targets.</p>
+    <p>Adobe’s Forms overview recommends starting new form projects in Universal Editor, unless the team is entirely document-centric and the form is very basic. The <b>Forms Submission Service</b> can save submissions directly to OneDrive, SharePoint or Google Sheets.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Document-based</th><th>WYSIWYG</th></tr></thead>
+    <tbody>
+      <tr><td>Simple contact form</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Rules and validation</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Advanced rule editor</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Document of record</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Form Data Model</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Submit to spreadsheet</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>REST, Power Automate, AEM Workflow</td><td>No</td><td>Yes</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div data-component="form-sheet" data-title="From sheet to form"><script type="application/json">{"csv": "Name,Type,Label,Mandatory,Options\nfullName,text,Full name,x,\nemail,email,Email,x,\ntopic,select,Topic,,Savings;Loans\nsend,submit,Send,,"}</script></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e4-t1"><script type="application/json">{"questions": [{"q": "A team needs a form that calls an AEM Workflow on submission. Which authoring method fits?", "options": ["Document-based authoring", "WYSIWYG authoring", "Either one, with no difference"], "answer": 1, "explain": "The advanced integrations are in WYSIWYG authoring."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Form missing in editor</td><td>Forms block not added</td><td>Add the Adaptive Forms Block.</td></tr>
+      <tr><td>Submissions do not arrive</td><td>Sheet not prepared or shared</td><td>Review the submission set-up.</td></tr>
+      <tr><td>Licence question</td><td>Forms is licensed separately</td><td>Check the product description.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="enterprise-forms" data-level="4">
+  <h2>Enterprise forms</h2>
+  <div data-part="why"><p>A loan application is more like a small application than a web page. Its logic, data and audit trail all need design.</p></div>
+  <div data-part="concept">
+    <p>The <b>Rule Editor</b> gives authors conditions and actions without code. Patterns include <i>When/Then</i>, <i>Set If</i> and <i>If/Then/Else</i>. It is an extension that must be enabled in Extension Manager. Rules run from top to bottom. Custom functions go in <code>/blocks/form/functions.js</code>, and must be synchronous.</p>
+    <p>Available submission targets include spreadsheet, email, REST endpoint, SharePoint, OneDrive, Azure Blob Storage, Power Automate, AEM Workflow, Marketo Engage and Adobe Experience Platform. Check the list for your environment: Adobe’s submit action page is not fully consistent, and custom submit actions are listed as early access.</p>
+    <p>Client-side rules improve the experience. They are not security. Always validate submitted data on the server, protect from spam, minimize the personal data you collect, and agree on retention.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+    V["Visitor fills form"] --&gt; R["Rules and validation in browser"]
+    R --&gt; S["Submit action"]
+    S --&gt; B["Backend validates"]
+    B --&gt; W["Workflow or system of record"]
+    B --&gt; D["Document of record"]</pre>
+      <figcaption><b>What to notice:</b> the backend validates again. The browser rules are not a control.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visitor fills in a form, browser rules run, a submit action sends data, the backend validates and sends it to a workflow or system of record, and to a document of record.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="blocks/form/functions.js (sketch)" data-lang="javascript">
+      <textarea class="src" hidden>/**
+ * Annual amount from a monthly value.
+ * @param {number} monthly
+ * @returns {number}
+ */
+function annualAmount(monthly) {
+  return Number(monthly) * 12;
+}
+
+export { annualAmount };</textarea>
+      <figcaption><b>Note:</b> rule editor functions must be synchronous. Use the Invoke Service action for API calls.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e4-t2"><script type="application/json">{"questions": [{"q": "Why must a server validate data that the Rule Editor already checked?", "options": ["Servers are faster than browsers", "The Rule Editor does not run", "Browser rules can be bypassed"], "answer": 2, "explain": "Treat all submitted data as untrusted."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Rule does not fire</td><td>Order or extension off</td><td>Check order and Extension Manager.</td></tr>
+      <tr><td>Custom function missing</td><td>Wrong file or async</td><td>Use <code>functions.js</code>, and make it synchronous.</td></tr>
+      <tr><td>Spam submissions</td><td>No protection</td><td>Add reCAPTCHA where supported.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: form rules builder</h2>
+  <p>Build a rule, then type in the form to watch it apply. It follows the When/Then and If/Then/Else patterns.</p>
+  <div data-component="form-rules" data-title="Form rules builder"><script type="application/json">{}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: design an eligibility form</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Plan a form with conditional logic and a safe submission path.</p></div>
+    <div><h4>You need</h4><p>A Forms-licensed environment if available. Otherwise, do it on paper.</p></div>
+    <div><h4>Time</h4><p>About 2 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Write</b> the purpose, and the data you truly need.</div></li>
+    <li><div><b>Pick</b> an authoring method.</div></li>
+    <li><div><b>List</b> fields and validation messages.</div></li>
+    <li><div><b>Write</b> rules as When/Then.</div></li>
+    <li><div><b>Choose</b> a submission target and owner.</div></li>
+    <li><div><b>Define</b> server-side validation.</div></li>
+    <li><div><b>Test</b> keyboard use and error messages.</div></li>
+    <li><div><b>State</b> how long data is kept.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A form specification ready to build.</p></div>
+    <div><h4>How to verify</h4><p>Each field has a reason, each rule has a test case, and data has an owner.</p></div>
+    <div><h4>Stretch</h4><p>Build it in the sandbox, and measure completion with telemetry.</p></div>
+  </div>
+  <ul class="checklist" data-id="e4-lab">
+    <li>Data minimized</li>
+    <li>Rules listed</li>
+    <li>Server validation planned</li>
+    <li>Retention agreed</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Field stays hidden</td><td>Rule order</td><td>Rules run top to bottom.</td></tr>
+      <tr><td>Rule Editor missing</td><td>Extension is disabled</td><td>Enable it in Extension Manager.</td></tr>
+      <tr><td>Submission fails</td><td>Target not configured</td><td>Check the submit action.</td></tr>
+      <tr><td>Form slows page</td><td>Loaded too early</td><td>Load forms lazily when below the fold.</td></tr>
+      <tr><td>Screen reader misses errors</td><td>Errors not linked to fields</td><td>Associate and announce them.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Decide the system of record.</b> A spreadsheet is fine for a newsletter, and wrong for a regulated application.</p></aside>
+    <aside class="callout warning" data-label="Personal data"><p>Forms often gather personal data. Involve privacy and legal teams before launch.</p></aside>
+    <aside class="callout accessibility"><p>Every field needs a real label, and errors must be clear and programmatically linked.</p></aside>
+    <aside class="callout performance"><p>Keep form scripts out of the first load unless the form is the main content.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Form content</td><td>Accountable</td><td>Consulted</td><td>Informed</td></tr>
+      <tr><td>Rules</td><td>Responsible</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Backend validation</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Data retention</td><td>Consulted</td><td>Informed</td><td>Accountable</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="e4-check"><script type="application/json">{"questions": [{"q": "What is required to use Edge Delivery Services for AEM Forms?", "options": ["A valid AEM Forms licence", "A separate repository for each form", "A BYO CDN"], "answer": 0, "explain": "See Forms."}, {"q": "Which feature is WYSIWYG only?", "options": ["Rules and validation", "Advanced rule editor", "Accessible components"], "answer": 1, "explain": "See the comparison table."}, {"q": "Which is a document-based submission target?", "options": ["AEM Workflow", "Form Data Model", "Spreadsheet"], "answer": 2, "explain": "Simple forms can submit to sheets."}, {"q": "In what order do rules run?", "options": ["Top to bottom", "Bottom to top", "Random"], "answer": 0, "explain": "See Rule Editor."}, {"q": "Where do custom functions go?", "options": ["/robots.txt", "/styles/styles.css", "/blocks/form/functions.js"], "answer": 2, "explain": "See Rule Editor."}, {"q": "What must custom functions be?", "options": ["Longer than 100 lines", "Synchronous", "Written in Java"], "answer": 1, "explain": "Use a service action for network calls."}, {"q": "Which authoring does Adobe suggest for most new form projects?", "options": ["Hand-written HTML in each page", "Universal Editor", "A PDF"], "answer": 1, "explain": "See the Forms overview."}, {"q": "A rule hides the salary field for under-18s. A visitor still posts a salary directly. What should the system do?", "options": ["Publish the data", "Trust the browser", "Delete the form", "Validate and reject on the server if the rule requires it"], "answer": 3, "explain": "Client-side rules are not controls.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="e4-cards"><script type="application/json">{"cards": [["Forms licence", "Required for EDS Forms."], ["Document-based", "Simple forms from sheets."], ["WYSIWYG", "Universal Editor forms."], ["Rule Editor", "No-code conditions and actions."], ["functions.js", "Custom rule functions."], ["Form Data Model", "Data structure and sources."], ["Document of record", "Tamper-proof archive."], ["Forms Submission Service", "Saves directly to spreadsheets."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>E4 · Forms</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Choose</h4><ul><li>Simple: sheets</li><li>Complex: Universal Editor</li><li>Check licence</li></ul></div>
+      <div><h4>Rules</h4><ul><li>When/Then</li><li>Top to bottom</li><li>Sync functions</li></ul></div>
+      <div><h4>Submit</h4><ul><li>Choose target</li><li>Name an owner</li><li>Check support</li></ul></div>
+      <div><h4>Safety</h4><ul><li>Server validation</li><li>Least data</li><li>Accessible errors</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/forms" rel="noopener" target="_blank">aem.live: Forms</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview" rel="noopener" target="_blank">Adobe: EDS Forms overview</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/universal-editor/rule-editor-universal-editor" rel="noopener" target="_blank">Adobe: Rule Editor</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/universal-editor/submit-action" rel="noopener" target="_blank">Adobe: Submit actions</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/universal-editor/getting-started-universal-editor" rel="noopener" target="_blank">Adobe: Getting started with Universal Editor forms</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

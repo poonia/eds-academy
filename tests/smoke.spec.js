@@ -172,6 +172,49 @@ test('implementation simulators respond to input', async ({ page }) => {
   await expect(route.locator('pre')).toContainText('adobeaemcloud');
 });
 
+test('advanced simulators respond to input', async ({ page }) => {
+  await open(page, 'modules/e1-experimentation.html');
+  const exp = page.locator('[data-component="experiment-results"]');
+  await expect(exp.locator('.feedback')).toContainText('Not significant');
+  await exp.locator('select').selectOption('1');
+  await expect(exp.locator('.feedback')).toContainText('Significant at 95%');
+
+  await open(page, 'modules/e2-personalization.html');
+  const flick = page.locator('[data-component="flicker-timeline"]');
+  await expect(flick.locator('.feedback')).toContainText('Within');
+  await flick.locator('select').first().selectOption('targetFirst');
+  await expect(flick.locator('.feedback')).toContainText('Over');
+  await expect(flick.locator('.sim-notes')).toContainText('flicker');
+
+  await open(page, 'modules/e4-forms.html');
+  const rules = page.locator('[data-component="form-rules"]');
+  await expect(rules.getByLabel('Additional deduction')).toBeHidden();
+  await rules.getByLabel('Gross salary', { exact: true }).fill('60000');
+  await expect(rules.getByLabel('Additional deduction')).toBeVisible();
+
+  await open(page, 'modules/e5-structured-content.html');
+  const cf = page.locator('[data-component="cf-html"]');
+  await expect(cf.locator('pre')).toContainText('<h1>Acme opens new branch</h1>');
+  await expect(cf.locator('pre')).toContainText('<li>Toronto</li>');
+  await cf.locator('.sim-text').first().fill('{');
+  await expect(cf.locator('.feedback')).toContainText('Invalid JSON');
+
+  await open(page, 'modules/e7-expert-accessibility.html');
+  const demos = page.locator('[data-component="a11y-demos"]');
+  await demos.getByRole('tab', { name: 'Overview' }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(demos.getByRole('tab', { name: 'Rates' })).toBeFocused();
+  await expect(demos.getByRole('tabpanel')).toContainText('Rates change');
+  await demos.getByRole('button', { name: 'Next slide' }).click();
+  await expect(demos.locator('.ad-slide')).toContainText('Slide 2 of 3');
+
+  await open(page, 'modules/e9-performance-at-scale.html');
+  const dash = page.locator('[data-component="portfolio-dash"]');
+  await expect(dash.locator('tbody tr').first()).toContainText('Retail');
+  await dash.getByLabel('LCP budget (ms)').fill('3000');
+  await expect(dash.locator('tbody tr').first()).toContainText('Business');
+});
+
 test('a missing URL at any depth shows the styled 404 page', async ({ page }) => {
   const problems = watch(page);
   const response = await page.goto('/eds-academy/no/such/deep/page.html');

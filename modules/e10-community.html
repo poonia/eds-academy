@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E10 Community and contribution · EDS Academy</title>
+<meta name="description" content="Module E10: using the AEM Block Collection, blocks and widgets, and contributing to Adobe open source projects.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/e10-community.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="E10 Community and contribution · EDS Academy">
+<meta property="og:description" content="Module E10: using the AEM Block Collection, blocks and widgets, and contributing to Adobe open source projects.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/e10-community.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="E10">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Evaluate a block against collection principles.</li>
+    <li>Tell a block from a widget.</li>
+    <li>Contribute to an open source project responsibly.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="e10-ready" data-title="Ready for community and contribution?">
+    <script type="application/json">{"questions": [{"q": "Where does the Block Collection live?", "options": ["Inside Word", "A private CDN", "A public GitHub repository"], "answer": 2, "explain": "Covered in C4."}, {"q": "What should a pull request include?", "options": ["A zip of the site", "A test URL", "A password"], "answer": 1, "explain": "Covered in D9."}, {"q": "What should you do before large changes?", "options": ["Merge first", "Delete tests", "Talk to maintainers"], "answer": 2, "explain": "Covered in D9."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="block-collection-and-open-source" data-level="4">
+  <h2>Block Collection and open source</h2>
+  <div data-part="why"><p>Most of what you will build is a variation on something already solved. Contributing back makes that true for others.</p></div>
+  <div data-part="concept">
+    <p>Adobe’s <b>Block Collection</b> contains content blocks that are used widely across real projects, and that are general enough to reuse without changing their content model. Their principles are: intuitive, usable with no dependencies, responsive, context-aware, localizable, fast, and SEO friendly and accessible. Its main value is the <b>content structure</b>. Expect to change its CSS and JavaScript for your project. Blocks that are not used enough may be removed.</p>
+    <p>A self-contained, application-like feature, such as search results or a calculator, is a <b>widget</b> and does not belong in the collection. Widgets live in <code>/widgets</code>.</p>
+    <p>To contribute to an Adobe open source repository, read <code>CONTRIBUTING.md</code>. It asks you to check for an existing issue and overlapping pull requests, fork, work on a branch, and open a pull request that explains the intent, the change and anything that breaks. Third-party contributions need a signed Adobe Contributor License Agreement. Talk to the maintainers first, particularly for larger or AI-assisted changes.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Criterion</th><th>Question</th></tr></thead>
+    <tbody>
+      <tr><td>Intuitive</td><td>Would an author understand the table?</td></tr>
+      <tr><td>Usable</td><td>Does it work with the boilerplate and no dependencies?</td></tr>
+      <tr><td>Responsive</td><td>Does it work at each breakpoint?</td></tr>
+      <tr><td>Context aware</td><td>Does it inherit colours and text?</td></tr>
+      <tr><td>Localizable</td><td>Is there hard-coded text?</td></tr>
+      <tr><td>Fast</td><td>Does it hurt performance?</td></tr>
+      <tr><td>SEO and accessibility</td><td>Is it friendly to both?</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div data-component="match" data-title="Block or widget?"><script type="application/json">{"prompt": "Is it a block or a widget?", "pairs": [["Three cards an author writes", "Block"], ["Dealer locator with a single link", "Widget"], ["Accordion of authored questions", "Block"], ["Mortgage calculator", "Widget"]], "explain": "A block adds form and function to authored content."}</script></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e10-t1"><script type="application/json">{"questions": [{"q": "What is the main value of a Block Collection block?", "options": ["Its colours", "Its content structure", "Its exact CSS"], "answer": 1, "explain": "You will likely adapt the code."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Pull request ignored</td><td>No prior discussion</td><td>Open an issue first.</td></tr>
+      <tr><td>Blocked by license check</td><td>CLA not signed</td><td>Sign the Adobe CLA.</td></tr>
+      <tr><td>Block rejected as too specific</td><td>Client-specific</td><td>Generalize it, or keep it private.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: contribution flow</h2>
+  <p>Step through a contribution, then put a pull request in order.</p>
+  <div data-component="stepper" data-title="From your project to the community"><div class="step" data-label="1. Prove it"><p>Use the block on real pages, and confirm the content model is simple.</p></div><div class="step" data-label="2. Generalize"><p>Remove client names, hard-coded text and dependencies.</p></div><div class="step" data-label="3. Check rights"><p>Confirm that your employer allows it, and sign the CLA.</p></div><div class="step" data-label="4. Raise an issue"><p>Discuss the need with maintainers, and look for overlapping work.</p></div><div class="step" data-label="5. Fork and branch"><p>Make focused changes, and pass lint.</p></div><div class="step" data-label="6. Open a pull request"><p>Describe intent, changes and breakage, with a test URL.</p></div><div class="step" data-label="7. Respond"><p>Take review well. Rejection is a normal part of open source.</p></div></div><div data-component="order" data-title="Pull request order"><script type="application/json">{"prompt": "Put the pull request steps in order.", "items": ["Find or open an issue", "Fork the repository", "Work on a branch", "Run lint", "Open a pull request with a test URL", "Respond to review"], "explain": "Issue first, so that nobody wastes effort."}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: prepare a contribution</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Get a block or fix ready to propose.</p></div>
+    <div><h4>You need</h4><p>A GitHub account, and permission from your employer if relevant.</p></div>
+    <div><h4>Time</h4><p>About 90 minutes</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Pick</b> a block, or a small fix.</div></li>
+    <li><div><b>Compare</b> it against the principles.</div></li>
+    <li><div><b>Remove</b> anything project-specific.</div></li>
+    <li><div><b>Search</b> issues and pull requests.</div></li>
+    <li><div><b>Read</b> <code>CONTRIBUTING.md</code>.</div></li>
+    <li><div><b>Draft</b> the issue or pull request text.</div></li>
+    <li><div><b>Decide</b> with your team if you will submit.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A contribution ready for discussion.</p></div>
+    <div><h4>How to verify</h4><p>A colleague can understand the need and scope from your text.</p></div>
+    <div><h4>Stretch</h4><p>Submit it.</p></div>
+  </div>
+  <ul class="checklist" data-id="e10-lab">
+    <li>Principles checked</li>
+    <li>Client details removed</li>
+    <li>Rights confirmed</li>
+    <li>Draft written</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>CLA failure</td><td>Not signed</td><td>Sign once.</td></tr>
+      <tr><td>Lint fails</td><td>Local rules differ</td><td>Use the repository’s rules.</td></tr>
+      <tr><td>Maintainers ask for less</td><td>Scope too wide</td><td>Split it.</td></tr>
+      <tr><td>Block has hard-coded words</td><td>Not localizable</td><td>Use content or placeholders.</td></tr>
+      <tr><td>Duplicate work</td><td>Did not search</td><td>Check issues first.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>Open source policy.</b> Know your employer’s rules before you contribute company work.</p></aside>
+    <aside class="callout warning" data-label="Confidentiality"><p>Remove client names, secrets and non-public designs from everything you share.</p></aside>
+    <aside class="callout accessibility"><p>Include what you tested, and with what, in the pull request.</p></aside>
+    <aside class="callout performance"><p>A public block runs on many sites. Keep it small.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Approving contribution</td><td>Informed</td><td>Responsible</td><td>Accountable</td></tr>
+      <tr><td>Removing client data</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Adopting a community block</td><td>Consulted</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Keeping it updated</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="e10-check"><script type="application/json">{"questions": [{"q": "Which is a Block Collection principle?", "options": ["Must use React", "Hard-coded copy", "No dependencies"], "answer": 2, "explain": "Usable means no dependencies."}, {"q": "Where do widgets live?", "options": ["/widgets", "/config", "/blocks only"], "answer": 0, "explain": "See Exploring Blocks."}, {"q": "What may happen to blocks not used enough?", "options": ["Removal", "Licensing fees", "Automatic promotion"], "answer": 0, "explain": "See Block Collection."}, {"q": "What must third-party contributors sign?", "options": ["Adobe’s Contributor License Agreement", "An NDA with each user", "A lease"], "answer": 0, "explain": "See CONTRIBUTING.md."}, {"q": "What should you check before contributing?", "options": ["Your CDN bill", "Existing issues and pull requests", "The weather"], "answer": 1, "explain": "See CONTRIBUTING.md."}, {"q": "Is a calculator a block or widget?", "options": ["Block", "Widget", "Section metadata"], "answer": 1, "explain": "It has no authored content."}, {"q": "Should a collection block depend on extra libraries?", "options": ["Only frameworks", "Yes, always", "No"], "answer": 2, "explain": "Compatible with boilerplate, no dependencies."}, {"q": "Your block includes a client’s logo and copy. You want to contribute it. What is first?", "options": ["Rename the client", "Submit as is", "Remove client material, and confirm your rights", "Make the repository private"], "answer": 2, "explain": "Generalize and check permissions first.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="e10-cards"><script type="application/json">{"cards": [["Block Collection", "Reusable content block blueprints."], ["Widget", "Application-like feature."], ["/widgets", "Where widgets live."], ["CLA", "Contributor License Agreement."], ["Fork", "Your copy of a repository."], ["Issue first", "Discuss before coding."], ["Context aware", "Inherits text and colours."], ["Localizable", "No hard-coded content."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>E10 · Community and contribution</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Reuse</h4><ul><li>Content structure</li><li>Adapt code</li><li>Check principles</li></ul></div>
+      <div><h4>Block or widget</h4><ul><li>Authored: block</li><li>Application: widget</li></ul></div>
+      <div><h4>Contribute</h4><ul><li>Issue first</li><li>Sign CLA</li><li>Small PR</li></ul></div>
+      <div><h4>Respect</h4><ul><li>Client data out</li><li>Maintainers first</li><li>Test evidence</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/block-collection" rel="noopener" target="_blank">aem.live: Block Collection</a></li>
+    <li><a href="https://www.aem.live/docs/exploring-blocks" rel="noopener" target="_blank">aem.live: Exploring blocks</a></li>
+    <li><a href="https://github.com/adobe/aem-block-collection" rel="noopener" target="_blank">GitHub: aem-block-collection</a></li>
+    <li><a href="https://github.com/adobe/aem-block-collection/blob/main/CONTRIBUTING.md" rel="noopener" target="_blank">GitHub: Contributing</a></li>
+    <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development good practices</a></li>
+    <li><a href="https://opensource.adobe.com/cla.html" rel="noopener" target="_blank">Adobe: Contributor License Agreement</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

@@ -637,3 +637,14 @@ dialog.search-dlg::backdrop { background: rgb(10 14 20 / 45%); }
 .sim-io .sim-table { min-width: 0; width: 100%; }
 .sim-io .sim-table .sim-input { min-width: 84px; }
 .rd-cards ~ h4 { margin-top: 18px; }
+.fl-bars { display: grid; gap: 6px; margin: 10px 0; }
+.wf-bar.paint { background: var(--accent); }
+.wf-bar.wait { background: var(--warn); }
+.wf-bar.swap { background: var(--bad); }
+.form-row[hidden] { display: none; }
+.ad-part { border-top: 1px solid var(--line); padding: 10px 0; }
+.ad-part h4 { margin: 0 0 8px; }
+.ad-panel { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; }
+.ad-acc { border-bottom: 1px solid var(--line); padding: 6px 0; }
+.ad-slide { background: var(--surface-2); border-radius: 8px; padding: 18px 12px; margin: 0; font-weight: 700; }
+.chip[role="tab"][aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }

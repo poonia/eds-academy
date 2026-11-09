@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E5 Structured content · EDS Academy</title>
+<meta name="description" content="Module E5: publishing Content Fragments as semantic HTML, overlays, JSON2HTML and data-driven pages at scale.">
+<!-- site-meta -->
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://poonia.github.io/eds-academy/modules/e5-structured-content.html">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1218" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDS Academy">
+<meta property="og:title" content="E5 Structured content · EDS Academy">
+<meta property="og:description" content="Module E5: publishing Content Fragments as semantic HTML, overlays, JSON2HTML and data-driven pages at scale.">
+<meta property="og:url" content="https://poonia.github.io/eds-academy/modules/e5-structured-content.html">
+<meta property="og:image" content="https://poonia.github.io/eds-academy/assets/images/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EDS Academy: a self-paced course on Adobe Edge Delivery Services">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site-meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/academy.css">
+<script>try{var t=localStorage.getItem('eds-academy-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="module" src="../assets/js/academy.js"></script>
+</head>
+<body data-page="module" data-module="E5">
+<noscript><p class="no-js-note">This course works best with JavaScript on. Without it you can still read every topic, but interactives, diagrams and progress tracking are off.</p></noscript>
+<main id="main">
+
+<section class="intro" id="overview" data-toc="Overview and outcomes">
+  <h2>What you will be able to do</h2>
+  <ul class="outcomes">
+    <li>Explain fragment references compared with self-contained HTML.</li>
+    <li>Configure an overlay with json2html.</li>
+    <li>Write a Mustache template.</li>
+    <li>Plan data-driven pages at scale.</li>
+  </ul>
+  <div data-component="quiz" data-variant="ready" data-id="e5-ready" data-title="Ready for structured content?">
+    <script type="application/json">{"questions": [{"q": "Which authoring uses component models?", "options": ["Excel", "Google Docs", "Universal Editor"], "answer": 2, "explain": "Covered in B7."}, {"q": "What can be used to query content?", "options": ["An index", "A role", "A CDN rule"], "answer": 0, "explain": "Covered in C8."}, {"q": "What does path mapping connect?", "options": ["Users and roles", "AEM paths and public URLs", "Git and DNS"], "answer": 1, "explain": "Covered in D6."}]}</script>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="topic" id="content-fragments-as-html" data-level="3">
+  <h2>Content Fragments as HTML</h2>
+  <div data-part="why"><p>A page that only references a fragment shows crawlers and language models nothing useful.</p></div>
+  <div data-part="concept">
+    <p>Previously, publishing Content Fragments to EDS embedded only a <b>reference</b> in the HTML. A block then fetched the content with GraphQL. The newer approach publishes each fragment as a self-contained semantic HTML page, with no extra block, query or authored page.</p>
+    <p>The set-up has three parts. First, in the Configuration Service, add a path mapping and allow-list the fragment model. Second, add an <code>overlay</code> to the content source that points at the <b>json2html</b> service. Third, configure json2html with a path, endpoint, regex, template, and options such as <code>relativeURLPrefix</code>.</p>
+    <p>When a fragment is published, the Admin API checks the overlay first. The service fetches the fragment as JSON, applies a Mustache template, and the HTML is ingested as a page. You need AEM as a Cloud Service, a site such as one from the xwalk boilerplate, and the Configuration Service.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+    participant P as Publisher
+    participant A as Admin API
+    participant J as json2html
+    participant M as AEM author
+    P-&gt;&gt;A: Publish fragment
+    A-&gt;&gt;J: Check overlay
+    J-&gt;&gt;M: Fetch fragment JSON
+    M--&gt;&gt;J: JSON
+    J-&gt;&gt;J: Apply Mustache template
+    J--&gt;&gt;A: HTML
+    A-&gt;&gt;A: Ingest as page</pre>
+      <figcaption><b>What to notice:</b> the template runs at publish time, so visitors receive finished HTML.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A publisher publishes a fragment. The Admin API checks the overlay at json2html, which fetches JSON from AEM author, applies a Mustache template, and returns HTML for ingestion.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Site content configuration" data-lang="json">
+      <textarea class="src" hidden>{
+  "source": {
+    "url": "https://author-pXXXX-eXXXX.adobeaemcloud.com/bin/franklin.delivery/acme/site/main",
+    "type": "markup",
+    "suffix": ".html"
+  },
+  "overlay": {
+    "url": "https://json2html.adobeaem.workers.dev/acme/site/main",
+    "type": "markup"
+  }
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e5-t1"><script type="application/json">{"questions": [{"q": "Why does self-contained HTML help LLM agents?", "options": ["It adds a sitemap", "The full content is available without JavaScript", "It removes the need for content"], "answer": 1, "explain": "References alone hide the content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Fragment does not publish</td><td>Model is not allow-listed</td><td>Add it to the overlay configuration.</td></tr>
+      <tr><td>Images break</td><td>Relative URLs</td><td>Set <code>relativeURLPrefix</code>.</td></tr>
+      <tr><td>Empty fields</td><td>Template key is wrong</td><td>Check it against the JSON.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="json-driven-pages-at-scale" data-level="4">
+  <h2>JSON-driven pages at scale</h2>
+  <div data-part="why"><p>Ten thousand event or product pages should not be hand-authored. The data already exists.</p></div>
+  <div data-part="concept">
+    <p><b>JSON2HTML</b> is a generic worker that converts JSON into pages through a Mustache template, with no service to deploy. One configuration can map a URL path to an endpoint using <code>{{id}}</code> and a <code>regex</code>. Another can read one large JSON array with <code>arrayKey</code> and <code>pathKey</code>, creating one page per record.</p>
+    <p>After configuration, you <b>preview</b> a dynamic path to generate it. From then on it behaves like other Edge Delivery content. So plan for scale: bulk preview and publish through jobs, respect rate limits, and decide how updates and deletions in the source reach EDS.</p>
+    <p>A webhook or scheduled job is a common way to do that synchronization. Be careful with the custom headers in the configuration: API keys belong in a protected configuration, never in a template. Consider the large-site limits, such as 50,000 pages per index and sitemap.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Pattern</th><th>Config</th><th>Good for</th></tr></thead>
+    <tbody>
+      <tr><td>One endpoint per page</td><td><code>endpoint</code> with <code>{{id}}</code> and <code>regex</code></td><td>Large catalogs with an item API</td></tr>
+      <tr><td>One feed, many pages</td><td><code>arrayKey</code> and <code>pathKey</code></td><td>Smaller lists from a single file</td></tr>
+      <tr><td>Default markup</td><td>No <code>template</code></td><td>Prototypes only</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="POST /config/acme/site/main" data-lang="json">
+      <textarea class="src" hidden>[
+  {
+    "path": "/events/",
+    "endpoint": "https://api.example.com/event-{{id}}.json",
+    "regex": "/[^/]+$/",
+    "template": "/templates/event.html"
+  }
+]</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e5-t2"><script type="application/json">{"questions": [{"q": "After configuring JSON2HTML, how does a page get generated?", "options": ["Preview the dynamic path", "Open it in Word", "Reboot the CDN"], "answer": 0, "explain": "After that it works like normal content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Records change, pages do not</td><td>Nothing republishes</td><td>Trigger preview and publish on change.</td></tr>
+      <tr><td>Bulk job throttled</td><td>Rate limits</td><td>Use jobs, and back off.</td></tr>
+      <tr><td>Removed record still live</td><td>No delete flow</td><td>Unpublish on delete.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="mpart" id="signature" data-toc="Signature interactive">
+  <h2>Signature interactive: Content Fragment JSON to HTML simulator</h2>
+  <p>Edit the JSON or template, and see the HTML. Try removing the h1, or using a missing field. This is a small subset of Mustache.</p>
+  <div data-component="cf-html" data-title="Content Fragment JSON to HTML"><script type="application/json">{"json": {"title": "Acme opens new branch", "author": {"name": "A. Rivera"}, "text": "The new branch opens on 1 December.", "tags": [{"label": "News"}, {"label": "Toronto"}]}, "template": "<body>\n  <header><\/header>\n  <main>\n    <div>\n      <h1>{{title}}<\/h1>\n      <p>By {{author.name}}<\/p>\n      <p>{{text}}<\/p>\n      <ul>{{#tags}}<li>{{label}}<\/li>{{/tags}}<\/ul>\n    <\/div>\n  <\/main>\n  <footer><\/footer>\n<\/body>"}</script></div>
+</section>
+
+<section class="mpart" id="lab" data-toc="Hands-on lab">
+  <h2>Hands-on lab: turn a data feed into pages</h2>
+  <div class="lab-meta">
+    <div><h4>Goal</h4><p>Generate pages from JSON, and plan the synchronization.</p></div>
+    <div><h4>You need</h4><p>A test site with Configuration Service access, and a small JSON file you own.</p></div>
+    <div><h4>Time</h4><p>About 2 hours</p></div>
+  </div>
+  <ol class="lab-steps">
+    <li><div><b>Create</b> a JSON file with three records.</div></li>
+    <li><div><b>Write</b> a Mustache template in your repository.</div></li>
+    <li><div><b>Add</b> the overlay to site content configuration.</div></li>
+    <li><div><b>Configure</b> json2html for one path.</div></li>
+    <li><div><b>Preview</b> one dynamic path.</div></li>
+    <li><div><b>Check</b> the page source for full content.</div></li>
+    <li><div><b>Write</b> how updates and deletions will sync.</div></li>
+  </ol>
+  <div class="lab-meta" style="margin-top:16px">
+    <div><h4>Expected result</h4><p>A generated page and a sync plan.</p></div>
+    <div><h4>How to verify</h4><p>The page source has the content without running JavaScript.</p></div>
+    <div><h4>Stretch</h4><p>Bulk preview all three through a job.</p></div>
+  </div>
+  <ul class="checklist" data-id="e5-lab">
+    <li>Template stored in repo</li>
+    <li>Overlay configured</li>
+    <li>HTML verified</li>
+    <li>Delete flow planned</li>
+  </ul>
+</section>
+
+<section class="mpart" id="troubleshooting" data-toc="Troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>404 on preview</td><td>Path or regex mismatch</td><td>Test the regex.</td></tr>
+      <tr><td>Blank fields</td><td>Key mismatch</td><td>Compare with the JSON.</td></tr>
+      <tr><td>401 from the endpoint</td><td>Headers not forwarded</td><td>Check <code>forwardHeaders</code>.</td></tr>
+      <tr><td>Primary source page wins or loses unexpectedly</td><td>Overlay order</td><td>Remember that the overlay is checked first.</td></tr>
+      <tr><td>Index missing fields</td><td>Metadata not in the HTML</td><td>Include it in the template.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="enterprise" data-toc="Enterprise lens">
+  <h2>Enterprise lens</h2>
+  <div class="grid-2">
+    <aside class="callout enterprise"><p><b>One source of truth.</b> Authors must know where to change a value, and that it will not be overwritten.</p></aside>
+    <aside class="callout warning" data-label="API keys"><p>json2html can hold request headers for your endpoint. Treat its configuration as sensitive, and scope any key.</p></aside>
+    <aside class="callout accessibility"><p>Templates create every page, so one wrong heading level repeats everywhere.</p></aside>
+    <aside class="callout performance"><p>HTML generated at publish time avoids a browser fetch for primary content.</p></aside>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Decision</th><th>Author / publisher</th><th>Developer</th><th>Platform team</th></tr></thead>
+    <tbody>
+      <tr><td>Data model</td><td>Consulted</td><td>Consulted</td><td>Accountable</td></tr>
+      <tr><td>Template</td><td>Consulted</td><td>Accountable</td><td>Informed</td></tr>
+      <tr><td>Sync job</td><td>Informed</td><td>Accountable</td><td>Consulted</td></tr>
+      <tr><td>Page content</td><td>Accountable</td><td>Informed</td><td>Informed</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="mpart" id="knowledge-check" data-toc="Knowledge check">
+  <h2>Knowledge check</h2>
+  <div data-component="quiz" data-id="e5-check"><script type="application/json">{"questions": [{"q": "What does the Admin API check first when publishing with an overlay?", "options": ["The overlay", "The CDN", "The sitemap"], "answer": 0, "explain": "See Content Fragment overlay."}, {"q": "Which language does the template use?", "options": ["HTL", "XSLT", "Mustache"], "answer": 2, "explain": "See JSON2HTML."}, {"q": "Which key builds pages from one array?", "options": ["robots", "arrayKey with pathKey", "regex alone"], "answer": 1, "explain": "See JSON2HTML."}, {"q": "What is {{id}} used with?", "options": ["hreflang", "CSP", "regex"], "answer": 2, "explain": "The regex extracts the id from the URL."}, {"q": "What does relativeURLPrefix do?", "options": ["Adds a robots tag", "Prefixes relative URLs with a domain", "Creates a token"], "answer": 1, "explain": "It applies to src and href for supported file types."}, {"q": "Which prerequisite is needed for fragment overlays?", "options": ["A BYO CDN", "AEM as a Cloud Service", "A PDF library"], "answer": 1, "explain": "See Content Fragment overlay."}, {"q": "Where is the Mustache template stored?", "options": ["In your repository", "In a cookie", "In a metadata sheet"], "answer": 0, "explain": "It follows code."}, {"q": "50,000 records change nightly. What should you plan?", "options": ["Publish by hand", "Changed-record detection, jobs and back-off", "Copy each page to a document", "A single unthrottled loop"], "answer": 1, "explain": "Only publish what changed, within the limits.", "scenario": true}]}</script></div>
+</section>
+
+<section class="mpart" id="flashcards" data-toc="Flashcards">
+  <h2>Flashcards</h2>
+  <div data-component="flashcards" data-id="e5-cards"><script type="application/json">{"cards": [["Overlay", "Second source, checked first."], ["json2html", "Worker that turns JSON into HTML."], ["Mustache", "Simple template syntax."], ["{{id}}", "Value extracted from the URL."], ["arrayKey", "Records inside one JSON."], ["pathKey", "Field holding each URL."], ["relativeURLPrefix", "Makes asset URLs absolute."], ["Model allow list", "Which fragments publish."]]}</script></div>
+</section>
+
+<section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
+  <h2>Cheat sheet</h2>
+  <div class="cheat">
+    <h3><span>E5 · Structured content</span><span class="muted" style="font-size:14px">Print-friendly</span></h3>
+    <div class="cheat-grid">
+      <div><h4>Fragments</h4><ul><li>Path mapping</li><li>Allow-list model</li><li>Overlay</li></ul></div>
+      <div><h4>json2html</h4><ul><li>path + endpoint</li><li>regex for id</li><li>Template in repo</li></ul></div>
+      <div><h4>Scale</h4><ul><li>Preview to generate</li><li>Jobs</li><li>Handle deletes</li></ul></div>
+      <div><h4>Output</h4><ul><li>Semantic HTML</li><li>Has an h1</li><li>No client fetch</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="mpart" id="further-reading" data-toc="Further reading">
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.aem.live/developer/content-fragment-overlay" rel="noopener" target="_blank">aem.live: Publishing Content Fragments</a></li>
+    <li><a href="https://www.aem.live/developer/json2html" rel="noopener" target="_blank">aem.live: JSON2HTML</a></li>
+    <li><a href="https://www.aem.live/developer/byom" rel="noopener" target="_blank">aem.live: Bring your own markup</a></li>
+    <li><a href="https://www.aem.live/docs/large-sites" rel="noopener" target="_blank">aem.live: Large sites</a></li>
+    <li><a href="https://www.aem.live/developer/webhook" rel="noopener" target="_blank">aem.live: Webhook</a></li>
+  </ul>
+</section>
+
+<section class="mpart" id="next-steps" data-toc="Next steps">
+  <h2>Next steps</h2>
+  <div data-auto="next-steps"></div>
+</section>
+
+</main>
+</body>
+</html>

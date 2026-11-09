@@ -12,8 +12,8 @@ Run mode: AGENT. This log is the resume point for later runs.
 | 2 | Category B: B1–B10 | Done (8 Nov 2026) |
 | 3 | Category C: C1–C11 | Done (8 Nov 2026) |
 | 4 | Category D: D1–D10 | Done (9 Nov 2026) |
-| 5 | Category E: E1–E10 | Next: set `START AT: PHASE 5` |
-| 6 | Capstones 1–4, level exams 1–4, final exam | Not started |
+| 5 | Category E: E1–E10 | Done (9 Nov 2026) |
+| 6 | Capstones 1–4, level exams 1–4, final exam | Next: set `START AT: PHASE 6` |
 | 7 | Path pages, full glossary page, cheat sheets page, resources page, search | Not started (search works now from the generated index) |
 | 8 | Full QA pass and coverage report | Not started |
 
@@ -103,7 +103,7 @@ taken from pages that could be opened:
   form-sheet, traffic-split. B2, B6 and B7 use hotspots; B8 uses scorer.
 - Sources read 8 Nov 2026: aem.live docs and developer pages, adobe/aem-boilerplate,
   adobe/aem-block-collection, adobe/aem-experimentation.
-- Glossary extended to 75 terms (85 after Category C, 94 after Category D). Module `asOf` in the syllabus overrides the global date.
+- Glossary extended to 75 terms (85 after Category C, 94 after Category D, 102 after Category E). Module `asOf` in the syllabus overrides the global date.
 - The labs have not been run against a real site, AEM sandbox or da.live project.
 - VERIFY: B6 library and starter documents; B6 support terms; B7 feature exceptions on lifecycle
   pages; B10 plugin access and form block columns; B3 taxonomy on document-based sites is a convention.
@@ -143,6 +143,19 @@ taken from pages that could be opened:
   AODA duties for a specific organization (needs counsel).
 - C11's prerequisite D2 now exists.
 
+### E1–E10 Category E (built 9 Nov 2026)
+- All 17 syllabus topics written. New components: experiment-results, flicker-timeline, form-rules,
+  cf-html, a11y-demos, portfolio-dash. E3 and E8 use explorer; E6 and E10 use stepper and order.
+- Sources read 9 Nov 2026: aem.live docs, adobe/aem-experimentation, adobe/aem-block-collection,
+  Experience League (MCP, Forms, Universal Editor extensibility), Adobe Commerce Storefront docs, W3C APG.
+- The experimentation plugin README limits availability to projects working with AEM Engineering. E1 and E2 say so.
+- Storefront docs mark Universal Editor as deprecated for new storefronts. E3 teaches Experience Workspace authoring.
+- Target LCP figures are Adobe's published baseline. Other flicker figures and all dashboard data are teaching models.
+- E modules are shorter because their syllabus has one to three topics each.
+- Code samples and labs have not been run against a real project, Commerce backend, Forms licence or AEM sandbox.
+- VERIFY: plugin availability per customer; Forms submit action list per environment (Adobe's page is inconsistent);
+  Commerce drop-in licence terms; MCP capabilities per AEM release; significance test in E1 is simplified.
+
 ## Coverage matrix (built modules)
 
 | Module | Topic id | Page anchor |
@@ -166,5 +179,5 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
 
 ## Next run
 
-Set `START AT: PHASE 5`. Write E1–E10 with the same template, add their glossary terms and `asOf`,
-flip `built` to true in `data/syllabus.json`, run `npm run check && npm test`, and update this log.
+Set `START AT: PHASE 6`. Build capstones 1–4, level exams 1–4 and the final exam,
+run `npm run check && npm test`, and update this log.
