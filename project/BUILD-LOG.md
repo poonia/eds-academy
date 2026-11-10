@@ -206,6 +206,12 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
 - Content checked against aem.live and Adobe's Commerce storefront docs on 9 Nov 2026. Code samples are illustrative and have not been run on a real project. Items labelled as shapes or sketches must be checked against current references.
 - Re-scanned all 64 pages with axe, and for overflow, diagrams, console and failed requests in light and dark: clear.
 
+## Practice (9 Nov 2026)
+- New components: `code-lab` (learner writes `decorate()`, run in a sandboxed frame with simplified aem.js helpers and automatic checks), `debug-lab` (symptom, clues, diagnosis, fix) and `practice-hub`.
+- 9 code labs and 10 debug cases replace the multiple-choice check in the topic they practise. `practice/index.html` lists them with each learner's status, and frames the four capstones as one Acme Financial project.
+- A browser test runs every lab's solution against its checks. Wide tables are now keyboard-scrollable on small screens, site-wide.
+- Not done: a starter and solution repository on GitHub, which needs a decision about creating a public repo.
+
 ## Next run
 
 All planned phases are complete. Remaining work is listed in `COVERAGE-REPORT.md`: real-project lab runs, assistive technology

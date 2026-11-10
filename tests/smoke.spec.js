@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 const syllabus = require('../data/syllabus.json');
 
 const built = syllabus.modules.filter((m) => m.built);
-const pages = ['index.html', 'start-here.html', 'reference/components.html', ...built.map((m) => m.page), ...syllabus.gates.map((g) => g.page), ...syllabus.exams.map((x) => x.page), ...syllabus.paths.map((p) => p.page), 'reference/index.html', 'reference/glossary.html', 'reference/cheat-sheets.html', 'reference/resources.html'];
+const pages = ['index.html', 'start-here.html', 'reference/components.html', ...built.map((m) => m.page), ...syllabus.gates.map((g) => g.page), ...syllabus.exams.map((x) => x.page), ...syllabus.paths.map((p) => p.page), 'practice/index.html', 'reference/index.html', 'reference/glossary.html', 'reference/cheat-sheets.html', 'reference/resources.html'];
 
 /* Records uncaught errors, runtime errors and failed same-origin requests. */
 function watch(page) {
@@ -325,6 +325,56 @@ test('the ready self-check starts collapsed and opens on demand', async ({ page 
   await page.reload();
   await page.waitForSelector('html[data-ready="true"]');
   await expect(fold).not.toHaveAttribute('open', '');
+});
+
+const LAB_PAGES = [...new Set(built.map((m) => m.page))].filter((p) => require('fs').readFileSync(require('path').join(__dirname, '..', p), 'utf8').includes('data-component="code-lab"'));
+
+for (const labPage of LAB_PAGES) {
+  test(`every code lab solution passes its checks: ${labPage}`, async ({ page }) => {
+    await page.goto(labPage);
+    await page.waitForSelector('html[data-ready="true"]');
+    const labs = page.locator('[data-component="code-lab"]');
+    for (let i = 0; i < await labs.count(); i += 1) {
+      const lab = labs.nth(i);
+      const solution = await lab.evaluate((el) => JSON.parse(el.querySelector('script[type="application/json"]').textContent).solution);
+      await lab.locator('textarea').fill(solution);
+      await lab.getByRole('button', { name: 'Run checks' }).click();
+      await expect(lab.locator('.cl-status')).toContainText('All', { timeout: 10000 });
+      await expect(lab.locator('.cl-checks li.fail')).toHaveCount(0);
+    }
+  });
+}
+
+test('a code lab starter does not pass, and reports what is missing', async ({ page }) => {
+  await page.goto('modules/c4-building-blocks.html#block-contract');
+  await page.waitForSelector('html[data-ready="true"]');
+  const lab = page.locator('[data-component="code-lab"][data-id="c4-quote"]');
+  await lab.getByRole('button', { name: 'Run checks' }).click();
+  await expect(lab.locator('.cl-status')).toContainText('of 5 checks pass', { timeout: 10000 });
+  await expect(lab.locator('.cl-checks li.fail').first()).toBeVisible();
+  await lab.getByRole('button', { name: 'Show a hint' }).click();
+  await expect(lab.locator('.cl-hints')).toContainText('Hint 1');
+});
+
+test('a debug case is solved after choosing the right cause, and the hub records it', async ({ page }) => {
+  await page.goto('modules/c4-building-blocks.html#debugging-blocks');
+  await page.waitForSelector('html[data-ready="true"]');
+  const dbg = page.locator('[data-component="debug-lab"][data-id="c4-hero-banner"]');
+  await dbg.locator('summary', { hasText: 'Network panel' }).click();
+  await expect(dbg.locator('.q-score')).toContainText('1 of 4');
+  await dbg.locator('.q-opt').nth(1).click();
+  await dbg.getByRole('button', { name: 'Check diagnosis' }).click();
+  await expect(dbg.locator('.feedback')).toContainText('Not quite');
+  await dbg.locator('.q-opt').first().click();
+  await dbg.getByRole('button', { name: 'Check diagnosis' }).click();
+  await expect(dbg.locator('.feedback')).toContainText('Solved, using 1 of 4 clues');
+  await page.goto('practice/index.html');
+  await page.waitForSelector('html[data-ready="true"]');
+  const hub = page.locator('[data-component="practice-hub"]');
+  await expect(hub.locator('.ph-item')).toHaveCount(19);
+  await expect(hub.locator('.ph-item.done')).toHaveCount(1);
+  await hub.getByRole('button', { name: 'Code labs' }).click();
+  await expect(hub.locator('.ph-item')).toHaveCount(9);
 });
 
 test('primary navigation reaches the reference section', async ({ page }) => {

@@ -129,6 +129,9 @@ All are driven by markup and inline JSON (`<script type="application/json">`). S
 | `terminal-replay` | Step through commands and output | `steps[]` with `cmd`, `out`, `note` |
 | `file-tree` | Select a file to see its role | `files[]` with `path`, `role`, `served` |
 | `block-playground` | Authored rows, decorate pattern, resulting DOM | `name`, `source` |
+| `code-lab` | Learner writes `decorate()`; runs in a sandboxed frame against delivered markup with automatic checks, hints and a solution | `name`, `task`, `markup`, `starter`, `solution`, `checks[]` (`label`, `test`), `hints[]`, optional `fetch`, `meta` |
+| `debug-lab` | Symptom, evidence opened one clue at a time, diagnosis and fix | `symptom`, `clues[]` (`label`, `kind` text or table), `question`, `options`, `answer`, `explain`, `fix` |
+| `practice-hub` | Lists every code lab and debug case with the learner&rsquo;s status (generated) | `items[]` |
 | `token-editor` | Design tokens and a fallback-font shift model | none |
 | `waterfall` | Apply fixes and see a modelled LCP | `items[]`, `fixes[]` |
 | `model-preview` | Component model to properties panel | `model` |

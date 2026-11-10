@@ -18,7 +18,7 @@ pages = ['index.html', 'start-here.html', 'reference/components.html']
 pages += [m['page'] for m in syl['modules'] if m['built']]
 pages += [x['page'] for x in syl['gates'] + syl['exams'] if x['built']]
 pages += [p['page'] for p in syl['paths']]
-pages += ['reference/index.html', 'reference/glossary.html', 'reference/cheat-sheets.html', 'reference/resources.html']
+pages += ['practice/index.html', 'reference/index.html', 'reference/glossary.html', 'reference/cheat-sheets.html', 'reference/resources.html']
 
 
 def head_tags(path, text):

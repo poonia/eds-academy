@@ -16,9 +16,10 @@ The course is complete against its syllabus: **45 of 45 modules** and **253 of 2
 | Learning paths | 3 of 3 |
 | Reference pages | Hub, glossary (102 terms), cheat sheets (45), resources (161 sources), components |
 | Diagrams | 172 |
-| Interactive component instances in modules | 462, built from 49 components |
+| Interactive component instances in modules | 462, built from 52 components |
 | Graded questions in modules | 811 |
 | Lab steps | 328 |
+| Practice | 9 code labs with automatic checks, 10 debug cases, and a practice hub |
 | Estimated study time | 107 hours (calculated by `tools/estimate-hours.py`), plus capstones and exams |
 
 ## Checks

@@ -877,7 +877,7 @@
     "C2",
     "B1"
    ],
-   "hours": 1.5,
+   "hours": 2,
    "topics": [
     {
      "id": "delivered-markup",
@@ -930,7 +930,7 @@
    "pre": [
     "C3"
    ],
-   "hours": 3.5,
+   "hours": 4.5,
    "topics": [
     {
      "id": "block-contract",
@@ -1072,7 +1072,7 @@
     "C4",
     "A3"
    ],
-   "hours": 2.5,
+   "hours": 3,
    "topics": [
     {
      "id": "eager-lazy-delayed-in-code",
@@ -1210,7 +1210,7 @@
     "C4",
     "B3"
    ],
-   "hours": 2.5,
+   "hours": 3,
    "topics": [
     {
      "id": "spreadsheet-json",

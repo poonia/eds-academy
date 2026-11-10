@@ -26,6 +26,7 @@ const COMPONENTS = {
   'experiment-results': 'experiment-results.js', 'flicker-timeline': 'flicker-timeline.js', 'form-rules': 'form-rules.js', 'cf-html': 'cf-html.js',
   'a11y-demos': 'a11y-demos.js', 'portfolio-dash': 'portfolio-dash.js', exam: 'exam.js', capstone: 'capstone.js',
   'filter-list': 'filter-list.js', 'path-progress': 'path-progress.js',
+  'code-lab': 'code-lab.js', 'debug-lab': 'debug-lab.js', 'practice-hub': 'practice-hub.js',
 };
 
 /* ---------- small helpers ---------- */
@@ -60,8 +61,15 @@ export function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1;
 function markScrollable(n) {
   if (n.scrollWidth > n.clientWidth + 1) { n.setAttribute('tabindex', '0'); n.setAttribute('aria-label', 'Diagram, scrollable'); } else { n.removeAttribute('tabindex'); n.removeAttribute('aria-label'); }
 }
+/* The same for wide tables, which scroll sideways inside .table-wrap on small screens. */
+function markTables(root = document) {
+  root.querySelectorAll('.table-wrap').forEach((w) => {
+    if (w.scrollWidth > w.clientWidth + 1) { w.setAttribute('tabindex', '0'); w.setAttribute('role', 'region'); w.setAttribute('aria-label', 'Table, scrolls sideways'); } else if (w.getAttribute('aria-label') === 'Table, scrolls sideways') { w.removeAttribute('tabindex'); w.removeAttribute('role'); w.removeAttribute('aria-label'); }
+  });
+}
 let scrollTimer;
-window.addEventListener('resize', () => { clearTimeout(scrollTimer); scrollTimer = setTimeout(() => document.querySelectorAll('pre.mermaid[data-rendered]').forEach(markScrollable), 150); });
+window.addEventListener('resize', () => { clearTimeout(scrollTimer); scrollTimer = setTimeout(() => { document.querySelectorAll('pre.mermaid[data-rendered]').forEach(markScrollable); markTables(); }, 150); });
+document.addEventListener('toggle', (e) => { if (e.target.tagName === 'DETAILS') markTables(e.target); }, true);
 
 /* ---------- progress store ---------- */
 function fresh() { return { v: 1, topics: {}, modules: {}, quizzes: {}, labs: {}, capstones: {}, checklists: {}, cards: {}, last: null }; }
@@ -167,7 +175,7 @@ function ring(pct) {
 }
 function buildHeader(syl) {
   const page = document.body.dataset.page || '';
-  const links = [['index.html', 'Home', 'home'], ['start-here.html', 'Start here', 'start'], ['index.html#course-map', 'Course map', 'map'], ['index.html#paths', 'Paths', 'paths'], ['reference/index.html', 'Reference', 'reference']];
+  const links = [['index.html', 'Home', 'home'], ['start-here.html', 'Start here', 'start'], ['index.html#course-map', 'Course map', 'map'], ['index.html#paths', 'Paths', 'paths'], ['practice/index.html', 'Practice', 'practice'], ['reference/index.html', 'Reference', 'reference']];
   const nav = h('nav', { class: 'primary-nav', 'aria-label': 'Primary' });
   const mnav = h('nav', { class: 'mobile-nav wrap', 'aria-label': 'Primary (mobile)', id: 'mobile-nav' });
   links.forEach(([u, t, k]) => {
@@ -629,6 +637,7 @@ export async function enhance(root, ctx) {
   await initComponents(root, ctx);
   await enhanceCode(root);
   await renderMermaid(root);
+  markTables(root.nodeType === 9 ? document : root);
 }
 
 /* ---------- boot ---------- */

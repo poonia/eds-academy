@@ -155,6 +155,32 @@ cards = [('glossary.html', 'Glossary', f'{len(glossary)} terms, each linked to t
 grid = '<div class="grid-3">' + ''.join(f'<a class="card ref-card" href="{u}"><h2>{t}</h2><p class="muted" style="margin:0">{d}</p></a>' for u, t, d in cards) + '</div>'
 shell('reference/index.html', 'Reference', 'The EDS Academy glossary, cheat sheets, resources and component showcase.', 'reference', hero('Reference', 'index.html', 'Reference', 'Look something up without going back through a module.') + band(grid))
 
+# Practice hub: every code lab and debug case, collected from the modules
+practice_items = []
+for m in syl['modules']:
+    if not m['built']:
+        continue
+    text = (ROOT / m['page']).read_text()
+    names = {t['id']: t['name'] for t in m['topics']}
+    for sec in re.finditer(r'<section class="topic" id="([^"]+)".*?</section>', text, re.S):
+        for comp in re.finditer(r'data-component="(code-lab|debug-lab)" data-id="([^"]+)" data-title="([^"]+)"', sec.group(0)):
+            practice_items.append({'id': comp.group(2), 'kind': 'code' if comp.group(1) == 'code-lab' else 'debug', 'title': html.unescape(comp.group(3)),
+                                   'module': m['id'], 'topic': html.unescape(names[sec.group(1)]), 'url': f"../{m['page']}#{sec.group(1)}"})
+ncode = sum(1 for x in practice_items if x['kind'] == 'code')
+hub = json.dumps({'items': practice_items}, ensure_ascii=False).replace('</', '<\\/')
+gates = [g for g in syl['gates'] if g['built']]
+project = ''.join(f'<tr><td>Gate {g["level"]}</td><td><a href="../{g["page"]}">{esc(g["title"])}</a></td><td>{esc(g["brief"])}</td></tr>' for g in gates)
+body = hero('Practice', 'index.html', 'Practice', f'{ncode} code labs where you write and check real block code, and {len(practice_items) - ncode} debug cases where you find the cause of a real-world fault. Everything runs in your browser, with nothing to install.')
+body += band('<div class="grid-3">'
+             '<div class="card"><h3>Code labs</h3><p>Write a block&rsquo;s <code>decorate()</code> function against delivered markup. Automatic checks tell you what works, with hints if you are stuck.</p></div>'
+             '<div class="card"><h3>Debug cases</h3><p>Start from a symptom, open only the evidence you need, and name the cause. Then see the fix.</p></div>'
+             '<div class="card"><h3>Your progress</h3><p>Results are saved in this browser, with the rest of your progress. Code you write is saved as a draft.</p></div></div>',
+             'How it works')
+body += band(f'<div data-component="practice-hub"><script type="application/json">{hub}</script></div>', 'All exercises', 'Each one sits in the topic that teaches it. Open it there, so the explanation is beside you.')
+body += band(f'<p style="max-width:72ch">The four capstones form one continuing project for Acme Financial, a fictional company: a microsite first, then a multi-locale blog, then a migrated section with go-live, and finally an enterprise architecture. The module labs and exercises build the skills each stage needs.</p><div class="table-wrap"><table class="t"><thead><tr><th>Stage</th><th>Capstone</th><th>What you build</th></tr></thead><tbody>{project}</tbody></table></div>', 'One project, four stages')
+body += band('<aside class="callout tip"><p>Code labs run your code in an isolated frame with simplified versions of the <code>aem.js</code> helpers, so they can differ slightly from a real project. Use them to practise the pattern, then try it with <code>aem up</code> in a real repository.</p></aside>')
+shell('practice/index.html', 'Practice', 'Code labs and debug cases for Edge Delivery Services, checked in your browser.', 'practice', body)
+
 json_links = [{'t': re.sub(r'^(aem\.live|Adobe|GitHub|W3C|Ontario|Adobe Developer|web\.dev): ', '', e['title']), 'u': u, 'x': 'Used in ' + ', '.join(e['mods'])} for u, e in sorted(links.items())]
 out['data/resources.json'] = json.dumps({'links': json_links}, ensure_ascii=False, indent=0) + '\n'
 

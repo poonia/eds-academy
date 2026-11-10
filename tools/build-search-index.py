@@ -66,7 +66,7 @@ for p, t, x in [('start-here.html', 'Start here: how the course works', 'Tracks,
 practice = [x for x in syl['gates'] + syl['exams'] if x['built']]
 for p in syl['paths']:
     items.append({'k': 'path', 't': f"{p['name']} path", 'u': p['page'], 'm': '', 'x': p['who'], 'built': True})
-for p, t_, x in [('reference/glossary.html', 'Glossary', 'Every term in the course'), ('reference/cheat-sheets.html', 'Cheat sheets', 'Printable summaries for every module'), ('reference/resources.html', 'Resources', 'External documentation used in the course')]:
+for p, t_, x in [('practice/index.html', 'Practice', 'Code labs and debug cases checked in your browser'), ('reference/glossary.html', 'Glossary', 'Every term in the course'), ('reference/cheat-sheets.html', 'Cheat sheets', 'Printable summaries for every module'), ('reference/resources.html', 'Resources', 'External documentation used in the course')]:
     items.append({'k': 'page', 't': t_, 'u': p, 'm': '', 'x': x, 'built': True})
 for link in json.loads((ROOT / 'data/resources.json').read_text())['links']:
     items.append({'k': 'resource', 't': link['t'], 'u': link['u'], 'm': '', 'x': link['x'], 'built': True})
