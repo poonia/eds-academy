@@ -38,6 +38,8 @@
     <li>Integrate Adobe Target with the right trade-offs.</li>
     <li>Compare browser, Target and edge approaches.</li>
     <li>Protect privacy and performance.</li>
+    <li>Integrate Target with the Web SDK without flicker.</li>
+    <li>Choose the cheapest personalization route that does the job.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e2-ready" data-title="Ready for personalization?">
     <script type="application/json">{"questions": [{"q": "What is a good LCP?", "options": ["1 minute", "2.5 seconds or less", "10 seconds"], "answer": 1, "explain": "Covered in A3."}, {"q": "Which library does Web SDK refer to?", "options": ["A CSS grid", "A Git tool", "Adobe Experience Platform’s client library"], "answer": 2, "explain": "Covered in C9."}, {"q": "Should personal data be stored in shared cache?", "options": ["No", "Yes", "Only at night"], "answer": 0, "explain": "Covered in C11."}]}</script>
@@ -63,9 +65,29 @@
 const { loadEager } = await import('../plugins/experimentation/src/index.js');
 await loadEager(document, { audiences: AUDIENCES });</textarea>
     </figure>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Page metadata lists options] --&gt; B{URL has a campaign?}
+  B -- Yes --&gt; C[Campaign page]
+  B -- No --&gt; D{Audience function true?}
+  D -- Yes --&gt; E[Audience page]
+  D -- No --&gt; F[Default page]</pre>
+      <figcaption><b>What to notice:</b> The decision uses signals already in the browser, so there is no extra request.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Page metadata lists options. If the URL has a campaign, the campaign page is used. Otherwise, if an audience function returns true, the audience page is used. Otherwise the default page is shown.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <div class="doc-page"><p>Page metadata:</p><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Audience: Mobile</td><td>/offers/mobile</td></tr><tr><td>Campaign: Xmas</td><td>/offers/xmas</td></tr></table></div>
+    <figure class="code" data-file="Defining audiences in project code" data-lang="javascript">
+      <textarea class="src" hidden>const AUDIENCES = {
+  mobile: () =&gt; window.innerWidth &lt; 600,
+  desktop: () =&gt; window.innerWidth &gt;= 600,
+  returning: () =&gt; !!localStorage.getItem('visited'),
+  newsletter: () =&gt; new URLSearchParams(window.location.search).get('utm_medium') === 'email',
+};</textarea>
+      <figcaption>A sketch. Follow the plugin&rsquo;s documentation for how to register audiences.</figcaption>
+      <ol class="code-explain"><li data-line="2">Each audience is a named function that returns true or false, and must return fast.</li><li data-line="3">Runs in the browser, so no request is needed.</li><li data-line="4">Check that using browser storage in this way is covered by your consent model.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="e2-t1"><script type="application/json">{"questions": [{"q": "Which URL reaches the xmas campaign variant?", "options": ["/page?utm_campaign=xmas", "/xmas--page", "/page?audience=xmas"], "answer": 0, "explain": "campaign= works too."}]}</script></div>
@@ -99,6 +121,13 @@ await loadEager(document, { audiences: AUDIENCES });</textarea>
       <tr><td>Client API after LCP</td><td>Late</td><td>Late appearance, but not LCP</td></tr>
     </tbody>
   </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Target call</th><th>Mobile LCP</th><th>Mobile TBT</th><th>Desktop LCP</th></tr></thead>
+    <tbody>
+      <tr><td>First call</td><td>+1.3 s</td><td>20 to 40 ms</td><td>+0.5 s</td></tr>
+      <tr><td>Later calls</td><td>+0.1 s</td><td>20 to 40 ms</td><td>+0.3 to 0.5 s</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <figure class="code" data-file="Feature flag in loadEager (sketch)" data-lang="javascript">
@@ -116,6 +145,110 @@ await loadEager(document, { audiences: AUDIENCES });</textarea>
       <tr><td>Flicker</td><td>Heavy page modifications</td><td>Simplify the snippet.</td></tr>
       <tr><td>Block ignores Target’s change</td><td>Applied after decoration</td><td>Use a MutationObserver.</td></tr>
       <tr><td>LCP worse on every page</td><td>Enabled sitewide</td><td>Use a metadata flag.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="target-with-web-sdk" data-level="4">
+  <h2>Target with the Web SDK, step by step</h2>
+  <div data-part="why"><p>Dropping Target in through a tag manager either slows the first paint or causes flicker. Adobe&rsquo;s integration works with the loading sequence instead.</p></div>
+  <div data-part="concept">
+    <p>Adobe&rsquo;s approach has four parts. It prepares a small <code>alloy</code> queue and loads the library from your own repository. It calls <code>sendEvent</code> with <code>renderDecisions: false</code>, so that it gets the decisions without applying them. It watches for blocks and sections to reach the <code>loaded</code> status, and applies the matching propositions at that point. Finally, it reports what was shown, in a timeout to avoid a long task.</p>
+    <p>Feature-flag all of this. A <code>Target: on</code> metadata value means pages with no activity skip the library and the round trip altogether.</p>
+    <p>Target&rsquo;s changes land after your block has been decorated. If a block needs to react to them, for example by recalculating a carousel, use a <code>MutationObserver</code>. Selectors written in the Visual Experience Composer depend on the final DOM, so changing a block&rsquo;s structure can silently break an activity.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+  participant P as Page
+  participant W as Web SDK
+  participant T as Target
+  P-&gt;&gt;W: Load alloy if Target is on
+  P-&gt;&gt;T: sendEvent with renderDecisions false
+  T--&gt;&gt;P: Propositions
+  P-&gt;&gt;P: Section reaches loaded
+  P-&gt;&gt;W: applyPropositions
+  P-&gt;&gt;T: Report propositionDisplay</pre>
+      <figcaption><b>What to notice:</b> Fetching a decision and applying it are deliberately separated, so that changes land on finished blocks.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The page loads the Web SDK if Target is on, and sends an event with renderDecisions false. Target returns propositions. When a section reaches the loaded state, the page applies them, and then reports which were displayed.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Applying decisions as blocks finish" data-lang="javascript">
+      <textarea class="src" hidden>async function applyDecisions() {
+  const { propositions } = await window.alloy('sendEvent', { renderDecisions: false });
+  const apply = () =&gt; window.alloy('applyPropositions', { propositions });
+
+  if (document.querySelector('[data-block-status="loaded"], [data-section-status="loaded"]')) apply();
+  new MutationObserver((mutations) =&gt; {
+    if (mutations.some((m) =&gt; m.target.dataset?.sectionStatus === 'loaded'
+      || m.target.dataset?.blockStatus === 'loaded')) apply();
+  }).observe(document.querySelector('main'), {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-block-status', 'data-section-status'],
+  });
+}
+
+if (getMetadata('target') === 'on') applyDecisions();</textarea>
+      <figcaption>Abridged from aem.live&rsquo;s Target guide, which also tracks applied propositions and reports display.</figcaption>
+      <ol class="code-explain"><li data-line="2">Asks for decisions, but does not let the SDK render them.</li><li data-line="5">Some sections may already be finished.</li><li data-line="6">Applies again as each block or section completes.</li><li data-line="16">Pages with no activity pay nothing.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e2-t3"><script type="application/json">{"questions": [{"q": "Why is sendEvent called with renderDecisions: false?", "options": ["So Target skips evaluating the visitor&rsquo;s audience", "So changes can be applied as blocks finish decorating", "So no analytics data is collected for this page view"], "answer": 1, "explain": "The page controls when propositions are applied."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Activity stopped working</td><td>Block markup changed</td><td>Update the activity&rsquo;s selectors.</td></tr>
+      <tr><td>Flicker on the hero</td><td>Complex snippet</td><td>Simplify it, or change the design.</td></tr>
+      <tr><td>Slow on every page</td><td>No feature flag</td><td>Enable per page through metadata.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="choosing-a-personalization-route" data-level="3">
+  <h2>Choosing a personalization route</h2>
+  <div data-part="why"><p>Personalization is often requested as a tool, when what is needed is one specific change for one group. The simplest route that does the job usually wins.</p></div>
+  <div data-part="concept">
+    <p>Start by asking what is different, for whom, and how you will know whether it worked. Then go through the options from cheapest to most expensive.</p>
+    <p><b>Campaign link</b>: a URL parameter selects a page. It costs no extra requests and suits email and paid traffic. <b>Audience</b>: a browser-side check selects a variant, and suits device type or returning visitors. <b>Target</b>: server-side rules for richer segments and an existing Adobe investment, at a cost in LCP. <b>Edge personalization</b>: the CDN selects content before HTML arrives, which avoids flicker. It needs careful cache variation and engineering effort.</p>
+    <p>Each extra variant of a page reduces cache efficiency, so vary by small, coarse groups. Never put personal data in a shared response, and do not create audiences so small that they identify someone.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A{Can a URL identify the group?} -- Yes --&gt; B[Campaign]
+  A -- No --&gt; C{Can the browser tell quickly?}
+  C -- Yes --&gt; D[Audience]
+  C -- No --&gt; E{Need CDP or Target segments?}
+  E -- Yes --&gt; F[Target, enabled per page]
+  E -- No --&gt; G[Edge, with careful cache keys]</pre>
+      <figcaption><b>What to notice:</b> Each step down adds cost, so only move down when the step above cannot do the job.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A decision flow. If a URL can identify the group, use a campaign. If the browser can tell quickly, use an audience. If you need CDP or Target segments, use Target per page. Otherwise use edge personalization with careful cache keys.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Route</th><th>Added LCP risk</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>Campaign</td><td>None</td><td>Email, paid traffic, seasonal offers</td></tr>
+      <tr><td>Audience</td><td>Very low, if resolved locally</td><td>Device or returning visitor</td></tr>
+      <tr><td>Target</td><td>Up to about 1.3 s on mobile</td><td>Rich segments, existing activities</td></tr>
+      <tr><td>Edge</td><td>Low, but cache cost</td><td>Above-the-fold changes without flicker</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e2-t4"><script type="application/json">{"questions": [{"q": "An email offer must show a different hero to people who click through. What is the simplest route?", "options": ["A new Adobe Target activity for those visitors", "A campaign selected by a URL parameter", "Edge personalization keyed on the visitor&rsquo;s IP"], "answer": 1, "explain": "A URL already identifies the group, with no extra requests."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Low cache hit rate</td><td>Too many variants</td><td>Vary by fewer, coarser groups.</td></tr>
+      <tr><td>Small audiences</td><td>Could identify a person</td><td>Set a minimum size.</td></tr>
+      <tr><td>Nobody can say what worked</td><td>No measure defined</td><td>Set a metric first.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -149,6 +282,7 @@ await loadEager(document, { audiences: AUDIENCES });</textarea>
     <li><div><b>Estimate</b> LCP effect on your pages.</div></li>
     <li><div><b>Pick</b> which pages should run it.</div></li>
     <li><div><b>Write</b> how you will measure success.</div></li>
+    <li><div><b>Add</b> a <code>Target: on</code> flag, and confirm that pages without it make no Target request.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
     <div><h3>Expected result</h3><p>A short recommendation.</p></div>
@@ -198,12 +332,12 @@ await loadEager(document, { audiences: AUDIENCES });</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e2-check"><script type="application/json">{"questions": [{"q": "Which Target integration does Adobe call future-proof?", "options": ["at.js", "A pixel", "Web SDK"], "answer": 2, "explain": "See Target integration."}, {"q": "When are Target’s page changes applied?", "options": ["Before the HTML exists", "In the CDN, before the HTML reaches the browser", "After blocks are decorated"], "answer": 2, "explain": "See Considerations."}, {"q": "What did the first mobile Target call add in Adobe’s tests?", "options": ["About 10 s", "About 10 ms", "About 1.3 s of LCP"], "answer": 2, "explain": "See the baseline table."}, {"q": "Where are audience definitions written?", "options": ["In robots.txt", "In project code", "In a Word table only"], "answer": 1, "explain": "See the audiences documentation."}, {"q": "Which option turns an audience variant into a redirect?", "options": ["Audience Split", "Audience Key", "Audience Resolution: redirect"], "answer": 2, "explain": "See the audiences documentation."}, {"q": "Which suits a block that reacts to Target’s changes?", "options": ["crontab", "MutationObserver", "A sitemap"], "answer": 1, "explain": "See Considerations."}, {"q": "Why not resolve audiences from an API by default?", "options": ["Audience APIs cannot return JSON to the browser", "APIs are not allowed", "It blocks page rendering until it responds"], "answer": 2, "explain": "See the audiences documentation."}, {"q": "Marketing wants Target on all 40,000 pages for one banner on the home page. What do you suggest?", "options": ["Replace the page with an image", "Move Target to head.html for all", "Enable it only where the activity runs", "Enable it everywhere, since it only runs where an activity is defined"], "answer": 2, "explain": "Limit the overhead.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e2-check"><script type="application/json">{"questions": [{"q": "Which Target integration does Adobe call future-proof?", "options": ["at.js", "A pixel", "Web SDK"], "answer": 2, "explain": "See Target integration."}, {"q": "When are Target’s page changes applied?", "options": ["Before the HTML exists", "In the CDN, before the HTML reaches the browser", "After blocks are decorated"], "answer": 2, "explain": "See Considerations."}, {"q": "What did the first mobile Target call add in Adobe’s tests?", "options": ["About 10 s", "About 10 ms", "About 1.3 s of LCP"], "answer": 2, "explain": "See the baseline table."}, {"q": "Where are audience definitions written?", "options": ["In robots.txt", "In project code", "In a Word table only"], "answer": 1, "explain": "See the audiences documentation."}, {"q": "Which option turns an audience variant into a redirect?", "options": ["Audience Split", "Audience Key", "Audience Resolution: redirect"], "answer": 2, "explain": "See the audiences documentation."}, {"q": "Which suits a block that reacts to Target’s changes?", "options": ["crontab", "MutationObserver", "A sitemap"], "answer": 1, "explain": "See Considerations."}, {"q": "Why not resolve audiences from an API by default?", "options": ["Audience APIs cannot return JSON to the browser", "APIs are not allowed", "It blocks page rendering until it responds"], "answer": 2, "explain": "See the audiences documentation."}, {"q": "Marketing wants Target on all 40,000 pages for one banner on the home page. What do you suggest?", "options": ["Replace the page with an image", "Move Target to head.html for all", "Enable it only where the activity runs", "Enable it everywhere, since it only runs where an activity is defined"], "answer": 2, "explain": "Limit the overhead.", "scenario": true}, {"q": "What does a Target: on metadata value do?", "options": ["Turns off the delayed phase", "Limits Target to pages that need it", "Publishes the Target activity"], "answer": 1, "explain": "It works as a feature flag."}, {"q": "Which route adds no extra request?", "options": ["A campaign link", "Adobe Target", "An API audience"], "answer": 0, "explain": "The URL already holds the signal."}, {"q": "When does Target apply its changes?", "options": ["Before the HTML is delivered", "After blocks are decorated", "During the publish operation"], "answer": 1, "explain": "Selectors depend on the final DOM."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e2-cards"><script type="application/json">{"cards": [["Audience", "A named group, resolved by code."], ["Campaign", "Variant by query parameter."], ["utm_campaign", "Also selects a campaign."], ["Web SDK", "Recommended Target route."], ["VEC", "Visual Experience Composer."], ["Proposition", "A decision to apply."], ["Target: on", "Example metadata flag."], ["MutationObserver", "Watches DOM changes."], ["Flicker", "Visible content swap."]]}</script></div>
+  <div data-component="flashcards" data-id="e2-cards"><script type="application/json">{"cards": [["Audience", "A named group, resolved by code."], ["Campaign", "Variant by query parameter."], ["utm_campaign", "Also selects a campaign."], ["Web SDK", "Recommended Target route."], ["VEC", "Visual Experience Composer."], ["Proposition", "A decision to apply."], ["Target: on", "Example metadata flag."], ["MutationObserver", "Watches DOM changes."], ["Flicker", "Visible content swap."], ["renderDecisions: false", "Fetches Target decisions without applying them."], ["applyPropositions", "Applies Target changes when you choose."], ["Campaign", "A URL selects a variant."], ["Cache key", "What makes the CDN store separate copies."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -215,6 +349,10 @@ await loadEager(document, { audiences: AUDIENCES });</textarea>
       <div><h4>Target</h4><ul><li>Web SDK</li><li>Flag by page</li><li>After decoration</li></ul></div>
       <div><h4>Costs</h4><ul><li>LCP</li><li>Flicker</li><li>Cache</li></ul></div>
       <div><h4>Trust</h4><ul><li>Consent</li><li>No personal data in cache</li><li>Accessible changes</li></ul></div>
+      <div><h4>Choose a route</h4><ul><li>URL: campaign</li><li>Browser: audience</li><li>Segments: Target</li><li>No flicker needed: edge</li></ul></div>
+      <div><h4>Target on EDS</h4><ul><li>Web SDK, not at.js</li><li><code>Target: on</code> flag</li><li><code>renderDecisions: false</code></li><li>Apply as blocks load</li><li>MutationObserver to react</li></ul></div>
+      <div><h4>Cost, mobile</h4><ul><li>First call: +1.3 s LCP</li><li>Later: +0.1 s LCP</li></ul></div>
+      <div><h4>Privacy</h4><ul><li>No personal data in shared cache</li><li>No tiny audiences</li><li>Check consent first</li></ul></div>
     </div>
   </div>
 </section>

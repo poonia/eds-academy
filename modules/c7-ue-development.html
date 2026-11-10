@@ -39,6 +39,9 @@
     <li>Control placement with filters.</li>
     <li>Build container blocks.</li>
     <li>Keep instrumentation intact when decorating.</li>
+    <li>Use type inference, field collapse and grouping to get semantic markup.</li>
+    <li>Model options and settings correctly.</li>
+    <li>Build a block in the recommended order.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c7-ready" data-title="Ready for universal Editor development?">
     <script type="application/json">{"questions": [{"q": "Which file lists what can be added?", "options": [".hlxignore", "component-definition.json", "head.html"], "answer": 1, "explain": "Covered in B7 and C2."}, {"q": "What receives a block element?", "options": ["The CDN", "Its default export", "The sitemap"], "answer": 1, "explain": "Covered in C4."}, {"q": "Where are xwalk root model files built from?", "options": ["Word files", "The CDN", "Per-block fragments"], "answer": 2, "explain": "Covered in C2."}]}</script>
@@ -52,6 +55,9 @@
   <div data-part="concept">
     <p><code>component-definition.json</code> lists what can be added. Each entry has a <code>title</code>, an <code>id</code> and an xwalk plugin section with a resource type and template.</p>
     <p>A block normally uses <code>core/franklin/components/block/v1/block</code>. Its template sets <code>name</code>, shown as the block name, and <code>model</code>, which links to its fields.</p>
+    <h3>The two required values</h3>
+    <p>Every block must use the resource type <code>core/franklin/components/block/v1/block</code> and must set a block <code>name</code>. If either is missing, the block does not render. The <code>model</code> and <code>filter</code> are optional. Values placed in the template become the default content when an author adds the block.</p>
+    <p>aem.live is clear that you must not build custom AEM components for this. The markup these components produce is the stable contract between AEM and Edge Delivery.</p>
   </div>
   <div data-part="visual">
     <figure class="code" data-file="Definition" data-lang="json">
@@ -81,6 +87,26 @@
       <tr><td><code>template.model</code></td><td>Which fields to show</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="A definition with default content" data-lang="json">
+      <textarea class="src" hidden>{
+  "title": "Quote",
+  "id": "quote",
+  "plugins": {
+    "xwalk": {
+      "page": {
+        "resourceType": "core/franklin/components/block/v1/block",
+        "template": {
+          "name": "Quote",
+          "model": "quote",
+          "quote": "&lt;p&gt;Your quote here&lt;/p&gt;",
+          "author": "Name"
+        }
+      }
+    }
+  }
+}</textarea>
+      <ol class="code-explain"><li data-line="7">Always this generic resource type.</li><li data-line="9">Becomes the block&rsquo;s class, and so its folder name.</li><li data-line="10">Links to the fields shown in the properties panel.</li><li data-line="11">Default values that an author sees on adding the block.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c7-t1"><script type="application/json">{"questions": [{"q": "What links a definition to its fields?", "options": ["resourceType", "template.model", "title"], "answer": 1, "explain": "It matches a model id."}]}</script></div>
@@ -117,6 +143,16 @@
   &lt;img src="/content/dam/red-car.png" alt="A red car on a road"&gt;
 &lt;/picture&gt;</textarea>
       <figcaption><b>From:</b> <code>image</code> and <code>imageAlt</code>.</figcaption>
+    </figure>
+    <figure class="code" data-file="A model for the quote block" data-lang="json">
+      <textarea class="src" hidden>{
+  "id": "quote",
+  "fields": [
+    { "component": "richtext", "name": "quote", "label": "Quote", "valueType": "string", "value": "" },
+    { "component": "text", "name": "author", "label": "Author", "valueType": "string", "value": "" }
+  ]
+}</textarea>
+      <ol class="code-explain"><li data-line="2">Matches the <code>model</code> in the definition.</li><li data-line="4">The first field is rendered first, so field order is cell order.</li></ol>
     </figure>
   </div>
   <div data-part="try">
@@ -157,6 +193,13 @@
       <figcaption><b>What to notice:</b> each container level can have its own list.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>The section filter allows text, hero and cards. The cards filter allows only card.</p></details>
     </figure>
+    <figure class="code" data-file="Allowing a new block in sections" data-lang="json">
+      <textarea class="src" hidden>{
+  "id": "section",
+  "components": ["text", "image", "button", "title", "hero", "cards", "columns", "quote"]
+}</textarea>
+      <figcaption>A block that is defined but missing from this list will not appear in the Add menu.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c7-t3"><script type="application/json">{"questions": [{"q": "A new block will not appear in Add. What is most likely?", "options": ["It is not in the filter", "CSS is broken", "The block's CSS has not been merged into main yet"], "answer": 0, "explain": "Add its id to the filter."}]}</script></div>
@@ -193,6 +236,27 @@
       <tr><td>Reusable</td><td>Copy a block folder whole</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="blocks/quote/_quote.json" data-lang="json">
+      <textarea class="src" hidden>{
+  "definitions": [
+    {
+      "title": "Quote",
+      "id": "quote",
+      "plugins": { "xwalk": { "page": {
+        "resourceType": "core/franklin/components/block/v1/block",
+        "template": { "name": "Quote", "model": "quote" }
+      } } }
+    }
+  ],
+  "models": [
+    { "id": "quote", "fields": [
+      { "component": "richtext", "name": "quote", "label": "Quote", "valueType": "string" }
+    ] }
+  ],
+  "filters": []
+}</textarea>
+      <figcaption>One file per block keeps a block&rsquo;s editing model next to its code. The build merges these into the root files.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c7-t4"><script type="application/json">{"questions": [{"q": "What runs build:json on commit?", "options": ["A Husky hook", "The CDN", "AEM Code Sync"], "answer": 0, "explain": "It is a pre-commit hook."}]}</script></div>
@@ -225,6 +289,17 @@
   ]
 }</textarea>
     </figure>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  P[Container: Cards] --&gt; F[filter: cards]
+  F --&gt; C[Allows Card]
+  P --&gt; R1[Row 1: Card]
+  P --&gt; R2[Row 2: Card]
+  R1 --&gt; C1[Cell: image]
+  R1 --&gt; C2[Cell: text]</pre>
+      <figcaption><b>What to notice:</b> Each child becomes a row, and each of its properties becomes a column in that row.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A Cards container points to a filter that allows the Card child. Each Card becomes a row in the block, and each property of the card becomes a cell.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <figure class="diagram">
@@ -234,6 +309,28 @@
     A --&gt; R1["Row: image and text cells"]</pre>
       <figcaption><b>What to notice:</b> each child becomes one row of the delivered block.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>A Cards container with filter cards has card items. Each becomes a row with image and text cells.</p></details>
+    </figure>
+    <figure class="code" data-file="Parent and child in one fragment" data-lang="json">
+      <textarea class="src" hidden>{
+  "definitions": [
+    { "title": "Cards", "id": "cards", "plugins": { "xwalk": { "page": {
+      "resourceType": "core/franklin/components/block/v1/block",
+      "template": { "name": "Cards", "filter": "cards" }
+    } } } },
+    { "title": "Card", "id": "card", "plugins": { "xwalk": { "page": {
+      "resourceType": "core/franklin/components/block/v1/block/item",
+      "template": { "name": "Card", "model": "card" }
+    } } } }
+  ],
+  "models": [
+    { "id": "card", "fields": [
+      { "component": "reference", "name": "image", "label": "Image", "multi": false, "valueType": "string" },
+      { "component": "text", "name": "imageAlt", "label": "Alt text", "valueType": "string" },
+      { "component": "richtext", "name": "text", "label": "Text", "valueType": "string" }
+    ] }
+  ],
+  "filters": [ { "id": "cards", "components": ["card"] } ]
+}</textarea>
     </figure>
   </div>
   <div data-part="try">
@@ -274,6 +371,21 @@
       <tr><td>Edit changes the wrong item</td><td>Attributes copied, not moved</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Keeping a card editable after decoration" data-lang="javascript">
+      <textarea class="src" hidden>import { moveInstrumentation } from '../../scripts/scripts.js';
+
+export default function decorate(block) {
+  const ul = document.createElement('ul');
+  [...block.children].forEach((row) =&gt; {
+    const li = document.createElement('li');
+    moveInstrumentation(row, li);
+    while (row.firstElementChild) li.append(row.firstElementChild);
+    ul.append(li);
+  });
+  block.replaceChildren(ul);
+}</textarea>
+      <ol class="code-explain"><li data-line="7">Without this line, the row&rsquo;s editor data is lost and the card can no longer be selected.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c7-t6"><script type="application/json">{"questions": [{"q": "Your rebuilt card cannot be selected in the editor. What is missing?", "options": ["A font", "moveInstrumentation", "A sitemap entry"], "answer": 1, "explain": "Instrumentation must follow content."}]}</script></div>
@@ -314,6 +426,151 @@
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Extension broke after an update</td><td>Dependent on unstable details</td><td>Use supported extension points.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="topic" id="type-inference-field-collapse-grouping" data-level="3">
+  <h2>Type inference, field collapse and grouping</h2>
+  <div data-part="why"><p>Authors fill in forms, but blocks need meaningful HTML. These three mechanisms turn separate fields into semantic markup, with no code of yours.</p></div>
+  <div data-part="concept">
+    <p><b>Type inference</b> works from the value. An AEM asset with an image MIME type becomes a picture. Another reference, or a value starting with <code>http</code>, <code>https</code> or <code>#</code>, becomes a link. A value starting with a paragraph, list or heading is rich text. A multi-value property becomes a comma-separated list. Anything else is plain text.</p>
+    <p><b>Field collapse</b> merges fields by name. A property ending in <code>Title</code>, <code>Type</code>, <code>MimeType</code>, <code>Alt</code> or <code>Text</code> becomes an attribute of its base property, not a value of its own. These suffixes are case sensitive. So <code>image</code> plus <code>imageAlt</code> becomes one picture with alt text. <code>link</code>, <code>linkText</code>, <code>linkTitle</code> and <code>linkType</code> become one link, and <code>heading</code> plus <code>headingType</code> becomes one heading.</p>
+    <p><b>Element grouping</b> puts several elements into a single cell. A group name and an underscore go at the start of each field. A teaser could allow only a title, a description and up to two buttons, all in one cell, as if an author had written them in a document. That limits what authors can create while keeping the markup clean.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Fields</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td><code>image</code>, <code>imageAlt</code></td><td><code>&lt;picture&gt;&lt;img alt&gt;</code></td></tr>
+      <tr><td><code>link</code>, <code>linkText</code>, <code>linkTitle</code></td><td><code>&lt;a title&gt;text&lt;/a&gt;</code></td></tr>
+      <tr><td><code>linkType: primary</code></td><td>Bold link, so a primary button</td></tr>
+      <tr><td><code>heading</code>, <code>headingType: h2</code></td><td><code>&lt;h2&gt;</code></td></tr>
+      <tr><td><code>teaser_title</code>, <code>teaser_description</code></td><td>Both in one <code>teaser</code> cell</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A teaser model using all three" data-lang="json">
+      <textarea class="src" hidden>{
+  "id": "teaser",
+  "fields": [
+    { "component": "reference", "name": "image", "label": "Image", "multi": false, "valueType": "string" },
+    { "component": "text", "name": "imageAlt", "label": "Alt text", "valueType": "string" },
+    { "component": "text", "name": "content_title", "label": "Title", "valueType": "string" },
+    { "component": "select", "name": "content_titleType", "label": "Heading level", "valueType": "string",
+      "options": [ { "name": "h2", "value": "h2" }, { "name": "h3", "value": "h3" } ] },
+    { "component": "richtext", "name": "content_text", "label": "Description", "valueType": "string" },
+    { "component": "text", "name": "content_cta", "label": "Link", "valueType": "string" },
+    { "component": "text", "name": "content_ctaText", "label": "Link text", "valueType": "string" }
+  ]
+}</textarea>
+      <figcaption>Two cells result: the picture, then the grouped content.</figcaption>
+      <ol class="code-explain"><li data-line="5">Collapses into the picture above it.</li><li data-line="6">The <code>content_</code> prefix places this in the second cell.</li><li data-line="7">Collapses with <code>content_title</code>, so authors choose the level.</li><li data-line="11">Collapses with <code>content_cta</code> into one link.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t8"><script type="application/json">{"questions": [{"q": "A field is named imagealt, and the alt text appears as a separate cell. Why?", "options": ["The suffix is case sensitive, so it must be imageAlt", "Field collapse only works on fields inside a content group", "Alt text can only be collapsed when it comes from an asset"], "answer": 0, "explain": "Suffixes are Title, Type, MimeType, Alt and Text, and are case sensitive."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Extra unexpected cell</td><td>Suffix in the wrong case</td><td>Rename the field.</td></tr>
+      <tr><td>Link shows as plain text</td><td>Value is not a reference or URL</td><td>Use a reference field.</td></tr>
+      <tr><td>Heading level ignored</td><td>No <code>headingType</code> field</td><td>Add one with the same base name.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="topic" id="block-options-and-key-value" data-level="3">
+  <h2>Block options and key-value blocks</h2>
+  <div data-part="why"><p>Not every block is a list of content. Styles and settings have their own patterns, which keep you from building fields you do not need.</p></div>
+  <div data-part="concept">
+    <p>A field named <code>classes</code> is treated as block options, the same thing as a variant in a document. It appears in the block header for simple blocks, or as a value list for items in a container. Use a <code>select</code> or <code>multiselect</code>, so authors choose from valid options. You can split options across controls with element grouping, as in <code>classes_size</code> and <code>classes_theme</code>.</p>
+    <p>Setting <code>key-value</code> to true renders the block as name and value rows, which is what <code>readBlockConfig</code> expects. It suits settings-style blocks such as a feed of articles. Section Metadata works this way too.</p>
+    <p>The Columns block is special. It defines layout, not a content model, and it can only have <code>rows</code>, <code>columns</code> and <code>classes</code> properties. Its cells accept default content only.</p>
+    <p>Renaming a field later is costly, because the old name is stored in every existing component. Plan a content migration, or keep reading both names until migration is done.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>Visual option</td><td><code>classes</code> with a select</td></tr>
+      <tr><td>Several independent options</td><td><code>classes_size</code>, <code>classes_theme</code></td></tr>
+      <tr><td>Settings for a block</td><td><code>key-value: true</code> with <code>readBlockConfig</code></td></tr>
+      <tr><td>Layout grid</td><td>Columns: <code>rows</code>, <code>columns</code>, <code>classes</code></td></tr>
+      <tr><td>Authored sections of content</td><td>A simple or container block</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A settings-style block" data-lang="json">
+      <textarea class="src" hidden>{
+  "title": "Featured Articles",
+  "id": "featured-articles",
+  "plugins": { "xwalk": { "page": {
+    "resourceType": "core/franklin/components/block/v1/block",
+    "template": { "name": "Featured Articles", "model": "feed", "key-value": true }
+  } } }
+}</textarea>
+      <ol class="code-explain"><li data-line="6">Delivered as name and value rows, ready for <code>readBlockConfig</code>.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t9"><script type="application/json">{"questions": [{"q": "Authors need to choose a card&rsquo;s size and also its theme. What fits best?", "options": ["One free-text field where authors type the class names", "Two new blocks, one for each of the combinations needed", "Two select fields named classes_size and classes_theme"], "answer": 2, "explain": "Element grouping lets several controls contribute block options."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Option has no effect</td><td>Field is not named <code>classes</code></td><td>Rename it, then migrate content.</td></tr>
+      <tr><td><code>readBlockConfig</code> returns nothing</td><td>Block is not key-value</td><td>Set <code>key-value</code> to true.</td></tr>
+      <tr><td>Old content lost a value</td><td>Field renamed</td><td>Migrate content or read both names.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="topic" id="building-a-ue-block-end-to-end" data-level="2">
+  <h2>Building a block end to end</h2>
+  <div data-part="why"><p>Teams that write the code first often have to rewrite it when real content arrives. Adobe suggests working in a particular order.</p></div>
+  <div data-part="concept">
+    <p>Adobe recommends three phases. First, <b>create the definition and model</b>, review them, and take them to production. Next, <b>create content</b> with the block, so real markup exists. Last, <b>write the decoration and styles</b> against that real content.</p>
+    <p>That order means your JavaScript sees the exact markup authors will produce. In the Universal Editor you can see it working as soon as the definition is live, even with no styling. A simple block needs no JavaScript at all to be editable.</p>
+    <p>On a real project, work on a branch. The Universal Editor can load your branch by using the <code>ref</code> query parameter on the page URL. Merge once it has been reviewed.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Definition, model and filter] --&gt; B[Review and merge]
+  B --&gt; C[Add the block in the editor]
+  C --&gt; D[Inspect the real markup]
+  D --&gt; E[Write JS and CSS]
+  E --&gt; F[Check it stays editable]
+  F --&gt; G[Publish and verify]</pre>
+      <figcaption><b>What to notice:</b> The model goes first. Code is written against real markup, and the last check is that authors can still select the block.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A flow in which the definition, model and filter are reviewed and merged. Then the block is added in the editor, its real markup inspected, JavaScript and CSS written, editability checked, and the page published and verified.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="blocks/quote/quote.js" data-lang="javascript">
+      <textarea class="src" hidden>export default function decorate(block) {
+  const [quoteWrapper] = block.children;
+  const blockquote = document.createElement('blockquote');
+  blockquote.textContent = quoteWrapper.textContent.trim();
+  quoteWrapper.replaceChildren(blockquote);
+}</textarea>
+      <figcaption>From Adobe&rsquo;s guide to creating instrumented blocks.</figcaption>
+      <ol class="code-explain"><li data-line="2">The first row is the first field in the model.</li><li data-line="5">The row stays in place, so its editor data is kept.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c7-t10"><script type="application/json">{"questions": [{"q": "In what order does Adobe suggest building a Universal Editor block?", "options": ["Content first, then decoration, then the model", "Decoration first, then the model, then content", "Model first, then content, then decoration"], "answer": 2, "explain": "Code written against real content needs less rework."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>New block not in the Add menu</td><td>Missing from the section filter</td><td>Add it to the filter.</td></tr>
+      <tr><td>Block renders empty</td><td>Name or resource type missing</td><td>Check the template.</td></tr>
+      <tr><td>Editing stops after styling</td><td>Rows were replaced</td><td>Move instrumentation, or keep the row.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -389,12 +646,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c7-check"><script type="application/json">{"questions": [{"q": "Which resource type is a block item?", "options": ["core/wcm/button", "core/franklin/components/block/v2/block-item/container", "core/franklin/components/block/v1/block/item"], "answer": 2, "explain": "See _cards.json."}, {"q": "Which suffixes collapse? Choose all that apply.", "options": ["Title", "Color", "Alt", "Type"], "answer": [0, 2, 3], "explain": "Also MimeType and Text."}, {"q": "What separates a group and a property?", "options": ["An underscore", "A dash", "A dot"], "answer": 0, "explain": "teaserText_title."}, {"q": "What does the classes property become?", "options": ["A new block", "Block options", "A filter"], "answer": 1, "explain": "It adds style options."}, {"q": "Which file do you add a block to for a section?", "options": ["sitemap.xml", "component-models.json, directly in the generated file", "component-filters.json, through its fragment"], "answer": 2, "explain": "Add its id."}, {"q": "In a container, what does each child become?", "options": ["A page", "A row", "A section"], "answer": 1, "explain": "Properties become columns."}, {"q": "Why move instrumentation?", "options": ["So the page's search snippets keep the block's fields", "So the editor can still find the content", "To speed up CSS"], "answer": 1, "explain": "It connects the DOM to content."}, {"q": "A team wants to rename a heavily used field. What do you recommend?", "options": ["Edit the generated JSON by hand, so that old pages pick up the new name automatically", "Rename it and tell nobody", "Plan a migration so existing content is not orphaned", "Delete all pages"], "answer": 2, "explain": "Models are a contract with content.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c7-check"><script type="application/json">{"questions": [{"q": "Which resource type is a block item?", "options": ["core/wcm/button", "core/franklin/components/block/v2/block-item/container", "core/franklin/components/block/v1/block/item"], "answer": 2, "explain": "See _cards.json."}, {"q": "Which suffixes collapse? Choose all that apply.", "options": ["Title", "Color", "Alt", "Type"], "answer": [0, 2, 3], "explain": "Also MimeType and Text."}, {"q": "What separates a group and a property?", "options": ["An underscore", "A dash", "A dot"], "answer": 0, "explain": "teaserText_title."}, {"q": "What does the classes property become?", "options": ["A new block", "Block options", "A filter"], "answer": 1, "explain": "It adds style options."}, {"q": "Which file do you add a block to for a section?", "options": ["sitemap.xml", "component-models.json, directly in the generated file", "component-filters.json, through its fragment"], "answer": 2, "explain": "Add its id."}, {"q": "In a container, what does each child become?", "options": ["A page", "A row", "A section"], "answer": 1, "explain": "Properties become columns."}, {"q": "Why move instrumentation?", "options": ["So the page's search snippets keep the block's fields", "So the editor can still find the content", "To speed up CSS"], "answer": 1, "explain": "It connects the DOM to content."}, {"q": "A team wants to rename a heavily used field. What do you recommend?", "options": ["Edit the generated JSON by hand, so that old pages pick up the new name automatically", "Rename it and tell nobody", "Plan a migration so existing content is not orphaned", "Delete all pages"], "answer": 2, "explain": "Models are a contract with content.", "scenario": true}, {"q": "Which fields combine into one link?", "options": ["link and urlLabel", "link and linkText", "href and linkName"], "answer": 1, "explain": "Text is a recognized suffix."}, {"q": "Which field name becomes block options?", "options": ["options", "classes", "variant"], "answer": 1, "explain": "It is treated specially."}, {"q": "Which two values must a block definition have?", "options": ["The generic resource type and a block name", "A filter ID and a model ID", "A default value and a label"], "answer": 0, "explain": "Without them the block does not render."}, {"q": "What should you know before renaming a field?", "options": ["Existing content keeps the old name", "New names need a new resource type", "Only filters are affected by a rename"], "answer": 0, "explain": "Plan a migration."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c7-cards"><script type="application/json">{"cards": [["Definition", "What can be added."], ["Model", "The properties form."], ["Filter", "What a container allows."], ["richtext", "Formatted text field."], ["reference", "Picks an asset."], ["Field collapse", "Suffix merges properties."], ["Element grouping", "Underscore merges cells."], ["Container block", "Has child items."], ["moveInstrumentation", "Moves editor attributes."], ["_name.json", "Per-block fragment."]]}</script></div>
+  <div data-component="flashcards" data-id="c7-cards"><script type="application/json">{"cards": [["Definition", "What can be added."], ["Model", "The properties form."], ["Filter", "What a container allows."], ["richtext", "Formatted text field."], ["reference", "Picks an asset."], ["Field collapse", "Suffix merges properties."], ["Element grouping", "Underscore merges cells."], ["Container block", "Has child items."], ["moveInstrumentation", "Moves editor attributes."], ["_name.json", "Per-block fragment."], ["Type inference", "Semantics from the value itself."], ["Field collapse", "Suffixes merge fields into one element."], ["Element grouping", "group_field puts elements in one cell."], ["classes", "Field rendered as block options."], ["key-value", "Renders a block as name and value rows."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -407,6 +664,11 @@
       <div><h4>Containers</h4><ul><li>Set template.filter</li><li>Item resource type</li></ul></div>
       <div><h4>Editing</h4><ul><li>moveInstrumentation</li><li>Do not clone attributes</li></ul></div>
       <div><h4>Workflow</h4><ul><li>Edit _name.json</li><li>npm run build:json</li><li>Hook on commit</li></ul></div>
+      <div><h4>Field suffixes</h4><ul><li><code>Title</code></li><li><code>Type</code></li><li><code>MimeType</code></li><li><code>Alt</code></li><li><code>Text</code></li><li>Case sensitive</li></ul></div>
+      <div><h4>Must have</h4><ul><li><code>core/franklin/components/block/v1/block</code></li><li>Block <code>name</code></li><li>Added to a filter</li><li>No custom components</li></ul></div>
+      <div><h4>Container</h4><ul><li>Parent sets <code>filter</code></li><li>Child uses <code>.../block/item</code></li><li>Child = row</li><li>Property = column</li></ul></div>
+      <div><h4>Keep it editable</h4><ul><li><code>moveInstrumentation(from, to)</code></li><li>Prefer keeping rows</li><li>Test selection after styling</li></ul></div>
+      <div><h4>Build order</h4><ul><li>Model</li><li>Merge</li><li>Content</li><li>Decorate</li><li>Verify in editor</li></ul></div>
     </div>
   </div>
 </section>

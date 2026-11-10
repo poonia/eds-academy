@@ -122,66 +122,110 @@
       <div><h3>Local</h3><ul><li>npm i -g @adobe/aem-cli</li><li>aem up</li><li>--url for repoless</li></ul></div>
       <div><h3>Quality</h3><ul><li>npm run lint</li><li>lint:fix</li><li>Do not change rules</li></ul></div>
       <div><h3>Branches</h3><ul><li>branch--repo--owner</li><li>Max 63 characters</li><li>No double dashes</li></ul></div>
+      <div><h3>Local server</h3><ul><li><code>aem up --open /path</code></li><li><code>--port 3010</code></li><li><code>--addr "*"</code> for a phone</li><li><code>--site-token</code> for protected sites</li><li><code>--forward-browser-logs</code></li></ul></div>
+      <div><h3>URLs</h3><ul><li><code>branch--repo--owner.aem.page</code></li><li><code>.aem.live</code> for published</li><li>63 characters at most, hyphens included</li><li>No <code>--</code> inside a part</li></ul></div>
+      <div><h3>Daily loop</h3><ul><li>Short branch</li><li>Real page in <code>aem up</code></li><li><code>npm run lint</code></li><li>Pull request with test URL</li><li>Green, reviewed, merged</li><li>Verify on aem.live</li></ul></div>
+      <div><h3>Local content</h3><ul><li><code>aem content clone --path</code></li><li><code>status</code>, <code>diff</code></li><li><code>add</code>, <code>commit</code>, <code>push</code></li><li><code>--html-folder drafts</code></li></ul></div>
     </div></div><div data-item data-cat="C" id="c2" class="cheat cs-item"><h2><a href="../modules/c2-project-anatomy.html#cheat-sheet"><code>C2</code> Project anatomy</a></h2><div class="cheat-grid">
       <div><h3>Folders</h3><ul><li>blocks/name/</li><li>scripts/</li><li>styles/</li></ul></div>
       <div><h3>Special files</h3><ul><li>head.html</li><li>404.html</li><li>.hlxignore</li></ul></div>
       <div><h3>Phases</h3><ul><li>loadEager</li><li>loadLazy</li><li>loadDelayed</li></ul></div>
       <div><h3>Consent</h3><ul><li>consent-check.js</li><li>consented.js</li><li>Declines by default</li></ul></div>
       <div><h3>UE</h3><ul><li>_name.json fragments</li><li>build:json</li><li>Three root files</li></ul></div>
+      <div><h3>Special files</h3><ul><li><code>head.html</code>: change rarely</li><li><code>404.html</code>: root of repository</li><li><code>.hlxignore</code>: not for secrets</li><li><code>robots.txt</code>: production only</li></ul></div>
+      <div><h3>Where code goes</h3><ul><li>Needed for first section: eager</li><li>Below the first section: block or lazy</li><li>Third party: delayed, behind consent</li><li>Never edit <code>aem.js</code></li></ul></div>
+      <div><h3>aem.js helpers</h3><ul><li><code>getMetadata</code></li><li><code>readBlockConfig</code></li><li><code>createOptimizedPicture</code></li><li><code>buildBlock</code></li><li><code>loadCSS</code>, <code>loadScript</code></li></ul></div>
     </div></div><div data-item data-cat="C" id="c3" class="cheat cs-item"><h2><a href="../modules/c3-rendering-decoration.html#cheat-sheet"><code>C3</code> Rendering and decoration</a></h2><div class="cheat-grid">
       <div><h3>Markup</h3><ul><li>main > div = section</li><li>div.name = block</li><li>rows and cells are divs</li></ul></div>
       <div><h3>Pipeline</h3><ul><li>Icons</li><li>Auto-blocks</li><li>Sections, blocks, buttons</li></ul></div>
       <div><h3>Loading</h3><ul><li>CSS and JS in parallel</li><li>default(block)</li><li>Errors are caught</li></ul></div>
       <div><h3>Buttons</h3><ul><li>Bold: primary</li><li>Italic: secondary</li><li>Both: accent</li></ul></div>
       <div><h3>Auto-blocks</h3><ul><li>buildAutoBlocks</li><li>buildBlock</li><li>Keep it tiny</li></ul></div>
+      <div><h3>Decorated classes</h3><ul><li><code>.section</code></li><li><code>.default-content-wrapper</code></li><li><code>.name-wrapper</code></li><li><code>.name-container</code></li><li><code>.block</code></li></ul></div>
+      <div><h3>Status</h3><ul><li><code>data-section-status</code></li><li><code>data-block-status</code></li><li><code>initialized</code> then <code>loading</code> then <code>loaded</code></li></ul></div>
+      <div><h3>Load order</h3><ul><li><code>loadEager</code>: first section</li><li><code>loadLazy</code>: the rest</li><li><code>loadDelayed</code>: after consent</li><li>Add your own delay if needed</li></ul></div>
+      <div><h3>decorateMain order</h3><ul><li><code>decorateIcons</code></li><li><code>buildAutoBlocks</code></li><li><code>decorateSections</code></li><li><code>decorateBlocks</code></li><li><code>decorateButtons</code></li></ul></div>
     </div></div><div data-item data-cat="C" id="c4" class="cheat cs-item"><h2><a href="../modules/c4-building-blocks.html#cheat-sheet"><code>C4</code> Building blocks</a></h2><div class="cheat-grid">
       <div><h3>Contract</h3><ul><li>blocks/name/name.js</li><li>export default decorate</li><li>Names match</li></ul></div>
       <div><h3>Content</h3><ul><li>Rows, then cells</li><li>Move nodes</li><li>Tolerate gaps</li></ul></div>
       <div><h3>Options</h3><ul><li>Variant = class</li><li>readBlockConfig</li></ul></div>
       <div><h3>Data</h3><ul><li>Async is fine</li><li>Handle failure</li><li>Reserve space</li></ul></div>
       <div><h3>Quality</h3><ul><li>Native elements</li><li>Keyboard</li><li>Small JS</li></ul></div>
+      <div><h3>Reading a block</h3><ul><li><code>[...block.children]</code>: rows</li><li><code>[...row.children]</code>: cells</li><li>Move nodes, do not copy text</li><li><code>readBlockConfig</code> for key and value</li></ul></div>
+      <div><h3>Data blocks</h3><ul><li>Do not await in first section</li><li>Check <code>res.ok</code></li><li><code>textContent</code>, not <code>innerHTML</code></li><li>Reserve space</li><li>Fail quietly</li></ul></div>
+      <div><h3>Debug order</h3><ul><li>Class in delivered markup</li><li>JS and CSS return 200</li><li><code>data-block-status</code></li><li>Console</li><li>Decorated DOM</li></ul></div>
+      <div><h3>Block or widget</h3><ul><li>Authored content: block</li><li>App logic: widget</li><li><code>/widgets/name/name.html</code></li><li>Query string to <code>dataset</code></li></ul></div>
+      <div><h3>Good block test</h3><ul><li>Intuitive to author</li><li>No dependencies</li><li>Responsive</li><li>No hard-coded text</li><li>Fast and accessible</li></ul></div>
     </div></div><div data-item data-cat="C" id="c5" class="cheat cs-item"><h2><a href="../modules/c5-styling.html#cheat-sheet"><code>C5</code> Styling</a></h2><div class="cheat-grid">
       <div><h3>Tokens</h3><ul><li>:root in styles.css</li><li>Simple names</li><li>Media query overrides</li></ul></div>
       <div><h3>Blocks</h3><ul><li>Start with .name</li><li>Prefix private classes</li><li>Avoid !important</li></ul></div>
       <div><h3>Sections</h3><ul><li>Style = class</li><li>name-container</li><li>Small named set</li></ul></div>
       <div><h3>Fonts</h3><ul><li>size-adjust fallback</li><li>Load after LCP</li><li>Few weights</li></ul></div>
       <div><h3>Design system</h3><ul><li>Map tokens</li><li>Rebuild as blocks</li></ul></div>
+      <div><h3>Selectors</h3><ul><li>Start with <code>.blockname</code></li><li>Prefix private classes</li><li>Add classes in JS, not long selectors</li><li>Avoid <code>!important</code></li></ul></div>
+      <div><h3>Layout</h3><ul><li>Mobile first</li><li>Main breakpoint: 900px</li><li><code>repeat(auto-fill, minmax(min(100%, 260px), 1fr))</code></li><li><code>aspect-ratio</code> on images</li></ul></div>
+      <div><h3>Authored buttons</h3><ul><li>Link alone: <code>.button</code></li><li>Bold: <code>.primary</code></li><li>Italic: <code>.secondary</code></li><li>Style <code>:focus-visible</code></li></ul></div>
+      <div><h3>Fonts</h3><ul><li>Fallback straight after the web font</li><li>Compute <code>size-adjust</code></li><li>Set <code>line-height</code></li><li>Load after LCP</li></ul></div>
     </div></div><div data-item data-cat="C" id="c6" class="cheat cs-item"><h2><a href="../modules/c6-performance-engineering.html#cheat-sheet"><code>C6</code> Performance engineering</a></h2><div class="cheat-grid">
       <div><h3>Phases</h3><ul><li>Eager: to LCP</li><li>Lazy: own code</li><li>Delayed: the rest</li></ul></div>
       <div><h3>LCP</h3><ul><li>Under 100 KB</li><li>One origin</li><li>Few first blocks</li></ul></div>
       <div><h3>Images</h3><ul><li>createOptimizedPicture</li><li>Eager only for LCP</li><li>Keep alt</li></ul></div>
       <div><h3>Gates</h3><ul><li>PSI on each PR</li><li>Include test URL</li><li>Aim for 100</li></ul></div>
       <div><h3>Field</h3><ul><li>Sampled</li><li>No cookies</li><li>Confirms impact</li></ul></div>
+      <div><h3>Before LCP</h3><ul><li>Under 100 KB in total</li><li>No second origin</li><li>Few blocks in first section</li><li>Only LCP image eager</li></ul></div>
+      <div><h3>LCP edge cases</h3><ul><li>Lookup: finish block first</li><li>Two heroes: remove one</li><li>Text: fast CSS and font</li><li>Carousel: eager for slide 1</li></ul></div>
+      <div><h3>INP</h3><ul><li>Good: 200 ms or less</li><li>Short handlers</li><li>Yield in loops</li><li>Gate third parties</li><li>Measure in the field</li></ul></div>
+      <div><h3>Tag inventory</h3><ul><li>Owner</li><li>Purpose and consent</li><li>Measured cost</li><li>Review date</li></ul></div>
     </div></div><div data-item data-cat="C" id="c7" class="cheat cs-item"><h2><a href="../modules/c7-ue-development.html#cheat-sheet"><code>C7</code> Universal Editor development</a></h2><div class="cheat-grid">
       <div><h3>Files</h3><ul><li>definition: catalogue</li><li>models: forms</li><li>filters: placement</li></ul></div>
       <div><h3>Naming</h3><ul><li>Alt, Title, Type, MimeType, Text</li><li>group_field</li><li>Case sensitive</li></ul></div>
       <div><h3>Containers</h3><ul><li>Set template.filter</li><li>Item resource type</li></ul></div>
       <div><h3>Editing</h3><ul><li>moveInstrumentation</li><li>Do not clone attributes</li></ul></div>
       <div><h3>Workflow</h3><ul><li>Edit _name.json</li><li>npm run build:json</li><li>Hook on commit</li></ul></div>
+      <div><h3>Field suffixes</h3><ul><li><code>Title</code></li><li><code>Type</code></li><li><code>MimeType</code></li><li><code>Alt</code></li><li><code>Text</code></li><li>Case sensitive</li></ul></div>
+      <div><h3>Must have</h3><ul><li><code>core/franklin/components/block/v1/block</code></li><li>Block <code>name</code></li><li>Added to a filter</li><li>No custom components</li></ul></div>
+      <div><h3>Container</h3><ul><li>Parent sets <code>filter</code></li><li>Child uses <code>.../block/item</code></li><li>Child = row</li><li>Property = column</li></ul></div>
+      <div><h3>Keep it editable</h3><ul><li><code>moveInstrumentation(from, to)</code></li><li>Prefer keeping rows</li><li>Test selection after styling</li></ul></div>
+      <div><h3>Build order</h3><ul><li>Model</li><li>Merge</li><li>Content</li><li>Decorate</li><li>Verify in editor</li></ul></div>
     </div></div><div data-item data-cat="C" id="c8" class="cheat cs-item"><h2><a href="../modules/c8-data-driven.html#cheat-sheet"><code>C8</code> Data-driven development</a></h2><div class="cheat-grid">
       <div><h3>Sheets</h3><ul><li>fetch .json</li><li>limit and offset</li><li>Convert strings</li></ul></div>
       <div><h3>Index</h3><ul><li>Published only</li><li>Parse tags</li><li>Request few rows</li></ul></div>
       <div><h3>Placeholders</h3><ul><li>Add placeholders.js</li><li>Camel case keys</li></ul></div>
       <div><h3>JSON2HTML</h3><ul><li>Template</li><li>Overlay</li><li>Config POST</li></ul></div>
       <div><h3>BYOM</h3><ul><li>Return HTML</li><li>Semantic structure</li><li>Reachable images</li></ul></div>
+      <div><h3>Index expressions</h3><ul><li><code>textContent(el)</code></li><li><code>attribute(el, "name")</code></li><li><code>words(text, 0, 50)</code></li><li><code>parseTimestamp(text, "fmt")</code></li><li>Reads delivered HTML</li></ul></div>
+      <div><h3>Key limits</h3><ul><li>6 MB compressed response</li><li>50k pages per index</li><li>100k rows per sheet</li><li>100k redirects</li><li>200 req/s per IP</li></ul></div>
+      <div><h3>In blocks</h3><ul><li>Cache one promise per URL</li><li><code>limit</code> and <code>offset</code></li><li>Parse multi-value once</li><li>Convert strings</li></ul></div>
+      <div><h3>BYOM and JSON2HTML</h3><ul><li><code>"type": "markup"</code></li><li>Overlay needs config service</li><li>Block names: letters, digits, single dash</li><li><code>arrayKey</code> + <code>pathKey</code></li></ul></div>
     </div></div><div data-item data-cat="C" id="c9" class="cheat cs-item"><h2><a href="../modules/c9-integrations.html#cheat-sheet"><code>C9</code> Integrations</a></h2><div class="cheat-grid">
       <div><h3>Tags</h3><ul><li>Delayed, after consent</li><li>Never head.html</li><li>Check CSP</li></ul></div>
       <div><h3>Consent</h3><ul><li>consent-check.js</li><li>consent.update</li><li>consented.js once</li></ul></div>
       <div><h3>APIs</h3><ul><li>Live: front end or edge</li><li>Author: edge or App Builder</li><li>Dynamic: BYOM</li></ul></div>
       <div><h3>Secrets</h3><ul><li>Never in client code</li><li>Rotate if exposed</li></ul></div>
       <div><h3>Target</h3><ul><li>Web SDK preferred</li><li>Costs LCP</li><li>Flicker risk</li></ul></div>
+      <div><h3>Consent</h3><ul><li><code>consent-check.js</code> gates</li><li><code>consented.js</code> holds tags</li><li>Guard double loading</li><li>Banner timing: privacy decision</li></ul></div>
+      <div><h3>Tracking</h3><ul><li>Blocks push events</li><li>One file knows the vendor</li><li>No personal data</li><li>Do not duplicate page views</li></ul></div>
+      <div><h3>Adobe stack cost, mobile</h3><ul><li>LCP +0.2 s, no changes</li><li>LCP +1.2 s, with changes</li><li>Enable per page</li></ul></div>
+      <div><h3>API proxy</h3><ul><li>Secrets on the worker</li><li>Allowlist path and method</li><li>Set a timeout</li><li>Never cache personal data</li></ul></div>
     </div></div><div data-item data-cat="C" id="c10" class="cheat cs-item"><h2><a href="../modules/c10-testing-quality.html#cheat-sheet"><code>C10</code> Testing and code quality</a></h2><div class="cheat-grid">
       <div><h3>PRs</h3><ul><li>Small and focused</li><li>Include test URL</li><li>Author merges</li></ul></div>
       <div><h3>Lint</h3><ul><li>Do not change rules</li><li>Fix, do not disable</li></ul></div>
       <div><h3>Tests</h3><ul><li>Unit for logic</li><li>E2E for journeys</li><li>Exclude from serving</li></ul></div>
       <div><h3>Accessibility</h3><ul><li>Automated + manual</li><li>Keyboard</li><li>Zoom</li></ul></div>
       <div><h3>Visual</h3><ul><li>Main vs branch</li><li>Few stable pages</li></ul></div>
+      <div><h3>Test layers</h3><ul><li>Logic: <code>node:test</code></li><li>Journeys: Playwright on branch</li><li>Visual: main versus branch</li><li>Accessibility: manual too</li></ul></div>
+      <div><h3>Reliable browser tests</h3><ul><li>Dedicated test pages</li><li>Wait for <code>data-block-status</code></li><li>Select by role and name</li><li>Ignore test files in <code>.hlxignore</code></li></ul></div>
+      <div><h3>Load testing</h3><ul><li>Often unnecessary</li><li>Production CDN only</li><li>Real browsers</li><li>Near 99th percentile</li><li>200 uncached req/s per IP</li></ul></div>
     </div></div><div data-item data-cat="C" id="c11" class="cheat cs-item"><h2><a href="../modules/c11-advanced-tooling.html#cheat-sheet"><code>C11</code> Advanced developer tooling</a></h2><div class="cheat-grid">
       <div><h3>Sidekick</h3><ul><li>sidekick in config</li><li>id and title</li><li>Listen for events</li></ul></div>
       <div><h3>Admin API</h3><ul><li>x-auth-token</li><li>Limited keys</li><li>Handle 429</li></ul></div>
       <div><h3>EW tools</h3><ul><li>App SDK</li><li>Fullscreen or library</li><li>postMessage</li></ul></div>
       <div><h3>Edge</h3><ul><li>Your CDN</li><li>Hold secrets</li><li>Beware cache</li></ul></div>
       <div><h3>Repoless</h3><ul><li>One repo</li><li>Profiles</li><li>aem up --url</li></ul></div>
+      <div><h3>Admin API jobs</h3><ul><li>Bulk returns 202</li><li>Poll until <code>stopped</code></li><li>Read <code>/details</code></li><li>Back off on 429 or 503</li><li>Log <code>x-error</code></li></ul></div>
+      <div><h3>Sidekick</h3><ul><li>URL or event plugin</li><li><code>isPalette</code>, <code>isPopover</code></li><li><code>includePaths</code></li><li>No event plugins in edit or admin</li></ul></div>
+      <div><h3>Webhooks</h3><ul><li>At most once a minute</li><li>Reply 204 first</li><li>Read the log with the token</li><li>Follow <code>links.next</code></li><li>Tolerate duplicates</li></ul></div>
+      <div><h3>Safe scripts</h3><ul><li>Dedicated, limited key</li><li>Secret store</li><li>Batches</li><li>Re-run only failures</li></ul></div>
     </div></div><div data-item data-cat="D" id="d1" class="cheat cs-item"><h2><a href="../modules/d1-project-setup.html#cheat-sheet"><code>D1</code> Project setup and onboarding</a></h2><div class="cheat-grid">
       <div><h3>Start</h3><ul><li>Decide owner</li><li>Pick the boilerplate</li><li>Install Code Sync</li></ul></div>
       <div><h3>Names</h3><ul><li>ref--site--org</li><li>Max 63 chars</li><li>Canonical site</li></ul></div>
@@ -215,6 +259,10 @@
       <div><h3>Import</h3><ul><li>aem import</li><li>Workbench then bulk</li><li>docx, HTML, JCR</li></ul></div>
       <div><h3>URLs</h3><ul><li>Keep them</li><li>Exact redirects</li><li>No chains</li></ul></div>
       <div><h3>Cutover</h3><ul><li>Parity list</li><li>Path groups</li><li>Reverse at CDN</li></ul></div>
+      <div><h3>Import script</h3><ul><li><code>transformDOM</code></li><li><code>DOMUtils.remove</code></li><li><code>Blocks.createBlock</code></li><li><code>generateDocumentPath</code></li><li>Check Markdown tab</li></ul></div>
+      <div><h3>Redirects</h3><ul><li>Value only</li><li>Relevant target</li><li>Patterns at CDN</li><li>One hop to 200</li><li>Watch 404s</li></ul></div>
+      <div><h3>Estimate</h3><ul><li>Templates</li><li>Integrations and forms</li><li>Content quality</li><li>Author training</li><li>Sign-off</li></ul></div>
+      <div><h3>Cutover</h3><ul><li>Freeze or delta</li><li>Robots verified</li><li>CDN switch is the rollback</li><li>Review at 7 days</li></ul></div>
     </div></div><div data-item data-cat="D" id="d7" class="cheat cs-item"><h2><a href="../modules/d7-monitoring.html#cheat-sheet"><code>D7</code> Monitoring and observability</a></h2><div class="cheat-grid">
       <div><h3>OpTel</h3><ul><li>1 in 100</li><li>No cookies</li><li>No personal data</li></ul></div>
       <div><h3>Read data</h3><ul><li>Margin of error</li><li>Mobile separately</li><li>Compare trends</li></ul></div>
@@ -243,52 +291,91 @@
       <div><h3>Split</h3><ul><li>Even by default</li><li>Split metadata</li><li>Control gets the rest</li></ul></div>
       <div><h3>Measure</h3><ul><li>One metric</li><li>Sampled counts</li><li>Guardrails</li></ul></div>
       <div><h3>Finish</h3><ul><li>Planned duration</li><li>Record</li><li>Clean up</li></ul></div>
+      <div><h3>Plan</h3><ul><li>Hypothesis</li><li>One primary metric</li><li>Guardrails</li><li>End date in whole weeks</li></ul></div>
+      <div><h3>Sample size</h3><ul><li><code>16 × p × (1 − p) ÷ d²</code></li><li>Half the effect: four times the data</li><li>Count sampled views</li></ul></div>
+      <div><h3>Close</h3><ul><li>Decide on planned date</li><li>Apply the winner</li><li>Remove metadata</li><li>Unpublish challengers</li><li>Log it</li></ul></div>
     </div></div><div data-item data-cat="E" id="e2" class="cheat cs-item"><h2><a href="../modules/e2-personalization.html#cheat-sheet"><code>E2</code> Personalization</a></h2><div class="cheat-grid">
       <div><h3>Plugin</h3><ul><li>Audience functions</li><li>Campaign metadata</li><li>Limited availability</li></ul></div>
       <div><h3>Target</h3><ul><li>Web SDK</li><li>Flag by page</li><li>After decoration</li></ul></div>
       <div><h3>Costs</h3><ul><li>LCP</li><li>Flicker</li><li>Cache</li></ul></div>
       <div><h3>Trust</h3><ul><li>Consent</li><li>No personal data in cache</li><li>Accessible changes</li></ul></div>
+      <div><h3>Choose a route</h3><ul><li>URL: campaign</li><li>Browser: audience</li><li>Segments: Target</li><li>No flicker needed: edge</li></ul></div>
+      <div><h3>Target on EDS</h3><ul><li>Web SDK, not at.js</li><li><code>Target: on</code> flag</li><li><code>renderDecisions: false</code></li><li>Apply as blocks load</li><li>MutationObserver to react</li></ul></div>
+      <div><h3>Cost, mobile</h3><ul><li>First call: +1.3 s LCP</li><li>Later: +0.1 s LCP</li></ul></div>
+      <div><h3>Privacy</h3><ul><li>No personal data in shared cache</li><li>No tiny audiences</li><li>Check consent first</li></ul></div>
     </div></div><div data-item data-cat="E" id="e3" class="cheat cs-item"><h2><a href="../modules/e3-commerce.html#cheat-sheet"><code>E3</code> Commerce</a></h2><div class="cheat-grid">
       <div><h3>Page</h3><ul><li>Content + code</li><li>Delivered by EDS</li><li>Data from browser</li></ul></div>
       <div><h3>Drop-ins</h3><ul><li>One job each</li><li>Slots and events</li><li>Avoid forks</li></ul></div>
       <div><h3>Services</h3><ul><li>Catalog</li><li>Shopping operations</li><li>Separate clients</li></ul></div>
       <div><h3>SEO</h3><ul><li>Crawl demand</li><li>Selective prerender</li><li>SSR is not ranking</li></ul></div>
+      <div><h3>Connect</h3><ul><li>Import initializer</li><li>Import container and render</li><li><code>provider.render(C, props)(el)</code></li></ul></div>
+      <div><h3>Customize, in order</h3><ul><li>Tokens and CSS</li><li>Props</li><li>Slots</li><li>Events</li><li>Extend</li><li>New block</li></ul></div>
+      <div><h3>Slot context</h3><ul><li><code>appendChild</code>, <code>replaceWith</code></li><li><code>onChange</code></li><li><code>dictionary</code></li><li>No context method inside another</li></ul></div>
+      <div><h3>Event bus</h3><ul><li><code>events.on</code>, <code>emit</code></li><li><code>sub.off()</code></li><li>One document only</li><li>Rehydrate across pages</li></ul></div>
+      <div><h3>Requests</h3><ul><li>Catalog: products, prices</li><li>Shopping: cart, checkout</li><li>Nothing personal in shared HTML</li></ul></div>
     </div></div><div data-item data-cat="E" id="e4" class="cheat cs-item"><h2><a href="../modules/e4-forms.html#cheat-sheet"><code>E4</code> Forms</a></h2><div class="cheat-grid">
       <div><h3>Choose</h3><ul><li>Simple: sheets</li><li>Complex: Universal Editor</li><li>Check licence</li></ul></div>
       <div><h3>Rules</h3><ul><li>When/Then</li><li>Top to bottom</li><li>Sync functions</li></ul></div>
       <div><h3>Submit</h3><ul><li>Choose target</li><li>Name an owner</li><li>Check support</li></ul></div>
       <div><h3>Safety</h3><ul><li>Server validation</li><li>Least data</li><li>Accessible errors</li></ul></div>
+      <div><h3>Choose authoring</h3><ul><li>Complex logic: WYSIWYG</li><li>Basic, doc-centric team: sheets</li><li>Valid AEM Forms licence</li></ul></div>
+      <div><h3>Accessible forms</h3><ul><li>Visible <code>label</code></li><li><code>fieldset</code> and <code>legend</code></li><li><code>aria-describedby</code> for errors</li><li>Focus first error</li><li><code>autocomplete</code></li></ul></div>
+      <div><h3>Security</h3><ul><li>Validate on the server</li><li>No keys in client code</li><li>reCAPTCHA or rate limits</li><li>Scan attachments</li></ul></div>
+      <div><h3>Privacy</h3><ul><li>Collect less</li><li>State the purpose</li><li>Limit access</li><li>Agree on retention</li></ul></div>
     </div></div><div data-item data-cat="E" id="e5" class="cheat cs-item"><h2><a href="../modules/e5-structured-content.html#cheat-sheet"><code>E5</code> Structured content</a></h2><div class="cheat-grid">
       <div><h3>Fragments</h3><ul><li>Path mapping</li><li>Allow-list model</li><li>Overlay</li></ul></div>
       <div><h3>json2html</h3><ul><li>path + endpoint</li><li>regex for id</li><li>Template in repo</li></ul></div>
       <div><h3>Scale</h3><ul><li>Preview to generate</li><li>Jobs</li><li>Handle deletes</li></ul></div>
       <div><h3>Output</h3><ul><li>Semantic HTML</li><li>Has an h1</li><li>No client fetch</li></ul></div>
+      <div><h3>Mustache</h3><ul><li><code>{{x}}</code>: escaped</li><li><code>{{{x}}}</code>: raw HTML</li><li><code>{{#x}}</code>: section</li><li><code>{{^x}}</code>: if missing</li></ul></div>
+      <div><h3>Generated HTML</h3><ul><li><code>main</code>, sections as <code>div</code></li><li>Metadata block</li><li>Valid block classes</li><li>Reachable images</li></ul></div>
+      <div><h3>Sync</h3><ul><li>New or changed: publish</li><li>Deleted: unpublish</li><li>Bulk jobs with back-off</li><li>Alert on failure</li><li>Agree on freshness</li></ul></div>
     </div></div><div data-item data-cat="E" id="e6" class="cheat cs-item"><h2><a href="../modules/e6-ai-automation.html#cheat-sheet"><code>E6</code> AI and automation</a></h2><div class="cheat-grid">
       <div><h3>MCP</h3><ul><li>Runs as the user</li><li>Unified server</li><li>Assistant for writes</li></ul></div>
       <div><h3>Agents</h3><ul><li>AGENTS.md</li><li>www.aem.live</li><li>Skills</li></ul></div>
       <div><h3>Automation</h3><ul><li>Propose</li><li>Validate</li><li>Human review</li></ul></div>
       <div><h3>Safety</h3><ul><li>Limited keys</li><li>Audit log</li><li>Data is not instructions</li></ul></div>
+      <div><h3>Agent setup</h3><ul><li><code>AGENTS.md</code></li><li>Mention <code>llms.txt</code></li><li>Say "search www.aem.live"</li><li>Install skills after review</li></ul></div>
+      <div><h3>Evidence to require</h3><ul><li>Branch URL</li><li>Lint clean</li><li>PageSpeed</li><li>Screenshot with real content</li></ul></div>
+      <div><h3>Red flags</h3><ul><li>New dependency</li><li><code>innerHTML</code> on data</li><li><code>head.html</code> changes</li><li>Old config files</li></ul></div>
+      <div><h3>Safe pipeline</h3><ul><li>Read and publish separated</li><li>Allowlist paths</li><li>Cap per run</li><li>Human approval</li><li>Audit and rollback</li></ul></div>
     </div></div><div data-item data-cat="E" id="e7" class="cheat cs-item"><h2><a href="../modules/e7-expert-accessibility.html#cheat-sheet"><code>E7</code> Expert accessibility</a></h2><div class="cheat-grid">
       <div><h3>First</h3><ul><li>Do you need it?</li><li>Works without script</li><li>Native first</li></ul></div>
       <div><h3>Tabs</h3><ul><li>Roles</li><li>Roving tabindex</li><li>Arrow keys</li></ul></div>
       <div><h3>Accordion</h3><ul><li>details</li><li>Heading structure</li></ul></div>
       <div><h3>Carousel</h3><ul><li>Real buttons</li><li>No auto-advance</li><li>Announce slide</li></ul></div>
       <div><h3>Test</h3><ul><li>Keyboard</li><li>Screen reader</li><li>Zoom</li></ul></div>
+      <div><h3>Patterns</h3><ul><li>Accordion: <code>details</code></li><li>Menu: disclosure button</li><li>Modal: <code>dialog</code></li><li>Tabs: roving tabindex</li></ul></div>
+      <div><h3>Focus</h3><ul><li>Open: heading or first control</li><li>Close: return to opener</li><li>Deleted item: next item</li><li>Sticky: <code>scroll-padding-top</code></li></ul></div>
+      <div><h3>Numbers</h3><ul><li>Text 4.5:1, large 3:1</li><li>UI and focus 3:1</li><li>Target 24 by 24 px</li><li>Reflow at 320 px</li><li>Zoom 200%</li></ul></div>
+      <div><h3>Test script</h3><ul><li>Keyboard</li><li>Screen reader</li><li>Zoom</li><li>Reduced motion</li><li>Real content</li><li>Record results</li></ul></div>
     </div></div><div data-item data-cat="E" id="e8" class="cheat cs-item"><h2><a href="../modules/e8-tool-extensions.html#cheat-sheet"><code>E8</code> Authoring tool extensions</a></h2><div class="cheat-grid">
       <div><h3>Sidekick</h3><ul><li>Site config</li><li>environments</li><li>Events</li></ul></div>
       <div><h3>Experience Workspace</h3><ul><li>App SDK</li><li>App or library</li><li>In your repo</li></ul></div>
       <div><h3>Universal Editor</h3><ul><li>App Builder</li><li>Extension Manager</li><li>Panel or header</li></ul></div>
       <div><h3>Always</h3><ul><li>Least access</li><li>Test roles</li><li>Accessible</li></ul></div>
+      <div><h3>Sidekick tool</h3><ul><li>Page under <code>/tools/</code></li><li><code>passConfig</code>, <code>passReferrer</code></li><li>Palette or popover</li><li>Event: not in edit or admin</li></ul></div>
+      <div><h3>App SDK</h3><ul><li><code>await DA_SDK</code></li><li><code>context</code>, <code>token</code>, <code>actions</code></li><li><code>admin.da.live/source/</code></li><li><code>crawl</code> with throttle</li></ul></div>
+      <div><h3>UE extension</h3><ul><li>App Builder</li><li>Secrets in actions</li><li>Extension Manager</li><li>Owner and test plan</li></ul></div>
+      <div><h3>Every tool</h3><ul><li>Say how to fix it</li><li>Keyboard accessible</li><li>Preview before bulk</li><li>Cancel button</li></ul></div>
     </div></div><div data-item data-cat="E" id="e9" class="cheat cs-item"><h2><a href="../modules/e9-performance-at-scale.html#cheat-sheet"><code>E9</code> Performance at scale</a></h2><div class="cheat-grid">
       <div><h3>Set</h3><ul><li>Inventory</li><li>Budgets</li><li>Owners</li></ul></div>
       <div><h3>Measure</h3><ul><li>Lab</li><li>Field</li><li>Mobile</li></ul></div>
       <div><h3>Act</h3><ul><li>Traffic first</li><li>Shared fixes</li><li>Tags</li></ul></div>
       <div><h3>Guard</h3><ul><li>PR checks</li><li>Reviews</li><li>Procurement</li></ul></div>
+      <div><h3>Thresholds</h3><ul><li>LCP 2.5 s</li><li>INP 200 ms</li><li>CLS 0.1</li><li>At the 75th percentile</li></ul></div>
+      <div><h3>Rank work</h3><ul><li>Traffic × miss</li><li>Trend, not just value</li><li>Owner for each row</li></ul></div>
+      <div><h3>Diagnose</h3><ul><li>Check samples</li><li>Split the data</li><li>Line up changes</li><li>Reproduce in the lab</li><li>Fix at source</li></ul></div>
+      <div><h3>Peak</h3><ul><li>Non-CDN inventory</li><li>Vendor limits</li><li>Freeze</li><li>Rollback rehearsal</li><li>Escalation path</li></ul></div>
     </div></div><div data-item data-cat="E" id="e10" class="cheat cs-item"><h2><a href="../modules/e10-community.html#cheat-sheet"><code>E10</code> Community and contribution</a></h2><div class="cheat-grid">
       <div><h3>Reuse</h3><ul><li>Content structure</li><li>Adapt code</li><li>Check principles</li></ul></div>
       <div><h3>Block or widget</h3><ul><li>Authored: block</li><li>Application: widget</li></ul></div>
       <div><h3>Contribute</h3><ul><li>Issue first</li><li>Sign CLA</li><li>Small PR</li></ul></div>
       <div><h3>Respect</h3><ul><li>Client data out</li><li>Maintainers first</li><li>Test evidence</li></ul></div>
+      <div><h3>Contribution</h3><ul><li>Search issues and PRs</li><li>Talk first</li><li>Small and focused</li><li>Test URL</li><li>CLA once</li></ul></div>
+      <div><h3>Description</h3><ul><li>Issue ID</li><li>Intent</li><li>Change</li><li>What breaks</li></ul></div>
+      <div><h3>Inner source</h3><ul><li>Named maintainers</li><li>Contribution guide</li><li>Fast reviews</li><li>Count reuse</li></ul></div>
+      <div><h3>Copy or share</h3><ul><li>Copy: autonomy</li><li>Repoless: consistency</li><li>Tokens for brand differences</li></ul></div>
     </div></div></div></div></div></section>
 </main>
 </body>

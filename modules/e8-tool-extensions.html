@@ -38,6 +38,9 @@
     <li>Configure a Sidekick plugin.</li>
     <li>Compare an app and a library plugin.</li>
     <li>Plan a Universal Editor extension.</li>
+    <li>Build a Sidekick tool end to end.</li>
+    <li>Create content safely from an Experience Workspace app.</li>
+    <li>Weigh the cost of a Universal Editor extension.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e8-ready" data-title="Ready for authoring tool extensions?">
     <script type="application/json">{"questions": [{"q": "Where do Sidekick plugins get configured?", "options": ["In site configuration", "In the sitemap", "In robots.txt"], "answer": 0, "explain": "Covered in C11."}, {"q": "What is the App SDK based on?", "options": ["FTP", "WebUSB", "PostMessage"], "answer": 2, "explain": "Covered in C11."}, {"q": "What is App Builder?", "options": ["Adobe’s serverless platform", "A Word add-in", "A browser"], "answer": 0, "explain": "Covered in C9."}]}</script>
@@ -65,6 +68,17 @@
       <tr><td>React to publish in your page</td><td>Sidekick event</td></tr>
     </tbody>
   </table></div>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A{Where is the author working?} --&gt; B[Reviewing a page]
+  A --&gt; C[Writing in Experience Workspace]
+  A --&gt; D[Editing in the Universal Editor]
+  B --&gt; E[Sidekick plugin or event]
+  C --&gt; F[App or library plugin]
+  D --&gt; G[App Builder extension]</pre>
+      <figcaption><b>What to notice:</b> Start from where the author is. Each location has one natural extension point.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>If the author is reviewing a page, use a Sidekick plugin or event. Writing in Experience Workspace suggests an app or library plugin. Editing in the Universal Editor suggests an App Builder extension.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <figure class="code" data-file="Sidekick plugin in site configuration" data-lang="json">
@@ -91,6 +105,171 @@
       <tr><td>Plugin not displayed</td><td><code>environments</code> excludes it</td><td>Adjust it.</td></tr>
       <tr><td>App gets no context</td><td>SDK not imported first</td><td>Import the SDK in HTML.</td></tr>
       <tr><td>Extension missing</td><td>Not enabled</td><td>Use Extension Manager.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="building-a-sidekick-tool" data-level="4">
+  <h2>Building a Sidekick tool end to end</h2>
+  <div data-part="why"><p>Most useful authoring tools are small pages in your repository. Doing one end to end shows how little is needed.</p></div>
+  <div data-part="concept">
+    <p>A palette or popover plugin is simply a page at a path such as <code>/tools/audit.html</code>. With <code>passConfig</code> and <code>passReferrer</code>, it receives the project details and the page being reviewed through query parameters. It can then fetch that page and report on it.</p>
+    <p>Event plugins run code in the page itself, which suits checks of the rendered DOM. Remember that they do not work in edit or admin views. Because the tool is served from your site, keep it out of the visitor path and add its folder to your CSP thinking. Do not load it for visitors.</p>
+    <p>Design for authors: state what was checked, what failed and how to fix it. Make it keyboard accessible, and remember that it only sees what the signed-in user can.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+  participant A as Author
+  participant S as Sidekick
+  participant T as /tools/audit.html
+  participant P as Page
+  A-&gt;&gt;S: Click Audit
+  S-&gt;&gt;T: Open with config and referrer
+  T-&gt;&gt;P: Fetch the page's HTML
+  P--&gt;&gt;T: Markup
+  T--&gt;&gt;A: Results and how to fix them</pre>
+      <figcaption><b>What to notice:</b> The tool is just a page that fetches another page. It needs no server.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An author clicks Audit in Sidekick. Sidekick opens the audit page with config and referrer, the tool fetches the page HTML, and shows the author the results and how to fix them.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="tools/audit.js" data-lang="javascript">
+      <textarea class="src" hidden>const params = new URLSearchParams(window.location.search);
+const referrer = params.get('referrer');
+
+async function audit() {
+  const res = await fetch(`${new URL(referrer).pathname}.plain.html`);
+  const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+  const missing = [...doc.querySelectorAll('img:not([alt]), img[alt=""]')];
+  const list = document.querySelector('#results');
+  const li = document.createElement('li');
+  li.textContent = missing.length
+    ? `${missing.length} images need alt text`
+    : 'All images have alt text';
+  list.append(li);
+}
+audit();</textarea>
+      <figcaption>Configure the plugin with isPopover or isPalette, passReferrer and environments set to preview.</figcaption>
+      <ol class="code-explain"><li data-line="2">Provided by <code>passReferrer</code>.</li><li data-line="5">Reads the delivered content, as an author would see it published.</li><li data-line="11">Plain language that says what to do.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e8-t2"><script type="application/json">{"questions": [{"q": "You want a tool to inspect a page&rsquo;s rendered DOM on the preview host. Which kind of plugin suits it?", "options": ["An event plugin that runs code in the page", "A URL plugin limited to the edit environment", "A palette plugin limited to the admin environment"], "answer": 0, "explain": "Event plugins run in the page, in dev, preview, live and production."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Referrer is empty</td><td>Option not set</td><td>Add <code>passReferrer</code>.</td></tr>
+      <tr><td>Event plugin absent in Word</td><td>Not supported in edit</td><td>Use a URL plugin.</td></tr>
+      <tr><td>Tool visible to visitors</td><td>Linked from site</td><td>Keep it under <code>/tools/</code>, and unlinked.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="experience-workspace-apps" data-level="4">
+  <h2>Experience Workspace apps</h2>
+  <div data-part="why"><p>Bulk tasks and content tools can run inside the authoring environment, using the author&rsquo;s own access.</p></div>
+  <div data-part="concept">
+    <p>An app imports the SDK from <code>https://da.live/nx/utils/sdk.js</code> and awaits it to get <code>context</code> (including <code>org</code> and <code>repo</code>), a <code>token</code> and <code>actions</code>. The token authorizes calls to the source API at <code>admin.da.live</code>, so the app can create or change content as that author.</p>
+    <p>Adobe&rsquo;s recipes include creating a page by posting HTML as form data, and streaming a list of pages under a path with the <code>crawl</code> utility. <code>crawl</code> takes a callback and a throttle setting, and returns results, the duration and a cancel function. Lower the throttle if your callback performs its own requests.</p>
+    <p>Add a preview step before bulk changes, offer a cancel button, and show progress. Author Kit and the SDK UI components can help a tool look native.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[App page in repository] --&gt; B[await DA_SDK]
+  B --&gt; C[context, token, actions]
+  C --&gt; D[admin.da.live source API]
+  C --&gt; E[Insert into document]</pre>
+      <figcaption><b>What to notice:</b> The author&rsquo;s own token is used, so the app can never do more than that person can.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An app page in the repository awaits DA_SDK, which provides context, token and actions. These are used either to call the admin.da.live source API or to insert into the document.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Create a page from an app" data-lang="javascript">
+      <textarea class="src" hidden>import DA_SDK from 'https://da.live/nx/utils/sdk.js';
+
+const { context, token } = await DA_SDK;
+const { org, repo } = context;
+const html = '&lt;body&gt;&lt;header&gt;&lt;/header&gt;&lt;main&gt;&lt;div&gt;&lt;h1&gt;Hello&lt;/h1&gt;&lt;/div&gt;&lt;/main&gt;&lt;footer&gt;&lt;/footer&gt;&lt;/body&gt;';
+const body = new FormData();
+body.append('data', new Blob([html], { type: 'text/html' }));
+
+const res = await fetch(`https://admin.da.live/source/${org}/${repo}/drafts/hello.html`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}` },
+  body,
+});
+if (!res.ok) throw new Error(`Save failed: ${res.status}`);</textarea>
+      <figcaption>Adapted from Adobe&rsquo;s App SDK recipes.</figcaption>
+      <ol class="code-explain"><li data-line="3">Identity and project come from the SDK, so nothing is hard-coded.</li><li data-line="11">Writes as the signed-in author.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e8-t3"><script type="application/json">{"questions": [{"q": "Whose access does a token from DA_SDK represent?", "options": ["A shared service account&rsquo;s", "The signed-in author&rsquo;s", "The repository owner&rsquo;s"], "answer": 1, "explain": "The app acts as that person."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>App gets no context</td><td>Opened outside the editor</td><td>Open it through Experience Workspace.</td></tr>
+      <tr><td>Bulk tool overloads requests</td><td>Throttle too high</td><td>Lower it, and offer cancel.</td></tr>
+      <tr><td>Accidental mass change</td><td>No preview</td><td>Show the changes first.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="universal-editor-extensions-in-practice" data-level="4">
+  <h2>Universal Editor extensions in practice</h2>
+  <div data-part="why"><p>An extension is a small product with hosting and upgrades of its own, so you should know what you are taking on before starting.</p></div>
+  <div data-part="concept">
+    <p>A Universal Editor extension is a JavaScript application, usually built with App Builder. It registers with the editor through Adobe&rsquo;s UI extensibility model and declares what it adds, such as header buttons or a panel. Once deployed, Extension Manager enables it per instance.</p>
+    <p>The extension runs in an isolated frame and talks to the editor through a defined interface. Anything that needs a secret belongs in a server-side App Builder action, not the front end.</p>
+    <p>Plan for ownership. You will need a named team, a pipeline for deployments, monitoring, and a test against each editor update. Check first whether Adobe&rsquo;s ready-made extensions, a model field, a filter or a Sidekick plugin would do the job.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Part</th><th>Purpose</th><th>Where it runs</th></tr></thead>
+    <tbody>
+      <tr><td>Extension registration</td><td>Declares buttons or panels</td><td>Browser, in a frame</td></tr>
+      <tr><td>UI</td><td>What authors see</td><td>Browser</td></tr>
+      <tr><td>App Builder action</td><td>Calls protected services</td><td>Serverless runtime</td></tr>
+      <tr><td>Extension Manager</td><td>Enables per instance</td><td>Adobe service</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Registering a header button (shape only)" data-lang="javascript">
+      <textarea class="src" hidden>import { register } from '@adobe/uix-guest';
+
+await register({
+  id: 'com.example.check-links',
+  methods: {
+    headerMenu: {
+      getButtons() {
+        return [{
+          id: 'check-links',
+          label: 'Check links',
+          icon: 'Link',
+          onClick() { /* open a panel or call an action */ },
+        }];
+      },
+    },
+  },
+});</textarea>
+      <figcaption>Illustrative. Follow Adobe&rsquo;s current Universal Editor extension documentation for exact APIs.</figcaption>
+      <ol class="code-explain"><li data-line="4">A unique ID for your extension.</li><li data-line="6">The extension point this adds to.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e8-t4"><script type="application/json">{"questions": [{"q": "An extension needs a partner API key. Where should the key be kept?", "options": ["In the extension&rsquo;s front-end code", "In the extension&rsquo;s registration ID", "In a server-side App Builder action"], "answer": 2, "explain": "Front-end code reaches the browser."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Extension not displayed</td><td>Not enabled</td><td>Enable it in Extension Manager.</td></tr>
+      <tr><td>Breaks after an update</td><td>No regression test</td><td>Test against editor updates.</td></tr>
+      <tr><td>No one can maintain it</td><td>No owner</td><td>Assign a team first.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -165,12 +344,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e8-check"><script type="application/json">{"questions": [{"q": "Which event tells code Sidekick is ready?", "options": ["init", "loaded", "sidekick-ready"], "answer": 2, "explain": "On the document."}, {"q": "Which plugin option limits where it appears?", "options": ["environments", "theme", "redirect"], "answer": 0, "explain": "See Sidekick development."}, {"q": "Which fires when Publish is clicked?", "options": ["done", "sent", "published"], "answer": 2, "explain": "See Sidekick events."}, {"q": "What are UE extensions built with?", "options": ["HTL", "Excel", "App Builder"], "answer": 2, "explain": "See Extending the Universal Editor."}, {"q": "Where do you enable UE extensions?", "options": ["A metadata block", "Extension Manager", "In the site's component-definition.json file"], "answer": 1, "explain": "Per instance."}, {"q": "Which Experience Workspace option suits inserting content while writing?", "options": ["Fullscreen app only", "CDN worker", "Library plugin"], "answer": 2, "explain": "See Developing apps and plugins."}, {"q": "What is the prefix for custom Sidekick events?", "options": ["custom:", "event.", "plugin-"], "answer": 0, "explain": "See Sidekick development."}, {"q": "Authors want a Sidekick button that publishes all pages in a folder. What should you consider first?", "options": ["Whether roles, confirmation and limits are safe", "Which colour and icon the button should use", "Removing authentication", "How to make it run without a confirmation step"], "answer": 0, "explain": "Tools inherit user rights and can cause bulk damage.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e8-check"><script type="application/json">{"questions": [{"q": "Which event tells code Sidekick is ready?", "options": ["init", "loaded", "sidekick-ready"], "answer": 2, "explain": "On the document."}, {"q": "Which plugin option limits where it appears?", "options": ["environments", "theme", "redirect"], "answer": 0, "explain": "See Sidekick development."}, {"q": "Which fires when Publish is clicked?", "options": ["done", "sent", "published"], "answer": 2, "explain": "See Sidekick events."}, {"q": "What are UE extensions built with?", "options": ["HTL", "Excel", "App Builder"], "answer": 2, "explain": "See Extending the Universal Editor."}, {"q": "Where do you enable UE extensions?", "options": ["A metadata block", "Extension Manager", "In the site's component-definition.json file"], "answer": 1, "explain": "Per instance."}, {"q": "Which Experience Workspace option suits inserting content while writing?", "options": ["Fullscreen app only", "CDN worker", "Library plugin"], "answer": 2, "explain": "See Developing apps and plugins."}, {"q": "What is the prefix for custom Sidekick events?", "options": ["custom:", "event.", "plugin-"], "answer": 0, "explain": "See Sidekick development."}, {"q": "Authors want a Sidekick button that publishes all pages in a folder. What should you consider first?", "options": ["Whether roles, confirmation and limits are safe", "Which colour and icon the button should use", "Removing authentication", "How to make it run without a confirmation step"], "answer": 0, "explain": "Tools inherit user rights and can cause bulk damage.", "scenario": true}, {"q": "What does passReferrer give a URL plugin?", "options": ["The originating URL", "An admin token", "A list of authors"], "answer": 0, "explain": "It arrives as a query parameter."}, {"q": "What does an app get from awaiting DA_SDK?", "options": ["user, role and session", "config, cache and routes", "context, token and actions"], "answer": 2, "explain": "See the App SDK guide."}, {"q": "What should a bulk tool do before changing content?", "options": ["Show the changes for approval", "Clear the browser cache", "Disable other authors"], "answer": 0, "explain": "A preview step prevents accidents."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e8-cards"><script type="application/json">{"cards": [["Sidekick plugin", "Configured button or popover."], ["custom:<name>", "Plugin event."], ["Fullscreen app", "A first-class tool."], ["Library plugin", "Integrates with the editor."], ["App SDK", "Experience Workspace integration."], ["App Builder", "Builds UE extensions."], ["Extension Manager", "Enables extensions."], ["/tools/", "Common location for tools."]]}</script></div>
+  <div data-component="flashcards" data-id="e8-cards"><script type="application/json">{"cards": [["Sidekick plugin", "Configured button or popover."], ["custom:<name>", "Plugin event."], ["Fullscreen app", "A first-class tool."], ["Library plugin", "Integrates with the editor."], ["App SDK", "Experience Workspace integration."], ["App Builder", "Builds UE extensions."], ["Extension Manager", "Enables extensions."], ["/tools/", "Common location for tools."], ["passReferrer", "Passes the originating URL to a plugin."], ["crawl", "Streams pages under a path in an app."], ["Extension Manager", "Turns UE extensions on for an instance."], ["admin.da.live", "Source API used by apps."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -182,6 +361,10 @@
       <div><h4>Experience Workspace</h4><ul><li>App SDK</li><li>App or library</li><li>In your repo</li></ul></div>
       <div><h4>Universal Editor</h4><ul><li>App Builder</li><li>Extension Manager</li><li>Panel or header</li></ul></div>
       <div><h4>Always</h4><ul><li>Least access</li><li>Test roles</li><li>Accessible</li></ul></div>
+      <div><h4>Sidekick tool</h4><ul><li>Page under <code>/tools/</code></li><li><code>passConfig</code>, <code>passReferrer</code></li><li>Palette or popover</li><li>Event: not in edit or admin</li></ul></div>
+      <div><h4>App SDK</h4><ul><li><code>await DA_SDK</code></li><li><code>context</code>, <code>token</code>, <code>actions</code></li><li><code>admin.da.live/source/</code></li><li><code>crawl</code> with throttle</li></ul></div>
+      <div><h4>UE extension</h4><ul><li>App Builder</li><li>Secrets in actions</li><li>Extension Manager</li><li>Owner and test plan</li></ul></div>
+      <div><h4>Every tool</h4><ul><li>Say how to fix it</li><li>Keyboard accessible</li><li>Preview before bulk</li><li>Cancel button</li></ul></div>
     </div>
   </div>
 </section>
@@ -194,6 +377,7 @@
     <li><a href="https://www.aem.live/docs/ew/developing/micro-frontends" rel="noopener" target="_blank">aem.live: Micro-frontends tutorial</a></li>
     <li><a href="https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/extending" rel="noopener" target="_blank">Adobe: Extending the Universal Editor</a></li>
     <li><a href="https://developer.adobe.com/uix/docs/services/aem-universal-editor/" rel="noopener" target="_blank">Adobe Developer: Universal Editor extensions</a></li>
+    <li><a href="https://www.aem.live/docs/ew/developing/sdk-recipes" rel="noopener" target="_blank">Experience Workspace App SDK recipes</a></li>
   </ul>
 </section>
 

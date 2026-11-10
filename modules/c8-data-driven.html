@@ -39,6 +39,9 @@
     <li>Use placeholders in code.</li>
     <li>Generate pages with JSON2HTML.</li>
     <li>Build a BYOM source.</li>
+    <li>Write custom index properties.</li>
+    <li>Share and page data efficiently in blocks.</li>
+    <li>Design data around the platform limits.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c8-ready" data-title="Ready for data-driven development?">
     <script type="application/json">{"questions": [{"q": "When is a page in the index?", "options": ["After publishing", "After a push", "After saving"], "answer": 0, "explain": "Covered in B3."}, {"q": "Does an async decorate work?", "options": ["Yes", "Only in the footer", "No"], "answer": 0, "explain": "Covered in C4."}, {"q": "Should fetched text be inserted as HTML?", "options": ["Always", "No", "Yes"], "answer": 1, "explain": "Covered in C4."}]}</script>
@@ -82,6 +85,24 @@
       <tr><td><code>?sheet=name</code></td><td>Returns <code>shared-name</code></td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Single sheet and multi-sheet responses" data-lang="json">
+      <textarea class="src" hidden>{
+  "total": 2, "offset": 0, "limit": 2,
+  "data": [
+    { "Branch": "Toronto", "Phone": "416-555-0100" },
+    { "Branch": "Ottawa", "Phone": "613-555-0100" }
+  ],
+  ":type": "sheet"
+}
+
+{
+  ":names": ["branches", "rates"],
+  ":type": "multi-sheet",
+  "branches": { "total": 2, "offset": 0, "limit": 2, "data": [] },
+  "rates": { "total": 3, "offset": 0, "limit": 3, "data": [] }
+}</textarea>
+      <figcaption>Two separate example responses. Request one sheet with ?sheet=branches, and page with ?limit= and ?offset=.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c8-t1"><script type="application/json">{"questions": [{"q": "What type are values in the JSON?", "options": ["Numbers only", "Strings", "Typed by column"], "answer": 1, "explain": "Convert in your code."}]}</script></div>
@@ -100,12 +121,27 @@
   <div data-part="concept">
     <p><code>/query-index.json</code> lists published pages with the configured properties. The Index Admin tool defines these properties, and a custom index uses a CSS selector to extract values from the page.</p>
     <p>Multi-value properties such as <code>tags</code> are delivered as a JSON string, so parse them. Indexes can grow large, so request a sensible limit and filter on the client. Cache in memory if several blocks need the same data.</p>
+    <h3>Limits that shape your design</h3>
+    <p>A single index stops at 50,000 pages, although you can configure several. It contains the same published pages on aem.page and aem.live, so a previewed page never appears until it is published. Unpublishing removes a page. After changing the properties, run Reindex from the Index Admin tool, or existing rows keep their old shape.</p>
   </div>
   <div data-part="visual">
     <figure class="code" data-file="Reading tags" data-lang="javascript">
       <textarea class="src" hidden>const { data } = await (await fetch('/query-index.json?limit=500')).json();
 const savings = data.filter((p) =&gt; JSON.parse(p.tags || '[]').includes('savings'));</textarea>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Built-in property</th><th>Comes from</th></tr></thead>
+    <tbody>
+      <tr><td><code>title</code></td><td><code>og:title</code> meta property</td></tr>
+      <tr><td><code>image</code></td><td><code>og:image</code> meta property</td></tr>
+      <tr><td><code>description</code></td><td><code>description</code> meta tag</td></tr>
+      <tr><td><code>date</code></td><td><code>publication-date</code> meta tag</td></tr>
+      <tr><td><code>author</code>, <code>category</code></td><td>Meta tags of those names</td></tr>
+      <tr><td><code>tags</code></td><td><code>article:tag</code> meta tags, as an array</td></tr>
+      <tr><td><code>robots</code></td><td><code>robots</code> meta tag</td></tr>
+      <tr><td><code>lastModified</code></td><td>The <code>Last-Modified</code> response header</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
@@ -142,6 +178,14 @@ const savings = data.filter((p) =&gt; JSON.parse(p.tags || '[]').includes('savin
 
 const placeholders = await fetchPlaceholders('en');
 const { readMore } = placeholders; // Key: Read more</textarea>
+    </figure>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Placeholders sheet in a locale folder] --&gt; B[fetchPlaceholders with prefix]
+  B --&gt; C[Object with camelCase keys]
+  C --&gt; D[Block text in the right language]</pre>
+      <figcaption><b>What to notice:</b> Blocks never contain hard-coded strings, so one code path serves all locales.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A placeholders sheet in a locale folder is read by fetchPlaceholders with a prefix. The result is an object with camelCase keys, used for block text in the right language.</p></details>
     </figure>
   </div>
   <div data-part="show">
@@ -189,6 +233,26 @@ const { readMore } = placeholders; // Key: Read more</textarea>
   "type": "markup"
 }</textarea>
     </figure>
+    <figure class="code" data-file="Configuring the worker" data-lang="json">
+      <textarea class="src" hidden>[
+  {
+    "path": "/events/",
+    "endpoint": "https://api.example.com/event-{{id}}.json",
+    "regex": "/[^/]+$/",
+    "template": "/templates/event.html",
+    "headers": { "X-API-Key": "your-api-key" }
+  },
+  {
+    "path": "/branches/",
+    "endpoint": "https://www.example.com/branches.json",
+    "arrayKey": "data",
+    "pathKey": "URL",
+    "template": "/templates/branch.html"
+  }
+]</textarea>
+      <figcaption>POST this to the worker&rsquo;s /config/&lt;org&gt;/&lt;site&gt;/&lt;branch&gt; endpoint with an Admin API token.</figcaption>
+      <ol class="code-explain"><li data-line="3">Requests under this path use this configuration.</li><li data-line="4"><code>{{id}}</code> is filled in from the URL by <code>regex</code>.</li><li data-line="5">Takes the last segment of the path.</li><li data-line="12">Uses one JSON file, finding the item whose <code>URL</code> matches the page. A spreadsheet JSON suits this.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c8-t4"><script type="application/json">{"questions": [{"q": "When is the HTML generated?", "options": ["At every visit", "On git push", "At preview"], "answer": 2, "explain": "It is ingested like other content."}]}</script></div>
@@ -207,6 +271,9 @@ const { readMore } = placeholders; // Key: Read more</textarea>
   <div data-part="concept">
     <p><b>Bring Your Own Markup</b> lets any source publish to EDS, using HTML as the format. For each previewed page, your service returns HTML following the semantics of sections, blocks and default content.</p>
     <p>Extra elements, spans, data attributes and styles are removed on ingestion. Images must be reachable by EDS, and are downloaded at preview. Block class names may contain only alphanumerics and single dashes, and may not start with a digit.</p>
+    <h3>How the request is built</h3>
+    <p>When a page is previewed, the admin service requests <code>{origin}{path}{contentPath}{suffix}{params}</code>. With a source of <code>https://content-service.acme.com/data?foo=bar</code> and suffix <code>.html</code>, previewing <code>/products/widget</code> requests <code>https://content-service.acme.com/data/products/widget.html?foo=bar</code>.</p>
+    <p>BYOM can be a site&rsquo;s primary source, or an <b>overlay</b> on another source. An overlay suits cases like product pages published from a commerce backend. It needs the Configuration Service, because <code>fstab.yaml</code> does not support it.</p>
   </div>
   <div data-part="visual">
     <figure class="code" data-file="A minimal BYOM response" data-lang="xml">
@@ -235,6 +302,25 @@ const { readMore } = placeholders; // Key: Read more</textarea>
       <tr><td><code>hero_wide</code></td><td>No</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="The smallest valid response" data-lang="html">
+      <textarea class="src" hidden>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;Home&lt;/title&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;div&gt;
+        &lt;div class="hero"&gt;
+          &lt;div&gt;&lt;div&gt;&lt;h1&gt;Hello World&lt;/h1&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p&gt;Welcome to your website.&lt;/p&gt;
+        &lt;div class="metadata"&gt;
+          &lt;div&gt;&lt;div&gt;&lt;p&gt;Description&lt;/p&gt;&lt;/div&gt;&lt;div&gt;&lt;p&gt;Page description&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</textarea>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c8-t5"><script type="application/json">{"questions": [{"q": "Which format does BYOM use?", "options": ["HTML", "Markdown", "XML only"], "answer": 0, "explain": "The same structure EDS delivers."}]}</script></div>
@@ -243,6 +329,175 @@ const { readMore } = placeholders; // Key: Read more</textarea>
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Attributes lost</td><td>Stripped at ingestion</td><td>Encode the data as content or classes.</td></tr>
       <tr><td>Images fail</td><td>Not reachable by EDS</td><td>Use accessible URLs.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="custom-index-expressions" data-level="3">
+  <h2>Custom index properties and expressions</h2>
+  <div data-part="why"><p>The built-in properties cover metadata. When a list needs a value from the page&rsquo;s body, you write an expression.</p></div>
+  <div data-part="concept">
+    <p>A custom property has a CSS selector and an expression. <code>select</code> matches all elements, and <code>selectFirst</code> takes only the first. <code>value</code> returns a string, and <code>values</code> returns an array of all matches.</p>
+    <p>Selectors run against the <b>delivered HTML</b>, not the decorated DOM. Write them from view source. That is the single most common mistake. Not every CSS selector is supported, so check with <code>aem up --print-index</code>, which prints the result for the page you open.</p>
+    <p>Expressions can be combined. Useful functions include <code>textContent</code>, <code>innerHTML</code>, <code>attribute</code>, <code>match</code>, <code>words</code>, <code>characters</code>, <code>replace</code>, <code>replaceAll</code>, <code>parseTimestamp</code> and <code>dateValue</code>.</p>
+    <p>Each published page&rsquo;s result is also available from the Admin API at <code>/index/&lt;org&gt;/&lt;site&gt;/&lt;branch&gt;/&lt;path&gt;</code>. Older projects held these definitions in <code>helix-query.yaml</code>, and new ones use the Index Admin tool or Configuration Service.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>You want</th><th>Expression</th></tr></thead>
+    <tbody>
+      <tr><td>First heading&rsquo;s text</td><td><code>textContent(el)</code></td></tr>
+      <tr><td>A meta tag&rsquo;s value</td><td><code>attribute(el, "content")</code></td></tr>
+      <tr><td>A teaser of 50 words</td><td><code>words(textContent(el), 0, 50)</code></td></tr>
+      <tr><td>A title without its prefix</td><td><code>replace(attribute(el, "content"), "ACME | ", "")</code></td></tr>
+      <tr><td>A sortable date</td><td><code>parseTimestamp(attribute(el, "content"), "MM/DD/YYYY")</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Custom properties, in the definition format" data-lang="yaml">
+      <textarea class="src" hidden>headline:
+  select: main h1
+  value: textContent(el)
+teaser:
+  select: main &gt; div p
+  value: words(textContent(el), 0, 50)
+publishedAt:
+  select: head &gt; meta[name="publication-date"]
+  value: parseTimestamp(attribute(el, "content"), "MM/DD/YYYY")</textarea>
+      <figcaption>Selectors see the delivered markup, so .section and .block classes do not exist here.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c8-t6"><script type="application/json">{"questions": [{"q": "The selector main .section h1 returns an empty value in the index. Why?", "options": ["The index only reads values from the page head", "The .section class is only added in the browser", "A selector cannot include more than one element"], "answer": 1, "explain": "The indexer reads delivered HTML, before decoration."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Property is empty</td><td>Selector written for the decorated DOM</td><td>Write it from view source.</td></tr>
+      <tr><td>Rows keep old values</td><td>No reindex</td><td>Reindex after changing properties.</td></tr>
+      <tr><td>Selector unsupported</td><td>Some CSS is not supported</td><td>Test with <code>--print-index</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="data-loading-patterns" data-level="3">
+  <h2>Data loading patterns in blocks</h2>
+  <div data-part="why"><p>Several blocks fetching the same large file, or a list built on every keystroke, is a quiet way to harm a fast site.</p></div>
+  <div data-part="concept">
+    <p><b>Share one request.</b> Keep a promise per URL at module level, so that all blocks on a page reuse one fetch and one parse.</p>
+    <p><b>Page the data.</b> Use <code>limit</code> and <code>offset</code>, and loop until you have what you need. Fetching in pieces also means you can stop early.</p>
+    <p><b>Convert types once.</b> Everything in sheets is a string, and multi-value columns are a JSON string. Normalize rows as you read them, so the rest of the block deals with real values.</p>
+    <p><b>Debounce.</b> For filters, wait for the visitor to pause. Keep filtering on the client, using data you already have.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Block A] --&gt; C[loadIndex]
+  B[Block B] --&gt; C
+  C --&gt; D{Promise exists?}
+  D -- Yes --&gt; E[Reuse it]
+  D -- No --&gt; F[Fetch pages using limit and offset]
+  F --&gt; G[Normalize rows]
+  G --&gt; E</pre>
+      <figcaption><b>What to notice:</b> However many blocks ask, the browser makes one set of requests.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Two blocks call loadIndex. If a promise for that URL exists it is reused. If not, pages are fetched with limit and offset, and rows are normalized before being returned.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="scripts/data.js" data-lang="javascript">
+      <textarea class="src" hidden>const cache = new Map();
+
+async function fetchAll(url, pageSize = 500) {
+  const rows = [];
+  let offset = 0;
+  let total = 0;
+  do {
+    // eslint-disable-next-line no-await-in-loop
+    const res = await fetch(`${url}?limit=${pageSize}&amp;offset=${offset}`);
+    if (!res.ok) throw new Error(`${url}: ${res.status}`);
+    // eslint-disable-next-line no-await-in-loop
+    const json = await res.json();
+    rows.push(...json.data);
+    total = json.total;
+    offset += json.data.length;
+  } while (offset &lt; total);
+  return rows;
+}
+
+export function loadIndex(url = '/query-index.json') {
+  if (!cache.has(url)) {
+    cache.set(url, fetchAll(url).then((rows) =&gt; rows.map((row) =&gt; ({
+      ...row,
+      tags: row.tags ? JSON.parse(row.tags) : [],
+      lastModified: Number(row.lastModified),
+    }))));
+  }
+  return cache.get(url);
+}</textarea>
+      <ol class="code-explain"><li data-line="1">A cache for the lifetime of this page view.</li><li data-line="15">Advances by what actually arrived, which is safe if the last page is short.</li><li data-line="22">Stores the promise itself, so even simultaneous calls share one fetch.</li><li data-line="24">Multi-value columns arrive as a JSON string.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c8-t7"><script type="application/json">{"questions": [{"q": "Three blocks on a page need the query index. What should they do?", "options": ["Load the entire index in head.html", "Each fetch the file, so their data is fresh", "Share one cached promise per URL"], "answer": 2, "explain": "A shared promise means one request, even if the blocks ask at the same moment."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Three identical requests</td><td>Each block fetches</td><td>Cache the promise.</td></tr>
+      <tr><td><code>tags.includes</code> misbehaves</td><td>Still a JSON string</td><td>Parse it once.</td></tr>
+      <tr><td>Only 500 rows appear</td><td>Default page size</td><td>Page through with <code>offset</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="topic" id="limits-at-scale" data-level="3">
+  <h2>Limits that affect data design</h2>
+  <div data-part="why"><p>Limits usually surface months after launch, when an index or sheet has quietly grown. Designing for them is much cheaper.</p></div>
+  <div data-part="concept">
+    <p>aem.live says limits exist for stability, can change, and can often be raised for a customer. Treat these as design inputs. Split an index by section or language well before it gets near 50,000 pages. Keep a large file out of the browser by paging or by building a smaller derived index.</p>
+    <p>Throttled preview operations return a 503 with an <code>x-error</code> header that names the content source&rsquo;s limit, so bulk scripts must back off. See C11.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Resource</th><th>Limit</th></tr></thead>
+    <tbody>
+      <tr><td>Response payload</td><td>6 MB compressed</td></tr>
+      <tr><td>Requests per IP to one aem.live or aem.page host</td><td>200 a second, then 429</td></tr>
+      <tr><td>Index</td><td>50,000 pages each</td></tr>
+      <tr><td>Sitemap file</td><td>50,000 pages or 50 MB</td></tr>
+      <tr><td>Redirects per site</td><td>100,000</td></tr>
+      <tr><td>Pages per site</td><td>Should stay under 1 million</td></tr>
+      <tr><td>Spreadsheet</td><td>100,000 rows and 500,000 cells</td></tr>
+      <tr><td>Word or Google Doc</td><td>100 MB</td></tr>
+      <tr><td>Image</td><td>20 MB</td></tr>
+      <tr><td>Video (.mp4)</td><td>36 MB</td></tr>
+      <tr><td>PDF</td><td>20 MB</td></tr>
+      <tr><td>SVG</td><td>40 KB</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Large dataset] --&gt; B{Needed by visitors as a whole?}
+  B -- No --&gt; C[Split by section or language]
+  B -- Yes --&gt; D{Under 6 MB compressed?}
+  D -- Yes --&gt; E[Page with limit and offset]
+  D -- No --&gt; F[Use a search service, or smaller derived indexes]</pre>
+      <figcaption><b>What to notice:</b> Decide early where a dataset will end up, not where it starts.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A decision about a large dataset. If visitors do not need all of it, split by section or language. If they do and it is under 6 MB compressed, page it. Otherwise use a search service or smaller derived indexes.</p></details>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c8-t8"><script type="application/json">{"questions": [{"q": "A product sheet has grown to 8 MB compressed. What happens if you request it in one piece?", "options": ["EDS automatically splits it into two sheets", "It is delivered, but is left out of the CDN", "The response exceeds the 6 MB payload limit"], "answer": 2, "explain": "Use limit and offset, or restructure the data."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Large JSON request fails</td><td>Over 6 MB compressed</td><td>Request pages.</td></tr>
+      <tr><td>Index stopped growing</td><td>Reached 50,000 pages</td><td>Split into several indexes.</td></tr>
+      <tr><td>Bulk preview returns 503</td><td>Source throttled</td><td>Read <code>x-error</code> and back off.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -317,12 +572,12 @@ const { readMore } = placeholders; // Key: Read more</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c8-check"><script type="application/json">{"questions": [{"q": "Which parameter pages through rows?", "options": ["skip", "page", "offset"], "answer": 2, "explain": "Use it with limit."}, {"q": "Response size limit?", "options": ["6 MB compressed", "No limit", "6 GB"], "answer": 0, "explain": "See Limits."}, {"q": "Which option prints index records?", "options": ["--index", "--print-index", "--open"], "answer": 1, "explain": "On aem up."}, {"q": "What language are JSON2HTML templates?", "options": ["Handlebars only", "Mustache", "JSX"], "answer": 1, "explain": "See the docs."}, {"q": "What is removed from BYOM HTML? Choose all that apply.", "options": ["Data attributes", "Extra span tags", "Headings", "Styles"], "answer": [0, 1, 3], "explain": "Headings are semantic."}, {"q": "Where does placeholders.js come from?", "options": ["npm", "The block collection", "The boilerplate"], "answer": 1, "explain": "It moved."}, {"q": "When do BYOM images get ingested?", "options": ["At preview", "Never", "At every visit"], "answer": 0, "explain": "They must be reachable."}, {"q": "A retailer has 80,000 products in an API, and they need indexable pages. What is the right approach?", "options": ["Use folder mapping", "Copy them into Word", "Generate pages through a BYOM overlay such as JSON2HTML", "Render all products client-side from one URL, using the query index to hold their data"], "answer": 2, "explain": "aem.live recommends the BYOM overlay for dynamic pages.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c8-check"><script type="application/json">{"questions": [{"q": "Which parameter pages through rows?", "options": ["skip", "page", "offset"], "answer": 2, "explain": "Use it with limit."}, {"q": "Response size limit?", "options": ["6 MB compressed", "No limit", "6 GB"], "answer": 0, "explain": "See Limits."}, {"q": "Which option prints index records?", "options": ["--index", "--print-index", "--open"], "answer": 1, "explain": "On aem up."}, {"q": "What language are JSON2HTML templates?", "options": ["Handlebars only", "Mustache", "JSX"], "answer": 1, "explain": "See the docs."}, {"q": "What is removed from BYOM HTML? Choose all that apply.", "options": ["Data attributes", "Extra span tags", "Headings", "Styles"], "answer": [0, 1, 3], "explain": "Headings are semantic."}, {"q": "Where does placeholders.js come from?", "options": ["npm", "The block collection", "The boilerplate"], "answer": 1, "explain": "It moved."}, {"q": "When do BYOM images get ingested?", "options": ["At preview", "Never", "At every visit"], "answer": 0, "explain": "They must be reachable."}, {"q": "A retailer has 80,000 products in an API, and they need indexable pages. What is the right approach?", "options": ["Use folder mapping", "Copy them into Word", "Generate pages through a BYOM overlay such as JSON2HTML", "Render all products client-side from one URL, using the query index to hold their data"], "answer": 2, "explain": "aem.live recommends the BYOM overlay for dynamic pages.", "scenario": true}, {"q": "Index selectors run against what?", "options": ["The authored document", "The decorated DOM", "The delivered HTML"], "answer": 2, "explain": "Use view source."}, {"q": "How large can one index grow?", "options": ["1 million pages", "50,000 pages", "5,000 pages"], "answer": 1, "explain": "You can configure several."}, {"q": "What should a JSON2HTML configuration use to pick one item from a shared JSON file?", "options": ["template with useAEMMapping", "arrayKey with pathKey", "regex with forwardHeaders"], "answer": 1, "explain": "Together they find the row for the page."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c8-cards"><script type="application/json">{"cards": [[".json", "Path of a previewed sheet."], ["limit, offset", "Paging parameters."], [":type", "sheet or multi-sheet."], ["query-index.json", "Default index path."], ["--print-index", "Shows records locally."], ["fetchPlaceholders", "Reads the placeholders sheet."], ["JSON2HTML", "Generic JSON-to-HTML worker."], ["Overlay", "Additional markup source."], ["BYOM", "Bring Your Own Markup."], ["Mustache", "Template language for JSON2HTML."]]}</script></div>
+  <div data-component="flashcards" data-id="c8-cards"><script type="application/json">{"cards": [[".json", "Path of a previewed sheet."], ["limit, offset", "Paging parameters."], [":type", "sheet or multi-sheet."], ["query-index.json", "Default index path."], ["--print-index", "Shows records locally."], ["fetchPlaceholders", "Reads the placeholders sheet."], ["JSON2HTML", "Generic JSON-to-HTML worker."], ["Overlay", "Additional markup source."], ["BYOM", "Bring Your Own Markup."], ["Mustache", "Template language for JSON2HTML."], ["select / selectFirst", "All matches, or the first."], ["value / values", "A string, or an array."], ["Reindex", "Needed after changing index properties."], ["Overlay", "BYOM source layered over another source."], ["x-error", "Header describing a throttled preview."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -335,6 +590,10 @@ const { readMore } = placeholders; // Key: Read more</textarea>
       <div><h4>Placeholders</h4><ul><li>Add placeholders.js</li><li>Camel case keys</li></ul></div>
       <div><h4>JSON2HTML</h4><ul><li>Template</li><li>Overlay</li><li>Config POST</li></ul></div>
       <div><h4>BYOM</h4><ul><li>Return HTML</li><li>Semantic structure</li><li>Reachable images</li></ul></div>
+      <div><h4>Index expressions</h4><ul><li><code>textContent(el)</code></li><li><code>attribute(el, "name")</code></li><li><code>words(text, 0, 50)</code></li><li><code>parseTimestamp(text, "fmt")</code></li><li>Reads delivered HTML</li></ul></div>
+      <div><h4>Key limits</h4><ul><li>6 MB compressed response</li><li>50k pages per index</li><li>100k rows per sheet</li><li>100k redirects</li><li>200 req/s per IP</li></ul></div>
+      <div><h4>In blocks</h4><ul><li>Cache one promise per URL</li><li><code>limit</code> and <code>offset</code></li><li>Parse multi-value once</li><li>Convert strings</li></ul></div>
+      <div><h4>BYOM and JSON2HTML</h4><ul><li><code>"type": "markup"</code></li><li>Overlay needs config service</li><li>Block names: letters, digits, single dash</li><li><code>arrayKey</code> + <code>pathKey</code></li></ul></div>
     </div>
   </div>
 </section>
@@ -348,6 +607,8 @@ const { readMore } = placeholders; // Key: Read more</textarea>
     <li><a href="https://www.aem.live/developer/json2html" rel="noopener" target="_blank">aem.live: JSON2HTML</a></li>
     <li><a href="https://www.aem.live/developer/byom" rel="noopener" target="_blank">aem.live: Bring Your Own Markup</a></li>
     <li><a href="https://www.aem.live/developer/integrations" rel="noopener" target="_blank">aem.live: Building integrations</a></li>
+    <li><a href="https://www.aem.live/docs/indexing-reference" rel="noopener" target="_blank">Indexing reference</a></li>
+    <li><a href="https://www.aem.live/docs/limits" rel="noopener" target="_blank">Limits</a></li>
   </ul>
 </section>
 

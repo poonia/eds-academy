@@ -1,25 +1,25 @@
 # EDS Academy coverage and QA report
 
-Reviewed on 9 November 2026 against commit `fa08614` and the Phase 8 fixes. EDS Academy is an unofficial learning resource.
+Reviewed on 9 November 2026 against commit `fa08614` and the Phase 8 fixes, then updated after Category C, Category E and D6 were expanded. EDS Academy is an unofficial learning resource.
 
 ## Result
 
-The course is complete against its syllabus: **45 of 45 modules** and **199 of 199 topics**, each topic with all six parts. Automated checks on all 64 published pages found no outstanding failures. It has **not** been tested by real learners, on a real project, or with a screen reader.
+The course is complete against its syllabus: **45 of 45 modules** and **253 of 253 topics**, each topic with all six parts. Automated checks on all 64 published pages found no outstanding failures. It has **not** been tested by real learners, on a real project, or with a screen reader.
 
 | Item | Built |
 | --- | --- |
 | Modules | 45 of 45 |
-| Topics with why, concept, visual, show, try and pitfalls | 199 of 199 |
+| Topics with why, concept, visual, show, try and pitfalls | 253 of 253 |
 | Module closing sections (signature, lab, troubleshooting, enterprise, knowledge check, flashcards, cheat sheet, reading, next steps) | 405 of 405 |
 | Capstone gates | 4 of 4 |
-| Level exams and final exam | 5 of 5, from a bank of 412 questions |
+| Level exams and final exam | 5 of 5, from a bank of 482 questions |
 | Learning paths | 3 of 3 |
-| Reference pages | Hub, glossary (102 terms), cheat sheets (45), resources (154 sources), components |
-| Diagrams | 117 |
-| Interactive component instances in modules | 406, built from 49 components |
-| Graded questions in modules | 687 |
-| Lab steps | 316 |
-| Estimated study time | 99.5 hours (calculated by `tools/estimate-hours.py`), plus capstones and exams |
+| Reference pages | Hub, glossary (102 terms), cheat sheets (45), resources (161 sources), components |
+| Diagrams | 172 |
+| Interactive component instances in modules | 462, built from 49 components |
+| Graded questions in modules | 811 |
+| Lab steps | 328 |
+| Estimated study time | 107 hours (calculated by `tools/estimate-hours.py`), plus capstones and exams |
 
 ## Checks
 
@@ -95,34 +95,34 @@ Confirm with Adobe, or for the specific contract, before relying on these. Detai
 | B8 Publishing workflow and quality | 5/5 | 9/9 | 3 | 9 | 16 | 7 | 9 Nov 2026 |
 | B9 Localization and multi-site content | 3/3 | 9/9 | 2 | 7 | 14 | 7 | 8 Nov 2026 |
 | B10 Forms and experimentation for authors | 4/4 | 9/9 | 3 | 10 | 15 | 7 | 8 Nov 2026 |
-| C1 Environment setup | 5/5 | 9/9 | 4 | 9 | 16 | 7 | 8 Nov 2026 |
-| C2 Project anatomy | 4/4 | 9/9 | 2 | 8 | 15 | 6 | 8 Nov 2026 |
-| C3 Rendering and decoration | 4/4 | 9/9 | 3 | 8 | 15 | 7 | 8 Nov 2026 |
-| C4 Building blocks | 9/9 | 9/9 | 2 | 13 | 20 | 8 | 8 Nov 2026 |
-| C5 Styling | 5/5 | 9/9 | 2 | 9 | 16 | 7 | 8 Nov 2026 |
-| C6 Performance engineering | 6/6 | 9/9 | 4 | 10 | 17 | 7 | 8 Nov 2026 |
-| C7 Universal Editor development | 7/7 | 9/9 | 3 | 11 | 18 | 8 | 8 Nov 2026 |
-| C8 Data-driven development | 5/5 | 9/9 | 1 | 9 | 16 | 7 | 8 Nov 2026 |
-| C9 Integrations | 4/4 | 9/9 | 4 | 8 | 15 | 7 | 8 Nov 2026 |
-| C10 Testing and code quality | 5/5 | 9/9 | 2 | 10 | 16 | 8 | 8 Nov 2026 |
-| C11 Advanced developer tooling | 5/5 | 9/9 | 2 | 9 | 16 | 7 | 8 Nov 2026 |
+| C1 Environment setup | 7/7 | 9/9 | 6 | 11 | 21 | 7 | 9 Nov 2026 |
+| C2 Project anatomy | 5/5 | 9/9 | 4 | 9 | 19 | 6 | 9 Nov 2026 |
+| C3 Rendering and decoration | 6/6 | 9/9 | 5 | 10 | 20 | 7 | 9 Nov 2026 |
+| C4 Building blocks | 12/12 | 9/9 | 4 | 16 | 27 | 8 | 9 Nov 2026 |
+| C5 Styling | 7/7 | 9/9 | 4 | 11 | 21 | 7 | 9 Nov 2026 |
+| C6 Performance engineering | 8/8 | 9/9 | 6 | 12 | 22 | 7 | 9 Nov 2026 |
+| C7 Universal Editor development | 10/10 | 9/9 | 5 | 14 | 25 | 8 | 9 Nov 2026 |
+| C8 Data-driven development | 8/8 | 9/9 | 4 | 12 | 22 | 7 | 9 Nov 2026 |
+| C9 Integrations | 6/6 | 9/9 | 6 | 10 | 20 | 7 | 9 Nov 2026 |
+| C10 Testing and code quality | 7/7 | 9/9 | 4 | 12 | 21 | 8 | 9 Nov 2026 |
+| C11 Advanced developer tooling | 7/7 | 9/9 | 4 | 11 | 21 | 7 | 9 Nov 2026 |
 | D1 Project setup and onboarding | 4/4 | 9/9 | 1 | 9 | 15 | 7 | 9 Nov 2026 |
 | D2 Configuration service | 4/4 | 9/9 | 2 | 9 | 15 | 7 | 9 Nov 2026 |
 | D3 Domains, CDN and go-live | 6/6 | 9/9 | 3 | 10 | 17 | 8 | 9 Nov 2026 |
 | D4 Security and access | 5/5 | 9/9 | 2 | 9 | 16 | 8 | 9 Nov 2026 |
 | D5 Environments and release management | 4/4 | 9/9 | 3 | 9 | 15 | 8 | 9 Nov 2026 |
-| D6 Migration to EDS | 6/6 | 9/9 | 1 | 12 | 17 | 8 | 9 Nov 2026 |
+| D6 Migration to EDS | 9/9 | 9/9 | 6 | 15 | 23 | 10 | 9 Nov 2026 |
 | D7 Monitoring and observability | 5/5 | 9/9 | 1 | 10 | 16 | 7 | 9 Nov 2026 |
 | D8 SEO and discoverability operations | 3/3 | 9/9 | 1 | 7 | 14 | 7 | 9 Nov 2026 |
 | D9 Governance and operating model | 5/5 | 9/9 | 1 | 10 | 16 | 7 | 9 Nov 2026 |
 | D10 Enterprise architecture | 5/5 | 9/9 | 1 | 10 | 16 | 7 | 9 Nov 2026 |
-| E1 Experimentation | 2/2 | 9/9 | 1 | 7 | 13 | 7 | 9 Nov 2026 |
-| E2 Personalization | 2/2 | 9/9 | 1 | 6 | 13 | 7 | 9 Nov 2026 |
-| E3 Commerce | 2/2 | 9/9 | 1 | 6 | 13 | 7 | 9 Nov 2026 |
-| E4 Forms | 2/2 | 9/9 | 1 | 7 | 13 | 8 | 9 Nov 2026 |
-| E5 Structured content | 2/2 | 9/9 | 1 | 6 | 13 | 7 | 9 Nov 2026 |
-| E6 AI and automation | 3/3 | 9/9 | 2 | 8 | 14 | 7 | 9 Nov 2026 |
-| E7 Expert accessibility | 1/1 | 9/9 | 0 | 5 | 12 | 7 | 9 Nov 2026 |
-| E8 Authoring tool extensions | 1/1 | 9/9 | 0 | 5 | 12 | 7 | 9 Nov 2026 |
-| E9 Performance at scale | 1/1 | 9/9 | 1 | 5 | 12 | 7 | 9 Nov 2026 |
-| E10 Community and contribution | 1/1 | 9/9 | 0 | 7 | 12 | 7 | 9 Nov 2026 |
+| E1 Experimentation | 4/4 | 9/9 | 3 | 10 | 18 | 9 | 9 Nov 2026 |
+| E2 Personalization | 4/4 | 9/9 | 4 | 8 | 18 | 8 | 9 Nov 2026 |
+| E3 Commerce | 6/6 | 9/9 | 5 | 10 | 21 | 9 | 9 Nov 2026 |
+| E4 Forms | 5/5 | 9/9 | 4 | 10 | 19 | 10 | 9 Nov 2026 |
+| E5 Structured content | 4/4 | 9/9 | 3 | 8 | 18 | 8 | 9 Nov 2026 |
+| E6 AI and automation | 5/5 | 9/9 | 4 | 10 | 19 | 7 | 9 Nov 2026 |
+| E7 Expert accessibility | 5/5 | 9/9 | 3 | 10 | 20 | 8 | 9 Nov 2026 |
+| E8 Authoring tool extensions | 4/4 | 9/9 | 3 | 8 | 18 | 7 | 9 Nov 2026 |
+| E9 Performance at scale | 4/4 | 9/9 | 4 | 8 | 18 | 8 | 9 Nov 2026 |
+| E10 Community and contribution | 3/3 | 9/9 | 2 | 9 | 17 | 7 | 9 Nov 2026 |

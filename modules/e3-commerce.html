@@ -38,6 +38,10 @@
     <li>Choose how to customize a drop-in.</li>
     <li>Trace catalog and shopping requests.</li>
     <li>Decide which product pages to prerender.</li>
+    <li>Connect a drop-in to a block.</li>
+    <li>Customize with slots, without forking.</li>
+    <li>Explain how state moves across pages.</li>
+    <li>Plan storefront performance and crawlability.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e3-ready" data-title="Ready for commerce?">
     <script type="application/json">{"questions": [{"q": "What is an overlay?", "options": ["A pop-up block", "A second content source served when available", "A CDN"], "answer": 1, "explain": "Covered in C8."}, {"q": "Which runs integrations without a server of your own?", "options": ["A metadata block", "robots.txt", "App Builder"], "answer": 2, "explain": "Covered in C9."}, {"q": "When should third-party work load?", "options": ["Late, after the main content", "In head.html always", "Before LCP"], "answer": 0, "explain": "Covered in C6."}]}</script>
@@ -52,6 +56,9 @@
     <p>A <b>Commerce Storefront</b> brings together page content, storefront code and Commerce data. Edge Delivery Services delivers content and code to the browser. Commerce blocks then render <b>drop-ins</b>, which request Commerce data.</p>
     <p>A drop-in is a ready-made npm package with the whole interface and logic for one shopper job. B2C drop-ins include cart, checkout, order, payment services, personalization, product details, product discovery, recommendations, user account and user authentication. B2B drop-ins cover company, quote, purchase order and requisition work. You connect and customize them through containers, slots and events, rather than building from nothing.</p>
     <p>Authors manage pages in Document Authoring, placing commerce blocks in tables. For new storefronts, Adobe’s storefront guide marks Universal Editor as deprecated and directs you to Experience Workspace. Drop-ins have their own licensing terms, so review those for your project.</p>
+    <h3>What a drop-in is made of</h3>
+    <p>A drop-in exposes <b>containers</b>, which are pre-built pieces of interface such as a cart summary. Each container has <b>props</b> for configuration and <b>slots</b> for your own content. An <b>initializer</b> sets the drop-in up with endpoints, language and options. It also publishes <b>events</b>. The boilerplate ships with all the B2C drop-ins pre-installed, so you wire them up rather than building them.</p>
+    <p>On top of the list above, a Wishlist drop-in lets guests and registered customers save products for later.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -62,6 +69,16 @@
     B &lt;--&gt; D["Commerce data"]</pre>
       <figcaption><b>What to notice:</b> the page and code arrive first. Commerce data is requested from the browser.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>Page content and storefront code go through Edge Delivery Services to the shopper’s browser, which exchanges data with Commerce services.</p></details>
+    </figure>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Commerce block in the page] --&gt; B[Initializer: endpoints and locale]
+  B --&gt; C[Container rendered into the block]
+  C --&gt; D[Props and slots]
+  C --&gt; E[Event bus]
+  E --&gt; F[Other drop-ins and your code]</pre>
+      <figcaption><b>What to notice:</b> A commerce block is ordinary EDS code that happens to render a drop-in container.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A commerce block in the page uses an initializer to set endpoints and locale, then renders a container into the block. The container takes props and slots, and communicates through the event bus with other drop-ins and your code.</p></details>
     </figure>
   </div>
   <div data-part="show">
@@ -96,6 +113,9 @@
     <p>Storefront requests have two purposes. <b>Catalog requests</b> get product details, prices, search results and recommendations. <b>Shopping operations</b> read or update carts, complete checkout, and manage customer accounts and orders. The starter code has separate API clients for these.</p>
     <p>Adobe Commerce as a Cloud Service supports both. With <b>Adobe Commerce Optimizer</b>, the storefront uses its catalog and product discovery services, while an existing commerce platform handles shopping operations.</p>
     <p>Commerce data is rendered client-side by default, and Adobe’s SEO guide is direct about this choice: server-side rendering is not a ranking signal, and Google does not crawl every page. <b>AEM Commerce Prerender</b> is an App Builder application that generates product and category HTML on a schedule, then publishes it as an overlay. Render the pages that have crawl demand. Do not assume every SKU needs a page.</p>
+    <h3>Follow a request when something is wrong</h3>
+    <p>Most storefront faults fall on one side of the split. A wrong price or missing product points at catalog configuration and data feeds. An empty cart or failed order points at shopping operations, sessions or store view settings. Open the Network panel, find the GraphQL request, and check which endpoint and headers it used before changing code.</p>
+    <p>Treat prices and availability as live data. Do not copy them into page content, and do not cache anything that varies by customer in shared HTML.</p>
   </div>
   <div data-part="visual">
     <div class="table-wrap"><table class="t">
@@ -123,6 +143,208 @@
   </div>
 </section>
 
+<!-- 3 -->
+<section class="topic" id="connecting-a-drop-in" data-level="4">
+  <h2>Connecting a drop-in in a block</h2>
+  <div data-part="why"><p>Every commerce block follows the same short pattern. Once you recognize it, each drop-in&rsquo;s documentation is easy to apply.</p></div>
+  <div data-part="concept">
+    <p>A commerce block is an ordinary block. It has three jobs. Importing the <b>initializer</b> makes sure that the drop-in is configured. Importing the <b>container</b> and the drop-in&rsquo;s <b>render</b> function brings in the interface. Calling <code>provider.render(Container, props)(element)</code> puts it on the page.</p>
+    <p>A page often holds several containers from one drop-in, each mounted in its own element. Because drop-ins are loaded by your block, the usual EDS rules apply: they load with the block, and heavy ones should stay out of the first section where you can manage that.</p>
+    <p>Configuration such as endpoints and store headers belongs in project configuration, not hard-coded in a block, so that it can vary by environment and store view.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Import initializer] --&gt; B[Import container and render]
+  B --&gt; C[Create mount elements]
+  C --&gt; D["provider.render(Container, props)(element)"]
+  D --&gt; E[Interface in the block]</pre>
+      <figcaption><b>What to notice:</b> One pattern repeats for every drop-in. Only the package and container names change.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Import the initializer, import the container and render function, create mount elements, call provider.render with the container and props on an element, and the interface appears in the block.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="blocks/commerce-cart/commerce-cart.js (shape only)" data-lang="javascript">
+      <textarea class="src" hidden>import { render as provider } from '@dropins/storefront-cart/render.js';
+import CartSummaryList from '@dropins/storefront-cart/containers/CartSummaryList.js';
+import OrderSummary from '@dropins/storefront-cart/containers/OrderSummary.js';
+import '../../scripts/initializers/cart.js';
+
+export default async function decorate(block) {
+  const list = document.createElement('div');
+  const summary = document.createElement('div');
+  block.replaceChildren(list, summary);
+
+  await Promise.all([
+    provider.render(CartSummaryList, {
+      routeProduct: (item) =&gt; `/products/${item.url.urlKey}/${item.topLevelSku}`,
+    })(list),
+    provider.render(OrderSummary, {
+      routeCheckout: () =&gt; '/checkout',
+    })(summary),
+  ]);
+}</textarea>
+      <figcaption>A simplified version of the boilerplate pattern. Package paths and prop names come from each drop-in&rsquo;s reference.</figcaption>
+      <ol class="code-explain"><li data-line="1">Each drop-in provides its own render function.</li><li data-line="4">Importing this configures the drop-in.</li><li data-line="12">Props such as routes connect it to your URL structure.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e3-t3"><script type="application/json">{"questions": [{"q": "What does importing the cart initializer do in a commerce block?", "options": ["Adds the items to the shopper&rsquo;s cart on load", "Publishes the block to the commerce back end", "Configures the drop-in before it is rendered"], "answer": 2, "explain": "Initializers set endpoints, language and options."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Container renders empty</td><td>Initializer not imported</td><td>Import it in the block.</td></tr>
+      <tr><td>Wrong store&rsquo;s data</td><td>Headers or store view</td><td>Check configuration.</td></tr>
+      <tr><td>Links go to wrong URLs</td><td>Route props not set</td><td>Set them to match your URLs.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="slots-and-styling-drop-ins" data-level="4">
+  <h2>Customizing with slots and design tokens</h2>
+  <div data-part="why"><p>Forking a drop-in for a small change means owning every future upgrade yourself. The supported extension points cover most needs.</p></div>
+  <div data-part="concept">
+    <p>Work up the ladder, and stop as soon as the need is met. <b>Design tokens and CSS</b> handle branding. <b>Props</b> change configured behaviour. <b>Slots</b> add, replace or remove pieces of interface. <b>Events</b> let you react to state. Only when those fail should you extend a drop-in or build a new block.</p>
+    <p>A slot receives a context object. It has <code>prependSibling</code>, <code>prependChild</code>, <code>replaceWith</code>, <code>appendChild</code>, <code>appendSibling</code> and <code>remove</code>, as well as <code>getSlotElement</code>, <code>onChange</code> and <code>dictionary</code> for the current language.</p>
+    <p>One rule is easy to break: do not call a context method inside another context method. Create and append a wrapper when the slot mounts, then update the wrapper with normal DOM methods inside <code>onChange</code>.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Need</th><th>Use</th><th>Upgrade risk</th></tr></thead>
+    <tbody>
+      <tr><td>Brand colour or spacing</td><td>Design tokens and CSS</td><td>Very low</td></tr>
+      <tr><td>Change a route or option</td><td>Props</td><td>Low</td></tr>
+      <tr><td>Add a message beside the price</td><td>Slot</td><td>Low</td></tr>
+      <tr><td>React to an item being added</td><td>Event</td><td>Low</td></tr>
+      <tr><td>Change core behaviour</td><td>Extend the drop-in</td><td>Higher</td></tr>
+      <tr><td>Different shopper feature</td><td>New commerce block</td><td>You own it</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A slot that updates with the cart" data-lang="javascript">
+      <textarea class="src" hidden>provider.render(OrderSummary, {
+  slots: {
+    EstimateShipping: (ctx) =&gt; {
+      const note = document.createElement('p');
+      ctx.appendChild(note);
+      ctx.onChange((next) =&gt; {
+        const total = next.data?.total?.includingTax?.value ?? 0;
+        note.textContent = total &gt;= 75 ? 'You qualify for free shipping' : 'Free shipping over $75';
+      });
+    },
+  },
+})(summary);</textarea>
+      <figcaption>The slot name and data shape are illustrative. Each container&rsquo;s reference lists its own slots.</figcaption>
+      <ol class="code-explain"><li data-line="5">Uses a context method once, on mount.</li><li data-line="6">Runs on each change to the slot&rsquo;s context.</li><li data-line="8">Updates the wrapper using a normal DOM property, not another context method.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e3-t4"><script type="application/json">{"questions": [{"q": "A slot&rsquo;s onChange callback calls ctx.appendChild each time. What is wrong?", "options": ["A slot callback is only allowed to read data, never to write it", "onChange only runs once, so the update would never be shown", "Context methods must not be called within other context methods"], "answer": 2, "explain": "Append a wrapper on mount, then update it with DOM methods."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Duplicates appear on update</td><td>Context method inside <code>onChange</code></td><td>Append once, then update.</td></tr>
+      <tr><td>Upgrades break a store</td><td>Forked drop-in</td><td>Move changes to slots and CSS.</td></tr>
+      <tr><td>Text not translated</td><td>Hard-coded strings</td><td>Use <code>dictionary</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="event-bus-and-cart-continuity" data-level="4">
+  <h2>The event bus and cart continuity</h2>
+  <div data-part="why"><p>Drop-ins do not call each other. Knowing how they coordinate, and where that stops, explains most state bugs.</p></div>
+  <div data-part="concept">
+    <p>Drop-ins and your own blocks share a publish and subscribe system in <code>@dropins/tools/event-bus.js</code>. Subscribe with <code>events.on()</code>, publish with <code>events.emit()</code>, and stop listening with <code>subscription.off()</code>. So a mini cart can update when the cart changes, with no reference to the cart drop-in.</p>
+    <p>The bus only works within one loaded document. When a shopper goes from the cart to the checkout page, the new page has a new bus. Continuity comes from the server-side cart in Commerce, and from storefront code that rehydrates it. The boilerplate saves the cart ID when <code>cart/data</code> fires, and imports the cart initializer at startup.</p>
+    <p>An event may already have fired before your block subscribes, particularly on data that loads early. Check the event&rsquo;s documentation for an option to receive the last value, and for cached readers such as <code>getCartDataFromCache</code>.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  Cart[Cart drop-in] --&gt;|cart/updated| Bus[Event bus]
+  Auth[Auth drop-in] --&gt;|authenticated| Bus
+  Bus --&gt; Checkout[Checkout drop-in]
+  Bus --&gt; Mini[Your mini cart]
+  Bus -. Not across page loads .-&gt; Next[Next document]</pre>
+      <figcaption><b>What to notice:</b> The dotted line is the important one. A new page means a new bus, and state must come back from Commerce.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The cart drop-in and auth drop-in publish to the event bus, and the checkout drop-in and a custom mini cart listen. A dotted line notes that events do not cross page loads into the next document.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A mini cart count from your own block" data-lang="javascript">
+      <textarea class="src" hidden>import { events } from '@dropins/tools/event-bus.js';
+
+export default function decorate(block) {
+  const count = document.createElement('span');
+  block.replaceChildren(count);
+  const sub = events.on('cart/data', (data) =&gt; {
+    count.textContent = data?.totalQuantity ?? 0;
+  }, { eager: true });
+  window.addEventListener('pagehide', () =&gt; sub.off(), { once: true });
+}</textarea>
+      <figcaption>Check the event bus reference for current event names and options.</figcaption>
+      <ol class="code-explain"><li data-line="6">Subscribes with no dependency on the cart drop-in.</li><li data-line="8"><code>eager</code> asks for the last value, in case the event has already fired.</li><li data-line="9">Unsubscribes when the page is going away.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e3-t5"><script type="application/json">{"questions": [{"q": "The mini cart is correct on the cart page, but empty just after moving to checkout. Which is the most useful explanation?", "options": ["The bus only delivers events to drop-ins, never to custom blocks", "The checkout page cannot read a cart while a shopper is signed in", "Events do not cross pages, so the cart must be rehydrated"], "answer": 2, "explain": "Each document has a new bus."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Listener never fires</td><td>Event fired before subscribing</td><td>Use the eager option.</td></tr>
+      <tr><td>Cart empty on new page</td><td>Cart not rehydrated</td><td>Check the initializer and session.</td></tr>
+      <tr><td>Handlers multiply</td><td>Never unsubscribed</td><td>Call <code>off()</code> where appropriate.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="storefront-performance-and-seo" data-level="4">
+  <h2>Storefront performance and SEO</h2>
+  <div data-part="why"><p>A store has more moving parts than a marketing site, and each one can quietly take back the speed you started with.</p></div>
+  <div data-part="concept">
+    <p><b>Performance.</b> Product and listing pages depend on data that loads in the browser. Reserve space for prices, images and buttons so nothing shifts. Keep marketing tags and payment scripts away from the path to LCP. Measure by page type, because a home page score tells you nothing about checkout.</p>
+    <p><b>SEO.</b> Adobe&rsquo;s guidance is that server-side rendering is not itself a ranking signal, and that Google does not crawl every page. Use Search Console to find out how much Google crawls. Prerender the products and categories that have crawl demand, and add structured data. AEM Commerce Prerender publishes generated HTML as an overlay, on a schedule.</p>
+    <p><b>Going live.</b> Test checkout with real payment settings in a safe environment. Check error handling for payment failures and timeouts. Plan for a surge by finding your commerce back end&rsquo;s limits, since the CDN will absorb page traffic but API calls still reach your services. Adobe&rsquo;s 429 troubleshooting is the place to start if those limits are hit.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Product page requested] --&gt; B{Prerendered HTML?}
+  B -- Yes --&gt; C[Crawlers and first view get full content]
+  B -- No --&gt; D[Shell, then data from the browser]
+  C --&gt; E[Drop-in updates live price and stock]
+  D --&gt; E</pre>
+      <figcaption><b>What to notice:</b> Prerendering changes what arrives first. Live price and stock still come from Commerce.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A product page request either has prerendered HTML, which gives crawlers and first views full content, or a shell followed by browser data. In both cases, the drop-in then updates live price and stock.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Page type</th><th>Watch first</th><th>Common cause of trouble</th></tr></thead>
+    <tbody>
+      <tr><td>Home and category</td><td>LCP</td><td>Hero, or marketing tags</td></tr>
+      <tr><td>Product</td><td>CLS and LCP</td><td>No reserved space for gallery or price</td></tr>
+      <tr><td>Cart</td><td>INP</td><td>Slow updates</td></tr>
+      <tr><td>Checkout</td><td>Errors and INP</td><td>Payment scripts, validation</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e3-t6"><script type="application/json">{"questions": [{"q": "Marketing wants all 2 million SKUs prerendered for SEO. What should you check first?", "options": ["Whether all of the SKUs have product images uploaded", "Search Console data on how much Google actually crawls", "Whether the CDN can hold two million additional HTML files"], "answer": 1, "explain": "Crawl demand decides how many pages are useful."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Layout jumps on product pages</td><td>No reserved space</td><td>Set sizes for gallery and price.</td></tr>
+      <tr><td>429 during a sale</td><td>Commerce API limits</td><td>Plan capacity, and consult Adobe.</td></tr>
+      <tr><td>Stale price in HTML</td><td>Copied into content</td><td>Treat price as live data.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
 <section class="mpart" id="signature" data-toc="Signature interactive">
   <h2>Signature interactive: storefront architecture explorer</h2>
   <p>Select a part to see what it does and what it talks to.</p>
@@ -144,6 +366,8 @@
     <li><div><b>Sort</b> your product pages by crawl demand.</div></li>
     <li><div><b>Write</b> which pages to prerender.</div></li>
     <li><div><b>Identify</b> anything that must never be cached.</div></li>
+    <li><div><b>Add</b> a slot with a message, using the wrapper pattern.</div></li>
+    <li><div><b>Subscribe</b> to a cart event from a block of your own.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
     <div><h3>Expected result</h3><p>A one-page request map.</p></div>
@@ -193,12 +417,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e3-check"><script type="application/json">{"questions": [{"q": "Which of these is a catalog request?", "options": ["Changing an order", "Getting a product price", "Completing checkout"], "answer": 1, "explain": "Catalog requests retrieve product information."}, {"q": "Which of these is a shopping operation?", "options": ["Updating a cart", "Getting recommendations", "Showing search results"], "answer": 0, "explain": "Shopping operations change carts, checkout and accounts."}, {"q": "Which platform can provide catalog services alongside an existing commerce platform?", "options": ["Sidekick", "Adobe Commerce Optimizer", "Cloud Manager"], "answer": 1, "explain": "See Commerce services at a glance."}, {"q": "Is SSR a ranking signal, according to the storefront guide?", "options": ["Yes, the strongest", "No", "Only on mobile"], "answer": 1, "explain": "It can help indexing freshness."}, {"q": "Where does AEM Commerce Prerender run?", "options": ["App Builder", "A Word document", "The browser"], "answer": 0, "explain": "It polls the catalog on a schedule."}, {"q": "Where do authors add commerce blocks?", "options": ["In package.json", "Tables in authored documents", "In the commerce admin, as a storefront setting"], "answer": 1, "explain": "See storefront authoring."}, {"q": "What lets drop-ins coordinate in the browser?", "options": ["The sitemap", "The event bus", "A shared iframe that each drop-in posts messages through"], "answer": 1, "explain": "See How drop-ins coordinate."}, {"q": "A team wants to fork the checkout drop-in for one small text change. What should you propose?", "options": ["Disable the drop-in", "Fork it, as one small change is cheap to carry through future upgrades", "Rebuild the checkout", "Use a slot or supported customization"], "answer": 3, "explain": "Forks make upgrades harder.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e3-check"><script type="application/json">{"questions": [{"q": "Which of these is a catalog request?", "options": ["Changing an order", "Getting a product price", "Completing checkout"], "answer": 1, "explain": "Catalog requests retrieve product information."}, {"q": "Which of these is a shopping operation?", "options": ["Updating a cart", "Getting recommendations", "Showing search results"], "answer": 0, "explain": "Shopping operations change carts, checkout and accounts."}, {"q": "Which platform can provide catalog services alongside an existing commerce platform?", "options": ["Sidekick", "Adobe Commerce Optimizer", "Cloud Manager"], "answer": 1, "explain": "See Commerce services at a glance."}, {"q": "Is SSR a ranking signal, according to the storefront guide?", "options": ["Yes, the strongest", "No", "Only on mobile"], "answer": 1, "explain": "It can help indexing freshness."}, {"q": "Where does AEM Commerce Prerender run?", "options": ["App Builder", "A Word document", "The browser"], "answer": 0, "explain": "It polls the catalog on a schedule."}, {"q": "Where do authors add commerce blocks?", "options": ["In package.json", "Tables in authored documents", "In the commerce admin, as a storefront setting"], "answer": 1, "explain": "See storefront authoring."}, {"q": "What lets drop-ins coordinate in the browser?", "options": ["The sitemap", "The event bus", "A shared iframe that each drop-in posts messages through"], "answer": 1, "explain": "See How drop-ins coordinate."}, {"q": "A team wants to fork the checkout drop-in for one small text change. What should you propose?", "options": ["Disable the drop-in", "Fork it, as one small change is cheap to carry through future upgrades", "Rebuild the checkout", "Use a slot or supported customization"], "answer": 3, "explain": "Forks make upgrades harder.", "scenario": true}, {"q": "What should you try before forking a drop-in?", "options": ["Tokens, props, slots and events", "A custom Commerce back end", "A new CDN configuration"], "answer": 0, "explain": "Forking means owning every upgrade."}, {"q": "Which call subscribes to a drop-in event?", "options": ["events.on()", "bus.subscribe()", "events.listen()"], "answer": 0, "explain": "events.emit() publishes."}, {"q": "What keeps a cart across a full page navigation?", "options": ["The event bus, which persists across pages", "The server-side cart, rehydrated on load", "A cart value stored in the page metadata"], "answer": 1, "explain": "A new document has a new bus."}, {"q": "Which of these do slots not offer?", "options": ["A way to read the dictionary", "A way to replace an element", "A way to edit the catalog"], "answer": 2, "explain": "Slots change interface, not data."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e3-cards"><script type="application/json">{"cards": [["Drop-in", "Package for one shopper job."], ["Commerce block", "Places a drop-in on a page."], ["Slot", "Extension point in a drop-in."], ["Event bus", "Coordinates drop-ins."], ["Catalog request", "Products, prices, search."], ["Shopping operation", "Cart, checkout, orders."], ["Commerce Optimizer", "Catalog and discovery services."], ["Prerender", "HTML generated ahead of time."], ["Crawl demand", "What Google wants to crawl."]]}</script></div>
+  <div data-component="flashcards" data-id="e3-cards"><script type="application/json">{"cards": [["Drop-in", "Package for one shopper job."], ["Commerce block", "Places a drop-in on a page."], ["Slot", "Extension point in a drop-in."], ["Event bus", "Coordinates drop-ins."], ["Catalog request", "Products, prices, search."], ["Shopping operation", "Cart, checkout, orders."], ["Commerce Optimizer", "Catalog and discovery services."], ["Prerender", "HTML generated ahead of time."], ["Crawl demand", "What Google wants to crawl."], ["Container", "A pre-built piece of drop-in interface."], ["Initializer", "Sets up a drop-in&rsquo;s endpoints and options."], ["Slot", "A supported extension point inside a container."], ["events.on", "Subscribes to the event bus."], ["ctx.onChange", "Runs when a slot&rsquo;s context changes."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -210,6 +434,11 @@
       <div><h4>Drop-ins</h4><ul><li>One job each</li><li>Slots and events</li><li>Avoid forks</li></ul></div>
       <div><h4>Services</h4><ul><li>Catalog</li><li>Shopping operations</li><li>Separate clients</li></ul></div>
       <div><h4>SEO</h4><ul><li>Crawl demand</li><li>Selective prerender</li><li>SSR is not ranking</li></ul></div>
+      <div><h4>Connect</h4><ul><li>Import initializer</li><li>Import container and render</li><li><code>provider.render(C, props)(el)</code></li></ul></div>
+      <div><h4>Customize, in order</h4><ul><li>Tokens and CSS</li><li>Props</li><li>Slots</li><li>Events</li><li>Extend</li><li>New block</li></ul></div>
+      <div><h4>Slot context</h4><ul><li><code>appendChild</code>, <code>replaceWith</code></li><li><code>onChange</code></li><li><code>dictionary</code></li><li>No context method inside another</li></ul></div>
+      <div><h4>Event bus</h4><ul><li><code>events.on</code>, <code>emit</code></li><li><code>sub.off()</code></li><li>One document only</li><li>Rehydrate across pages</li></ul></div>
+      <div><h4>Requests</h4><ul><li>Catalog: products, prices</li><li>Shopping: cart, checkout</li><li>Nothing personal in shared HTML</li></ul></div>
     </div>
   </div>
 </section>
@@ -224,6 +453,9 @@
     <li><a href="https://experienceleague.adobe.com/en/tools/commerce-storefront/setup/configuration/aem-prerender/" rel="noopener" target="_blank">Adobe: AEM Commerce Prerender</a></li>
     <li><a href="https://experienceleague.adobe.com/en/tools/commerce-storefront/setup/launch/launch-checklist/" rel="noopener" target="_blank">Adobe: Launch checklist</a></li>
     <li><a href="https://www.aem.live/docs/storefront" rel="noopener" target="_blank">aem.live: Storefront</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/tools/commerce-storefront/dropins/all/introduction" rel="noopener" target="_blank">Drop-ins overview</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/tools/commerce-storefront/dropins/all/slots" rel="noopener" target="_blank">Using slots</a></li>
+    <li><a href="https://experienceleague.adobe.com/en/tools/commerce-storefront/dropins/all/events" rel="noopener" target="_blank">Event bus</a></li>
   </ul>
 </section>
 

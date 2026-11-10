@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SYL, HOME = ROOT / 'data/syllabus.json', ROOT / 'index.html'
 QUIZ = r'data-component="quiz"[^>]*><script type="application/json">(.*?)</script>'
 TOTAL = re.compile(r'(<span id="total-hours">)[\d.]+(</span>)')
+TOPICS = re.compile(r'(<span id="total-topics">)\d+(</span>)')
 raw = SYL.read_text()
 syl = json.loads(raw)
 problems = []
@@ -52,6 +53,7 @@ home = HOME.read_text()
 if not TOTAL.search(home):
     sys.exit('index.html: total-hours element not found')
 new_home = TOTAL.sub(rf'\g<1>{total}\g<2>', home)
+new_home = TOPICS.sub(rf"\g<1>{sum(len(m['topics']) for m in syl['modules'])}\g<2>", new_home)
 if '--check' in sys.argv:
     if raw != out or home != new_home:
         print('study hours are out of date: run python3 tools/estimate-hours.py')

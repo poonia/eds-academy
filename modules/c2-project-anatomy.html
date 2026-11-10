@@ -38,6 +38,7 @@
     <li>Explain the job of each core script.</li>
     <li>Put CSS in the right file.</li>
     <li>Update Universal Editor model files correctly.</li>
+    <li>Decide whether a change belongs in head.html, and when it does not.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c2-ready" data-title="Ready for project anatomy?">
     <script type="application/json">{"questions": [{"q": "What runs aem up?", "options": ["A linter", "A deploy", "A local server"], "answer": 2, "explain": "Covered in C1."}, {"q": "Which phase handles third-party tags?", "options": ["Eager", "Delayed", "Lazy"], "answer": 1, "explain": "Covered in A3."}, {"q": "What is the Code Bus for?", "options": ["Configuration", "JavaScript and CSS", "Documents"], "answer": 1, "explain": "Covered in A2."}]}</script>
@@ -63,6 +64,18 @@
       <tr><td><code>.hlxignore</code></td><td>Files not to serve</td></tr>
     </tbody>
   </table></div>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[New file] --&gt; B{Used by visitors?}
+  B -- No --&gt; C[tools/ and list it in .hlxignore if private]
+  B -- Yes --&gt; D{Tied to one block?}
+  D -- Yes --&gt; E[blocks/name/]
+  D -- No --&gt; F{Script or style?}
+  F -- Script --&gt; G[scripts/]
+  F -- Style --&gt; H[styles/]</pre>
+      <figcaption><b>What to notice:</b> Most code belongs with its block. Global folders are for what is shared by the whole site.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>For a new file: if not used by visitors, put it in tools and ignore it if private. If tied to one block, it goes in that block folder. Otherwise scripts go in scripts and styles in styles.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <figure class="code" data-file=".hlxignore" data-lang="text">
@@ -73,6 +86,30 @@ package.json
 package-lock.json
 test/*</textarea>
       <figcaption><b>Why:</b> repository files are served unless you exclude them.</figcaption>
+    </figure>
+    <figure class="code" data-file="A typical project" data-lang="text">
+      <textarea class="src" hidden>your-site/
+├── blocks/            one folder per block
+│   └── cards/
+│       ├── cards.js   default export receives the block
+│       └── cards.css  loaded with the block
+├── widgets/           application-like pieces, added by link
+├── scripts/
+│   ├── aem.js         shared library; do not edit
+│   ├── scripts.js     your entry point and loading phases
+│   ├── consent-check.js   gate for the delayed phase
+│   └── consented.js   third parties, after consent
+├── styles/
+│   ├── styles.css     tokens and critical layout
+│   ├── lazy-styles.css   loaded after the first section
+│   └── fonts.css      web fonts
+├── fonts/  icons/
+├── tools/             internal pages, such as Sidekick plugins
+├── head.html          injected into every page's head
+├── 404.html           custom not-found response
+├── robots.txt         production robots rules
+└── .hlxignore         files that must not be served</textarea>
+      <figcaption>Exact files vary by boilerplate version. Older projects may have delayed.js in place of the consent modules.</figcaption>
     </figure>
   </div>
   <div data-part="try">
@@ -93,6 +130,9 @@ test/*</textarea>
   <div data-part="concept">
     <p><code>aem.js</code> is the shared library, and <code>scripts.js</code> is your entry point with the three phases. Older projects and many tutorials use <code>delayed.js</code> for the last phase.</p>
     <p>The current boilerplate has no <code>delayed.js</code>. Its <code>loadDelayed()</code> imports <code>consent-check.js</code>, which loads <code>consented.js</code> once consent is granted. Check which pattern your project uses before adding code.</p>
+    <h3>What belongs where</h3>
+    <p>Treat <code>aem.js</code> as vendor code. If you edit it, every later upgrade becomes a manual merge. Put project logic in <code>scripts.js</code>, but keep that file small: it is on the critical path, and every line of it is parsed before LCP.</p>
+    <p>A useful test for new code is to ask when it first matters. If the visitor needs it to see the first section, it belongs in the eager path, which is rare. If it only matters below the first section, put it in a block or the lazy phase. If it is a third party, or not material to the experience, it belongs behind consent in the delayed phase.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -107,6 +147,19 @@ test/*</textarea>
       <figcaption><b>What to notice:</b> consent now gates third-party code by default.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>head.html loads aem.js and scripts.js. scripts.js runs loadEager, loadLazy and loadDelayed. loadDelayed imports consent-check.js, which loads consented.js if consent is given.</p></details>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Helper from <code>aem.js</code></th><th>Use it to</th></tr></thead>
+    <tbody>
+      <tr><td><code>getMetadata(name)</code></td><td>Read a page metadata value</td></tr>
+      <tr><td><code>toClassName(text)</code></td><td>Turn text into a class-safe name</td></tr>
+      <tr><td><code>readBlockConfig(block)</code></td><td>Read a key and value block into an object</td></tr>
+      <tr><td><code>createOptimizedPicture(src, alt, eager, breakpoints)</code></td><td>Build a responsive picture</td></tr>
+      <tr><td><code>buildBlock(name, content)</code></td><td>Create block markup in code</td></tr>
+      <tr><td><code>decorateBlock</code> and <code>loadBlock</code></td><td>Add and load a block after decoration</td></tr>
+      <tr><td><code>loadCSS(href)</code> and <code>loadScript(src, attrs)</code></td><td>Load a file once</td></tr>
+      <tr><td><code>fetchPlaceholders(prefix)</code> (separate module in some versions)</td><td>Read translated UI strings</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <figure class="code" data-file="scripts/scripts.js (from aem-boilerplate)" data-lang="javascript">
@@ -153,6 +206,16 @@ loadPage();</textarea>
       <tr><td>lazy-styles.css</td><td>Lazy phase</td><td>Everything non-critical</td></tr>
     </tbody>
   </table></div>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  H[head.html] --&gt; S[styles.css]
+  S --&gt; F1[First section visible]
+  F1 --&gt; B[Each block's CSS as it loads]
+  F1 --&gt; L[lazy-styles.css]
+  F1 --&gt; FO[fonts.css]</pre>
+      <figcaption><b>What to notice:</b> Only styles.css is render-blocking for the whole page. Everything else arrives with, or after, the content it styles.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>head.html links styles.css. Once the first section is visible, each block loads its own CSS as it appears, and lazy-styles.css and fonts.css load without blocking.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <aside class="callout performance"><p>Keep <code>styles.css</code> small. Everything in it travels before LCP.</p></aside>
@@ -194,6 +257,16 @@ loadPage();</textarea>
       <tr><td><code>blocks/hero/_hero.json</code></td><td><code>component-models.json</code></td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="From fragments to generated files" data-lang="text">
+      <textarea class="src" hidden>blocks/hero/_hero.json     you edit this
+models/_section.json       you edit this
+        │  npm run build:json (also run by a pre-commit hook)
+        ▼
+component-definition.json  generated
+component-models.json      generated
+component-filters.json     generated</textarea>
+      <figcaption>If a hook did not run, the generated files will be stale. Run the build script and commit the result.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c2-t4"><script type="application/json">{"questions": [{"q": "Your edit to component-models.json vanished after a commit. Why?", "options": ["It is generated from fragments", "AEM restores the file from the last published version", "Git lost it"], "answer": 0, "explain": "Edit the block’s _name.json."}]}</script></div>
@@ -201,6 +274,53 @@ loadPage();</textarea>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Block not in the editor</td><td>Merge step did not run</td><td>Run <code>npm run build:json</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="special-files-and-serving-rules" data-level="2">
+  <h2>Special files and serving rules</h2>
+  <div data-part="why"><p>A handful of files change how the whole site behaves. Editing one casually can slow every page, or expose files you meant to keep private.</p></div>
+  <div data-part="concept">
+    <p><b>head.html</b> is added on the server to the head of every page, together with metadata from the content. It should stay close to the boilerplate. Legitimate reasons to change it are few, such as pointing to a different base path when a site lives under a subfolder of a domain, or supporting browsers that need non-module scripts. aem.live strongly advises against adding marketing technology or inline scripts and styles here.</p>
+    <p><b>404.html</b> at the repository root replaces the body of the default not-found response on any URL that matches neither content nor code. It can reuse your site&rsquo;s styles and navigation.</p>
+    <p><b>.hlxignore</b> uses the <code>.gitignore</code> format to stop files being served. Use it for tests and tooling, but do not rely on it for secrets, because a public repository is still public.</p>
+    <p><b>robots.txt</b> in the repository applies to the production domain only. The <code>.aem.page</code> and <code>.aem.live</code> hosts always disallow all robots. On repoless sites, <code>head.html</code> and <code>robots.txt</code> can live in the site configuration instead.</p>
+    <h3>When only part of a domain is on EDS</h3>
+    <p>If a CDN sends only <code>/en/blog/</code> to EDS, teams often move the code folders under <code>/en/blog/</code> in the repository and adjust the paths in <code>head.html</code>. The same folder structure is created in the content source, which avoids URL rewriting. As the EDS footprint grows, the code usually moves back to the root.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>File</th><th>Applies to</th><th>Change it when</th></tr></thead>
+    <tbody>
+      <tr><td><code>head.html</code></td><td>Every page</td><td>Rarely: base path or legacy browser support</td></tr>
+      <tr><td><code>404.html</code></td><td>Unmatched URLs</td><td>You want a branded error page</td></tr>
+      <tr><td><code>.hlxignore</code></td><td>Files in the repository</td><td>Tests or tools should not be served</td></tr>
+      <tr><td><code>robots.txt</code></td><td>Production domain only</td><td>Production crawling rules change</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file=".hlxignore" data-lang="text">
+      <textarea class="src" hidden>.*
+*.md
+LICENSE
+package.json
+package-lock.json
+test/*
+tools/importer/*</textarea>
+      <figcaption>Patterns follow the .gitignore format. Check a boilerplate copy before writing your own.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c2-t5"><script type="application/json">{"questions": [{"q": "A developer wants to put a tag manager in head.html so that it never misses a page view. What is the right response?", "options": ["Allow it, because head.html only affects the page after LCP", "Allow it, provided the script is added as an inline block", "Load it through the delayed phase, because head.html is on every page&rsquo;s critical path"], "answer": 2, "explain": "aem.live strongly advises against adding marketing technology to head.html because of its performance impact."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Lighthouse drops site-wide</td><td>Script added to <code>head.html</code></td><td>Move it to the delayed phase.</td></tr>
+      <tr><td>Test files are reachable by URL</td><td>No <code>.hlxignore</code> entry</td><td>Add the pattern and push.</td></tr>
+      <tr><td>aem.live is not crawled</td><td>That host always disallows robots</td><td>Check the production domain instead.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -273,12 +393,12 @@ loadPage();</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c2-check"><script type="application/json">{"questions": [{"q": "What is head.html?", "options": ["A template that replaces the whole page markup", "A block", "Injected into each page’s head"], "answer": 2, "explain": "Combined on the server with metadata."}, {"q": "What does .hlxignore do?", "options": ["Hides pages from search", "Stops files being served", "Ignores CSS errors and lint warnings during deployment"], "answer": 1, "explain": "Same format as .gitignore."}, {"q": "Where is site configuration managed now?", "options": ["The fstab.yaml and config files in Git", "The Configuration Service", "package.json"], "answer": 1, "explain": "Older projects may have files."}, {"q": "Which files come with the current boilerplate? Choose all that apply.", "options": ["consented.js", "delayed.js", "consent-check.js", "scripts.js"], "answer": [0, 2, 3], "explain": "delayed.js is an older pattern."}, {"q": "What is the boilerplate’s default consent?", "options": ["Accept", "Decline", "Ask the CDN"], "answer": 1, "explain": "A real CMP must replace it."}, {"q": "Where does a font-face rule go?", "options": ["aem.js", "head.html", "fonts.css"], "answer": 2, "explain": "It should not block LCP."}, {"q": "Which file do you edit for hero’s fields?", "options": ["hero.css", "blocks/hero/_hero.json", "component-models.json"], "answer": 1, "explain": "The root file is generated."}, {"q": "A marketer asks you to paste a tag manager snippet into head.html. What do you do?", "options": ["Load it in the delayed phase, behind consent", "Paste it at the top of head.html, so that it records every page view", "Inline it in every block", "Put it in aem.js"], "answer": 0, "explain": "aem.live strongly advises against martech in head.html.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c2-check"><script type="application/json">{"questions": [{"q": "What is head.html?", "options": ["A template that replaces the whole page markup", "A block", "Injected into each page’s head"], "answer": 2, "explain": "Combined on the server with metadata."}, {"q": "What does .hlxignore do?", "options": ["Hides pages from search", "Stops files being served", "Ignores CSS errors and lint warnings during deployment"], "answer": 1, "explain": "Same format as .gitignore."}, {"q": "Where is site configuration managed now?", "options": ["The fstab.yaml and config files in Git", "The Configuration Service", "package.json"], "answer": 1, "explain": "Older projects may have files."}, {"q": "Which files come with the current boilerplate? Choose all that apply.", "options": ["consented.js", "delayed.js", "consent-check.js", "scripts.js"], "answer": [0, 2, 3], "explain": "delayed.js is an older pattern."}, {"q": "What is the boilerplate’s default consent?", "options": ["Accept", "Decline", "Ask the CDN"], "answer": 1, "explain": "A real CMP must replace it."}, {"q": "Where does a font-face rule go?", "options": ["aem.js", "head.html", "fonts.css"], "answer": 2, "explain": "It should not block LCP."}, {"q": "Which file do you edit for hero’s fields?", "options": ["hero.css", "blocks/hero/_hero.json", "component-models.json"], "answer": 1, "explain": "The root file is generated."}, {"q": "A marketer asks you to paste a tag manager snippet into head.html. What do you do?", "options": ["Load it in the delayed phase, behind consent", "Paste it at the top of head.html, so that it records every page view", "Inline it in every block", "Put it in aem.js"], "answer": 0, "explain": "aem.live strongly advises against martech in head.html.", "scenario": true}, {"q": "Which host uses the robots.txt from your repository?", "options": ["Your production domain", "Your .aem.page host", "Your .aem.live host"], "answer": 0, "explain": "Preview and live hosts always disallow robots."}, {"q": "Why should you avoid editing aem.js?", "options": ["It makes later upgrades a manual merge", "Code Sync does not deliver changes to the file", "The file is regenerated on each publish"], "answer": 0, "explain": "Keep project logic in scripts.js and blocks."}, {"q": "What does .hlxignore not give you?", "options": ["Protection for secrets in a public repository", "A way to keep tests from being served", "A .gitignore-style list of patterns"], "answer": 0, "explain": "A public repository is still public. Do not store secrets in it."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c2-cards"><script type="application/json">{"cards": [["head.html", "Server-injected into the head."], ["aem.js", "Shared library; leave it unmodified."], ["scripts.js", "Project entry point."], ["consent-check.js", "Gate for delayed scripts."], ["consented.js", "Consent-dependent code."], ["styles.css", "Critical global CSS."], ["lazy-styles.css", "Non-critical global CSS."], [".hlxignore", "Files that are not served."], ["_hero.json", "Per-block model fragment."], ["build:json", "Merges model fragments."]]}</script></div>
+  <div data-component="flashcards" data-id="c2-cards"><script type="application/json">{"cards": [["head.html", "Server-injected into the head."], ["aem.js", "Shared library; leave it unmodified."], ["scripts.js", "Project entry point."], ["consent-check.js", "Gate for delayed scripts."], ["consented.js", "Consent-dependent code."], ["styles.css", "Critical global CSS."], ["lazy-styles.css", "Non-critical global CSS."], [".hlxignore", "Files that are not served."], ["_hero.json", "Per-block model fragment."], ["build:json", "Merges model fragments."], ["head.html", "Added on the server to every page&rsquo;s head."], ["404.html", "Custom not-found body, at the repository root."], [".hlxignore", "Stops listed files being served."], ["aem.js", "Shared library. Treat as vendor code."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -291,6 +411,9 @@ loadPage();</textarea>
       <div><h4>Phases</h4><ul><li>loadEager</li><li>loadLazy</li><li>loadDelayed</li></ul></div>
       <div><h4>Consent</h4><ul><li>consent-check.js</li><li>consented.js</li><li>Declines by default</li></ul></div>
       <div><h4>UE</h4><ul><li>_name.json fragments</li><li>build:json</li><li>Three root files</li></ul></div>
+      <div><h4>Special files</h4><ul><li><code>head.html</code>: change rarely</li><li><code>404.html</code>: root of repository</li><li><code>.hlxignore</code>: not for secrets</li><li><code>robots.txt</code>: production only</li></ul></div>
+      <div><h4>Where code goes</h4><ul><li>Needed for first section: eager</li><li>Below the first section: block or lazy</li><li>Third party: delayed, behind consent</li><li>Never edit <code>aem.js</code></li></ul></div>
+      <div><h4>aem.js helpers</h4><ul><li><code>getMetadata</code></li><li><code>readBlockConfig</code></li><li><code>createOptimizedPicture</code></li><li><code>buildBlock</code></li><li><code>loadCSS</code>, <code>loadScript</code></li></ul></div>
     </div>
   </div>
 </section>

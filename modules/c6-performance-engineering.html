@@ -39,6 +39,8 @@
     <li>Use responsive images in blocks correctly.</li>
     <li>Govern third parties.</li>
     <li>Use lab and field data together.</li>
+    <li>Handle LCP elements the default logic gets wrong.</li>
+    <li>Find and reduce main-thread work behind poor INP.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c6-ready" data-title="Ready for performance engineering?">
     <script type="application/json">{"questions": [{"q": "What is the 100 KB rule about?", "options": ["Total site size", "Image size only", "Payload before LCP"], "answer": 2, "explain": "Covered in A3."}, {"q": "Which function loads the first section?", "options": ["loadDelayed", "loadEager", "loadFooter"], "answer": 1, "explain": "Covered in C2."}, {"q": "Which runs a block’s code?", "options": ["loadBlock", "decorateIcons", "getMetadata"], "answer": 0, "explain": "Covered in C3."}]}</script>
@@ -76,6 +78,15 @@
       <tr><td>Analytics, chat, tag manager</td><td>Delayed, after consent</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Adding a guaranteed delay to the last phase" data-lang="javascript">
+      <textarea class="src" hidden>// scripts/consented.js (loaded only after consent)
+const delay = (ms) =&gt; new Promise((resolve) =&gt; { setTimeout(resolve, ms); });
+
+await delay(3000);
+await import('./tags.js');</textarea>
+      <figcaption>One way to add the delay. consent-check.js is another reasonable place.</figcaption>
+      <ol class="code-explain"><li data-line="4">aem.live advises starting at least three seconds after LCP. The boilerplate no longer enforces this for you.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c6-t1"><script type="application/json">{"questions": [{"q": "A chat widget belongs in?", "options": ["Eager", "Delayed", "head.html"], "answer": 1, "explain": "It is a non-essential third party."}]}</script></div>
@@ -94,6 +105,8 @@
   <div data-part="concept">
     <p>aem.live’s rule of thumb is to keep the total payload before LCP under 100 KB. Avoid connecting to a second origin before LCP, because setting up the connection costs time, particularly on mobile.</p>
     <p>Keep the first section small: the fewer blocks it has, the faster LCP can be. Do not load large libraries for first-section blocks.</p>
+    <h3>What is on the path to LCP</h3>
+    <p>Count the requests a browser must complete before the hero appears: HTML, <code>styles.css</code>, <code>aem.js</code>, <code>scripts.js</code>, the hero block&rsquo;s JavaScript and CSS, and the image. Keeping their combined size below 100 KB usually gives an LCP that scores 100 in PageSpeed Insights. Changing the order of those requests on a constrained mobile network makes little difference: cutting bytes does.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -151,6 +164,16 @@
       <tr><td><code>breakpoints</code></td><td>Media and width for each source</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="What createOptimizedPicture produces" data-lang="html">
+      <textarea class="src" hidden>&lt;picture&gt;
+  &lt;source type="image/webp" srcset="./media_1a2b.jpg?width=2000&amp;format=webply&amp;optimize=medium"
+          media="(min-width: 600px)"&gt;
+  &lt;source type="image/webp" srcset="./media_1a2b.jpg?width=750&amp;format=webply&amp;optimize=medium"&gt;
+  &lt;source srcset="./media_1a2b.jpg?width=2000&amp;format=jpeg&amp;optimize=medium" media="(min-width: 600px)"&gt;
+  &lt;img loading="lazy" alt="Family on a porch" src="./media_1a2b.jpg?width=750&amp;format=jpeg&amp;optimize=medium"&gt;
+&lt;/picture&gt;</textarea>
+      <figcaption>Query parameters resize and convert the image on delivery, so authors upload one file.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c6-t3"><script type="application/json">{"questions": [{"q": "Which images should be eager?", "options": ["All of them", "Only the LCP image", "None ever"], "answer": 1, "explain": "Eager downloads compete for bandwidth."}]}</script></div>
@@ -178,6 +201,16 @@
       <tr><td>Analytics</td><td>Marketing</td><td>Delayed</td><td>Yes</td><td>Q1</td></tr>
       <tr><td>Chat</td><td>Support</td><td>Delayed</td><td>Yes</td><td>Q2</td></tr>
       <tr><td>Unknown pixel</td><td>None</td><td>—</td><td>—</td><td>Remove</td></tr>
+    </tbody>
+  </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Field</th><th>Example</th><th>Why record it</th></tr></thead>
+    <tbody>
+      <tr><td>Tag and vendor</td><td>Heat map, Acme</td><td>To know what is running</td></tr>
+      <tr><td>Owner</td><td>Marketing analytics lead</td><td>No owner means removal</td></tr>
+      <tr><td>Purpose and consent category</td><td>Research, analytics</td><td>Privacy review</td></tr>
+      <tr><td>Measured cost</td><td>+120 ms TBT on mobile</td><td>Comparison with its value</td></tr>
+      <tr><td>Review date</td><td>Each quarter</td><td>Stops tags living forever</td></tr>
     </tbody>
   </table></div>
   </div>
@@ -248,6 +281,8 @@
   <div data-part="concept">
     <p><b>Operational Telemetry</b>, also known as real use monitoring, collects performance data from a sample of real visits. It uses no cookies or other client-side state, sends data with <code>navigator.sendBeacon</code>, and does not fingerprint visitors.</p>
     <p>Field results often differ from lab results because real devices and networks vary. For small changes, variance and low traffic can make results hard to read. The OpTel Explorer tool helps you examine the data.</p>
+    <h3>Lab and field answer different questions</h3>
+    <p>Use the lab to compare two versions of code under the same conditions. Use the field to find out what visitors really experience. A lab score that holds at 100 while field LCP worsens usually means the real pages, devices or traffic are different from the test page. For small changes, wait for enough traffic before drawing a conclusion.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -276,6 +311,99 @@
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Personal data added to OpTel</td><td>Custom checkpoint</td><td>Remove it: this is not permitted.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="lcp-edge-cases" data-level="3">
+  <h2>LCP edge cases</h2>
+  <div data-part="why"><p>The boilerplate guesses the first image is the LCP element. When that is wrong, the page can be slow despite doing everything else right.</p></div>
+  <div data-part="concept">
+    <p><b>The LCP element is not in the markup.</b> If the hero is fetched from a fragment or service, the loader must not pick a candidate until the block has updated the DOM. Make sure the first block finishes that work before <code>waitForFirstImage</code> runs. Better still, put the content in the page.</p>
+    <p><b>There are two hero images.</b> When content holds one for desktop and one for mobile, the hero block should remove the one that is not needed before it starts loading. Otherwise a visitor downloads an unused image, or worse, loads the wrong one first.</p>
+    <p><b>The LCP is not an image.</b> It can be a long heading, or a video poster. Then focus on getting that text or poster displayed, including the CSS and font it depends on.</p>
+    <p><b>The image is in a lazily built structure.</b> If a carousel re-renders its pictures, pass <code>eager</code> for the first slide only.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A{What is the LCP element?} --&gt; B[Image in markup]
+  A --&gt; C[Image from a lookup]
+  A --&gt; D[Two heroes]
+  A --&gt; E[Text]
+  B --&gt; F[Default handling works]
+  C --&gt; G[Finish the block before guessing]
+  D --&gt; H[Remove the unused image first]
+  E --&gt; I[Keep its CSS and font fast]</pre>
+      <figcaption><b>What to notice:</b> Find out what the LCP element really is before optimizing anything. PageSpeed Insights names it.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A decision showing four kinds of LCP element. An image in the markup needs no special handling. An image from a lookup needs the block to finish first. Two heroes need the unused image removed. Text needs fast CSS and fonts.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Keeping only the hero image this viewport needs" data-lang="javascript">
+      <textarea class="src" hidden>export default function decorate(block) {
+  const isDesktop = window.matchMedia('(width &gt;= 900px)').matches;
+  const [mobile, desktop] = block.querySelectorAll('picture');
+  if (mobile &amp;&amp; desktop) (isDesktop ? mobile : desktop).remove();
+}</textarea>
+      <figcaption>This assumes authors supply the mobile image first.</figcaption>
+      <ol class="code-explain"><li data-line="4">Runs before the first image is chosen, so the unused file is never requested.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c6-t7"><script type="application/json">{"questions": [{"q": "A hero&rsquo;s desktop and mobile images are both in the content. The mobile LCP is poor. What should you change first?", "options": ["Mark both of the images as eager in the block&rsquo;s code", "Have the block remove the unneeded image before it loads", "Add a preload link for both of the images to head.html"], "answer": 1, "explain": "Downloading both wastes bandwidth, and the first image may be the wrong one."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>LCP image is lazy</td><td>Chosen after the first image rule ran</td><td>Finish block work first.</td></tr>
+      <tr><td>Two images downloaded</td><td>Both left in the DOM</td><td>Remove one in the block.</td></tr>
+      <tr><td>LCP waits on a service</td><td>Hero fetched from an API</td><td>Move hero content into the page.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="topic" id="inp-and-the-main-thread" data-level="3">
+  <h2>INP and the main thread</h2>
+  <div data-part="why"><p>A page can load instantly and still feel broken if taps take a second to respond. INP measures that.</p></div>
+  <div data-part="concept">
+    <p>Interaction to Next Paint measures how long the page takes to respond to interactions across a visit. A good result is 200 milliseconds or less. It is caused by long tasks on the main thread: the browser cannot respond while your JavaScript, or a third party&rsquo;s, is running.</p>
+    <p>Keep handlers short. Do what shows the result first, then defer the rest. Split long loops so the browser can paint between pieces. Third-party tags are the most common cause, which is another reason to gate them, remove those without an owner, and consider moving heavy work to a web worker.</p>
+    <p>Lighthouse cannot measure real interactions, so it reports Total Blocking Time as a proxy. Use Operational Telemetry to see INP from real visits.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Tap] --&gt; B[Input delay: main thread busy]
+  B --&gt; C[Your event handler]
+  C --&gt; D[Browser renders next frame]
+  D --&gt; E[INP is the whole span]</pre>
+      <figcaption><b>What to notice:</b> Most INP problems are in the first box: another task was already running.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A tap is followed by input delay while the main thread is busy, then the event handler, then rendering of the next frame. INP covers the whole span.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Yielding during long work" data-lang="javascript">
+      <textarea class="src" hidden>const yieldToMain = () =&gt; new Promise((resolve) =&gt; { setTimeout(resolve, 0); });
+
+async function renderRows(rows, tbody) {
+  for (let i = 0; i &lt; rows.length; i += 1) {
+    tbody.append(rows[i]);
+    if (i % 50 === 49) await yieldToMain();
+  }
+}</textarea>
+      <ol class="code-explain"><li data-line="6">Every 50 rows, give the browser a chance to handle input and paint.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c6-t8"><script type="application/json">{"questions": [{"q": "Lab results show low TBT, but field INP is poor on product pages. What is the most likely reason?", "options": ["Real visits meet long tasks that the lab run did not trigger", "INP can only be calculated for pages that have been published", "The lab test is measuring the page without any CSS applied"], "answer": 0, "explain": "Field data includes real interactions, devices and third parties."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Menu reacts slowly</td><td>Long task in a handler</td><td>Update the UI first, and defer the rest.</td></tr>
+      <tr><td>INP worsens after a tag is added</td><td>Third-party long tasks</td><td>Delay or remove the tag.</td></tr>
+      <tr><td>Large list blocks the page</td><td>One long loop</td><td>Yield in chunks.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -350,12 +478,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c6-check"><script type="application/json">{"questions": [{"q": "What is aem.live’s pre-LCP payload rule of thumb?", "options": ["Under 10 KB", "Under 1 MB", "Under 100 KB"], "answer": 2, "explain": "Results in a fast LCP."}, {"q": "Which function marks the first image eager?", "options": ["loadFonts", "getMetadata", "waitForFirstImage"], "answer": 2, "explain": "See aem.js."}, {"q": "Default picture widths?", "options": ["4000 and 2000", "2000 and 750", "1200 and 400"], "answer": 1, "explain": "See createOptimizedPicture."}, {"q": "Which are field data? Choose all that apply.", "options": ["Operational Telemetry", "A single lab run", "CrUX"], "answer": [0, 2], "explain": "Lab runs are simulations."}, {"q": "How is telemetry sent?", "options": ["A pixel with cookies", "navigator.sendBeacon", "Email"], "answer": 1, "explain": "See the privacy notes."}, {"q": "What is ideal for a PR’s score?", "options": ["Desktop only", "100 on mobile and desktop", "At least 90 on mobile and 100 on desktop"], "answer": 1, "explain": "aem.live’s guidance."}, {"q": "Should you make a separate Lighthouse config?", "options": ["Yes, per page", "Prefer the default PageSpeed Insights measure", "Yes, a separate config for each team and each template"], "answer": 1, "explain": "It keeps comparisons meaningful."}, {"q": "A/B tool vendor says their snippet must be first in head. LCP would suffer. What do you do?", "options": ["Comply, as vendors know best, and put the snippet at the top of head.html on every page of the site", "Remove all images", "Hide the page until it loads", "Test alternatives such as native experimentation, and measure any exception"], "answer": 3, "explain": "aem.live points to its native capability first.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c6-check"><script type="application/json">{"questions": [{"q": "What is aem.live’s pre-LCP payload rule of thumb?", "options": ["Under 10 KB", "Under 1 MB", "Under 100 KB"], "answer": 2, "explain": "Results in a fast LCP."}, {"q": "Which function marks the first image eager?", "options": ["loadFonts", "getMetadata", "waitForFirstImage"], "answer": 2, "explain": "See aem.js."}, {"q": "Default picture widths?", "options": ["4000 and 2000", "2000 and 750", "1200 and 400"], "answer": 1, "explain": "See createOptimizedPicture."}, {"q": "Which are field data? Choose all that apply.", "options": ["Operational Telemetry", "A single lab run", "CrUX"], "answer": [0, 2], "explain": "Lab runs are simulations."}, {"q": "How is telemetry sent?", "options": ["A pixel with cookies", "navigator.sendBeacon", "Email"], "answer": 1, "explain": "See the privacy notes."}, {"q": "What is ideal for a PR’s score?", "options": ["Desktop only", "100 on mobile and desktop", "At least 90 on mobile and 100 on desktop"], "answer": 1, "explain": "aem.live’s guidance."}, {"q": "Should you make a separate Lighthouse config?", "options": ["Yes, per page", "Prefer the default PageSpeed Insights measure", "Yes, a separate config for each team and each template"], "answer": 1, "explain": "It keeps comparisons meaningful."}, {"q": "A/B tool vendor says their snippet must be first in head. LCP would suffer. What do you do?", "options": ["Comply, as vendors know best, and put the snippet at the top of head.html on every page of the site", "Remove all images", "Hide the page until it loads", "Test alternatives such as native experimentation, and measure any exception"], "answer": 3, "explain": "aem.live points to its native capability first.", "scenario": true}, {"q": "What is a good INP?", "options": ["200 ms or less", "0.1 or less", "2.5 s or less"], "answer": 0, "explain": "2.5 s is the LCP threshold, and 0.1 is the CLS threshold."}, {"q": "What does Lighthouse report as a proxy for responsiveness?", "options": ["First Input Budget", "Total Blocking Time", "Cumulative Input Shift"], "answer": 1, "explain": "A lab run has no real interactions."}, {"q": "Your hero comes from a fragment. What must happen before the LCP image is chosen?", "options": ["The fragment must appear in the sitemap", "The block must finish updating the DOM", "The font must finish loading in full"], "answer": 1, "explain": "Otherwise the loader guesses from a page without the image."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c6-cards"><script type="application/json">{"cards": [["loadEager", "Decorates and shows the first section."], ["loadLazy", "Remaining sections, header, footer, fonts."], ["loadDelayed", "Runs last."], ["100 KB", "Rule of thumb before LCP."], ["Second origin", "Costly before LCP."], ["createOptimizedPicture", "Builds responsive pictures."], ["PSI", "PageSpeed Insights."], ["OpTel", "Operational Telemetry."], ["Lab data", "Simulated measurement."], ["Field data", "Measured from real visits."]]}</script></div>
+  <div data-component="flashcards" data-id="c6-cards"><script type="application/json">{"cards": [["loadEager", "Decorates and shows the first section."], ["loadLazy", "Remaining sections, header, footer, fonts."], ["loadDelayed", "Runs last."], ["100 KB", "Rule of thumb before LCP."], ["Second origin", "Costly before LCP."], ["createOptimizedPicture", "Builds responsive pictures."], ["PSI", "PageSpeed Insights."], ["OpTel", "Operational Telemetry."], ["Lab data", "Simulated measurement."], ["Field data", "Measured from real visits."], ["INP", "Responsiveness across a visit. Good is 200 ms or less."], ["TBT", "Lab proxy for main-thread blocking."], ["Long task", "Main-thread work over 50 ms."], ["LCP candidate", "The first image, by default."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -368,6 +496,10 @@
       <div><h4>Images</h4><ul><li>createOptimizedPicture</li><li>Eager only for LCP</li><li>Keep alt</li></ul></div>
       <div><h4>Gates</h4><ul><li>PSI on each PR</li><li>Include test URL</li><li>Aim for 100</li></ul></div>
       <div><h4>Field</h4><ul><li>Sampled</li><li>No cookies</li><li>Confirms impact</li></ul></div>
+      <div><h4>Before LCP</h4><ul><li>Under 100 KB in total</li><li>No second origin</li><li>Few blocks in first section</li><li>Only LCP image eager</li></ul></div>
+      <div><h4>LCP edge cases</h4><ul><li>Lookup: finish block first</li><li>Two heroes: remove one</li><li>Text: fast CSS and font</li><li>Carousel: eager for slide 1</li></ul></div>
+      <div><h4>INP</h4><ul><li>Good: 200 ms or less</li><li>Short handlers</li><li>Yield in loops</li><li>Gate third parties</li><li>Measure in the field</li></ul></div>
+      <div><h4>Tag inventory</h4><ul><li>Owner</li><li>Purpose and consent</li><li>Measured cost</li><li>Review date</li></ul></div>
     </div>
   </div>
 </section>

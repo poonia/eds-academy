@@ -38,6 +38,9 @@
     <li>Build conditional form rules.</li>
     <li>Choose a submission target.</li>
     <li>Design enterprise forms responsibly.</li>
+    <li>Explain how a form reaches the page.</li>
+    <li>Build accessible validation.</li>
+    <li>Design safe submission and data handling.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e4-ready" data-title="Ready for forms?">
     <script type="application/json">{"questions": [{"q": "What can a form sheet define?", "options": ["Fields and labels", "API keys", "CDN rules"], "answer": 0, "explain": "Covered in B10."}, {"q": "Where do blocks live?", "options": ["/content", "/blocks", "/config.json"], "answer": 1, "explain": "Covered in C4."}, {"q": "Can browser code hold secrets?", "options": ["Only in forms", "Yes", "No"], "answer": 2, "explain": "Covered in D4."}]}</script>
@@ -66,6 +69,29 @@
       <tr><td>REST, Power Automate, AEM Workflow</td><td>No</td><td>Yes</td></tr>
     </tbody>
   </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Capability</th><th>Document-based</th><th>WYSIWYG (Universal Editor)</th></tr></thead>
+    <tbody>
+      <tr><td>Accessible components, rules and validation</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Attachments, custom components</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Submit to a spreadsheet or email</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Operational Telemetry</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Advanced rule editor</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Document of record</td><td>No</td><td>Yes</td></tr>
+      <tr><td>reCAPTCHA</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Form Data Model</td><td>No</td><td>Yes</td></tr>
+      <tr><td>SharePoint, OneDrive, Azure Blob, REST</td><td>No</td><td>Yes</td></tr>
+    </tbody>
+  </table></div>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A{Multiple panels, business logic or AEM Workflow?} -- Yes --&gt; B[WYSIWYG in Universal Editor]
+  A -- No --&gt; C{Team entirely document-centric?}
+  C -- Yes --&gt; D[Document-based]
+  C -- No --&gt; B</pre>
+      <figcaption><b>What to notice:</b> Adobe recommends starting new projects in the Universal Editor, unless the form is basic and the team is entirely document-centric.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A decision. A form with multiple panels, business logic or AEM Workflow uses WYSIWYG in the Universal Editor. A simple form uses document-based authoring only if the team is entirely document-centric, otherwise the Universal Editor.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <div data-component="form-sheet" data-title="From sheet to form"><script type="application/json">{"csv": "Name,Type,Label,Mandatory,Options\nfullName,text,Full name,x,\nemail,email,Email,x,\ntopic,select,Topic,,Savings;Loans\nsend,submit,Send,,"}</script></div>
@@ -117,6 +143,24 @@ function annualAmount(monthly) {
 export { annualAmount };</textarea>
       <figcaption><b>Note:</b> rule editor functions must be synchronous. Use the Invoke Service action for API calls.</figcaption>
     </figure>
+    <figure class="code" data-file="A synchronous custom function" data-lang="javascript">
+      <textarea class="src" hidden>/**
+ * Returns the number of whole years since a date.
+ * @name yearsSince
+ * @param {string} date in YYYY-MM-DD format
+ * @return {number}
+ */
+function yearsSince(date) {
+  const start = new Date(date);
+  if (Number.isNaN(start.getTime())) return 0;
+  const diff = Date.now() - start.getTime();
+  return Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
+}
+
+export { yearsSince };</textarea>
+      <figcaption>A sketch for blocks/form/functions.js.</figcaption>
+      <ol class="code-explain"><li data-line="3">The comment helps the Rule Editor list this function for authors.</li><li data-line="7">Must be synchronous. Do not fetch data here.</li><li data-line="9">Handle bad input, since rules can run before the field is complete.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="e4-t2"><script type="application/json">{"questions": [{"q": "Why must a server validate data that the Rule Editor already checked?", "options": ["Servers are faster than browsers", "The Rule Editor does not run", "Browser rules can be bypassed"], "answer": 2, "explain": "Treat all submitted data as untrusted."}]}</script></div>
@@ -126,6 +170,144 @@ export { annualAmount };</textarea>
       <tr><td>Rule does not fire</td><td>Order or extension off</td><td>Check order and Extension Manager.</td></tr>
       <tr><td>Custom function missing</td><td>Wrong file or async</td><td>Use <code>functions.js</code>, and make it synchronous.</td></tr>
       <tr><td>Spam submissions</td><td>No protection</td><td>Add reCAPTCHA where supported.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="form-block-anatomy" data-level="3">
+  <h2>How a form reaches the page</h2>
+  <div data-part="why"><p>Without a mental model of how a form is built, every form bug looks like a mystery. It is a block, and a small data file.</p></div>
+  <div data-part="concept">
+    <p>A form is delivered through the form block. In document-based authoring, a sheet defines the fields and is delivered as JSON at the form&rsquo;s path. The block fetches that definition, builds HTML form elements, applies rules, and takes care of the submission.</p>
+    <p>Each row of the sheet is a field. Columns such as <b>Name</b>, <b>Type</b>, <b>Label</b>, <b>Mandatory</b> and <b>Options</b> describe it. In WYSIWYG authoring the definition comes from the Universal Editor instead, but it reaches the browser through the same block.</p>
+    <p>Because the form block is project code, you own its styling and can add custom field types. Forms are usually lower on a page, so keep them out of the first section where possible. Hide a field with rules rather than with CSS, so that its state is correct on submit.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+  participant P as Page
+  participant F as Form block
+  participant J as Definition JSON
+  participant S as Submission target
+  P-&gt;&gt;F: Block loads
+  F-&gt;&gt;J: Fetch definition
+  J--&gt;&gt;F: Fields and rules
+  F-&gt;&gt;F: Build real form elements
+  Note over F: Visitor completes form
+  F-&gt;&gt;S: Submit validated data</pre>
+      <figcaption><b>What to notice:</b> The block builds real HTML form controls, so browser and assistive technology behaviour come for free.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The page loads the form block. The block fetches the definition JSON and receives fields and rules, then builds real form elements. After the visitor completes the form, the block submits validated data to the target.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A field definition, as delivered" data-lang="json">
+      <textarea class="src" hidden>{
+  "total": 3,
+  "data": [
+    { "Name": "email", "Type": "email", "Label": "Email address", "Mandatory": "true" },
+    { "Name": "topic", "Type": "select", "Label": "Topic", "Options": "Rates,Accounts,Other" },
+    { "Name": "submit", "Type": "submit", "Label": "Send" }
+  ],
+  ":type": "sheet"
+}</textarea>
+      <figcaption>Column names depend on your form block version. B10 covers authoring.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e4-t3"><script type="application/json">{"questions": [{"q": "A form renders without its fields, and the page has no errors. What should you check first?", "options": ["Whether the page&rsquo;s sitemap entry was generated", "Whether the form&rsquo;s definition JSON returns data", "Whether the CDN was purged after the code merge"], "answer": 1, "explain": "The block builds fields from that definition."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Form is empty</td><td>Definition not previewed or published</td><td>Preview the sheet.</td></tr>
+      <tr><td>Field stays visible</td><td>Hidden with CSS only</td><td>Use a rule.</td></tr>
+      <tr><td>Validation is not announced</td><td>Custom field lacks a label or error link</td><td>Associate them with <code>aria-describedby</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="accessible-form-design" data-level="3">
+  <h2>Accessible and usable forms</h2>
+  <div data-part="why"><p>A form is usually the point where a visitor becomes a customer, and it is also where accessibility problems stop people altogether.</p></div>
+  <div data-part="concept">
+    <p>Every control needs a visible label, tied to it through <code>for</code> and <code>id</code>. A placeholder is not a label. Group related choices in a <code>fieldset</code> with a <code>legend</code>. Ask only for what you need, since each field lowers completion, and collecting less also reduces your privacy risk.</p>
+    <p>Errors must be specific, placed next to the field, and programmatically linked to it. On submit, move focus to the first error or to a summary. Do not rely on colour alone. Use the right <code>type</code> and <code>autocomplete</code> values, so phones show the right keyboard and browsers can fill details in.</p>
+    <p>Long forms benefit from being split into steps, as long as progress is clear and earlier answers are kept.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Element</th><th>Requirement</th></tr></thead>
+    <tbody>
+      <tr><td>Label</td><td>Visible, associated with the control</td></tr>
+      <tr><td>Required field</td><td>Marked in text, and with <code>required</code></td></tr>
+      <tr><td>Error</td><td>Specific text, linked with <code>aria-describedby</code></td></tr>
+      <tr><td>Submit failure</td><td>Focus moves to the error summary</td></tr>
+      <tr><td>Contact fields</td><td><code>type</code> and <code>autocomplete</code> set</td></tr>
+      <tr><td>Radio group</td><td><code>fieldset</code> and <code>legend</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="An error that assistive technology can find" data-lang="html">
+      <textarea class="src" hidden>&lt;label for="email"&gt;Email address&lt;/label&gt;
+&lt;input id="email" name="email" type="email" autocomplete="email"
+       required aria-invalid="true" aria-describedby="email-error"&gt;
+&lt;p id="email-error"&gt;Enter an email address in the format name@example.com&lt;/p&gt;</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e4-t4"><script type="application/json">{"questions": [{"q": "An error appears in red below a field, but a screen reader user never hears it. What is missing?", "options": ["A placeholder that repeats the error text", "A programmatic link such as aria-describedby", "A stronger shade of red on the error text"], "answer": 1, "explain": "The relationship has to be in the markup."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Field has no accessible name</td><td>Placeholder used as label</td><td>Add a <code>label</code>.</td></tr>
+      <tr><td>Focus lost after submit</td><td>Nothing moved it</td><td>Move focus to the first error.</td></tr>
+      <tr><td>Wrong phone keyboard</td><td>Generic type</td><td>Set <code>type</code> and <code>autocomplete</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="submission-security-and-privacy" data-level="4">
+  <h2>Submission, security and privacy</h2>
+  <div data-part="why"><p>A form that accepts data carries legal and security duties long after the page looks finished.</p></div>
+  <div data-part="concept">
+    <p>Treat everything from the browser as untrusted. Client-side rules are for usability. The system receiving the data must validate type, length, range and business rules again, whatever the page says.</p>
+    <p>Protect against automated abuse with Google reCAPTCHA in WYSIWYG forms, or a measure such as a honeypot field and rate limiting on your own endpoint. Never put an API key in client code: send data to a proxy or a submit action that holds the credential.</p>
+    <p>Decide what happens to the data. A spreadsheet is convenient, but it is a poor home for sensitive information, because many people can open it. Agree on who has access and how long data is kept, then state the purpose to the visitor. For regulated records, consider Document of Record and your organization&rsquo;s approved systems.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Browser rules] --&gt;|untrusted| B[Submit action or proxy]
+  B --&gt; C[Server validation]
+  C -- Fails --&gt; D[Clear error back to the visitor]
+  C -- Passes --&gt; E[Approved store]
+  E --&gt; F[Retention policy]</pre>
+      <figcaption><b>What to notice:</b> Browser rules sit on the left of the trust boundary. Only the server&rsquo;s checks count.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Browser rules send untrusted data to a submit action or proxy. Server validation either returns a clear error to the visitor, or passes data to an approved store governed by a retention policy.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Data</th><th>Reasonable store</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Newsletter email</td><td>Marketing platform</td><td>Consent recorded</td></tr>
+      <tr><td>General enquiry</td><td>CRM or case tool</td><td>Limit the fields</td></tr>
+      <tr><td>Financial or health data</td><td>Approved system through a secure endpoint</td><td>Not a shared spreadsheet</td></tr>
+      <tr><td>Attachments</td><td>Scanned, restricted storage</td><td>Limit types and size</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e4-t5"><script type="application/json">{"questions": [{"q": "A rule hides the income field unless a box is ticked. An attacker posts income anyway. Where must that be handled?", "options": ["In server-side validation at the receiving system", "In the Rule Editor&rsquo;s ordering of the rules", "In the form block&rsquo;s CSS for the hidden field"], "answer": 0, "explain": "Client rules can be bypassed by posting directly."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Key visible in the page</td><td>Submitted directly from client</td><td>Use a proxy or submit action.</td></tr>
+      <tr><td>Spam submissions</td><td>No protection</td><td>Add reCAPTCHA or a honeypot and rate limits.</td></tr>
+      <tr><td>Old data retained</td><td>No policy</td><td>Agree on retention and access.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -152,6 +334,8 @@ export { annualAmount };</textarea>
     <li><div><b>Define</b> server-side validation.</div></li>
     <li><div><b>Test</b> keyboard use and error messages.</div></li>
     <li><div><b>State</b> how long data is kept.</div></li>
+    <li><div><b>Link</b> each error to its field, and check it with a screen reader.</div></li>
+    <li><div><b>Post</b> a request that bypasses the rules, and confirm the receiving system rejects it.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
     <div><h3>Expected result</h3><p>A form specification ready to build.</p></div>
@@ -201,12 +385,12 @@ export { annualAmount };</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e4-check"><script type="application/json">{"questions": [{"q": "What is required to use Edge Delivery Services for AEM Forms?", "options": ["A valid AEM Forms licence", "A separate repository for each form", "A BYO CDN"], "answer": 0, "explain": "See Forms."}, {"q": "Which feature is WYSIWYG only?", "options": ["Rules and validation", "Advanced rule editor", "Accessible components"], "answer": 1, "explain": "See the comparison table."}, {"q": "Which is a document-based submission target?", "options": ["AEM Workflow", "Form Data Model", "Spreadsheet"], "answer": 2, "explain": "Simple forms can submit to sheets."}, {"q": "In what order do rules run?", "options": ["Top to bottom", "Bottom to top", "Random"], "answer": 0, "explain": "See Rule Editor."}, {"q": "Where do custom functions go?", "options": ["/robots.txt", "/styles/styles.css", "/blocks/form/functions.js"], "answer": 2, "explain": "See Rule Editor."}, {"q": "What must custom functions be?", "options": ["Longer than 100 lines", "Synchronous", "Written in Java"], "answer": 1, "explain": "Use a service action for network calls."}, {"q": "Which authoring does Adobe suggest for most new form projects?", "options": ["Hand-written HTML in each page", "Universal Editor", "A PDF"], "answer": 1, "explain": "See the Forms overview."}, {"q": "A rule hides the salary field for under-18s. A visitor still posts a salary directly. What should the system do?", "options": ["Publish the data", "Trust the browser, because the hidden field cannot be changed by visitors", "Delete the form", "Validate and reject on the server if the rule requires it"], "answer": 3, "explain": "Client-side rules are not controls.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e4-check"><script type="application/json">{"questions": [{"q": "What is required to use Edge Delivery Services for AEM Forms?", "options": ["A valid AEM Forms licence", "A separate repository for each form", "A BYO CDN"], "answer": 0, "explain": "See Forms."}, {"q": "Which feature is WYSIWYG only?", "options": ["Rules and validation", "Advanced rule editor", "Accessible components"], "answer": 1, "explain": "See the comparison table."}, {"q": "Which is a document-based submission target?", "options": ["AEM Workflow", "Form Data Model", "Spreadsheet"], "answer": 2, "explain": "Simple forms can submit to sheets."}, {"q": "In what order do rules run?", "options": ["Top to bottom", "Bottom to top", "Random"], "answer": 0, "explain": "See Rule Editor."}, {"q": "Where do custom functions go?", "options": ["/robots.txt", "/styles/styles.css", "/blocks/form/functions.js"], "answer": 2, "explain": "See Rule Editor."}, {"q": "What must custom functions be?", "options": ["Longer than 100 lines", "Synchronous", "Written in Java"], "answer": 1, "explain": "Use a service action for network calls."}, {"q": "Which authoring does Adobe suggest for most new form projects?", "options": ["Hand-written HTML in each page", "Universal Editor", "A PDF"], "answer": 1, "explain": "See the Forms overview."}, {"q": "A rule hides the salary field for under-18s. A visitor still posts a salary directly. What should the system do?", "options": ["Publish the data", "Trust the browser, because the hidden field cannot be changed by visitors", "Delete the form", "Validate and reject on the server if the rule requires it"], "answer": 3, "explain": "Client-side rules are not controls.", "scenario": true}, {"q": "A placeholder can replace a label. True or false?", "options": ["False", "True"], "answer": 0, "explain": "Every control needs a visible label."}, {"q": "Which attribute links a field to its error text?", "options": ["aria-owns", "aria-describedby", "aria-flowto"], "answer": 1, "explain": "It adds the text to the field&rsquo;s description."}, {"q": "Which is a poor home for sensitive form data?", "options": ["An approved case system", "A widely shared spreadsheet", "A restricted secure store"], "answer": 1, "explain": "Many people can open it."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e4-cards"><script type="application/json">{"cards": [["Forms licence", "Required for EDS Forms."], ["Document-based", "Simple forms from sheets."], ["WYSIWYG", "Universal Editor forms."], ["Rule Editor", "No-code conditions and actions."], ["functions.js", "Custom rule functions."], ["Form Data Model", "Data structure and sources."], ["Document of record", "Tamper-proof archive."], ["Forms Submission Service", "Saves directly to spreadsheets."]]}</script></div>
+  <div data-component="flashcards" data-id="e4-cards"><script type="application/json">{"cards": [["Forms licence", "Required for EDS Forms."], ["Document-based", "Simple forms from sheets."], ["WYSIWYG", "Universal Editor forms."], ["Rule Editor", "No-code conditions and actions."], ["functions.js", "Custom rule functions."], ["Form Data Model", "Data structure and sources."], ["Document of record", "Tamper-proof archive."], ["Forms Submission Service", "Saves directly to spreadsheets."], ["Form definition", "JSON that the form block builds fields from."], ["aria-describedby", "Links a field to its error or help text."], ["Honeypot", "Hidden field that traps simple bots."], ["Document of Record", "Tamper-proof archive of a submission."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -218,6 +402,10 @@ export { annualAmount };</textarea>
       <div><h4>Rules</h4><ul><li>When/Then</li><li>Top to bottom</li><li>Sync functions</li></ul></div>
       <div><h4>Submit</h4><ul><li>Choose target</li><li>Name an owner</li><li>Check support</li></ul></div>
       <div><h4>Safety</h4><ul><li>Server validation</li><li>Least data</li><li>Accessible errors</li></ul></div>
+      <div><h4>Choose authoring</h4><ul><li>Complex logic: WYSIWYG</li><li>Basic, doc-centric team: sheets</li><li>Valid AEM Forms licence</li></ul></div>
+      <div><h4>Accessible forms</h4><ul><li>Visible <code>label</code></li><li><code>fieldset</code> and <code>legend</code></li><li><code>aria-describedby</code> for errors</li><li>Focus first error</li><li><code>autocomplete</code></li></ul></div>
+      <div><h4>Security</h4><ul><li>Validate on the server</li><li>No keys in client code</li><li>reCAPTCHA or rate limits</li><li>Scan attachments</li></ul></div>
+      <div><h4>Privacy</h4><ul><li>Collect less</li><li>State the purpose</li><li>Limit access</li><li>Agree on retention</li></ul></div>
     </div>
   </div>
 </section>

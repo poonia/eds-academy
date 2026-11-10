@@ -38,6 +38,8 @@
     <li>Name the decoration steps in order.</li>
     <li>Explain how a block’s CSS and JS load.</li>
     <li>Write a safe auto-block.</li>
+    <li>Read the decorated DOM and its status attributes.</li>
+    <li>Trace a page load through its three phases.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c3-ready" data-title="Ready for rendering and decoration?">
     <script type="application/json">{"questions": [{"q": "Which file holds decorateMain?", "options": ["styles.css", "head.html", "scripts.js"], "answer": 2, "explain": "Covered in C2."}, {"q": "What is a section break?", "options": ["===", "---", "###"], "answer": 1, "explain": "Covered in B1."}, {"q": "What makes a table a block?", "options": ["Its width", "Its first row names it", "Its colour"], "answer": 1, "explain": "Covered in B1."}]}</script>
@@ -81,6 +83,24 @@
       <tr><td><code>.plain.html</code></td><td>Only the sections</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="View source: what the server sends" data-lang="html">
+      <textarea class="src" hidden>&lt;body&gt;
+  &lt;header&gt;&lt;/header&gt;
+  &lt;main&gt;
+    &lt;div&gt;                          &lt;!-- section --&gt;
+      &lt;h1&gt;Save for later&lt;/h1&gt;
+      &lt;div class="cards"&gt;          &lt;!-- block --&gt;
+        &lt;div&gt;                      &lt;!-- row --&gt;
+          &lt;div&gt;&lt;picture&gt;...&lt;/picture&gt;&lt;/div&gt;  &lt;!-- cell --&gt;
+          &lt;div&gt;&lt;p&gt;Plain text&lt;/p&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;&lt;/footer&gt;
+&lt;/body&gt;</textarea>
+      <figcaption>View source shows this. The Elements panel shows the page after JavaScript has changed it.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c3-t1"><script type="application/json">{"questions": [{"q": "Where do you confirm what the server really sent?", "options": ["View Source", "The Console", "DevTools Elements"], "answer": 0, "explain": "Elements shows the decorated DOM."}]}</script></div>
@@ -99,6 +119,9 @@
   <div data-part="concept">
     <p><code>decorateMain</code> in <code>scripts.js</code> runs five steps in order: <code>decorateIcons</code>, <code>buildAutoBlocks</code>, <code>decorateSections</code>, <code>decorateBlocks</code> and <code>decorateButtons</code>.</p>
     <p>This happens in the eager phase, and the body is hidden until then, which avoids early image downloads and layout shift. After that, the first section is loaded with priority for its first image, the LCP candidate.</p>
+    <h3>Why order matters</h3>
+    <p>Each step depends on the one before. Auto blocks must exist before <code>decorateSections</code> wraps content, or they would be treated as default content. Sections must be wrapped before <code>decorateBlocks</code> looks inside them. Buttons come last so that links inside finished structure are classified correctly.</p>
+    <p>If you add a step, decide where it belongs in that chain, and keep it synchronous. Anything awaited here delays every page&rsquo;s LCP.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -139,6 +162,8 @@
   <div data-part="concept">
     <p><code>loadBlock</code> sets <code>data-block-status</code> to loading, then fetches <code>blocks/name/name.css</code> and dynamically imports <code>name.js</code> in parallel. If the module has a default export, it is called with the block element, and the status becomes loaded.</p>
     <p>A failure in one block is caught and logged, so the rest of the page continues. Sections load one by one, and the first section is awaited before lazy loading starts.</p>
+    <h3>Why sections load in order</h3>
+    <p>Sections stay hidden until their blocks are ready, so a visitor never sees a half-built section. Loading one section at a time keeps the order predictable. It also means a slow block delays the sections after it, which is another reason to fetch data without blocking and to reserve space.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -179,6 +204,8 @@ if (mod.default) await mod.default(block);</textarea>
   <div data-part="concept">
     <p>Add your logic to <code>buildAutoBlocks</code>. Use <code>buildBlock(name, content)</code> to create the markup a block would have had from the server, then insert it into <code>main</code>.</p>
     <p>The current boilerplate auto-loads links to <code>/fragments/</code> and builds widget blocks here. Keep this code tiny, because it runs before LCP, and wrap it in a try/catch as the boilerplate does.</p>
+    <h3>When to reach for it</h3>
+    <p>Auto-blocking suits patterns that authors should not have to build: a hero made from the first image and heading, or an article header from metadata. It keeps documents simple. It is the wrong tool for something authors need to control or move around, because they cannot see or edit a block that exists only in code.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -205,6 +232,20 @@ if (mod.default) await mod.default(block);</textarea>
 }</textarea>
       <figcaption><b>Pattern:</b> a common auto-block from earlier boilerplate versions.</figcaption>
     </figure>
+    <figure class="code" data-file="A hero built from the first heading and picture" data-lang="javascript">
+      <textarea class="src" hidden>function buildHeroBlock(main) {
+  const h1 = main.querySelector('h1');
+  const picture = main.querySelector('picture');
+  if (h1 &amp;&amp; picture
+    &amp;&amp; (h1.compareDocumentPosition(picture) &amp; Node.DOCUMENT_POSITION_PRECEDING)) {
+    const section = document.createElement('div');
+    section.append(buildBlock('hero', { elems: [picture, h1] }));
+    main.prepend(section);
+  }
+}</textarea>
+      <figcaption>This pattern is the one the boilerplate has used. Check your own scripts.js.</figcaption>
+      <ol class="code-explain"><li data-line="5">Only build a hero when the picture comes before the heading.</li><li data-line="7"><code>buildBlock</code> creates the same markup the server would have delivered.</li><li data-line="8">The new section is decorated in the normal way by later steps.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c3-t4"><script type="application/json">{"questions": [{"q": "Which helper creates block markup in code?", "options": ["readBlockConfig", "createOptimizedPicture", "buildBlock"], "answer": 2, "explain": "It takes a name and content."}]}</script></div>
@@ -212,6 +253,107 @@ if (mod.default) await mod.default(block);</textarea>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Page crashes on odd content</td><td>No guard</td><td>Check elements exist, and keep the try/catch.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="decorated-dom" data-level="2">
+  <h2>From markup to decorated DOM</h2>
+  <div data-part="why"><p>Your CSS and JavaScript work against the decorated DOM, not the markup in view source. Knowing the differences explains most &ldquo;why doesn&rsquo;t my selector match?&rdquo; problems.</p></div>
+  <div data-part="concept">
+    <p>Decoration adds structure and state but does not change the content. Three things are worth remembering.</p>
+    <p><b>Sections</b> get the class <code>section</code>, and default content is wrapped in <code>default-content-wrapper</code>. Each block gets a <code>blockname-wrapper</code> parent. A section containing a block also gets <code>blockname-container</code>. Section Metadata becomes data attributes and classes.</p>
+    <p><b>Blocks</b> get the class <code>block</code>, plus <code>data-block-name</code> and <code>data-block-status</code>. Sections get <code>data-section-status</code>. These are useful during debugging, since they show exactly how far a page has got.</p>
+    <p><b>Buttons</b> are identified by shape. A link alone in a paragraph gets <code>button</code>, and bold or italic around it makes it <code>primary</code> or <code>secondary</code>. Authors never add a class.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">stateDiagram-v2
+  [*] --&gt; initialized: decorateSections or decorateBlock
+  initialized --&gt; loading: loadSection or loadBlock
+  loading --&gt; loaded: code and CSS finished
+  loaded --&gt; [*]</pre>
+      <figcaption><b>What to notice:</b> Status attributes are a free progress indicator. A block stuck on loading points at its own JavaScript or CSS request.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A state diagram. A section or block starts as initialized after decoration, moves to loading when its load starts, and to loaded when its code and CSS have finished.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="The same section after decoration" data-lang="html">
+      <textarea class="src" hidden>&lt;div class="section cards-container" data-section-status="loaded"&gt;
+  &lt;div class="default-content-wrapper"&gt;
+    &lt;h1 id="save-for-later"&gt;Save for later&lt;/h1&gt;
+  &lt;/div&gt;
+  &lt;div class="cards-wrapper"&gt;
+    &lt;div class="cards block" data-block-name="cards" data-block-status="loaded"&gt;
+      ...
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</textarea>
+      <figcaption>Compare with the delivered markup earlier in this module. Details may differ slightly between versions of aem.js.</figcaption>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c3-t5"><script type="application/json">{"questions": [{"q": "Your selector .section > .cards never matches. Why?", "options": ["The block class is only added once the block has been published", "Decoration puts a cards-wrapper between the section and the block", "Block classes are removed after the block has finished loading"], "answer": 1, "explain": "Each block is wrapped in a blockname-wrapper div."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Selector matches nothing</td><td>Written against view source</td><td>Inspect the Elements panel.</td></tr>
+      <tr><td>Block stuck on <code>loading</code></td><td>Its JS or CSS failed or is hanging</td><td>Check the Network panel and console.</td></tr>
+      <tr><td>Link is not a button</td><td>Link is not alone in its paragraph</td><td>Move it to its own line.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="page-load-walkthrough" data-level="2">
+  <h2>A page load, step by step</h2>
+  <div data-part="why"><p>When a page is slow or flickers, you need to know which step is responsible. This is the sequence to hold in your head.</p></div>
+  <div data-part="concept">
+    <p>The browser receives HTML with the body hidden by CSS. <code>scripts.js</code> runs as a module and calls <code>loadEager</code>. That decorates the main element and makes the body visible, then loads the first section and waits for its first image. Fonts may start here on larger screens or if they have already been cached.</p>
+    <p><code>loadLazy</code> loads the remaining sections, then the header and footer, <code>lazy-styles.css</code> and fonts. If the URL has a hash, it scrolls to that element once the content is present. The header and footer come after content because they are not on the critical path to LCP, and they have their own publishing life cycle.</p>
+    <p><code>loadDelayed</code> runs last. It imports <code>consent-check.js</code>, which declines by default, and loads <code>consented.js</code> only after consent. The boilerplate no longer hard-codes a timer, so if you need the three-second gap that aem.live recommends after LCP, add it yourself.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+  participant B as Browser
+  participant S as scripts.js
+  participant N as Same origin
+  B-&gt;&gt;N: Request HTML
+  N--&gt;&gt;B: Markup, head.html, styles.css
+  B-&gt;&gt;S: Run module
+  S-&gt;&gt;S: decorateMain, show body
+  S-&gt;&gt;N: First section blocks and LCP image
+  N--&gt;&gt;B: LCP
+  S-&gt;&gt;N: Remaining sections, header, footer
+  S-&gt;&gt;N: lazy-styles.css and fonts
+  Note over S: Later
+  S-&gt;&gt;S: consent-check, then consented</pre>
+      <figcaption><b>What to notice:</b> Everything before LCP comes from one origin. Third parties only appear at the very end, and only after consent.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A sequence diagram. The browser requests HTML from the same origin and runs scripts.js. The script decorates the main element and shows the body, then requests the first section&rsquo;s blocks and LCP image. After LCP it requests remaining sections, header, footer, lazy styles and fonts. Finally consent-check runs and may load consented.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="The shape of the three phases" data-lang="javascript">
+      <textarea class="src" hidden>async function loadPage() {
+  await loadEager(document);   // to LCP
+  await loadLazy(document);    // rest of the page
+  loadDelayed();               // no await: nothing waits on it
+}
+loadPage();</textarea>
+      <figcaption>Simplified from scripts/scripts.js.</figcaption>
+      <ol class="code-explain"><li data-line="2">Awaited: lazy work must not compete with LCP.</li><li data-line="4">Not awaited, because visitors should never wait for this phase.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c3-t6"><script type="application/json">{"questions": [{"q": "The footer appears noticeably later than the page content. Is that a defect?", "options": ["No, it loads in the lazy phase so that it stays off the path to LCP", "Yes, the footer should be delivered in the page&rsquo;s initial HTML", "Yes, it means that the delayed phase is starting much too early"], "answer": 0, "explain": "Header and footer are loaded asynchronously, in their own blocks."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Page jumps as header arrives</td><td>No space reserved</td><td>Give the header a fixed height in <code>styles.css</code>.</td></tr>
+      <tr><td>Link to <code>#section</code> lands wrong</td><td>Content was not ready</td><td>Let <code>loadLazy</code> do the scroll.</td></tr>
+      <tr><td>Third party starts too early</td><td>No delay added</td><td>Add a timer in <code>consent-check.js</code> or <code>consented.js</code>.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -311,12 +453,12 @@ if (mod.default) await mod.default(block);</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c3-check"><script type="application/json">{"questions": [{"q": "Which step comes first?", "options": ["decorateButtons", "decorateBlocks", "decorateIcons"], "answer": 2, "explain": "Then auto-blocks."}, {"q": "What class does a section get?", "options": ["wrapper", "block", "section"], "answer": 2, "explain": "decorateSections adds it."}, {"q": "What wraps default content?", "options": ["text-block", "content", "default-content-wrapper"], "answer": 2, "explain": "See decorateSections."}, {"q": "Which attributes does decoration set? Choose all that apply.", "options": ["data-section-status", "data-block-name", "data-block-status"], "answer": [0, 1, 2], "explain": "They track load state."}, {"q": "What does a primary button need?", "options": ["A style attribute", "A block", "A standalone bold link"], "answer": 2, "explain": "Italic gives secondary, both gives accent."}, {"q": "What does loadBlock import?", "options": ["blocks/name/name.js", "name.json", "scripts/name.js"], "answer": 0, "explain": "Dynamically."}, {"q": "If a block’s JS throws, what happens?", "options": ["The page stays blank until the block is removed", "It is logged and the page continues", "The server returns 500"], "answer": 1, "explain": "loadBlock catches errors."}, {"q": "A hero block waits on a personalization API before rendering, and LCP has doubled. What do you recommend?", "options": ["Await a longer timeout, and preload the personalization API in head.html to make up the difference in LCP", "Hide the page until it answers", "Move all the CSS into head.html", "Render authored content first, and apply changes afterwards or in a later phase"], "answer": 3, "explain": "Protect the first section.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c3-check"><script type="application/json">{"questions": [{"q": "Which step comes first?", "options": ["decorateButtons", "decorateBlocks", "decorateIcons"], "answer": 2, "explain": "Then auto-blocks."}, {"q": "What class does a section get?", "options": ["wrapper", "block", "section"], "answer": 2, "explain": "decorateSections adds it."}, {"q": "What wraps default content?", "options": ["text-block", "content", "default-content-wrapper"], "answer": 2, "explain": "See decorateSections."}, {"q": "Which attributes does decoration set? Choose all that apply.", "options": ["data-section-status", "data-block-name", "data-block-status"], "answer": [0, 1, 2], "explain": "They track load state."}, {"q": "What does a primary button need?", "options": ["A style attribute", "A block", "A standalone bold link"], "answer": 2, "explain": "Italic gives secondary, both gives accent."}, {"q": "What does loadBlock import?", "options": ["blocks/name/name.js", "name.json", "scripts/name.js"], "answer": 0, "explain": "Dynamically."}, {"q": "If a block’s JS throws, what happens?", "options": ["The page stays blank until the block is removed", "It is logged and the page continues", "The server returns 500"], "answer": 1, "explain": "loadBlock catches errors."}, {"q": "A hero block waits on a personalization API before rendering, and LCP has doubled. What do you recommend?", "options": ["Await a longer timeout, and preload the personalization API in head.html to make up the difference in LCP", "Hide the page until it answers", "Move all the CSS into head.html", "Render authored content first, and apply changes afterwards or in a later phase"], "answer": 3, "explain": "Protect the first section.", "scenario": true}, {"q": "What does data-block-status=\"loading\" tell you, if it never changes?", "options": ["The block&rsquo;s page has not been published", "The block&rsquo;s JS or CSS has not finished", "The block has no authored content"], "answer": 1, "explain": "Look at that block&rsquo;s requests and console errors."}, {"q": "Which class does a section containing a cards block get?", "options": ["section-cards", "cards-container", "cards-section"], "answer": 1, "explain": "The block&rsquo;s parent gets cards-wrapper."}, {"q": "What makes the header load after page content?", "options": ["It cannot be cached by the CDN", "Header blocks do not run in the eager phase by design of the browser", "It is not on the critical path to LCP"], "answer": 2, "explain": "Blocks with a separate life cycle are loaded on their own."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c3-cards"><script type="application/json">{"cards": [["main > div", "A section."], ["Block div", "Class is the block’s name."], ["decorateMain", "Runs the five decoration steps."], ["buildBlock", "Creates block markup in code."], ["loadBlock", "Fetches CSS and JS, calls default."], ["data-block-status", "initialized, loading or loaded."], ["default-content-wrapper", "Wraps text outside blocks."], ["decorateButtons", "Turns formatted links into buttons."], ["codeBasePath", "Base path for loading code."], ["LCP candidate", "First image in the first section."]]}</script></div>
+  <div data-component="flashcards" data-id="c3-cards"><script type="application/json">{"cards": [["main > div", "A section."], ["Block div", "Class is the block’s name."], ["decorateMain", "Runs the five decoration steps."], ["buildBlock", "Creates block markup in code."], ["loadBlock", "Fetches CSS and JS, calls default."], ["data-block-status", "initialized, loading or loaded."], ["default-content-wrapper", "Wraps text outside blocks."], ["decorateButtons", "Turns formatted links into buttons."], ["codeBasePath", "Base path for loading code."], ["LCP candidate", "First image in the first section."], ["data-section-status", "Shows how far a section has loaded."], ["data-block-status", "initialized, loading or loaded."], ["blockname-wrapper", "Parent added around each block."], ["default-content-wrapper", "Wraps non-block content."], ["loadEager", "Decorates, then loads the first section."], ["loadLazy", "Other sections, header, footer, lazy CSS."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -329,6 +471,10 @@ if (mod.default) await mod.default(block);</textarea>
       <div><h4>Loading</h4><ul><li>CSS and JS in parallel</li><li>default(block)</li><li>Errors are caught</li></ul></div>
       <div><h4>Buttons</h4><ul><li>Bold: primary</li><li>Italic: secondary</li><li>Both: accent</li></ul></div>
       <div><h4>Auto-blocks</h4><ul><li>buildAutoBlocks</li><li>buildBlock</li><li>Keep it tiny</li></ul></div>
+      <div><h4>Decorated classes</h4><ul><li><code>.section</code></li><li><code>.default-content-wrapper</code></li><li><code>.name-wrapper</code></li><li><code>.name-container</code></li><li><code>.block</code></li></ul></div>
+      <div><h4>Status</h4><ul><li><code>data-section-status</code></li><li><code>data-block-status</code></li><li><code>initialized</code> then <code>loading</code> then <code>loaded</code></li></ul></div>
+      <div><h4>Load order</h4><ul><li><code>loadEager</code>: first section</li><li><code>loadLazy</code>: the rest</li><li><code>loadDelayed</code>: after consent</li><li>Add your own delay if needed</li></ul></div>
+      <div><h4>decorateMain order</h4><ul><li><code>decorateIcons</code></li><li><code>buildAutoBlocks</code></li><li><code>decorateSections</code></li><li><code>decorateBlocks</code></li><li><code>decorateButtons</code></li></ul></div>
     </div>
   </div>
 </section>

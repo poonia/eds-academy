@@ -796,11 +796,21 @@
      "id": "branch-previews",
      "name": "Branch previews",
      "level": 1
+    },
+    {
+     "id": "daily-development-loop",
+     "name": "The daily development loop",
+     "level": 1
+    },
+    {
+     "id": "cli-options-in-practice",
+     "name": "CLI options in practice",
+     "level": 2
     }
    ],
    "signature": "Terminal replay of project setup",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C2",
@@ -839,11 +849,16 @@
      "id": "ue-model-files",
      "name": "UE model files",
      "level": 2
+    },
+    {
+     "id": "special-files-and-serving-rules",
+     "name": "Special files and serving rules",
+     "level": 2
     }
    ],
    "signature": "Project file-tree explorer",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C3",
@@ -883,11 +898,21 @@
      "id": "auto-blocking-in-code",
      "name": "Auto-blocking in code",
      "level": 2
+    },
+    {
+     "id": "decorated-dom",
+     "name": "From markup to decorated DOM",
+     "level": 2
+    },
+    {
+     "id": "page-load-walkthrough",
+     "name": "A page load, step by step",
+     "level": 2
     }
    ],
    "signature": "Decoration pipeline step-through",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C4",
@@ -905,7 +930,7 @@
    "pre": [
     "C3"
    ],
-   "hours": 3,
+   "hours": 3.5,
    "topics": [
     {
      "id": "block-contract",
@@ -951,11 +976,26 @@
      "id": "web-components-in-blocks",
      "name": "Web components in blocks",
      "level": 4
+    },
+    {
+     "id": "designing-the-content-model",
+     "name": "Designing a block&rsquo;s content model",
+     "level": 2
+    },
+    {
+     "id": "widgets-versus-blocks",
+     "name": "Widgets versus blocks",
+     "level": 2
+    },
+    {
+     "id": "debugging-blocks",
+     "name": "Debugging a block",
+     "level": 1
     }
    ],
    "signature": "Block builder playground",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C5",
@@ -973,7 +1013,7 @@
    "pre": [
     "C2"
    ],
-   "hours": 2,
+   "hours": 2.5,
    "topics": [
     {
      "id": "design-tokens",
@@ -999,11 +1039,21 @@
      "id": "design-system-mapping",
      "name": "Design system mapping",
      "level": 3
+    },
+    {
+     "id": "responsive-layouts",
+     "name": "Responsive layout patterns",
+     "level": 2
+    },
+    {
+     "id": "styling-default-content",
+     "name": "Styling default content and buttons",
+     "level": 2
     }
    ],
    "signature": "Design token editor and fallback-font CLS demo",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C6",
@@ -1053,11 +1103,21 @@
      "id": "rum-driven-tuning",
      "name": "RUM-driven tuning",
      "level": 4
+    },
+    {
+     "id": "lcp-edge-cases",
+     "name": "LCP edge cases",
+     "level": 3
+    },
+    {
+     "id": "inp-and-the-main-thread",
+     "name": "INP and the main thread",
+     "level": 3
     }
    ],
    "signature": "Loading waterfall visualizer",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C7",
@@ -1076,7 +1136,7 @@
     "C4",
     "B7"
    ],
-   "hours": 3,
+   "hours": 3.5,
    "topics": [
     {
      "id": "component-definitions",
@@ -1112,11 +1172,26 @@
      "id": "ue-extensions",
      "name": "UE extensions",
      "level": 4
+    },
+    {
+     "id": "type-inference-field-collapse-grouping",
+     "name": "Type inference, field collapse and grouping",
+     "level": 3
+    },
+    {
+     "id": "block-options-and-key-value",
+     "name": "Block options and key-value blocks",
+     "level": 3
+    },
+    {
+     "id": "building-a-ue-block-end-to-end",
+     "name": "Building a block end to end",
+     "level": 2
     }
    ],
    "signature": "Model JSON to properties-panel preview",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C8",
@@ -1135,7 +1210,7 @@
     "C4",
     "B3"
    ],
-   "hours": 2,
+   "hours": 2.5,
    "topics": [
     {
      "id": "spreadsheet-json",
@@ -1161,11 +1236,26 @@
      "id": "byom-content-source",
      "name": "BYOM content source",
      "level": 4
+    },
+    {
+     "id": "custom-index-expressions",
+     "name": "Custom index properties and expressions",
+     "level": 3
+    },
+    {
+     "id": "data-loading-patterns",
+     "name": "Data loading patterns in blocks",
+     "level": 3
+    },
+    {
+     "id": "limits-at-scale",
+     "name": "Limits that affect data design",
+     "level": 3
     }
    ],
    "signature": "Query-index playground",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C9",
@@ -1183,7 +1273,7 @@
    "pre": [
     "C6"
    ],
-   "hours": 1.5,
+   "hours": 2,
    "topics": [
     {
      "id": "analytics-and-tags",
@@ -1204,11 +1294,21 @@
      "id": "adobe-target",
      "name": "Adobe Target",
      "level": 4
+    },
+    {
+     "id": "data-layer-and-events",
+     "name": "Data layers and tracking events",
+     "level": 3
+    },
+    {
+     "id": "protected-api-proxy-pattern",
+     "name": "The protected API proxy pattern",
+     "level": 4
     }
    ],
    "signature": "Martech timeline and consent state diagram",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C10",
@@ -1252,11 +1352,21 @@
      "id": "visual-regression",
      "name": "Visual regression",
      "level": 3
+    },
+    {
+     "id": "browser-tests-on-branch-urls",
+     "name": "Browser tests on branch URLs",
+     "level": 2
+    },
+    {
+     "id": "load-performance-penetration-tests",
+     "name": "Load, performance and penetration tests",
+     "level": 3
     }
    ],
    "signature": "PR workflow and accessibility fix-it exercise",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "C11",
@@ -1275,7 +1385,7 @@
     "C8",
     "D2"
    ],
-   "hours": 2,
+   "hours": 2.5,
    "topics": [
     {
      "id": "sidekick-customization",
@@ -1301,11 +1411,21 @@
      "id": "shared-code-across-sites",
      "name": "Shared code across sites",
      "level": 4
+    },
+    {
+     "id": "admin-api-job-patterns",
+     "name": "Admin API job patterns",
+     "level": 4
+    },
+    {
+     "id": "webhooks-and-change-feeds",
+     "name": "Webhooks and change feeds",
+     "level": 4
     }
    ],
    "signature": "Admin API request builder",
    "built": true,
-   "asOf": "8 Nov 2026"
+   "asOf": "9 Nov 2026"
   },
   {
    "id": "D1",
@@ -1557,7 +1677,7 @@
     "C4",
     "B1"
    ],
-   "hours": 4,
+   "hours": 4.5,
    "topics": [
     {
      "id": "discovery-and-inventory",
@@ -1588,6 +1708,21 @@
      "id": "aem-sites-to-eds-with-ue",
      "name": "AEM Sites to EDS with UE",
      "level": 4
+    },
+    {
+     "id": "writing-import-transformations",
+     "name": "Writing import transformations",
+     "level": 3
+    },
+    {
+     "id": "redirect-mapping-workflow",
+     "name": "Building and testing a redirect map",
+     "level": 3
+    },
+    {
+     "id": "estimating-and-planning-a-migration",
+     "name": "Estimating and sequencing a migration",
+     "level": 3
     }
    ],
    "signature": "Component-to-block mapping and redirect validator",
@@ -1800,7 +1935,7 @@
     "B10",
     "C6"
    ],
-   "hours": 2,
+   "hours": 2.5,
    "topics": [
     {
      "id": "experimentation-plugin",
@@ -1810,6 +1945,16 @@
     {
      "id": "measuring-results",
      "name": "Measuring results",
+     "level": 3
+    },
+    {
+     "id": "planning-sample-size",
+     "name": "Planning sample size and duration",
+     "level": 3
+    },
+    {
+     "id": "experiment-quality-and-closure",
+     "name": "Experiment quality and closing a test",
      "level": 3
     }
    ],
@@ -1847,6 +1992,16 @@
      "id": "adobe-target-and-edge-personalization",
      "name": "Adobe Target and edge personalization",
      "level": 4
+    },
+    {
+     "id": "target-with-web-sdk",
+     "name": "Target with the Web SDK, step by step",
+     "level": 4
+    },
+    {
+     "id": "choosing-a-personalization-route",
+     "name": "Choosing a personalization route",
+     "level": 3
     }
    ],
    "signature": "Personalization flow and flicker timeline",
@@ -1871,7 +2026,7 @@
     "C8",
     "C9"
    ],
-   "hours": 2.5,
+   "hours": 3,
    "topics": [
     {
      "id": "commerce-storefront-on-eds",
@@ -1881,6 +2036,26 @@
     {
      "id": "commerce-architecture",
      "name": "Commerce architecture",
+     "level": 4
+    },
+    {
+     "id": "connecting-a-drop-in",
+     "name": "Connecting a drop-in in a block",
+     "level": 4
+    },
+    {
+     "id": "slots-and-styling-drop-ins",
+     "name": "Customizing with slots and design tokens",
+     "level": 4
+    },
+    {
+     "id": "event-bus-and-cart-continuity",
+     "name": "The event bus and cart continuity",
+     "level": 4
+    },
+    {
+     "id": "storefront-performance-and-seo",
+     "name": "Storefront performance and SEO",
      "level": 4
     }
    ],
@@ -1907,7 +2082,7 @@
     "B10",
     "C4"
    ],
-   "hours": 2.5,
+   "hours": 3,
    "topics": [
     {
      "id": "aem-forms-on-eds",
@@ -1917,6 +2092,21 @@
     {
      "id": "enterprise-forms",
      "name": "Enterprise forms",
+     "level": 4
+    },
+    {
+     "id": "form-block-anatomy",
+     "name": "How a form reaches the page",
+     "level": 3
+    },
+    {
+     "id": "accessible-form-design",
+     "name": "Accessible and usable forms",
+     "level": 3
+    },
+    {
+     "id": "submission-security-and-privacy",
+     "name": "Submission, security and privacy",
      "level": 4
     }
    ],
@@ -1943,7 +2133,7 @@
     "C8",
     "B7"
    ],
-   "hours": 2.5,
+   "hours": 3,
    "topics": [
     {
      "id": "content-fragments-as-html",
@@ -1953,6 +2143,16 @@
     {
      "id": "json-driven-pages-at-scale",
      "name": "JSON-driven pages at scale",
+     "level": 4
+    },
+    {
+     "id": "writing-mustache-templates",
+     "name": "Writing templates for generated pages",
+     "level": 3
+    },
+    {
+     "id": "keeping-generated-pages-in-sync",
+     "name": "Keeping generated pages in sync",
      "level": 4
     }
    ],
@@ -1994,6 +2194,16 @@
      "id": "content-automation",
      "name": "Content automation",
      "level": 4
+    },
+    {
+     "id": "verifying-agent-work",
+     "name": "Verifying what an agent built",
+     "level": 3
+    },
+    {
+     "id": "safe-agent-pipelines",
+     "name": "Security for agent pipelines",
+     "level": 4
     }
    ],
    "signature": "AI automation pipeline and MCP sequence",
@@ -2018,11 +2228,31 @@
     "C4",
     "B8"
    ],
-   "hours": 2.5,
+   "hours": 3,
    "topics": [
     {
      "id": "accessible-complex-blocks",
      "name": "Accessible complex blocks",
+     "level": 3
+    },
+    {
+     "id": "navigation-and-menus",
+     "name": "Accessible navigation and menus",
+     "level": 3
+    },
+    {
+     "id": "dialogs-and-focus-management",
+     "name": "Dialogs and focus management",
+     "level": 3
+    },
+    {
+     "id": "motion-contrast-zoom-and-targets",
+     "name": "Motion, contrast, zoom and target size",
+     "level": 3
+    },
+    {
+     "id": "testing-with-assistive-technology",
+     "name": "Testing with assistive technology",
      "level": 3
     }
    ],
@@ -2046,11 +2276,26 @@
    "pre": [
     "C11"
    ],
-   "hours": 2.5,
+   "hours": 3,
    "topics": [
     {
      "id": "sidekick-da-and-ue-extensions",
      "name": "Sidekick, DA and UE extensions",
+     "level": 4
+    },
+    {
+     "id": "building-a-sidekick-tool",
+     "name": "Building a Sidekick tool end to end",
+     "level": 4
+    },
+    {
+     "id": "experience-workspace-apps",
+     "name": "Experience Workspace apps",
+     "level": 4
+    },
+    {
+     "id": "universal-editor-extensions-in-practice",
+     "name": "Universal Editor extensions in practice",
      "level": 4
     }
    ],
@@ -2075,11 +2320,26 @@
     "C6",
     "D7"
    ],
-   "hours": 2,
+   "hours": 2.5,
    "topics": [
     {
      "id": "portfolio-performance-program",
      "name": "Portfolio performance program",
+     "level": 4
+    },
+    {
+     "id": "budgets-and-scorecards",
+     "name": "Budgets and scorecards",
+     "level": 4
+    },
+    {
+     "id": "diagnosing-regressions",
+     "name": "Diagnosing a regression",
+     "level": 4
+    },
+    {
+     "id": "peak-readiness-and-reporting",
+     "name": "Peak events and reporting value",
      "level": 4
     }
    ],
@@ -2103,11 +2363,21 @@
    "pre": [
     "C4"
    ],
-   "hours": 2,
+   "hours": 2.5,
    "topics": [
     {
      "id": "block-collection-and-open-source",
      "name": "Block Collection and open source",
+     "level": 4
+    },
+    {
+     "id": "writing-a-strong-contribution",
+     "name": "Writing a strong contribution",
+     "level": 4
+    },
+    {
+     "id": "inner-source-across-teams",
+     "name": "Inner source across your organization",
      "level": 4
     }
    ],

@@ -39,6 +39,8 @@
     <li>Choose between an app and a library plugin.</li>
     <li>Decide when to use an edge worker.</li>
     <li>Run many sites from one codebase.</li>
+    <li>Run reliable bulk jobs against the Admin API.</li>
+    <li>React to content changes with webhooks.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c11-ready" data-title="Ready for advanced developer tooling?">
     <script type="application/json">{"questions": [{"q": "What is the Admin API host?", "options": ["admin.hlx.page", "api.github.com", "cdn.aem.live"], "answer": 0, "explain": "Covered in A2."}, {"q": "Which header carries a token?", "options": ["x-auth-token", "accept", "x-forwarded-for"], "answer": 0, "explain": "Covered in A2."}, {"q": "What does repoless share?", "options": ["Content", "Code", "Authors"], "answer": 1, "explain": "Covered in A4."}]}</script>
@@ -52,6 +54,9 @@
   <div data-part="concept">
     <p>Customize Sidekick with a <code>sidekick</code> object in site configuration. Plugins have an <code>id</code>, a <code>title</code>, and options such as <code>environments</code> (<code>dev</code>, <code>edit</code>, <code>admin</code>, <code>preview</code>, <code>live</code>, <code>prod</code>, <code>any</code>) and <code>includePaths</code>.</p>
     <p>A plugin can open a URL or fire a custom event. Sidekick also emits events such as <code>previewed</code>, <code>published</code> and <code>env-switched</code>, which project code can listen for.</p>
+    <h3>Plugin types, and where they can run</h3>
+    <p>A <b>URL plugin</b> opens a page in a new tab. With <code>isPalette</code> it opens in a floating palette, and with <code>isPopover</code> in a popover. An <b>event plugin</b> fires <code>custom:&lt;name&gt;</code>. Event plugins run your JavaScript in the page, so they only work in the development, preview, live and production environments. They cannot run in the edit or admin views.</p>
+    <p>Use <code>includePaths</code> and <code>excludePaths</code> to limit a plugin to part of a site. <code>passConfig</code> and <code>passReferrer</code> send the project details to a URL plugin. Because Sidekick may load after your scripts, always check for the element and fall back to <code>sidekick-ready</code>.</p>
   </div>
   <div data-part="visual">
     <figure class="code" data-file="Sidekick configuration" data-lang="json">
@@ -67,6 +72,18 @@
   ]
 }</textarea>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Event</th><th>Fires when</th><th>Payload</th></tr></thead>
+    <tbody>
+      <tr><td><code>previewed</code></td><td>Preview clicked</td><td>Path or paths</td></tr>
+      <tr><td><code>updated</code></td><td>Reload clicked</td><td>Path</td></tr>
+      <tr><td><code>published</code></td><td>Publish clicked</td><td>Path</td></tr>
+      <tr><td><code>unpublished</code>, <code>deleted</code></td><td>Those buttons clicked</td><td>Path</td></tr>
+      <tr><td><code>env-switched</code></td><td>Environment changed</td><td><code>sourceUrl</code>, <code>targetUrl</code></td></tr>
+      <tr><td><code>status-fetched</code></td><td>Resource status arrived</td><td>Status object</td></tr>
+      <tr><td><code>custom:&lt;name&gt;</code></td><td>Event plugin clicked</td><td>Config, location and status</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <figure class="code" data-file="scripts/scripts.js" data-lang="javascript">
@@ -154,6 +171,20 @@ done &lt; paths.txt</textarea>
       <tr><td>Library plugin</td><td>Integrating into the editor’s library</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="tools/tags/tags.js" data-lang="javascript">
+      <textarea class="src" hidden>import DA_SDK from 'https://da.live/nx/utils/sdk.js';
+
+(async function init() {
+  const { context, token, actions } = await DA_SDK;
+  const button = document.querySelector('button');
+  button.addEventListener('click', () =&gt; {
+    actions.sendText(`Project: ${context.repo}`);
+    actions.closeLibrary();
+  });
+}());</textarea>
+      <figcaption>Check the current App SDK documentation for the full list of actions.</figcaption>
+      <ol class="code-explain"><li data-line="4">Provides the current project, a token for protected content, and editor actions.</li><li data-line="7">Inserts text at the author&rsquo;s cursor.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c11-t3"><script type="application/json">{"questions": [{"q": "Which browser API is the SDK based on?", "options": ["WebUSB", "postMessage", "WebRTC"], "answer": 1, "explain": "It passes messages securely."}]}</script></div>
@@ -172,6 +203,8 @@ done &lt; paths.txt</textarea>
   <div data-part="concept">
     <p>If you bring your own CDN, its edge workers can handle live-traffic integrations such as protected APIs. Cloudflare is one documented option for connecting a CDN to EDS, and aem.live’s integration guide lists edge workers for live traffic and author-side tasks.</p>
     <p>Keep them small and independent of slow backends, and cache carefully: varying a response by user reduces the cache hit rate. Personal data must not end up in shared cache.</p>
+    <h3>What belongs at the edge</h3>
+    <p>Good fits are small decisions made on every request: routing, header changes, redirects too numerous for the sheet, and proxies that hide a key. Poor fits are anything slow, anything that needs a large dependency, and anything that adds per-visitor variation to otherwise cacheable pages. C9 has a worked proxy.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -245,6 +278,140 @@ done &lt; paths.txt</textarea>
   </div>
 </section>
 
+<!-- 6 -->
+<section class="topic" id="admin-api-job-patterns" data-level="4">
+  <h2>Admin API job patterns</h2>
+  <div data-part="why"><p>Publishing one page by script is easy. Publishing 5,000 reliably needs jobs, back-off and a record of what failed.</p></div>
+  <div data-part="concept">
+    <p>Single-resource calls answer directly. Bulk calls with a list of paths start an asynchronous job and return 202, with a link to check it. Poll that link at a modest interval until the job has stopped, then read its details for per-path results.</p>
+    <p>Respect limits. A 429 means slow down, and any <code>retry-after</code> header says how long. Preview operations can return a 503 with an <code>x-error</code> header when the content source is throttling. Do not retry straight away.</p>
+    <p>Make scripts safe to re-run. Keep a list of the paths that succeeded, send work in batches, and print a summary of failures for a person to review. Use a dedicated API key with only the role it needs, kept in a secret store.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+  participant S as Script
+  participant A as Admin API
+  S-&gt;&gt;A: POST /live/org/site/main/* with paths
+  A--&gt;&gt;S: 202 with a job link
+  loop Until stopped
+    S-&gt;&gt;A: GET the job
+    A--&gt;&gt;S: state and progress
+  end
+  S-&gt;&gt;A: GET job details
+  A--&gt;&gt;S: Result per path
+  Note over S: Save failures, re-run only those</pre>
+      <figcaption><b>What to notice:</b> A 202 only means the work was accepted. The job&rsquo;s details tell you what really happened.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A script posts a list of paths to the Admin API and gets a 202 with a job link. It polls the job until it has stopped, then fetches details with a result per path, and saves failures to re-run.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="scripts/bulk-publish.mjs" data-lang="javascript">
+      <textarea class="src" hidden>const API = 'https://admin.hlx.page';
+const { ORG, SITE, ADMIN_API_KEY } = process.env;
+const headers = { 'X-Auth-Token': ADMIN_API_KEY, 'Content-Type': 'application/json' };
+const sleep = (ms) =&gt; new Promise((r) =&gt; { setTimeout(r, ms); });
+
+async function call(url, options, attempt = 1) {
+  const res = await fetch(url, { headers, ...options });
+  if ((res.status === 429 || res.status === 503) &amp;&amp; attempt &lt;= 5) {
+    const wait = Number(res.headers.get('retry-after')) * 1000 || 2 ** attempt * 1000;
+    console.warn(`Throttled: ${res.headers.get('x-error') || res.status}. Waiting ${wait} ms`);
+    await sleep(wait);
+    return call(url, options, attempt + 1);
+  }
+  if (!res.ok) throw new Error(`${res.status} ${res.headers.get('x-error') || url}`);
+  return res.json();
+}
+
+const paths = (await import('node:fs')).readFileSync('paths.txt', 'utf8').trim().split('\n');
+const { links } = await call(`${API}/live/${ORG}/${SITE}/main/*`, {
+  method: 'POST',
+  body: JSON.stringify({ paths }),
+});
+
+let job;
+do {
+  await sleep(5000);
+  job = await call(links.self);
+  console.log(job.state, job.progress);
+} while (job.state !== 'stopped');
+
+const details = await call(`${links.self}/details`);
+console.log(details.data.resources.filter((r) =&gt; r.status &gt;= 400));</textarea>
+      <figcaption>Field names can change. Check the Admin API reference before relying on this.</figcaption>
+      <ol class="code-explain"><li data-line="3">A dedicated key, read from the environment.</li><li data-line="8">Back off on throttling, with a cap on attempts.</li><li data-line="10">The <code>x-error</code> header explains why.</li><li data-line="19">A 202 with a link. The work has not been done yet.</li><li data-line="29">Poll until the job finishes.</li><li data-line="32">Report anything that failed, for a person to review.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c11-t6"><script type="application/json">{"questions": [{"q": "A bulk publish call returns 202. What does that tell you?", "options": ["All of the listed pages were successfully published", "The list of pages was too long to be processed", "The job was accepted, and its results are not known yet"], "answer": 2, "explain": "Poll the job, then read its details."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Script reports success, pages missing</td><td>Stopped at the 202</td><td>Poll, then read the details.</td></tr>
+      <tr><td>Repeated 429s</td><td>Immediate retries</td><td>Back off and honour <code>retry-after</code>.</td></tr>
+      <tr><td>Re-run repeats everything</td><td>No record of progress</td><td>Save successes, and re-run failures.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="webhooks-and-change-feeds" data-level="4">
+  <h2>Webhooks and change feeds</h2>
+  <div data-part="why"><p>Search indexes, caches and notifications all need to know when content changes. Polling for that is wasteful, and misses things.</p></div>
+  <div data-part="concept">
+    <p>A webhook is called whenever content on a site is previewed or published, at most once a minute. It carries a token, not the changes. Your service passes that token to the Admin API log endpoint, and pages through all the unseen changes.</p>
+    <p>Acknowledge the webhook immediately and do the work afterward, so a slow job does not cause timeouts. Protect the endpoint using a site secret. Use an API key that can only read logs. Because an event may cover many changes, write your handler to process a batch, and make it safe if the same change appears twice.</p>
+    <p>The audit log can answer questions after the fact, such as who published what. The older GitHub Actions publication events carry a deprecation notice, so prefer webhooks for new work.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Author publishes] --&gt; B[Webhook: at most once a minute]
+  B --&gt; C[Your service replies 204]
+  C --&gt; D[Read the log with the token]
+  D --&gt; E{More pages?}
+  E -- Yes --&gt; D
+  E -- No --&gt; F[Update search or notify]</pre>
+      <figcaption><b>What to notice:</b> The webhook only says that something changed. The log says what.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>An author publishes. A webhook fires at most once a minute. Your service replies 204, reads the log using the token, follows further pages until none remain, then updates search or notifies people.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A webhook handler" data-lang="javascript">
+      <textarea class="src" hidden>export async function handle(req, res) {
+  if (req.get('authorization') !== `token ${process.env.WEBHOOK_SECRET}`) {
+    res.sendStatus(401);
+    return;
+  }
+  res.sendStatus(204);
+
+  const { org, site, nextToken } = req.body ?? {};
+  let url = `https://admin.hlx.page/log/${org}/${site}/main?nextToken=${nextToken}`;
+  while (url) {
+    const page = await fetch(url, { headers: { 'X-Auth-Token': process.env.ADMIN_API_TOKEN } });
+    if (!page.ok) break;
+    const { entries, links } = await page.json();
+    await updateSearchIndex(entries);   // your code; must tolerate duplicates
+    url = links?.next;
+  }
+}</textarea>
+      <figcaption>Based on aem.live&rsquo;s webhook guide. Confirm the log URL against the current reference.</figcaption>
+      <ol class="code-explain"><li data-line="2">Rejects calls that do not have your site secret.</li><li data-line="6">Replies first, so slow work cannot cause a timeout.</li><li data-line="14">One notification can cover many changes.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c11-t7"><script type="application/json">{"questions": [{"q": "Your webhook takes 90 seconds to update a search index before replying. What should change?", "options": ["Poll the sitemap instead of receiving the webhook", "Ask Adobe to raise the once-a-minute delivery limit", "Reply straight away, then do the work afterward"], "answer": 2, "explain": "Long handlers risk timeouts. Acknowledge first."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Changes appear missing</td><td>Only the first log page read</td><td>Follow <code>links.next</code>.</td></tr>
+      <tr><td>Duplicate updates</td><td>Handler assumes each event once</td><td>Make it idempotent.</td></tr>
+      <tr><td>Anyone can call the endpoint</td><td>No secret</td><td>Check the site secret.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
 <section class="mpart" id="signature" data-toc="Signature interactive">
   <h2>Signature interactive: Admin API request builder</h2>
   <p>Choose an operation and details to see the curl command. Nothing is sent.</p>
@@ -314,12 +481,12 @@ done &lt; paths.txt</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c11-check"><script type="application/json">{"questions": [{"q": "Which header works for API keys? Choose all that apply.", "options": ["X-Auth-Token", "Authorization: token", "Cookie: key"], "answer": [0, 1], "explain": "See Admin API Keys."}, {"q": "Which code means a job was scheduled?", "options": ["202", "500", "200"], "answer": 0, "explain": "Bulk operations are asynchronous."}, {"q": "Who can create API keys?", "options": ["Anyone with the publish role", "An admin role", "Anyone signed in to Sidekick"], "answer": 1, "explain": "See permissions."}, {"q": "Which environment value means a folder view?", "options": ["admin", "edit", "dev"], "answer": 0, "explain": "SharePoint or Google Drive."}, {"q": "What is a library plugin for?", "options": ["Serving sitemaps", "Integrating into the editor’s library", "Routing CDN traffic to a plugin host"], "answer": 1, "explain": "Fullscreen apps are the other type."}, {"q": "What do profiles group?", "options": ["Reusable images and brand assets", "Reusable configuration", "Authors"], "answer": 1, "explain": "Headers, indexes, metadata."}, {"q": "What is the status of GitHub Actions publication events?", "options": ["The recommended default for new projects", "Carries a deprecation notice", "Mandatory"], "answer": 1, "explain": "Look at webhooks or the audit log."}, {"q": "A nightly script uses a personal admin token committed in the repo. What should happen?", "options": ["Make the repository private, rotate nothing and keep the token in the script", "Keep it, the repo is small", "Email the token to the team", "Revoke it, and use a stored, limited API key"], "answer": 3, "explain": "Treat it as compromised.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c11-check"><script type="application/json">{"questions": [{"q": "Which header works for API keys? Choose all that apply.", "options": ["X-Auth-Token", "Authorization: token", "Cookie: key"], "answer": [0, 1], "explain": "See Admin API Keys."}, {"q": "Which code means a job was scheduled?", "options": ["202", "500", "200"], "answer": 0, "explain": "Bulk operations are asynchronous."}, {"q": "Who can create API keys?", "options": ["Anyone with the publish role", "An admin role", "Anyone signed in to Sidekick"], "answer": 1, "explain": "See permissions."}, {"q": "Which environment value means a folder view?", "options": ["admin", "edit", "dev"], "answer": 0, "explain": "SharePoint or Google Drive."}, {"q": "What is a library plugin for?", "options": ["Serving sitemaps", "Integrating into the editor’s library", "Routing CDN traffic to a plugin host"], "answer": 1, "explain": "Fullscreen apps are the other type."}, {"q": "What do profiles group?", "options": ["Reusable images and brand assets", "Reusable configuration", "Authors"], "answer": 1, "explain": "Headers, indexes, metadata."}, {"q": "What is the status of GitHub Actions publication events?", "options": ["The recommended default for new projects", "Carries a deprecation notice", "Mandatory"], "answer": 1, "explain": "Look at webhooks or the audit log."}, {"q": "A nightly script uses a personal admin token committed in the repo. What should happen?", "options": ["Make the repository private, rotate nothing and keep the token in the script", "Keep it, the repo is small", "Email the token to the team", "Revoke it, and use a stored, limited API key"], "answer": 3, "explain": "Treat it as compromised.", "scenario": true}, {"q": "What does a webhook delivery contain?", "options": ["A list of changed files only", "The full text of each change", "A token for reading the log"], "answer": 2, "explain": "Use it to page through the log."}, {"q": "Where can event-based Sidekick plugins not run?", "options": ["Local development", "Edit and admin views", "Preview and live views"], "answer": 1, "explain": "They run your JavaScript in the page."}, {"q": "Bulk preview returns 503 with an x-error header. What is happening?", "options": ["The content source is throttling", "The branch does not exist", "The API key has expired"], "answer": 0, "explain": "Back off, then retry."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c11-cards"><script type="application/json">{"cards": [["sidekick-ready", "Sidekick has been added to the DOM."], ["environments", "Where a plugin appears."], ["Admin API", "Operations at admin.hlx.page."], ["API key", "Credential with roles and expiry."], ["429", "Rate limited."], ["Job", "An asynchronous bulk operation."], ["App SDK", "For Experience Workspace tools."], ["Library plugin", "Adds to the editor’s library."], ["Edge worker", "Logic on your CDN."], ["Profile", "Shared site configuration."]]}</script></div>
+  <div data-component="flashcards" data-id="c11-cards"><script type="application/json">{"cards": [["sidekick-ready", "Sidekick has been added to the DOM."], ["environments", "Where a plugin appears."], ["Admin API", "Operations at admin.hlx.page."], ["API key", "Credential with roles and expiry."], ["429", "Rate limited."], ["Job", "An asynchronous bulk operation."], ["App SDK", "For Experience Workspace tools."], ["Library plugin", "Adds to the editor’s library."], ["Edge worker", "Logic on your CDN."], ["Profile", "Shared site configuration."], ["202", "Job accepted, not finished."], ["Job details", "Result for each path."], ["Webhook", "Tells you content changed, at most once a minute."], ["isPalette", "Opens a URL plugin in a floating palette."], ["DA_SDK", "Gives an app context, token and actions."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -332,6 +499,10 @@ done &lt; paths.txt</textarea>
       <div><h4>EW tools</h4><ul><li>App SDK</li><li>Fullscreen or library</li><li>postMessage</li></ul></div>
       <div><h4>Edge</h4><ul><li>Your CDN</li><li>Hold secrets</li><li>Beware cache</li></ul></div>
       <div><h4>Repoless</h4><ul><li>One repo</li><li>Profiles</li><li>aem up --url</li></ul></div>
+      <div><h4>Admin API jobs</h4><ul><li>Bulk returns 202</li><li>Poll until <code>stopped</code></li><li>Read <code>/details</code></li><li>Back off on 429 or 503</li><li>Log <code>x-error</code></li></ul></div>
+      <div><h4>Sidekick</h4><ul><li>URL or event plugin</li><li><code>isPalette</code>, <code>isPopover</code></li><li><code>includePaths</code></li><li>No event plugins in edit or admin</li></ul></div>
+      <div><h4>Webhooks</h4><ul><li>At most once a minute</li><li>Reply 204 first</li><li>Read the log with the token</li><li>Follow <code>links.next</code></li><li>Tolerate duplicates</li></ul></div>
+      <div><h4>Safe scripts</h4><ul><li>Dedicated, limited key</li><li>Secret store</li><li>Batches</li><li>Re-run only failures</li></ul></div>
     </div>
   </div>
 </section>

@@ -66,6 +66,21 @@
 "x": "Used in E3"
 },
 {
+"t": "Event bus",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/dropins/all/events",
+"x": "Used in E3"
+},
+{
+"t": "Drop-ins overview",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/dropins/all/introduction",
+"x": "Used in E3"
+},
+{
+"t": "Using slots",
+"u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/dropins/all/slots",
+"x": "Used in E3"
+},
+{
 "t": "Storefront architecture",
 "u": "https://experienceleague.adobe.com/en/tools/commerce-storefront/get-started/architecture/",
 "x": "Used in E3"
@@ -541,6 +556,11 @@
 "x": "Used in E8"
 },
 {
+"t": "Experience Workspace App SDK recipes",
+"u": "https://www.aem.live/docs/ew/developing/sdk-recipes",
+"x": "Used in E8"
+},
+{
 "t": "Set up experimentation in Experience Workspace",
 "u": "https://www.aem.live/docs/ew/developing/set-up-experimentation",
 "x": "Used in E1"
@@ -571,9 +591,14 @@
 "x": "Used in D3, D6, E9"
 },
 {
+"t": "Indexing reference",
+"u": "https://www.aem.live/docs/indexing-reference",
+"x": "Used in C8"
+},
+{
 "t": "Large sites",
 "u": "https://www.aem.live/docs/large-sites",
-"x": "Used in D6, D8, E5"
+"x": "Used in D6, D8, E5, E9"
 },
 {
 "t": "Feature lifecycle",
@@ -583,7 +608,7 @@
 {
 "t": "Limits",
 "u": "https://www.aem.live/docs/limits",
-"x": "Used in B1, B2, B5, D6, D7"
+"x": "Used in B1, B2, B5, C8, D6, D7"
 },
 {
 "t": "Media assets",
@@ -614,6 +639,11 @@
 "t": "OpTel Explorer",
 "u": "https://www.aem.live/docs/optel-explorer",
 "x": "Used in C6, D7, E1, E9"
+},
+{
+"t": "Service scaling and high-visibility events",
+"u": "https://www.aem.live/docs/peak-traffic",
+"x": "Used in E9"
 },
 {
 "t": "Placeholders",
@@ -729,6 +759,11 @@
 "t": "Publishing pages with AEM Assets",
 "u": "https://www.aem.live/docs/universal-editor-assets",
 "x": "Used in B5"
+},
+{
+"t": "Widgets",
+"u": "https://www.aem.live/docs/widgets",
+"x": "Used in C4"
 },
 {
 "t": "How to make websites accessible",

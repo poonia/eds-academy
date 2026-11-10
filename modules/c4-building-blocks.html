@@ -39,6 +39,9 @@
     <li>Add variants and configuration.</li>
     <li>Build async and accessible blocks.</li>
     <li>Decide when to reuse a block or a web component.</li>
+    <li>Design a content model that authors can use without instructions.</li>
+    <li>Choose between a block and a widget.</li>
+    <li>Debug a block in a fixed order of checks.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c4-ready" data-title="Ready for building blocks?">
     <script type="application/json">{"questions": [{"q": "What is the first decoration step?", "options": ["decorateIcons", "loadFooter", "decorateButtons"], "answer": 0, "explain": "Covered in C3."}, {"q": "What is passed to a block’s default export?", "options": ["The block element", "The URL", "The whole document"], "answer": 0, "explain": "Covered in C3."}, {"q": "What do variant words become?", "options": ["URLs", "Classes", "Files"], "answer": 1, "explain": "Covered in B1."}]}</script>
@@ -52,6 +55,9 @@
   <div data-part="concept">
     <p>A block named <code>cards</code> lives at <code>blocks/cards/</code>, with <code>cards.js</code> and <code>cards.css</code>. The JavaScript has a default export that receives the block element. It may be async.</p>
     <p>All names must match exactly. The folder name comes from the first class on the block’s <code>div</code>, which comes from the authored name, lower-cased with dashes.</p>
+    <h3>What the loader guarantees</h3>
+    <p>By the time your function runs, the block&rsquo;s CSS has been requested, the block has its classes and status attributes, and its rows and cells are in the DOM. Your job is to reshape what is already there. The function can be <code>async</code>, and the section will wait for it, so do not await anything slow in a first-section block.</p>
+    <p>Two kinds of failure look alike. If the folder or file name is wrong, the request returns 404. If your code throws, the error is caught and logged. In both cases the page continues, and the block appears undecorated.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -109,6 +115,16 @@
 });</textarea>
       <figcaption><b>Note:</b> cells are moved, not re-created.</figcaption>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Authored table</th><th>Delivered DOM</th><th>Read it with</th></tr></thead>
+    <tbody>
+      <tr><td>Row</td><td><code>block &gt; div</code></td><td><code>[...block.children]</code></td></tr>
+      <tr><td>Cell in a row</td><td><code>row &gt; div</code></td><td><code>[...row.children]</code></td></tr>
+      <tr><td>Picture in a cell</td><td><code>picture</code> inside a <code>p</code> or <code>div</code></td><td><code>cell.querySelector(&#39;picture&#39;)</code></td></tr>
+      <tr><td>Link in a cell</td><td><code>a</code>, perhaps inside <code>p</code></td><td><code>cell.querySelector(&#39;a&#39;)</code></td></tr>
+      <tr><td>Plain single value</td><td>Text inside the cell</td><td><code>cell.textContent.trim()</code></td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
@@ -118,6 +134,32 @@
       <tr><td><code>textContent</code> for rich text</td><td>Move the child nodes</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="blocks/cards/cards.js (shape of the boilerplate block)" data-lang="javascript">
+      <textarea class="src" hidden>import { createOptimizedPicture } from '../../scripts/aem.js';
+
+export default function decorate(block) {
+  const ul = document.createElement('ul');
+  [...block.children].forEach((row) =&gt; {
+    const li = document.createElement('li');
+    while (row.firstElementChild) li.append(row.firstElementChild);
+    [...li.children].forEach((div) =&gt; {
+      if (div.children.length === 1 &amp;&amp; div.querySelector('picture')) {
+        div.className = 'cards-card-image';
+      } else {
+        div.className = 'cards-card-body';
+      }
+    });
+    ul.append(li);
+  });
+  ul.querySelectorAll('picture &gt; img').forEach((img) =&gt; {
+    img.closest('picture').replaceWith(
+      createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]),
+    );
+  });
+  block.replaceChildren(ul);
+}</textarea>
+      <ol class="code-explain"><li data-line="7">Moves the delivered cells instead of copying text, so links and emphasis survive.</li><li data-line="9">Works out each cell&rsquo;s job from what it contains, which tolerates authors reordering cells.</li><li data-line="19">Smaller widths, because cards never display at full page width.</li><li data-line="22">Swap the content in one operation, once the new structure is complete.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c4-t2"><script type="application/json">{"questions": [{"q": "Why move child nodes rather than copying text?", "options": ["CSS requires it", "It keeps the CSS selectors shorter and easier to lint", "Links and formatting survive"], "answer": 2, "explain": "Authored semantics stay intact."}]}</script></div>
@@ -159,6 +201,15 @@
       <tr><td>Different content model</td><td>Probably a new block</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Behaviour that depends on a variant" data-lang="javascript">
+      <textarea class="src" hidden>export default function decorate(block) {
+  const autoplay = block.classList.contains('autoplay');
+  const count = block.firstElementChild.children.length;
+  block.classList.add(`columns-${count}-cols`);  // CSS can now respond to the number of columns
+  if (autoplay) { /* behaviour only for this variant */ }
+}</textarea>
+      <figcaption>The boilerplate Columns block adds a class for the number of columns in this same way.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c4-t3"><script type="application/json">{"questions": [{"q": "A variant only changes colours. Does it need JavaScript?", "options": ["Only on mobile", "Yes", "No"], "answer": 2, "explain": "A class selector is enough."}]}</script></div>
@@ -188,9 +239,30 @@ export default async function decorate(block) {
   // Fetch and render using source and limit.
 }</textarea>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Authored row</th><th>Key</th><th>Value in the object</th></tr></thead>
+    <tbody>
+      <tr><td><code>Max Items | 6</code></td><td><code>max-items</code></td><td><code>&#39;6&#39;</code> (a string)</td></tr>
+      <tr><td><code>Source | a link</code></td><td><code>source</code></td><td>The link&rsquo;s <code>href</code></td></tr>
+      <tr><td><code>Image | a picture</code></td><td><code>image</code></td><td>The image&rsquo;s <code>src</code></td></tr>
+      <tr><td><code>Tags | two paragraphs</code></td><td><code>tags</code></td><td>An array of two strings</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <div class="doc-page"><table class="blocktable"><tr><th colspan="2">Article List</th></tr><tr><td>Source</td><td>/insights/query-index.json</td></tr><tr><td>Limit</td><td>6</td></tr></table></div>
+    <figure class="code" data-file="Reading settings safely" data-lang="javascript">
+      <textarea class="src" hidden>import { readBlockConfig } from '../../scripts/aem.js';
+
+export default async function decorate(block) {
+  const config = readBlockConfig(block);
+  const limit = Number.parseInt(config['max-items'], 10) || 6;
+  const source = config.source || '/query-index.json';
+  block.textContent = '';
+  // render from source, using limit
+}</textarea>
+      <ol class="code-explain"><li data-line="5">Everything arrives as a string, so convert it and provide a default.</li><li data-line="7">Clear the settings table so that it is not displayed.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c4-t4"><script type="application/json">{"questions": [{"q": "What does a row named “Max Items” become as a key?", "options": ["max-items", "Max Items", "maxItems"], "answer": 0, "explain": "readBlockConfig uses toClassName."}]}</script></div>
@@ -234,6 +306,21 @@ export default async function decorate(block) {
       <tr><td>Tabs</td><td>Button elements and ARIA roles</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="An accordion built on native elements" data-lang="javascript">
+      <textarea class="src" hidden>export default function decorate(block) {
+  [...block.children].forEach((row) =&gt; {
+    const [label, body] = row.children;
+    const summary = document.createElement('summary');
+    summary.append(...label.childNodes);
+    const details = document.createElement('details');
+    details.className = 'accordion-item';
+    body.className = 'accordion-item-body';
+    details.append(summary, body);
+    row.replaceWith(details);
+  });
+}</textarea>
+      <ol class="code-explain"><li data-line="6">The browser provides keyboard support and announces state, with no extra JavaScript.</li><li data-line="5">Moves child nodes, so an authored link in the label survives.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c4-t5"><script type="application/json">{"questions": [{"q": "The best starting point for an accordion?", "options": ["A carousel library", "Clickable divs", "details and summary"], "answer": 2, "explain": "Native behaviour is accessible and needs little code."}]}</script></div>
@@ -285,6 +372,39 @@ export default async function decorate(block) {
       <tr><td>Reserve space</td><td>Content pop-in</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="A list that loads when it nears the viewport" data-lang="javascript">
+      <textarea class="src" hidden>async function render(block, url, limit) {
+  try {
+    const res = await fetch(`${url}?limit=${limit}`);
+    if (!res.ok) throw new Error(res.status);
+    const { data } = await res.json();
+    const ul = document.createElement('ul');
+    data.forEach((item) =&gt; {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = item.path;
+      a.textContent = item.title;   // never innerHTML with fetched data
+      li.append(a);
+      ul.append(li);
+    });
+    block.replaceChildren(ul);
+  } catch (e) {
+    block.closest('.section')?.classList.add('list-unavailable');
+    block.remove();
+  }
+}
+
+export default function decorate(block) {
+  const observer = new IntersectionObserver((entries) =&gt; {
+    if (entries.some((e) =&gt; e.isIntersecting)) {
+      observer.disconnect();
+      render(block, '/query-index.json', 6);
+    }
+  }, { rootMargin: '300px' });
+  observer.observe(block);
+}</textarea>
+      <ol class="code-explain"><li data-line="4">A 404 does not throw on its own, so check the response.</li><li data-line="11"><code>textContent</code> keeps fetched data from being treated as markup.</li><li data-line="18">Fail quietly for visitors. An empty box is worse than no box.</li><li data-line="26">Not awaited: the section can finish loading while data waits.</li><li data-line="28">Start slightly before the block scrolls into view.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c4-t6"><script type="application/json">{"questions": [{"q": "Why use textContent for fetched titles?", "options": ["To prevent HTML injection", "It is required by ESLint", "innerHTML is not allowed in block code"], "answer": 0, "explain": "Treat data as text."}]}</script></div>
@@ -304,6 +424,8 @@ export default async function decorate(block) {
   <div data-part="concept">
     <p>The <b>Block Collection</b> repository includes accordion, cards, carousel, columns, embed, form, fragment, header, footer, hero, modal, quote, search, table, tabs and video. Copy what you need into your project: it becomes your code.</p>
     <p>The current boilerplate includes a <code>sync-block-collection.sh</code> script and a workflow to help with this. aem.live’s linting advice exists partly so that this reuse stays easy.</p>
+    <h3>What you are really reusing</h3>
+    <p>aem.live says the primary value of these blocks is their content structure. You will very likely change all of the CSS and JavaScript. There is no promise of backward compatibility and no upgrade path, so a copy is a fork from day one. To be listed, a block must be intuitive to author, have no dependencies, be responsive, inherit its context, avoid hard-coded text, be fast, and be accessible and SEO-friendly. Those seven tests make a good review checklist for your own blocks too.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -352,6 +474,17 @@ export default async function decorate(block) {
       <tr><td>Motion</td><td>Respect <code>prefers-reduced-motion</code></td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="State in ARIA, and styling from that state" data-lang="css">
+      <textarea class="src" hidden>.tabs [role='tab'][aria-selected='true'] {
+  border-block-end: 3px solid var(--link-color);
+}
+
+.tabs [role='tabpanel'][aria-hidden='true'] {
+  display: none;
+}</textarea>
+      <figcaption>E7 builds the full keyboard behaviour for tabs.</figcaption>
+      <ol class="code-explain"><li data-line="1">The visual state cannot drift from what assistive technology is told.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c4-t8"><script type="application/json">{"questions": [{"q": "Which element should open a panel?", "options": ["span", "div with onclick", "button"], "answer": 2, "explain": "Buttons are focusable and announced."}]}</script></div>
@@ -391,6 +524,19 @@ export default async function decorate(block) {
       <tr><td>Below the fold</td><td>Hero in the first section</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="A block that outputs a custom element" data-lang="javascript">
+      <textarea class="src" hidden>import { loadScript, getMetadata } from '../../scripts/aem.js';
+
+export default async function decorate(block) {
+  await loadScript('/scripts/vendor/relative-time.js', { type: 'module' });
+  const el = document.createElement('relative-time');
+  el.setAttribute('datetime', getMetadata('published-time'));
+  el.textContent = getMetadata('published-time');
+  block.replaceChildren(el);
+}</textarea>
+      <figcaption>Adapted from the approach in aem.live&rsquo;s web components guide. Keep this out of the first section.</figcaption>
+      <ol class="code-explain"><li data-line="4">Load only the component this page needs, and from your own origin.</li><li data-line="7">Keep a text fallback for when the component has not run.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c4-t9"><script type="application/json">{"questions": [{"q": "What is the main risk of a large web component library?", "options": ["Payload and performance", "Git size", "Longer clone times for the Git repository"], "answer": 0, "explain": "See aem.live’s performance concerns."}]}</script></div>
@@ -398,6 +544,134 @@ export default async function decorate(block) {
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Global styles do not apply</td><td>Shadow DOM isolation</td><td>Pass values through custom properties.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="topic" id="designing-the-content-model" data-level="2">
+  <h2>Designing a block&amp;rsquo;s content model</h2>
+  <div data-part="why"><p>Code can be rewritten in an afternoon. A content model lives in thousands of documents, so a poor one is the most expensive mistake in a block.</p></div>
+  <div data-part="concept">
+    <p>aem.live&rsquo;s advice is to start from the content. Let authors put what they need into a document without any notion of blocks, then introduce sections and blocks only where needed. Leave as much as possible as default content.</p>
+    <p>Prefer the structure that requires the least explaining. An author should be able to copy a block, paste it and understand it. Infer meaning from what is in a cell, rather than from its position. Avoid columns that only exist to hold settings, and never nest blocks.</p>
+    <p>Absorb complexity in code. The Columns block works out how many columns an instance has, so authors do not have to say. When a request would add a tenth setting, ask whether the design should instead be two blocks, a variant, or default content.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Smell</th><th>Better model</th></tr></thead>
+    <tbody>
+      <tr><td>Empty cells to keep positions right</td><td>Infer the role from the content</td></tr>
+      <tr><td>A cell holding a colour code</td><td>A named variant or section style</td></tr>
+      <tr><td>One &ldquo;Page&rdquo; block with many settings</td><td>Default content and small blocks</td></tr>
+      <tr><td>A block inside a block</td><td>Sibling blocks, or a fragment</td></tr>
+      <tr><td>A heading typed into a setting cell</td><td>A real heading in default content</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <div class="doc-page"><p><b>Good: the structure explains itself</b></p><table class="blocktable"><tr><th colspan="2">Cards</th></tr><tr><td><em>image</em></td><td><b>Title</b> and text, with a link</td></tr></table><p><b>Poor: authors must memorize positions</b></p><table class="blocktable"><tr><th colspan="6">Cards</th></tr><tr><td>image</td><td>title</td><td>text</td><td>link</td><td>dark</td><td>3</td></tr></table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t10"><script type="application/json">{"questions": [{"q": "Designers want a &ldquo;tint&rdquo; setting on a block, with any hex colour. What is the best model?", "options": ["A setting row where authors can paste any hex value they need", "A small set of named variants agreed with the design team", "A separate block created for each colour used on the site"], "answer": 1, "explain": "Named variants stay on-brand and accessible, and remain easy to change."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Authors keep breaking a block</td><td>Position-dependent cells</td><td>Infer each cell&rsquo;s role from content.</td></tr>
+      <tr><td>Settings table visible on the page</td><td>Config not cleared</td><td>Clear it after reading.</td></tr>
+      <tr><td>Block has grown many options</td><td>Doing several jobs</td><td>Split it, or use variants.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="topic" id="widgets-versus-blocks" data-level="2">
+  <h2>Widgets versus blocks</h2>
+  <div data-part="why"><p>Forms, calculators and search results have no authored content. Forcing them into the block library clutters it for authors.</p></div>
+  <div data-part="concept">
+    <p>A <b>block</b> adds form and function to content that authors write. A <b>widget</b> is a self-contained piece of application logic that an author adds by pasting a link. Good candidates are forms, search results, filters, dealer locators, account pages and calculators, particularly if they appear in only a few places.</p>
+    <p>A widget lives in <code>/widgets/name/</code>. It has the same <code>.js</code> and <code>.css</code> as a block, plus its own <code>.html</code>, and often a <code>.json</code> for configuration or data. When a link to the widget&rsquo;s HTML is alone in its paragraph, it becomes a widget block as the page renders: the HTML is fetched and injected, and the CSS and JavaScript load. The element gets a class named after the widget.</p>
+    <p>Query parameters on the link become data attributes, so <code>?name=AEM</code> arrives as <code>widget.dataset.name</code>. That gives authors a simple way to configure a widget without a table.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A{Does an author write its content?} -- Yes --&gt; B[Block]
+  A -- No --&gt; C{Is it application logic?}
+  C -- Yes --&gt; D[Widget in /widgets]
+  C -- No --&gt; E[Default content or a fragment]</pre>
+      <figcaption><b>What to notice:</b> The deciding question is about who supplies the content, not how complicated the code is.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A decision flow. If an author writes the content, use a block. If not, and it is application logic, use a widget. Otherwise use default content or a fragment.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="widgets/rate-calculator/rate-calculator.js" data-lang="javascript">
+      <textarea class="src" hidden>export default function decorate(widget) {
+  const rate = Number(widget.dataset.rate) || 4.5;
+  const form = widget.querySelector('form');
+  const out = widget.querySelector('output');
+  form.addEventListener('input', () =&gt; {
+    const amount = Number(form.amount.value) || 0;
+    out.textContent = `${((amount * rate) / 100).toFixed(2)} a year`;
+  });
+}</textarea>
+      <figcaption>An author adds it with a link to /widgets/rate-calculator/rate-calculator.html?rate=4.5</figcaption>
+      <ol class="code-explain"><li data-line="1">The same contract as a block: a default export that receives the element.</li><li data-line="2">Comes from <code>?rate=4.5</code> on the authored link.</li><li data-line="3">The markup is already injected from the widget&rsquo;s own HTML file.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t11"><script type="application/json">{"questions": [{"q": "You are building a mortgage calculator used on one page. Where should it live?", "options": ["In /widgets, referenced from the page with a link", "In head.html, so that it is available to all of the pages", "In /blocks, with a table that authors fill in with settings"], "answer": 0, "explain": "It is application logic with no authored content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Link stays a plain link</td><td>Other text in the paragraph</td><td>Put the link alone in its paragraph.</td></tr>
+      <tr><td>Parameter not available</td><td>Missing from the URL</td><td>Read it from <code>dataset</code> after adding it to the link.</td></tr>
+      <tr><td>Widget in the authors&rsquo; library</td><td>Built as a block</td><td>Move it to <code>/widgets/</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="topic" id="debugging-blocks" data-level="1">
+  <h2>Debugging a block</h2>
+  <div data-part="why"><p>Most block problems are one of a few causes. A fixed order of checks finds them in minutes.</p></div>
+  <div data-part="concept">
+    <p>Start with the delivered markup: open the page with <code>.plain.html</code> added to its path, or view source, and confirm the table became a block with the class you expect. If the class is wrong, the problem is in authoring or naming.</p>
+    <p>Then check the Network panel for the block&rsquo;s <code>.js</code> and <code>.css</code>. A 404 means a naming or branch issue. Next, look at <code>data-block-status</code> and the console. A status stuck on <code>loading</code> points at code that never resolves. An error logged here means the block threw.</p>
+    <p>Last, step through your function with a breakpoint, and look at the decorated DOM. If it works locally and not on the branch URL, the file was probably not pushed, or the case of a file name differs.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Block looks wrong] --&gt; B{Right class in delivered markup?}
+  B -- No --&gt; C[Fix the authored name]
+  B -- Yes --&gt; D{JS and CSS return 200?}
+  D -- No --&gt; E[Fix folder or file name, or push]
+  D -- Yes --&gt; F{Status is loaded?}
+  F -- No --&gt; G[Read the console, find the hang or error]
+  F -- Yes --&gt; H[Inspect the decorated DOM and CSS]</pre>
+      <figcaption><b>What to notice:</b> Each question rules out a whole category of cause before you read any code.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A flow for debugging. Check whether the delivered markup has the right class. If so, check that the JS and CSS return 200. If so, check that the status is loaded. If so, inspect the decorated DOM and CSS. Each failure points to its own fix.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Useful checks in the browser console" data-lang="javascript">
+      <textarea class="src" hidden>// Every block on the page and how far it got
+[...document.querySelectorAll('.block')]
+  .map((b) =&gt; `${b.dataset.blockName}: ${b.dataset.blockStatus}`);
+
+// What the server delivered, before decoration
+fetch(`${location.pathname}.plain.html`).then((r) =&gt; r.text()).then(console.log);</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c4-t12"><script type="application/json">{"questions": [{"q": "A block has the right class, and both its files return 200, but data-block-status stays at loading. What is most likely?", "options": ["The block&rsquo;s name contains a capital letter in the authored table", "Its decorate function awaits something that never finishes", "The block&rsquo;s page has not yet been published to the live site"], "answer": 1, "explain": "The loader waits for your function to resolve."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Works locally, 404 on branch</td><td>File name case differs, or not pushed</td><td>Match case exactly, then push.</td></tr>
+      <tr><td>Styles missing</td><td>Selector written against view source</td><td>Inspect the decorated DOM.</td></tr>
+      <tr><td>Block appears twice</td><td>Decorated twice in custom code</td><td>Let the loader call it.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -473,12 +747,12 @@ export default async function decorate(block) {
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c4-check"><script type="application/json">{"questions": [{"q": "A block named Hero Banner loads which file?", "options": ["blocks/HeroBanner.js", "blocks/hero-banner/hero-banner.js", "blocks/hero-banner/hero-banner-decorate.js"], "answer": 1, "explain": "Names are normalized."}, {"q": "What is block.children?", "options": ["The rows", "The sections", "The cells"], "answer": 0, "explain": "Each row’s children are cells."}, {"q": "Which function reads name and value rows?", "options": ["buildBlock", "decorateBlocks", "readBlockConfig"], "answer": 2, "explain": "It returns an object."}, {"q": "Is deconstructing a block into a client-rendered DOM best practice?", "options": ["Always in the hero", "Yes", "No"], "answer": 2, "explain": "aem.live says it is not best practice."}, {"q": "Which are in the Block Collection? Choose all that apply.", "options": ["carousel", "tabs", "datagrid", "modal"], "answer": [0, 1, 3], "explain": "See the repository."}, {"q": "Which element is best for an accordion?", "options": ["table", "marquee", "details"], "answer": 2, "explain": "It is native."}, {"q": "Which are web component standards? Choose all that apply.", "options": ["HTML templates", "Custom elements", "Shadow DOM", "Service Bus"], "answer": [0, 1, 2], "explain": "Custom elements are the most relevant for AEM projects."}, {"q": "A team proposes one giant “Page” block with 30 settings, to save authors from learning blocks. What do you advise?", "options": ["Add 30 more settings", "Approve it, since fewer blocks are simpler for authors to learn and for developers to maintain", "Use default content and focused blocks instead", "Nest all blocks in it"], "answer": 2, "explain": "Simple content models serve authors best.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c4-check"><script type="application/json">{"questions": [{"q": "A block named Hero Banner loads which file?", "options": ["blocks/HeroBanner.js", "blocks/hero-banner/hero-banner.js", "blocks/hero-banner/hero-banner-decorate.js"], "answer": 1, "explain": "Names are normalized."}, {"q": "What is block.children?", "options": ["The rows", "The sections", "The cells"], "answer": 0, "explain": "Each row’s children are cells."}, {"q": "Which function reads name and value rows?", "options": ["buildBlock", "decorateBlocks", "readBlockConfig"], "answer": 2, "explain": "It returns an object."}, {"q": "Is deconstructing a block into a client-rendered DOM best practice?", "options": ["Always in the hero", "Yes", "No"], "answer": 2, "explain": "aem.live says it is not best practice."}, {"q": "Which are in the Block Collection? Choose all that apply.", "options": ["carousel", "tabs", "datagrid", "modal"], "answer": [0, 1, 3], "explain": "See the repository."}, {"q": "Which element is best for an accordion?", "options": ["table", "marquee", "details"], "answer": 2, "explain": "It is native."}, {"q": "Which are web component standards? Choose all that apply.", "options": ["HTML templates", "Custom elements", "Shadow DOM", "Service Bus"], "answer": [0, 1, 2], "explain": "Custom elements are the most relevant for AEM projects."}, {"q": "A team proposes one giant “Page” block with 30 settings, to save authors from learning blocks. What do you advise?", "options": ["Add 30 more settings", "Approve it, since fewer blocks are simpler for authors to learn and for developers to maintain", "Use default content and focused blocks instead", "Nest all blocks in it"], "answer": 2, "explain": "Simple content models serve authors best.", "scenario": true}, {"q": "Where does a widget&rsquo;s query parameter arrive?", "options": ["As a data attribute on the widget element", "As a metadata value on the page", "As a row in a settings table"], "answer": 0, "explain": "Each parameter becomes a data- attribute."}, {"q": "What is the primary value of a Block Collection block, according to aem.live?", "options": ["Its finished CSS", "Its content structure", "Its upgrade path"], "answer": 1, "explain": "You will likely change all of its code."}, {"q": "Why is moving child nodes better than copying textContent into new elements?", "options": ["It runs faster in Safari", "It avoids a lint error", "It keeps links and emphasis"], "answer": 2, "explain": "Authored inline markup survives."}, {"q": "Which suits a site-wide search results page?", "options": ["A block variant", "A widget", "An auto block"], "answer": 1, "explain": "It is application logic, with no authored content."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c4-cards"><script type="application/json">{"cards": [["decorate(block)", "The block’s default export."], [":scope", "Limits queries to direct children."], ["readBlockConfig", "Name and value rows to an object."], ["Variant", "Class from parentheses."], ["createOptimizedPicture", "Builds responsive images."], ["Block Collection", "Reusable blocks to copy."], ["aria-expanded", "Announces open state."], ["Custom element", "A web component standard."], ["replaceChildren", "Swaps a block’s content."], ["textContent", "Safe way to set fetched text."]]}</script></div>
+  <div data-component="flashcards" data-id="c4-cards"><script type="application/json">{"cards": [["decorate(block)", "The block’s default export."], [":scope", "Limits queries to direct children."], ["readBlockConfig", "Name and value rows to an object."], ["Variant", "Class from parentheses."], ["createOptimizedPicture", "Builds responsive images."], ["Block Collection", "Reusable blocks to copy."], ["aria-expanded", "Announces open state."], ["Custom element", "A web component standard."], ["replaceChildren", "Swaps a block’s content."], ["textContent", "Safe way to set fetched text."], ["Widget", "Application piece added by link, in /widgets."], [".plain.html", "Shows the delivered content of a page."], ["Content model", "The table shape authors fill in."], ["block.replaceChildren()", "Swaps in new structure at once."], ["IntersectionObserver", "Starts work as a block nears the viewport."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -491,6 +765,11 @@ export default async function decorate(block) {
       <div><h4>Options</h4><ul><li>Variant = class</li><li>readBlockConfig</li></ul></div>
       <div><h4>Data</h4><ul><li>Async is fine</li><li>Handle failure</li><li>Reserve space</li></ul></div>
       <div><h4>Quality</h4><ul><li>Native elements</li><li>Keyboard</li><li>Small JS</li></ul></div>
+      <div><h4>Reading a block</h4><ul><li><code>[...block.children]</code>: rows</li><li><code>[...row.children]</code>: cells</li><li>Move nodes, do not copy text</li><li><code>readBlockConfig</code> for key and value</li></ul></div>
+      <div><h4>Data blocks</h4><ul><li>Do not await in first section</li><li>Check <code>res.ok</code></li><li><code>textContent</code>, not <code>innerHTML</code></li><li>Reserve space</li><li>Fail quietly</li></ul></div>
+      <div><h4>Debug order</h4><ul><li>Class in delivered markup</li><li>JS and CSS return 200</li><li><code>data-block-status</code></li><li>Console</li><li>Decorated DOM</li></ul></div>
+      <div><h4>Block or widget</h4><ul><li>Authored content: block</li><li>App logic: widget</li><li><code>/widgets/name/name.html</code></li><li>Query string to <code>dataset</code></li></ul></div>
+      <div><h4>Good block test</h4><ul><li>Intuitive to author</li><li>No dependencies</li><li>Responsive</li><li>No hard-coded text</li><li>Fast and accessible</li></ul></div>
     </div>
   </div>
 </section>
@@ -503,6 +782,7 @@ export default async function decorate(block) {
     <li><a href="https://www.aem.live/developer/web-components" rel="noopener" target="_blank">aem.live: Web Components</a></li>
     <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development collaboration and good practices</a></li>
     <li><a href="https://github.com/adobe/aem-block-collection" rel="noopener" target="_blank">GitHub: aem-block-collection</a></li>
+    <li><a href="https://www.aem.live/docs/widgets" rel="noopener" target="_blank">Widgets</a></li>
   </ul>
 </section>
 

@@ -39,6 +39,8 @@
     <li>Provide section styles for authors.</li>
     <li>Add fonts without layout shift.</li>
     <li>Map a design system to EDS.</li>
+    <li>Build layouts that adapt to any amount of content.</li>
+    <li>Style default content and authored buttons.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c5-ready" data-title="Ready for styling?">
     <script type="application/json">{"questions": [{"q": "Which file holds global critical CSS?", "options": ["fonts.css", "styles.css", "lazy-styles.css"], "answer": 1, "explain": "Covered in C2."}, {"q": "What is CLS?", "options": ["Input delay", "Layout shift", "Load time"], "answer": 1, "explain": "Covered in A3."}, {"q": "What adds classes to a section?", "options": ["Bulk delete", "A redirect", "Section Metadata Style"], "answer": 2, "explain": "Covered in B1."}]}</script>
@@ -77,6 +79,24 @@
       <tr><td><code>--acme-ds-v2-color-primary</code></td><td><code>--link-color</code></td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="styles/styles.css" data-lang="css">
+      <textarea class="src" hidden>:root {
+  --background-color: white;
+  --text-color: #131313;
+  --link-color: #3b63fb;
+  --body-font-family: roboto, roboto-fallback, sans-serif;
+  --heading-font-size-xl: 44px;
+  --nav-height: 64px;
+}
+
+@media (width &gt;= 900px) {
+  :root {
+    --heading-font-size-xl: 60px;
+  }
+}</textarea>
+      <figcaption>Values shortened from the boilerplate.</figcaption>
+      <ol class="code-explain"><li data-line="6">Set the size for small screens first.</li><li data-line="10">Larger screens change the token, so no heading rule needs to change.</li><li data-line="5">The fallback family comes straight after the web font.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c5-t1"><script type="application/json">{"questions": [{"q": "Where do global tokens belong?", "options": ["At the top of each block's CSS file", "head.html", ":root in styles.css"], "answer": 2, "explain": "Blocks then reuse them."}]}</script></div>
@@ -109,6 +129,14 @@
   margin: 16px;
 }</textarea>
     </figure>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[styles.css: tokens and element defaults] --&gt; B[Section style: redefines tokens]
+  B --&gt; C[Block CSS: scoped to .blockname]
+  C --&gt; D[Variant: .blockname.variant]</pre>
+      <figcaption><b>What to notice:</b> Each layer narrows the one before. Blocks read tokens, so sections can restyle them without any extra selectors.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>styles.css holds tokens and element defaults. A section style redefines tokens. Block CSS is scoped to the block class, and a variant narrows it further.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
@@ -116,6 +144,15 @@
     <tbody>
       <tr><td><code>ul { margin: 0; }</code></td><td><code>.cards ul { margin: 0; }</code></td></tr>
       <tr><td><code>.title</code></td><td><code>.cards-title</code></td></tr>
+    </tbody>
+  </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Avoid</th><th>Prefer</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><code>li { margin: 0 }</code></td><td><code>.cards li { margin: 0 }</code></td><td>Stays inside the block</td></tr>
+      <tr><td><code>.card-title</code></td><td><code>.cards-card-title</code></td><td>Prefix private classes</td></tr>
+      <tr><td><code>.cards &gt; div &gt; div:nth-child(2) &gt; p</code></td><td>A class added during decoration</td><td>Survives content changes</td></tr>
+      <tr><td><code>color: #333 !important</code></td><td>Lower the specificity elsewhere</td><td>Leaves room for overrides</td></tr>
     </tbody>
   </table></div>
   </div>
@@ -158,6 +195,21 @@ main .section.cards-container {
       <tr><td><code>cards-wrapper</code></td><td>decorateBlock, on the parent</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Section styles that blocks inherit" data-lang="css">
+      <textarea class="src" hidden>main .section.highlight {
+  background-color: var(--light-color);
+  padding-block: 40px;
+}
+
+main .section.dark {
+  --text-color: white;
+  --link-color: #9cb4ff;
+  background-color: #131313;
+  color: var(--text-color);
+}</textarea>
+      <figcaption>A block written with tokens works in every section style with no additional CSS.</figcaption>
+      <ol class="code-explain"><li data-line="7">Redefine tokens rather than styling each child. Blocks inside inherit the right colours automatically.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c5-t3"><script type="application/json">{"questions": [{"q": "Which class appears on a section with a cards block?", "options": ["cards-container", "cards-section", "container-cards"], "answer": 0, "explain": "decorateBlock adds it."}]}</script></div>
@@ -199,6 +251,28 @@ main .section.cards-container {
       <figcaption><b>What to notice:</b> matching the size first makes the later swap invisible to layout.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>First paint uses size-adjusted Arial, then LCP happens, then the web font loads and swaps with no shift.</p></details>
     </figure>
+    <figure class="code" data-file="A web font with a matched fallback" data-lang="css">
+      <textarea class="src" hidden>@font-face {
+  font-family: roboto;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/roboto-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: roboto-fallback;
+  size-adjust: 99.5%;
+  src: local('Arial');
+}
+
+body {
+  font-family: roboto, roboto-fallback, sans-serif;
+  line-height: 1.6;
+}</textarea>
+      <figcaption>The size-adjust value depends on your font. Do not copy this number.</figcaption>
+      <ol class="code-explain"><li data-line="11">Scale a system font to occupy the same width. Adobe&rsquo;s font-fallback extension calculates this value.</li><li data-line="17">Set line-height, so the font does not determine the height of text.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c5-t4"><script type="application/json">{"questions": [{"q": "What does size-adjust do?", "options": ["Scales a font to match another’s space", "Sets the font weight", "Compresses a font file so it downloads faster"], "answer": 0, "explain": "That prevents shift on swap."}]}</script></div>
@@ -228,6 +302,16 @@ main .section.cards-container {
       <figcaption><b>What to notice:</b> values are imported, and components are rebuilt as blocks.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>Design tokens go through a mapping table into CSS custom properties used by blocks. Component specs inform the blocks directly.</p></details>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Design tool</th><th>In your project</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Colour style</td><td><code>--brand-color</code> on <code>:root</code></td><td>Keep names simple</td></tr>
+      <tr><td>Type scale</td><td><code>--heading-font-size-*</code></td><td>Change the value at breakpoints</td></tr>
+      <tr><td>Spacing scale</td><td><code>--space-*</code></td><td>Only sizes you use</td></tr>
+      <tr><td>Component</td><td>A block, and its variants</td><td>Rebuild from its spec</td></tr>
+      <tr><td>Dark area</td><td>A section style that redefines tokens</td><td>Blocks inherit it</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
@@ -245,6 +329,109 @@ main .section.cards-container {
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Payload grows</td><td>Whole CSS library imported</td><td>Keep only the values you use.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="responsive-layouts" data-level="2">
+  <h2>Responsive layout patterns</h2>
+  <div data-part="why"><p>Authors do not control layout, so CSS must cope with any amount of content on any screen.</p></div>
+  <div data-part="concept">
+    <p>The boilerplate is mobile first: base rules serve small screens, and <code>min-width</code> style queries add to them. Its main breakpoint is 900 pixels. Add a breakpoint only where the content needs it, rather than for particular devices.</p>
+    <p>Prefer layouts that adapt without a query. <code>grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr))</code> gives as many columns as fit, and never overflows. Use <code>max-width</code> and auto margins for line length, and <code>aspect-ratio</code> so that images reserve their space before they load.</p>
+    <p>Container queries let a block respond to the width of its own column. That is useful when the same block can appear full width or inside a narrow section.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Base rules: small screens] --&gt; B[Add at 600px if the content needs it]
+  B --&gt; C[Add at 900px: main desktop layout]
+  C --&gt; D[Add at 1200px: max width only]</pre>
+      <figcaption><b>What to notice:</b> Each step adds to the one before. Nothing needs undoing, which keeps CSS short.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Base rules serve small screens. A rule at 600 pixels is added only if content needs it, the main desktop layout starts at 900 pixels, and at 1200 pixels only the maximum width changes.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="blocks/cards/cards.css" data-lang="css">
+      <textarea class="src" hidden>.cards &gt; ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+}
+
+.cards .cards-card-image img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  width: 100%;
+}</textarea>
+      <ol class="code-explain"><li data-line="3">The number of columns follows the available width, without a media query.</li><li data-line="10">Reserves the image&rsquo;s space, which prevents layout shift.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c5-t6"><script type="application/json">{"questions": [{"q": "A card block must work full width and also within a narrow column. What adapts best?", "options": ["A media query on the viewport for each position it might be used", "A separate variant that authors have to choose for each position", "A container query, or a grid that fits columns to the space"], "answer": 2, "explain": "The viewport does not tell a block how wide its own column is."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Layout shifts as images load</td><td>No reserved space</td><td>Set <code>aspect-ratio</code> or dimensions.</td></tr>
+      <tr><td>Sideways scroll on phones</td><td>A fixed width</td><td>Use <code>min(100%, ...)</code>.</td></tr>
+      <tr><td>Rules are constantly overridden</td><td>Desktop-first CSS</td><td>Write base rules for small screens.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="styling-default-content" data-level="2">
+  <h2>Styling default content and buttons</h2>
+  <div data-part="why"><p>Most of a page is headings, text and links. If those look right, you need far fewer blocks.</p></div>
+  <div data-part="concept">
+    <p>Global element styles belong in <code>styles.css</code>, under <code>main</code> or on the elements themselves. They should work without any block, since default content has no wrapper for you to target until decoration adds <code>default-content-wrapper</code>.</p>
+    <p>Buttons come from authored links. A link alone in its paragraph becomes <code>.button</code>. If the author makes it bold it also gets <code>.primary</code>, and italic gives <code>.secondary</code>. Style those classes, and authors get buttons without a block.</p>
+    <p>Keep vertical rhythm with margins on headings and paragraphs, and let section styles change the colours through tokens. Check focus styles too: keyboard users need a visible indicator on every link and button.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Authored in the document</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>A link alone in a paragraph</td><td><code>a.button</code></td></tr>
+      <tr><td>A bold link alone in a paragraph</td><td><code>a.button.primary</code></td></tr>
+      <tr><td>An italic link alone in a paragraph</td><td><code>a.button.secondary</code></td></tr>
+      <tr><td>A link inside a sentence</td><td>A normal link</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Button styles from authored links" data-lang="css">
+      <textarea class="src" hidden>a.button:any-link {
+  display: inline-block;
+  border-radius: 2.4em;
+  padding: 0.5em 1.2em;
+  background-color: var(--link-color);
+  color: var(--background-color);
+}
+
+a.button:focus-visible {
+  outline: 3px solid var(--link-color);
+  outline-offset: 2px;
+}
+
+a.button.secondary {
+  background: transparent;
+  color: var(--text-color);
+  border: 2px solid currentcolor;
+}</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c5-t7"><script type="application/json">{"questions": [{"q": "An author wants a call-to-action button in plain text content. What should they do?", "options": ["Ask a developer to add a class to that particular link", "Add a new Button block from the library to hold the link", "Put the link alone in its own paragraph and make it bold"], "answer": 2, "explain": "decorateButtons works it out from the link&rsquo;s shape."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Button shows as a link</td><td>Other text in the paragraph</td><td>Put the link on its own line.</td></tr>
+      <tr><td>Focus ring invisible</td><td>Removed with <code>outline: none</code></td><td>Style <code>:focus-visible</code>.</td></tr>
+      <tr><td>Text unreadable in a section</td><td>Colours hard-coded</td><td>Use tokens the section can change.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -319,12 +506,12 @@ main .section.cards-container {
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c5-check"><script type="application/json">{"questions": [{"q": "Where are tokens defined?", "options": ["body::after", ":root", "A meta tag"], "answer": 1, "explain": "Custom properties on the root."}, {"q": "Which selector is too broad?", "options": ["a", ".cards > ul", ".cards a"], "answer": 0, "explain": "It affects the whole page."}, {"q": "When is !important appropriate?", "options": ["Always in blocks", "Whenever two stylesheets set the same property", "Very specific, isolated cases"], "answer": 2, "explain": "aem.live calls it a hand grenade."}, {"q": "Which class is added to a block’s parent?", "options": ["name-wrapper", "name-parent", "block-root"], "answer": 0, "explain": "decorateBlock adds it."}, {"q": "Which font approaches risk problems? Choose all that apply.", "options": ["font-display: optional alone", "Hiding the page until fonts load", "A size-adjusted fallback"], "answer": [0, 1], "explain": "The fallback is the recommended approach."}, {"q": "What does the boilerplate fall back to for Roboto?", "options": ["A Roboto subset inlined in head.html", "No fallback", "Arial, adjusted"], "answer": 2, "explain": "See styles.css."}, {"q": "When does aem.live load fonts?", "options": ["Before the first section is decorated, with a preload", "During publish", "Non-blocking, around or after LCP"], "answer": 2, "explain": "Fonts must not delay LCP."}, {"q": "The brand team wants a 300 KB CSS framework for consistency. What do you do?", "options": ["Load it in a CSS @import", "Map its tokens and rebuild only the needed components as blocks", "Inline it", "Load it in head.html, and then remove unused rules with a purge step in a build"], "answer": 1, "explain": "Keep the critical path small.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c5-check"><script type="application/json">{"questions": [{"q": "Where are tokens defined?", "options": ["body::after", ":root", "A meta tag"], "answer": 1, "explain": "Custom properties on the root."}, {"q": "Which selector is too broad?", "options": ["a", ".cards > ul", ".cards a"], "answer": 0, "explain": "It affects the whole page."}, {"q": "When is !important appropriate?", "options": ["Always in blocks", "Whenever two stylesheets set the same property", "Very specific, isolated cases"], "answer": 2, "explain": "aem.live calls it a hand grenade."}, {"q": "Which class is added to a block’s parent?", "options": ["name-wrapper", "name-parent", "block-root"], "answer": 0, "explain": "decorateBlock adds it."}, {"q": "Which font approaches risk problems? Choose all that apply.", "options": ["font-display: optional alone", "Hiding the page until fonts load", "A size-adjusted fallback"], "answer": [0, 1], "explain": "The fallback is the recommended approach."}, {"q": "What does the boilerplate fall back to for Roboto?", "options": ["A Roboto subset inlined in head.html", "No fallback", "Arial, adjusted"], "answer": 2, "explain": "See styles.css."}, {"q": "When does aem.live load fonts?", "options": ["Before the first section is decorated, with a preload", "During publish", "Non-blocking, around or after LCP"], "answer": 2, "explain": "Fonts must not delay LCP."}, {"q": "The brand team wants a 300 KB CSS framework for consistency. What do you do?", "options": ["Load it in a CSS @import", "Map its tokens and rebuild only the needed components as blocks", "Inline it", "Load it in head.html, and then remove unused rules with a purge step in a build"], "answer": 1, "explain": "Keep the critical path small.", "scenario": true}, {"q": "Which class does an italic link alone in its paragraph get?", "options": ["tertiary", "italic", "secondary"], "answer": 2, "explain": "Bold gives primary."}, {"q": "How should a dark section change its blocks&rsquo; colours?", "options": ["By adding !important inside each block", "By a separate stylesheet per block", "By redefining the tokens they use"], "answer": 2, "explain": "Blocks written with tokens inherit the change."}, {"q": "What should a font fallback match?", "options": ["The weight of every heading", "The file size of the web font", "The width text occupies"], "answer": 2, "explain": "Height comes from line-height, which you set."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c5-cards"><script type="application/json">{"cards": [["Custom property", "A CSS variable, such as --link-color."], [":root", "Where global tokens live."], ["Block scope", "Selectors begin with the block class."], ["name-container", "Class on a section with a block."], ["name-wrapper", "Class on a block’s parent."], ["size-adjust", "Scales a font’s metrics."], ["Fallback font", "Shown until the web font arrives."], ["font-display", "Controls swap behaviour."], ["Token map", "Design name to CSS name."], ["Self-hosting", "Fonts on your own origin."]]}</script></div>
+  <div data-component="flashcards" data-id="c5-cards"><script type="application/json">{"cards": [["Custom property", "A CSS variable, such as --link-color."], [":root", "Where global tokens live."], ["Block scope", "Selectors begin with the block class."], ["name-container", "Class on a section with a block."], ["name-wrapper", "Class on a block’s parent."], ["size-adjust", "Scales a font’s metrics."], ["Fallback font", "Shown until the web font arrives."], ["font-display", "Controls swap behaviour."], ["Token map", "Design name to CSS name."], ["Self-hosting", "Fonts on your own origin."], ["size-adjust", "Scales a fallback font to match a web font."], ["aspect-ratio", "Reserves space for an image."], [".button.primary", "A bold link alone in its paragraph."], ["Container query", "A block responds to its own width."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -337,6 +524,10 @@ main .section.cards-container {
       <div><h4>Sections</h4><ul><li>Style = class</li><li>name-container</li><li>Small named set</li></ul></div>
       <div><h4>Fonts</h4><ul><li>size-adjust fallback</li><li>Load after LCP</li><li>Few weights</li></ul></div>
       <div><h4>Design system</h4><ul><li>Map tokens</li><li>Rebuild as blocks</li></ul></div>
+      <div><h4>Selectors</h4><ul><li>Start with <code>.blockname</code></li><li>Prefix private classes</li><li>Add classes in JS, not long selectors</li><li>Avoid <code>!important</code></li></ul></div>
+      <div><h4>Layout</h4><ul><li>Mobile first</li><li>Main breakpoint: 900px</li><li><code>repeat(auto-fill, minmax(min(100%, 260px), 1fr))</code></li><li><code>aspect-ratio</code> on images</li></ul></div>
+      <div><h4>Authored buttons</h4><ul><li>Link alone: <code>.button</code></li><li>Bold: <code>.primary</code></li><li>Italic: <code>.secondary</code></li><li>Style <code>:focus-visible</code></li></ul></div>
+      <div><h4>Fonts</h4><ul><li>Fallback straight after the web font</li><li>Compute <code>size-adjust</code></li><li>Set <code>line-height</code></li><li>Load after LCP</li></ul></div>
     </div>
   </div>
 </section>

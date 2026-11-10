@@ -38,6 +38,9 @@
     <li>Combine lab and field data.</li>
     <li>Prioritize by affected traffic.</li>
     <li>Prevent regressions at scale.</li>
+    <li>Run a portfolio with budgets and scorecards.</li>
+    <li>Diagnose a regression methodically.</li>
+    <li>Prepare for peak events, and report value credibly.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e9-ready" data-title="Ready for performance at scale?">
     <script type="application/json">{"questions": [{"q": "Where can you see field data for a site?", "options": ["A Word doc", "robots.txt", "Operational Telemetry explorer"], "answer": 2, "explain": "Covered in D7."}, {"q": "Which check runs on pull requests?", "options": ["Spellcheck only", "PageSpeed", "DNS"], "answer": 1, "explain": "Covered in C10."}, {"q": "What can repoless share?", "options": ["Author passwords", "Domains", "One code fix across sites"], "answer": 2, "explain": "Covered in D2."}]}</script>
@@ -65,6 +68,14 @@
       <figcaption><b>What to notice:</b> it is a loop, and the guard stops regressions.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>Inventory, budgets, measuring lab and field data, prioritizing by traffic, fixing shared causes, guarding with pull request checks, then measuring again.</p></details>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Metric</th><th>Good</th><th>Needs improvement</th><th>Poor</th></tr></thead>
+    <tbody>
+      <tr><td>LCP</td><td>2.5 s or less</td><td>Up to 4 s</td><td>Over 4 s</td></tr>
+      <tr><td>INP</td><td>200 ms or less</td><td>Up to 500 ms</td><td>Over 500 ms</td></tr>
+      <tr><td>CLS</td><td>0.1 or less</td><td>Up to 0.25</td><td>Over 0.25</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
@@ -77,6 +88,15 @@
       <tr><td>Third parties</td><td>Each with owner and review date</td><td>Inventory</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="A shared budget, written down" data-lang="json">
+      <textarea class="src" hidden>{
+  "lab": { "mobileLighthouse": 100, "desktopLighthouse": 100 },
+  "field_p75": { "lcpMs": 2500, "inpMs": 200, "cls": 0.1 },
+  "beforeLcpKb": 100,
+  "thirdParties": { "maxPerPage": 3, "ownerRequired": true }
+}</textarea>
+      <figcaption>An example. Agree on your own numbers, and keep them where teams can find them.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="e9-t1"><script type="application/json">{"questions": [{"q": "Site A has LCP 4.0 s with 5,000 views. Site B has LCP 2.8 s with 3 million views. Where do you start?", "options": ["Usually Site B, as more visitors are affected", "Neither", "Always Site A, since its LCP is the further from the threshold"], "answer": 0, "explain": "Weigh severity with reach."}]}</script></div>
@@ -86,6 +106,154 @@
       <tr><td>Scores slowly decline</td><td>New tags</td><td>Require review of each tag.</td></tr>
       <tr><td>Lab good, field poor</td><td>Real devices and third parties</td><td>Investigate field data.</td></tr>
       <tr><td>Nobody acts</td><td>No owner</td><td>Name one per site.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="budgets-and-scorecards" data-level="4">
+  <h2>Budgets and scorecards</h2>
+  <div data-part="why"><p>Across dozens of sites, nobody can inspect pages one by one. A shared budget and scorecard shows where to look.</p></div>
+  <div data-part="concept">
+    <p>A <b>budget</b> states a limit before a problem exists. Set limits for lab scores, field Core Web Vitals, bytes before LCP, and the number of third parties. A scorecard then compares each site with those limits in the same format, so a review takes minutes.</p>
+    <p>Use the 75th percentile of real visits, the measure Google uses for Core Web Vitals. Include traffic beside each figure, so a minor site&rsquo;s bad number does not take attention from a major site&rsquo;s small problem. Show the trend as well as the value.</p>
+    <p>Combine traffic and severity to rank work. A site&rsquo;s priority is roughly the number of page views affected, multiplied by how far it misses the target.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Budget per metric] --&gt; B[Monthly field and lab data]
+  B --&gt; C[Scorecard by site]
+  C --&gt; D[Rank by affected traffic]
+  D --&gt; E[Owner and fix]
+  E --&gt; B</pre>
+      <figcaption><b>What to notice:</b> It is a loop. The scorecard only helps if each row leads to an owner and a change.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A budget per metric is compared with monthly field and lab data to form a scorecard by site. Sites are ranked by affected traffic, each gets an owner and fix, and the loop repeats.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Ranking sites by affected traffic" data-lang="javascript">
+      <textarea class="src" hidden>const targets = { lcp: 2500, inp: 200, cls: 0.1 };
+
+function priority(site) {
+  const miss = Math.max(
+    site.lcp / targets.lcp,
+    site.inp / targets.inp,
+    site.cls / targets.cls,
+  ) - 1;
+  return miss &gt; 0 ? Math.round(site.views * miss) : 0;
+}
+
+const sites = [
+  { name: 'Retail', views: 3000000, lcp: 2800, inp: 180, cls: 0.05 },
+  { name: 'Careers', views: 5000, lcp: 4000, inp: 220, cls: 0.2 },
+];
+console.table(sites.map((s) =&gt; ({ ...s, priority: priority(s) }))
+  .sort((a, b) =&gt; b.priority - a.priority));</textarea>
+      <figcaption>A simple model to start discussion. Retail outranks Careers here, despite having the better metrics.</figcaption>
+      <ol class="code-explain"><li data-line="4">How far the worst metric is from target.</li><li data-line="9">Weighted by traffic. Sites that meet every target score 0.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e9-t2"><script type="application/json">{"questions": [{"q": "Which site should come first: 3 million views at LCP 2.8 s, or 5,000 views at LCP 4 s?", "options": ["Usually the first, as far more visitors are affected", "Neither, because scores should be equal across sites", "Always the second, because it has the worst score"], "answer": 0, "explain": "Traffic and severity together decide priority."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Reviews argue about numbers</td><td>Different tools or periods</td><td>Agree on one source and period.</td></tr>
+      <tr><td>Scorecard ignored</td><td>No owners</td><td>Put an owner on every row.</td></tr>
+      <tr><td>Small sites get all the attention</td><td>Ranked by score alone</td><td>Weight by traffic.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="diagnosing-regressions" data-level="4">
+  <h2>Diagnosing a regression</h2>
+  <div data-part="why"><p>A dip on a chart can be a code change, a new tag, a content change, or simply different traffic. Guessing wastes days.</p></div>
+  <div data-part="concept">
+    <p>First, confirm that the change is real. Check the sample size, then look at whether it affects one device type, one page group or everything. Use the OpTel Explorer to split the data by these.</p>
+    <p>Next, line it up with what changed: code merges, tag releases, content publishes and campaigns. The audit log and Git history give you the timeline. A sudden change usually has one cause. A slow drift is usually accumulating tags or heavier content.</p>
+    <p>Reproduce it in the lab with PageSpeed Insights on an affected URL. Test a version without the suspected change by using a branch, or by temporarily blocking a request in DevTools. Fix at source, and if the fix is shared code, check another site before merging.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Metric worsened] --&gt; B{Enough samples?}
+  B -- No --&gt; C[Wait, or widen the time range]
+  B -- Yes --&gt; D[Split: device, page group, source]
+  D --&gt; E[Line up with merges, tags, publishes]
+  E --&gt; F[Reproduce in the lab]
+  F --&gt; G[Fix at source and watch field data]</pre>
+      <figcaption><b>What to notice:</b> Each step narrows the possibilities before anyone changes code.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>When a metric worsens, check for enough samples. If there are, split by device, page group and source. Line that up with merges, tags and publishes. Reproduce in the lab, then fix at source and watch field data.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Pattern</th><th>Likely cause</th></tr></thead>
+    <tbody>
+      <tr><td>Sudden drop on all pages</td><td>Shared code, or a global tag</td></tr>
+      <tr><td>Sudden drop on one template</td><td>A block or that template&rsquo;s content</td></tr>
+      <tr><td>Slow drift</td><td>Tags and heavier content accumulating</td></tr>
+      <tr><td>Mobile only</td><td>Script weight or image sizes</td></tr>
+      <tr><td>One region only</td><td>CDN or a third-party endpoint</td></tr>
+      <tr><td>Campaign period only</td><td>Traffic mix or landing pages</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e9-t3"><script type="application/json">{"questions": [{"q": "Field LCP worsens on only one template, the same day as a merge. What is the most promising lead?", "options": ["A change in the sitemap&rsquo;s URL count", "A change to the site&rsquo;s robots.txt rules", "A change to a block used by that template"], "answer": 2, "explain": "A sudden drop on one template points to what is specific to it."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Chart moves but nothing changed</td><td>Low sample</td><td>Check sample size.</td></tr>
+      <tr><td>Fix helped one site, hurt another</td><td>Tested once</td><td>Check other sites before merging.</td></tr>
+      <tr><td>Drift returns</td><td>No gate</td><td>Set a budget and review.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="peak-readiness-and-reporting" data-level="4">
+  <h2>Peak events and reporting value</h2>
+  <div data-part="why"><p>Executives hear about performance twice: during a big event, and at budget time. Be ready for both.</p></div>
+  <div data-part="concept">
+    <p><b>Before a peak event</b>, aem.live has a dedicated guide to service scaling and high-visibility events. The CDN absorbs page traffic well. Your real risks are elsewhere: third-party scripts, personalized APIs, commerce back ends, and forms. Freeze risky changes, rehearse rollback, know who to contact, and watch telemetry during the event.</p>
+    <p><b>When reporting</b>, connect performance to outcomes that you have measured. Compare conversion by speed band, or use a controlled experiment. Avoid applying another company&rsquo;s published uplift to your revenue. State your sample and method, and report wins and misses together so that the numbers remain credible.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Before a peak</th><th>Owner</th></tr></thead>
+    <tbody>
+      <tr><td>Inventory of everything that is not CDN-served</td><td>Platform team</td></tr>
+      <tr><td>Limits confirmed with API and commerce vendors</td><td>Integration owners</td></tr>
+      <tr><td>Change freeze dates</td><td>Release manager</td></tr>
+      <tr><td>Rollback rehearsal at the CDN</td><td>Platform team</td></tr>
+      <tr><td>Contacts and escalation path</td><td>Incident lead</td></tr>
+      <tr><td>Live dashboards in the war room</td><td>Operations</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Visitor surge] --&gt; B[CDN: pages absorb it]
+  A --&gt; C[APIs and tags]
+  C --&gt; D{Have limits been checked?}
+  D -- No --&gt; E[Risk of failure]
+  D -- Yes --&gt; F[Prepared, with fallbacks]</pre>
+      <figcaption><b>What to notice:</b> Most incidents at peak are in what the CDN does not serve.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visitor surge is absorbed by the CDN for pages. APIs and tags are the risk: if their limits have not been checked, there is a risk of failure, and if they have, the team is prepared with fallbacks.</p></details>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e9-t4"><script type="application/json">{"questions": [{"q": "How should you claim a revenue benefit from faster pages?", "options": ["Only from a link that you have measured on your own site", "By applying a uplift published by another large retailer", "By reporting only the months in which results improved"], "answer": 0, "explain": "Measured, transparent claims stay credible."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Site fine but checkout failed</td><td>Back-end limits</td><td>Confirm limits in advance.</td></tr>
+      <tr><td>Claim challenged by finance</td><td>Borrowed figures</td><td>Use your own data and method.</td></tr>
+      <tr><td>Risky release in peak week</td><td>No freeze</td><td>Agree on freeze dates.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -111,6 +279,7 @@
     <li><div><b>Identify</b> one shared cause.</div></li>
     <li><div><b>Propose</b> one guard against regression.</div></li>
     <li><div><b>Set</b> a review cadence.</div></li>
+    <li><div><b>Build</b> a scorecard for three sites, and rank them by affected traffic.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
     <div><h3>Expected result</h3><p>A one-page program plan.</p></div>
@@ -160,12 +329,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e9-check"><script type="application/json">{"questions": [{"q": "What is Adobe’s stated Lighthouse expectation on aem.live?", "options": ["100", "50", "70"], "answer": 0, "explain": "See the Go-Live Checklist."}, {"q": "What does lab data help with?", "options": ["Measuring revenue", "Knowing every visitor’s experience", "Catching issues before release"], "answer": 2, "explain": "Field data covers real visits."}, {"q": "What is the INP good threshold?", "options": ["2 s", "200 ms", "5 s"], "answer": 1, "explain": "Covered in A3."}, {"q": "How should you prioritize sites?", "options": ["Alphabetically", "By severity and affected traffic", "By which site has launched most recently"], "answer": 1, "explain": "Reach matters."}, {"q": "Which stops a regression from merging?", "options": ["A note in the release changelog", "A required status check", "A comment on the pull request"], "answer": 1, "explain": "Protect main."}, {"q": "What is a common cause of slow erosion?", "options": ["Code Sync running less often", "A growing number of authors on a site", "Third-party tags"], "answer": 2, "explain": "Own and review them."}, {"q": "Where does a shared code fix have most reach?", "options": ["A copied repository", "Repoless", "A local branch"], "answer": 1, "explain": "One codebase, many sites."}, {"q": "A vendor tag adds 800 ms of LCP, and marketing insists. What do you do?", "options": ["Hide it from Lighthouse", "Remove all analytics so the total stays about the same", "Measure it, then load it later or reconsider it with an owner", "Accept it, and exclude the tag from the Lighthouse run so the score stays at 100"], "answer": 2, "explain": "Decide on evidence, without gaming the score.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e9-check"><script type="application/json">{"questions": [{"q": "What is Adobe’s stated Lighthouse expectation on aem.live?", "options": ["100", "50", "70"], "answer": 0, "explain": "See the Go-Live Checklist."}, {"q": "What does lab data help with?", "options": ["Measuring revenue", "Knowing every visitor’s experience", "Catching issues before release"], "answer": 2, "explain": "Field data covers real visits."}, {"q": "What is the INP good threshold?", "options": ["2 s", "200 ms", "5 s"], "answer": 1, "explain": "Covered in A3."}, {"q": "How should you prioritize sites?", "options": ["Alphabetically", "By severity and affected traffic", "By which site has launched most recently"], "answer": 1, "explain": "Reach matters."}, {"q": "Which stops a regression from merging?", "options": ["A note in the release changelog", "A required status check", "A comment on the pull request"], "answer": 1, "explain": "Protect main."}, {"q": "What is a common cause of slow erosion?", "options": ["Code Sync running less often", "A growing number of authors on a site", "Third-party tags"], "answer": 2, "explain": "Own and review them."}, {"q": "Where does a shared code fix have most reach?", "options": ["A copied repository", "Repoless", "A local branch"], "answer": 1, "explain": "One codebase, many sites."}, {"q": "A vendor tag adds 800 ms of LCP, and marketing insists. What do you do?", "options": ["Hide it from Lighthouse", "Remove all analytics so the total stays about the same", "Measure it, then load it later or reconsider it with an owner", "Accept it, and exclude the tag from the Lighthouse run so the score stays at 100"], "answer": 2, "explain": "Decide on evidence, without gaming the score.", "scenario": true}, {"q": "Which percentile is used for Core Web Vitals?", "options": ["50th", "99th", "75th"], "answer": 2, "explain": "It is Google&rsquo;s measure."}, {"q": "A slow, steady decline usually suggests what?", "options": ["A problem with DNS records", "Accumulating tags and content", "A single bad merge last night"], "answer": 1, "explain": "Sudden changes usually have one cause."}, {"q": "What is usually most at risk during a surge?", "options": ["Images served from the CDN", "Cached HTML pages at the edge", "What the CDN does not serve"], "answer": 2, "explain": "Check APIs, tags and back ends."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e9-cards"><script type="application/json">{"cards": [["Budget", "A limit a team agrees to."], ["Lab data", "Controlled test."], ["Field data", "Real visits."], ["Affected traffic", "Views on failing pages."], ["Status check", "Required before merge."], ["Tag owner", "Answers for one tag."], ["Regression", "Something got worse."]]}</script></div>
+  <div data-component="flashcards" data-id="e9-cards"><script type="application/json">{"cards": [["Budget", "A limit a team agrees to."], ["Lab data", "Controlled test."], ["Field data", "Real visits."], ["Affected traffic", "Views on failing pages."], ["Status check", "Required before merge."], ["Tag owner", "Answers for one tag."], ["Regression", "Something got worse."], ["Budget", "A limit agreed before a problem exists."], ["Priority", "Views affected × distance from target."], ["p75", "The percentile used for Core Web Vitals."], ["Change freeze", "No risky releases around an event."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -177,6 +346,10 @@
       <div><h4>Measure</h4><ul><li>Lab</li><li>Field</li><li>Mobile</li></ul></div>
       <div><h4>Act</h4><ul><li>Traffic first</li><li>Shared fixes</li><li>Tags</li></ul></div>
       <div><h4>Guard</h4><ul><li>PR checks</li><li>Reviews</li><li>Procurement</li></ul></div>
+      <div><h4>Thresholds</h4><ul><li>LCP 2.5 s</li><li>INP 200 ms</li><li>CLS 0.1</li><li>At the 75th percentile</li></ul></div>
+      <div><h4>Rank work</h4><ul><li>Traffic × miss</li><li>Trend, not just value</li><li>Owner for each row</li></ul></div>
+      <div><h4>Diagnose</h4><ul><li>Check samples</li><li>Split the data</li><li>Line up changes</li><li>Reproduce in the lab</li><li>Fix at source</li></ul></div>
+      <div><h4>Peak</h4><ul><li>Non-CDN inventory</li><li>Vendor limits</li><li>Freeze</li><li>Rollback rehearsal</li><li>Escalation path</li></ul></div>
     </div>
   </div>
 </section>
@@ -189,6 +362,8 @@
     <li><a href="https://www.aem.live/docs/go-live-checklist" rel="noopener" target="_blank">aem.live: Go-live checklist</a></li>
     <li><a href="https://www.aem.live/docs/dev-collab-and-good-practices" rel="noopener" target="_blank">aem.live: Development good practices</a></li>
     <li><a href="https://web.dev/articles/vitals" rel="noopener" target="_blank">web.dev: Web Vitals</a></li>
+    <li><a href="https://www.aem.live/docs/peak-traffic" rel="noopener" target="_blank">Service scaling and high-visibility events</a></li>
+    <li><a href="https://www.aem.live/docs/large-sites" rel="noopener" target="_blank">Large sites</a></li>
   </ul>
 </section>
 

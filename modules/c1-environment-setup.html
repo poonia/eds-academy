@@ -39,6 +39,8 @@
     <li>Develop locally with the AEM CLI.</li>
     <li>Run the standard lint tools.</li>
     <li>Use and troubleshoot branch URLs.</li>
+    <li>Run a full change from branch to verified merge.</li>
+    <li>Pick the CLI option that fits a local problem.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c1-ready" data-title="Ready for environment setup?">
     <script type="application/json">{"questions": [{"q": "Where does code live in EDS?", "options": ["GitHub", "The CDN only", "The content source"], "answer": 0, "explain": "Covered in A2."}, {"q": "Which host shows previewed content?", "options": ["aem.live", "aem.page", "localhost"], "answer": 1, "explain": "Covered in A2."}, {"q": "Does EDS need a build step?", "options": ["Yes, always Vite", "Yes, always webpack", "No"], "answer": 2, "explain": "Covered in A3."}]}</script>
@@ -52,6 +54,9 @@
   <div data-part="concept">
     <p>Most projects start from <code>adobe/aem-boilerplate</code>, used as a GitHub template. It contains the loading scripts, base styles and starter blocks such as hero, cards, columns, header, footer and fragment. There is no build step: code runs directly from the repository.</p>
     <p>Projects that author in AEM with the Universal Editor use a separate template, <code>adobe-rnd/aem-boilerplate-xwalk</code>, which adds component model files. aem.live recommends keeping repositories public, because everything in them is sent to browsers anyway.</p>
+    <h3>What you get on day one</h3>
+    <p>The boilerplate is a working site, not a framework you install. It has no runtime dependency to upgrade, and <code>package.json</code> only lists development tools such as linters. That means the code in the repository is exactly the code a browser receives.</p>
+    <p>Treat the first day as making three small decisions: which template matches your authoring route, which GitHub organization owns the repository, and which starter blocks you will keep. Delete blocks that you will not use only once you are sure: an unused block costs nothing at runtime, because a block is only requested when a page contains it.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -62,6 +67,15 @@
       <figcaption><b>What to notice:</b> the authoring choice decides the starting template.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>If content is authored in Document Authoring, Word or Google Docs, use adobe/aem-boilerplate. If it is authored in AEM with the Universal Editor, use adobe-rnd/aem-boilerplate-xwalk.</p></details>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Question</th><th><code>aem-boilerplate</code></th><th><code>aem-boilerplate-xwalk</code></th></tr></thead>
+    <tbody>
+      <tr><td>Who authors?</td><td>Word, Google Docs or Experience Workspace</td><td>AEM with the Universal Editor</td></tr>
+      <tr><td>Extra root files</td><td>None</td><td>Component definition, models and filters</td></tr>
+      <tr><td>Block markup comes from</td><td>Tables in a document</td><td>Components stored in AEM</td></tr>
+      <tr><td>Learn next</td><td>C2 and C4</td><td>C2, C4 and C7</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
@@ -72,6 +86,14 @@
       <tr><td>aem-block-collection</td><td>A catalogue of reusable blocks to copy</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Starting from the template" data-lang="bash">
+      <textarea class="src" hidden># On github.com/adobe/aem-boilerplate choose "Use this template", then:
+git clone https://github.com/your-org/your-site.git
+cd your-site
+npm install        # development tools only: linters and git hooks
+aem up             # opens http://localhost:3000</textarea>
+      <figcaption>npm install adds tools for developers. Nothing it installs is sent to visitors.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c1-t1"><script type="application/json">{"questions": [{"q": "A project authors in AEM with the Universal Editor. Which template fits?", "options": ["aem-boilerplate", "A blank repository", "aem-boilerplate-xwalk"], "answer": 2, "explain": "It includes the component model files."}]}</script></div>
@@ -91,6 +113,9 @@
   <div data-part="concept">
     <p>Install the <b>AEM Code Sync</b> app on your repository. In its repository access settings, choose <em>Only select repositories</em>, select yours and save. From then on, each pushed branch is served automatically, and changes merged to <code>main</code> reach production.</p>
     <p>The app also runs Google PageSpeed Insights on pull requests. GitHub Enterprise with IP filtering needs the app’s IP address added to its allow list.</p>
+    <h3>What the app actually does</h3>
+    <p>Code Sync watches GitHub for push events and copies changed files into the Code Bus for that branch. There is no job for you to run, no artifact and no queue to wait for. The usual delay is seconds, and the result is visible at the branch URL.</p>
+    <p>If a push does not appear, check three things in order: the app is installed on that repository, the repository is in its access list, and the branch name produces a valid host name. Organizations that cannot use GitHub can bring another Git host through Cloud Manager, as covered in D1.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -104,6 +129,16 @@
   </div>
   <div data-part="show">
     <aside class="callout warning" data-label="Least privilege"><p>Choose <em>Only select repositories</em>, not <em>All repositories</em>, when you install the app. Grant it only what it needs.</p></aside>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>You do this</th><th>Code Sync does this</th><th>Where to look</th></tr></thead>
+    <tbody>
+      <tr><td>Push a new branch</td><td>Creates that branch&rsquo;s code in the Code Bus</td><td><code>https://branch--repo--owner.aem.page/</code></td></tr>
+      <tr><td>Push a commit</td><td>Updates only the changed files</td><td>The file&rsquo;s URL on the branch host</td></tr>
+      <tr><td>Open a pull request</td><td>Runs PageSpeed Insights on test URLs from the description</td><td>The checks on the pull request</td></tr>
+      <tr><td>Merge to <code>main</code></td><td>Updates production code</td><td>aem.live, then your CDN</td></tr>
+      <tr><td>Delete a branch</td><td>Removes that branch&rsquo;s code</td><td>The branch URL stops resolving</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c1-t2"><script type="application/json">{"questions": [{"q": "You merge a pull request to main. What happens next?", "options": ["The change reaches production automatically", "An Adobe engineer reviews it", "You must run a deploy job in Cloud Manager before it goes live"], "answer": 0, "explain": "Code Sync deploys what is merged to main."}]}</script></div>
@@ -123,6 +158,9 @@
   <div data-part="concept">
     <p>Install with <code>npm install -g @adobe/aem-cli</code>, then run <code>aem up</code> in your repository. It serves <code>http://localhost:3000</code>, reloads as files change, and fetches content from your site.</p>
     <p>Use <code>--url</code> to develop against a specific site, which is essential for repoless projects. <code>--print-index</code> shows the index records for the current page, and <code>--forward-browser-logs</code> sends console output to your terminal.</p>
+    <h3>What local preview really serves</h3>
+    <p>The CLI is a small proxy. A request for a file that exists in your working folder is answered from disk. Everything else, including every page of content, is fetched from the site&rsquo;s preview host. So you can change code against real content without publishing anything.</p>
+    <p>Because content is remote, a page must have been previewed at least once to appear locally. Protected sites need a site token, passed with <code>--site-token</code>. Live reload watches your files and is on by default.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -132,6 +170,16 @@
     S --&gt; B["Your browser"]</pre>
       <figcaption><b>What to notice:</b> code is local, but content is remote.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>Local blocks, styles and scripts combine with remote content from aem.page in the aem up server, which your browser opens at localhost port 3000.</p></details>
+    </figure>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  B[Browser at localhost:3000] --&gt; C{File in your folder?}
+  C -- Yes --&gt; D[Serve from disk]
+  C -- No --&gt; E[Fetch from the preview host]
+  E --&gt; F[Content: pages, sheets and media]
+  D --&gt; G[Code: blocks, scripts and styles]</pre>
+      <figcaption><b>What to notice:</b> Your code is local and your content is remote. That is why you can test a block against real pages with no deployment.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A browser requests a path from the local server. If the file exists in the working folder it is served from disk, which covers code. Otherwise it is fetched from the preview host, which covers pages, sheets and media.</p></details>
     </figure>
   </div>
   <div data-part="show">
@@ -185,6 +233,17 @@ aem up --url https://main--brand-b--acme.aem.page</textarea>
       <tr><td>Stylelint</td><td>CSS in blocks and styles</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="package.json scripts in the boilerplate" data-lang="json">
+      <textarea class="src" hidden>{
+  "scripts": {
+    "lint:js": "eslint .",
+    "lint:css": "stylelint blocks/**/*.css styles/*.css",
+    "lint": "npm run lint:js &amp;&amp; npm run lint:css",
+    "lint:fix": "npm run lint:js -- --fix &amp;&amp; npm run lint:css -- --fix"
+  }
+}</textarea>
+      <figcaption>Exact scripts can differ between boilerplate versions, so check your own package.json.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c1-t4"><script type="application/json">{"questions": [{"q": "You dislike a lint rule. What should you do?", "options": ["Follow it", "Disable it for the project", "Fork the boilerplate"], "answer": 0, "explain": "Shared rules keep code reusable."}]}</script></div>
@@ -203,6 +262,8 @@ aem up --url https://main--brand-b--acme.aem.page</textarea>
   <div data-part="concept">
     <p>Each branch is served at <code>https://&lt;branch&gt;--&lt;repo&gt;--&lt;owner&gt;.aem.page/</code> for preview and <code>.aem.live</code> for published content. Content is shared by all branches, so your code runs against real pages.</p>
     <p>The combined <code>branch--repo--owner</code> must not exceed 63 characters, and none of the three parts may contain <code>--</code>. Long branch names are the usual cause of a broken URL.</p>
+    <h3>Checking a name before you push</h3>
+    <p>The limit exists because the combined name becomes one DNS label. The hyphens count. A repository called <code>acme-corporate-website</code> in an organization called <code>acme-digital</code> uses 34 characters plus 4 for the separators, which leaves 25 for the branch. Teams with long repository names should agree on short branch prefixes.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -224,6 +285,15 @@ aem up --url https://main--brand-b--acme.aem.page</textarea>
       <tr><td>A 60-character branch name</td><td>Probably no: over 63 in total</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Check a branch name" data-lang="bash">
+      <textarea class="src" hidden>BRANCH=feature-cards
+REPO=acme-corporate-website
+OWNER=acme-digital
+HOST="$BRANCH--$REPO--$OWNER"
+echo "${#HOST} characters: $HOST"
+# Must be 63 or fewer, and no part may contain --</textarea>
+      <ol class="code-explain"><li data-line="5">Prints the length of the label that will appear in the URL.</li><li data-line="6">Double hyphens are the separators, so they cannot also appear inside a part.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c1-t5"><script type="application/json">{"questions": [{"q": "Why does feature--login have no URL?", "options": ["Feature branches only get URLs after they are merged", "Branch names cannot contain --", "Login is reserved"], "answer": 1, "explain": "The double dash separates URL parts."}]}</script></div>
@@ -231,6 +301,100 @@ aem up --url https://main--brand-b--acme.aem.page</textarea>
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Branch URL fails</td><td>Name too long or has <code>--</code></td><td>Rename the branch.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="daily-development-loop" data-level="1">
+  <h2>The daily development loop</h2>
+  <div data-part="why"><p>Developers who know each tool can still lose hours to the order they use them in. A steady loop keeps pull requests small and scores green.</p></div>
+  <div data-part="concept">
+    <p>A normal change on EDS takes one short branch. Create the branch and run <code>aem up</code>. Choose a real page that shows the problem, and make the change against it. Push early, because the branch URL lets anyone review on a real device.</p>
+    <p>Open a pull request with a test URL in the description. The bot uses that URL for PageSpeed Insights, and a reviewer uses it to see the result. Merge only when the check is green. After merging, the change is on production code with no deployment step, so verify the same page on the live host.</p>
+    <p>If a change needs content that does not exist yet, create a draft page, preview it and use that as the test URL. Keep code that depends on new content backward compatible, so that merging before content goes live is safe. D5 covers coordinating the two.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Create short branch] --&gt; B[aem up]
+  B --&gt; C[Change code against a real page]
+  C --&gt; D[npm run lint]
+  D --&gt; E[Push and check branch URL]
+  E --&gt; F[Pull request with test URL]
+  F --&gt; G{PageSpeed green and reviewed?}
+  G -- No --&gt; C
+  G -- Yes --&gt; H[Merge to main]
+  H --&gt; I[Verify on aem.live]</pre>
+      <figcaption><b>What to notice:</b> There is no build or deployment box. The only gates are lint, the performance check and a human review.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A linear flow: create a short branch, run the local server, change code against a real page, lint, push and check the branch URL, then open a pull request with a test URL. If checks fail, return to the code. If they pass, merge to main and verify on aem.live.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="One change from start to finish" data-lang="bash">
+      <textarea class="src" hidden>git switch -c fix-card-gap
+aem up --open /en/products          # work against a real page
+npm run lint
+git commit -am "Fix uneven gap in cards"
+git push -u origin fix-card-gap
+# Check: https://fix-card-gap--site--org.aem.page/en/products
+# Then open a pull request and paste that URL in the description</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c1-t6"><script type="application/json">{"questions": [{"q": "Your pull request has no test URL in its description. What is the main problem?", "options": ["GitHub refuses to open the pull request until a URL has been added", "Code Sync will not create a branch URL for that pull request", "The automated performance check has no useful page to measure"], "answer": 2, "explain": "The test URL tells the bot which page to run PageSpeed Insights against, and shows reviewers the change."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Performance check tests the wrong page</td><td>No test URL in the description</td><td>Add a URL that includes the changed block.</td></tr>
+      <tr><td>Local page is blank</td><td>The page has never been previewed</td><td>Preview it once from Sidekick.</td></tr>
+      <tr><td>Change looks right locally only</td><td>File not committed or pushed</td><td>Check <code>git status</code> and the file&rsquo;s branch URL.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="cli-options-in-practice" data-level="2">
+  <h2>CLI options in practice</h2>
+  <div data-part="why"><p>Most developers only ever run <code>aem up</code>. A few options solve problems that otherwise look like platform faults.</p></div>
+  <div data-part="concept">
+    <p>The options fall into three groups. <b>Server</b> options control where it listens, such as <code>--port</code> when 3000 is taken and <code>--addr</code> to allow other devices. <b>Content</b> options control where pages come from, including <code>--url</code> and <code>--site-token</code>. <b>Debugging</b> options include <code>--print-index</code>, <code>--forward-browser-logs</code> and <code>--log-level</code>.</p>
+    <p>You can also work without an authoring system. <code>--html-folder</code> serves local HTML files without their extensions, which helps when you draft a page&rsquo;s markup by hand or with an AI tool. For projects on da.live, <code>aem content clone</code> checks content out to a local <code>content/</code> folder. <code>aem up</code> then serves matching paths from that folder, and you use <code>status</code>, <code>diff</code>, <code>add</code>, <code>commit</code> and <code>push</code> much as you would with Git.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Situation</th><th>Command</th></tr></thead>
+    <tbody>
+      <tr><td>Port 3000 is in use</td><td><code>aem up --port 3010</code></td></tr>
+      <tr><td>Test on a phone on the same network</td><td><code>aem up --addr "*"</code></td></tr>
+      <tr><td>Repoless site, or a different origin</td><td><code>aem up --url https://main--site--org.aem.page</code></td></tr>
+      <tr><td>Protected site</td><td><code>aem up --site-token &lt;token&gt;</code></td></tr>
+      <tr><td>See console errors in the terminal</td><td><code>aem up --forward-browser-logs</code></td></tr>
+      <tr><td>Check what would be indexed</td><td><code>aem up --print-index</code></td></tr>
+      <tr><td>Preview hand-written HTML</td><td><code>aem up --html-folder drafts</code></td></tr>
+      <tr><td>Import pages from an old site</td><td><code>aem import</code></td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Editing da.live content locally" data-lang="bash">
+      <textarea class="src" hidden>aem content clone --path /en/news   # fetch one folder into ./content
+aem up                              # serves ./content where paths match
+aem content status
+aem content diff /en/news/launch.html
+aem content add en/news/launch.html
+aem content commit -m "Update launch date"
+aem content push                    # upload to da.live</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c1-t7"><script type="application/json">{"questions": [{"q": "A repoless site shows the wrong content in local preview. Which option do you add?", "options": ["--url with the site you are developing", "--print-index, so the CLI can read content from the query index", "--no-livereload, so the cached content is not replaced"], "answer": 0, "explain": "Repoless sites share one repository, so the CLI needs to know which site&rsquo;s content to use."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Phone cannot reach the local server</td><td>Bound to 127.0.0.1</td><td>Use <code>--addr "*"</code> on a trusted network.</td></tr>
+      <tr><td>401 from local preview</td><td>Site is protected</td><td>Pass <code>--site-token</code>.</td></tr>
+      <tr><td>Local content edits missing on the site</td><td>Not pushed</td><td>Run <code>aem content push</code>.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -305,12 +469,12 @@ aem up --url https://main--brand-b--acme.aem.page</textarea>
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c1-check"><script type="application/json">{"questions": [{"q": "What serves each branch?", "options": ["AEM Code Sync", "A nightly job", "The author"], "answer": 0, "explain": "It observes the repository."}, {"q": "What does aem up start?", "options": ["A local development server", "An index rebuild", "A production deploy of the current branch"], "answer": 0, "explain": "On port 3000 by default."}, {"q": "What does --url set?", "options": ["The port", "The Git remote", "The content origin"], "answer": 2, "explain": "Essential for repoless."}, {"q": "Which tools does the boilerplate lint with? Choose all that apply.", "options": ["ESLint", "Prettier only", "Stylelint"], "answer": [0, 2], "explain": "ESLint uses airbnb-base."}, {"q": "Max length of branch--repo--owner?", "options": ["255 characters", "32 characters", "63 characters"], "answer": 2, "explain": "It is a subdomain limit."}, {"q": "Why keep repositories public, according to aem.live?", "options": ["It makes pages faster", "Code Sync can only read public repositories on github.com", "The code is served to browsers anyway"], "answer": 2, "explain": "And it supports the community."}, {"q": "Which app access option is right?", "options": ["Only select repositories", "All repositories", "No repositories"], "answer": 0, "explain": "Least privilege."}, {"q": "A developer wants to add a bundler on day one, for familiarity. What do you say?", "options": ["Rewrite the boilerplate", "Add it: it is always better", "Start buildless and add tools only with a measured need", "Add it now, and commit the bundled output to the repository with each change"], "answer": 2, "explain": "EDS is designed to run directly from the repository.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c1-check"><script type="application/json">{"questions": [{"q": "What serves each branch?", "options": ["AEM Code Sync", "A nightly job", "The author"], "answer": 0, "explain": "It observes the repository."}, {"q": "What does aem up start?", "options": ["A local development server", "An index rebuild", "A production deploy of the current branch"], "answer": 0, "explain": "On port 3000 by default."}, {"q": "What does --url set?", "options": ["The port", "The Git remote", "The content origin"], "answer": 2, "explain": "Essential for repoless."}, {"q": "Which tools does the boilerplate lint with? Choose all that apply.", "options": ["ESLint", "Prettier only", "Stylelint"], "answer": [0, 2], "explain": "ESLint uses airbnb-base."}, {"q": "Max length of branch--repo--owner?", "options": ["255 characters", "32 characters", "63 characters"], "answer": 2, "explain": "It is a subdomain limit."}, {"q": "Why keep repositories public, according to aem.live?", "options": ["It makes pages faster", "Code Sync can only read public repositories on github.com", "The code is served to browsers anyway"], "answer": 2, "explain": "And it supports the community."}, {"q": "Which app access option is right?", "options": ["Only select repositories", "All repositories", "No repositories"], "answer": 0, "explain": "Least privilege."}, {"q": "A developer wants to add a bundler on day one, for familiarity. What do you say?", "options": ["Rewrite the boilerplate", "Add it: it is always better", "Start buildless and add tools only with a measured need", "Add it now, and commit the bundled output to the repository with each change"], "answer": 2, "explain": "EDS is designed to run directly from the repository.", "scenario": true}, {"q": "Which is served from your disk during aem up?", "options": ["The site&rsquo;s query index", "The HTML of a published page", "A block&rsquo;s JavaScript file"], "answer": 2, "explain": "Files in your working folder are local. Content is fetched from the preview host."}, {"q": "Which command prints the index record for the page you are viewing?", "options": ["npm run lint -- --index", "aem content status --index", "aem up --print-index"], "answer": 2, "explain": "It is a development server option."}, {"q": "A page opens on the live site, but not at localhost. It was published long ago. What should you check first?", "options": ["Whether the block has a lint warning", "Whether --url points at the right site", "Whether the sitemap lists the page"], "answer": 1, "explain": "The CLI needs the right content origin, particularly on repoless projects."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c1-cards"><script type="application/json">{"cards": [["aem-boilerplate", "Starter template for document-based projects."], ["aem-boilerplate-xwalk", "Starter template for AEM authoring."], ["AEM Code Sync", "GitHub App that serves branches."], ["aem up", "Starts the local server."], ["--url", "Sets the content origin."], ["Branch URL", "branch--repo--owner.aem.page"], ["63 characters", "Limit on the combined subdomain."], ["npm run lint", "Runs ESLint and Stylelint."], ["lint:fix", "Fixes what it can."], ["Draft PR", "Signals work in progress."]]}</script></div>
+  <div data-component="flashcards" data-id="c1-cards"><script type="application/json">{"cards": [["aem-boilerplate", "Starter template for document-based projects."], ["aem-boilerplate-xwalk", "Starter template for AEM authoring."], ["AEM Code Sync", "GitHub App that serves branches."], ["aem up", "Starts the local server."], ["--url", "Sets the content origin."], ["Branch URL", "branch--repo--owner.aem.page"], ["63 characters", "Limit on the combined subdomain."], ["npm run lint", "Runs ESLint and Stylelint."], ["lint:fix", "Fixes what it can."], ["Draft PR", "Signals work in progress."], ["--url", "Sets the origin content comes from."], ["--site-token", "Lets the CLI read a protected site."], ["--addr \"*\"", "Allows other devices on your network."], ["aem content clone", "Checks da.live content out locally."], ["--html-folder", "Serves local HTML files without extensions."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -323,6 +487,10 @@ aem up --url https://main--brand-b--acme.aem.page</textarea>
       <div><h4>Local</h4><ul><li>npm i -g @adobe/aem-cli</li><li>aem up</li><li>--url for repoless</li></ul></div>
       <div><h4>Quality</h4><ul><li>npm run lint</li><li>lint:fix</li><li>Do not change rules</li></ul></div>
       <div><h4>Branches</h4><ul><li>branch--repo--owner</li><li>Max 63 characters</li><li>No double dashes</li></ul></div>
+      <div><h4>Local server</h4><ul><li><code>aem up --open /path</code></li><li><code>--port 3010</code></li><li><code>--addr "*"</code> for a phone</li><li><code>--site-token</code> for protected sites</li><li><code>--forward-browser-logs</code></li></ul></div>
+      <div><h4>URLs</h4><ul><li><code>branch--repo--owner.aem.page</code></li><li><code>.aem.live</code> for published</li><li>63 characters at most, hyphens included</li><li>No <code>--</code> inside a part</li></ul></div>
+      <div><h4>Daily loop</h4><ul><li>Short branch</li><li>Real page in <code>aem up</code></li><li><code>npm run lint</code></li><li>Pull request with test URL</li><li>Green, reviewed, merged</li><li>Verify on aem.live</li></ul></div>
+      <div><h4>Local content</h4><ul><li><code>aem content clone --path</code></li><li><code>status</code>, <code>diff</code></li><li><code>add</code>, <code>commit</code>, <code>push</code></li><li><code>--html-folder drafts</code></li></ul></div>
     </div>
   </div>
 </section>

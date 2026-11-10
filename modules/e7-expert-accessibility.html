@@ -37,6 +37,10 @@
     <li>Decide if a complex pattern is needed.</li>
     <li>Build accessible tabs, accordions and carousels.</li>
     <li>Test with keyboard and screen reader.</li>
+    <li>Build accessible navigation.</li>
+    <li>Manage focus in dialogs and dynamic content.</li>
+    <li>Check motion, contrast, zoom and target size.</li>
+    <li>Test blocks with assistive technology.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e7-ready" data-title="Ready for expert accessibility?">
     <script type="application/json">{"questions": [{"q": "What should a block start from?", "options": ["A canvas image", "An empty page", "Authored HTML"], "answer": 2, "explain": "Covered in C4."}, {"q": "Which level does the course target?", "options": ["WCAG 1.0 A", "WCAG 2.2 AA", "None"], "answer": 1, "explain": "Covered in B8 and D9."}, {"q": "Can automated tests prove conformance?", "options": ["No", "Only Lighthouse", "Yes"], "answer": 0, "explain": "Covered in D9."}]}</script>
@@ -63,6 +67,28 @@
       <tr><td>Modal dialog</td><td>Tab stays inside, Escape closes</td><td>Label, return of focus</td></tr>
     </tbody>
   </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Key</th><th>Tabs</th><th>Accordion (details)</th><th>Carousel</th></tr></thead>
+    <tbody>
+      <tr><td>Tab</td><td>Into the set, then to the panel</td><td>To each summary</td><td>To each control</td></tr>
+      <tr><td>Arrow left or right</td><td>Previous or next tab</td><td>Not used</td><td>Not required</td></tr>
+      <tr><td>Home and End</td><td>First or last tab</td><td>Not used</td><td>Not used</td></tr>
+      <tr><td>Enter or Space</td><td>Activates if not automatic</td><td>Toggles</td><td>Presses the button</td></tr>
+    </tbody>
+  </table></div>
+    <figure class="diagram">
+      <pre class="mermaid">stateDiagram-v2
+  [*] --&gt; Tab1
+  Tab1 --&gt; Tab2: Right arrow
+  Tab2 --&gt; Tab3: Right arrow
+  Tab3 --&gt; Tab1: Right arrow wraps
+  Tab2 --&gt; Tab1: Left arrow
+  Tab3 --&gt; Tab2: Left arrow
+  Tab1 --&gt; Tab3: End
+  Tab3 --&gt; Tab1: Home</pre>
+      <figcaption><b>What to notice:</b> Only the selected tab is in the Tab order. Arrow keys move within the set, and wrap at each end.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A state diagram of three tabs. Right arrow moves forward and wraps from the last to the first. Left arrow moves back. End jumps to the last tab, and Home to the first.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <figure class="code" data-file="blocks/tabs/tabs.js (excerpt)" data-lang="javascript">
@@ -88,6 +114,214 @@
   </div>
 </section>
 
+<!-- 2 -->
+<section class="topic" id="navigation-and-menus" data-level="3">
+  <h2>Accessible navigation and menus</h2>
+  <div data-part="why"><p>If a keyboard user cannot get through the header, the rest of the site might as well not exist.</p></div>
+  <div data-part="concept">
+    <p>Keep site navigation as links in a <code>nav</code> element with a clear label, and use lists for the structure. A disclosure pattern suits most sites: a real button with <code>aria-expanded</code> opens a group of links. Avoid <code>role="menu"</code>, which is meant for application menus and tells screen reader users to expect different keys.</p>
+    <p>Escape should close an open panel and return focus to its button. On mobile, the toggle needs a name and state, and content behind an open panel should not be reachable. Provide a skip link as the first focusable element, so that keyboard users can go straight to <code>main</code>.</p>
+    <p>WCAG 2.2 adds that a focused element must not be entirely hidden by sticky content such as a fixed header. Use <code>scroll-padding-top</code> to keep it in view.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">stateDiagram-v2
+  Closed --&gt; Open: Enter or Space on button
+  Open --&gt; Closed: Escape, focus returns to button
+  Open --&gt; Closed: Button pressed again
+  Open --&gt; Open: Tab moves through links</pre>
+      <figcaption><b>What to notice:</b> Closing with Escape always returns focus to the button. Otherwise keyboard users lose their place.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A closed menu opens with Enter or Space on its button. While open, Tab moves through the links. Escape or pressing the button again closes it, and Escape returns focus to the button.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A disclosure navigation group" data-lang="javascript">
+      <textarea class="src" hidden>export function disclosure(button, panel) {
+  button.setAttribute('aria-expanded', 'false');
+  button.setAttribute('aria-controls', panel.id);
+  panel.hidden = true;
+  const set = (open) =&gt; {
+    button.setAttribute('aria-expanded', String(open));
+    panel.hidden = !open;
+  };
+  button.addEventListener('click', () =&gt; set(button.getAttribute('aria-expanded') !== 'true'));
+  panel.parentElement.addEventListener('keydown', (e) =&gt; {
+    if (e.key === 'Escape' &amp;&amp; !panel.hidden) { set(false); button.focus(); }
+  });
+}</textarea>
+      <ol class="code-explain"><li data-line="2">Announces whether the group is open.</li><li data-line="4"><code>hidden</code> also removes links from the Tab order.</li><li data-line="11">Escape closes the panel and returns focus.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e7-t2"><script type="application/json">{"questions": [{"q": "Why should site navigation usually avoid role=\"menu\"?", "options": ["It is not allowed inside of a nav element by HTML rules", "It stops the links from being indexed by search engines", "It suggests application-style keys that links do not provide"], "answer": 2, "explain": "A disclosure button with links matches what is actually there."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Focus goes behind sticky header</td><td>Header covers it</td><td>Add <code>scroll-padding-top</code>.</td></tr>
+      <tr><td>Escape does nothing</td><td>No handler</td><td>Close and return focus.</td></tr>
+      <tr><td>Hidden links still get focus</td><td>Hidden visually only</td><td>Use <code>hidden</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="dialogs-and-focus-management" data-level="3">
+  <h2>Dialogs and focus management</h2>
+  <div data-part="why"><p>Modals are where focus most often goes wrong: users land behind the dialog, or get stranded when it closes.</p></div>
+  <div data-part="concept">
+    <p>Use the native <code>dialog</code> element and <code>showModal()</code>. The browser then makes the rest of the page inert, keeps focus inside, closes on Escape, and renders the backdrop. Give it a name with <code>aria-labelledby</code>. The browser normally returns focus to the element that opened it, but verify this if you create or remove elements.</p>
+    <p>Decide where focus should go on open: usually the heading or first control. For dynamic changes on a page, use a live region to announce results, such as &ldquo;12 results found&rdquo;. Only announce what matters, since constant messages are as unhelpful as silence.</p>
+    <p>After content is removed, move focus somewhere sensible. If a user deletes a row and focus disappears with it, a keyboard user is sent back to the top of the page.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Event</th><th>Where focus goes</th></tr></thead>
+    <tbody>
+      <tr><td>Dialog opens</td><td>Its heading or first control</td></tr>
+      <tr><td>Dialog closes</td><td>The control that opened it</td></tr>
+      <tr><td>Item deleted</td><td>The next item, or the list heading</td></tr>
+      <tr><td>Inline error on submit</td><td>The first error or a summary</td></tr>
+      <tr><td>Filter applied</td><td>Stays put; announce the count</td></tr>
+    </tbody>
+  </table></div>
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+  participant U as User
+  participant O as Open button
+  participant D as Dialog
+  U-&gt;&gt;O: Activate
+  O-&gt;&gt;D: showModal, focus moves to heading
+  U-&gt;&gt;D: Tab stays inside
+  U-&gt;&gt;D: Escape
+  D-&gt;&gt;O: Close, focus returns</pre>
+      <figcaption><b>What to notice:</b> Focus goes in, stays in, and comes back to where it started.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The user activates an open button. showModal opens the dialog and focus moves to its heading. Tab stays inside. Escape closes the dialog and focus returns to the open button.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A modal using the native dialog" data-lang="javascript">
+      <textarea class="src" hidden>export function openModal(content, titleText) {
+  const dialog = document.createElement('dialog');
+  dialog.setAttribute('aria-labelledby', 'modal-title');
+  const title = document.createElement('h2');
+  title.id = 'modal-title';
+  title.tabIndex = -1;
+  title.textContent = titleText;
+  const close = document.createElement('button');
+  close.textContent = 'Close';
+  close.addEventListener('click', () =&gt; dialog.close());
+  dialog.append(title, content, close);
+  dialog.addEventListener('close', () =&gt; dialog.remove());
+  document.body.append(dialog);
+  dialog.showModal();
+  title.focus();
+}</textarea>
+      <ol class="code-explain"><li data-line="6">Lets the heading take focus, without adding it to the Tab order.</li><li data-line="14">Makes the rest of the page inert, and traps focus for you.</li><li data-line="12">Removing it when closed keeps the DOM clean.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e7-t3"><script type="application/json">{"questions": [{"q": "What does showModal() give you that a styled div does not?", "options": ["Automatic reporting of the dialog to Operational Telemetry", "Inert background, contained focus and Escape to close", "Automatic translation of the dialog&rsquo;s text content"], "answer": 1, "explain": "The browser does the hard parts."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Focus is behind the modal</td><td>A plain <code>div</code></td><td>Use <code>dialog</code> and <code>showModal</code>.</td></tr>
+      <tr><td>Lost after deleting an item</td><td>Focused element removed</td><td>Move focus first.</td></tr>
+      <tr><td>No announcement of results</td><td>Silent update</td><td>Add a polite live region.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="motion-contrast-zoom-and-targets" data-level="3">
+  <h2>Motion, contrast, zoom and target size</h2>
+  <div data-part="why"><p>These are the checks that automated tools catch least often, and that real people notice most.</p></div>
+  <div data-part="concept">
+    <p><b>Motion.</b> Respect <code>prefers-reduced-motion</code>. Parallax and large transitions can cause nausea.</p>
+    <p><b>Contrast.</b> Text needs 4.5:1, or 3:1 if large. Controls and focus indicators need 3:1 against what is next to them. Check text placed over images in the worst case, not the average.</p>
+    <p><b>Reflow and zoom.</b> Content must work at 320 CSS pixels wide without sideways scrolling, except for parts such as data tables. Text must remain usable at 200%. Do not set heights in pixels on anything containing text.</p>
+    <p><b>Target size.</b> WCAG 2.2 AA asks for at least 24 by 24 CSS pixels, with some exceptions such as links inside sentences. Other WCAG 2.2 additions include avoiding drag-only actions, consistent help, and not asking people to re-enter information unnecessarily.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>WCAG 2.2 criterion</th><th>Level</th><th>What to check</th></tr></thead>
+    <tbody>
+      <tr><td>2.4.11 Focus Not Obscured</td><td>AA</td><td>Sticky headers do not hide focus</td></tr>
+      <tr><td>2.5.7 Dragging Movements</td><td>AA</td><td>A single-pointer alternative exists</td></tr>
+      <tr><td>2.5.8 Target Size (Minimum)</td><td>AA</td><td>At least 24 by 24 CSS pixels</td></tr>
+      <tr><td>3.2.6 Consistent Help</td><td>A</td><td>Help is in the same relative place</td></tr>
+      <tr><td>3.3.7 Redundant Entry</td><td>A</td><td>No retyping of earlier answers</td></tr>
+      <tr><td>3.3.8 Accessible Authentication</td><td>AA</td><td>No memory or puzzle test alone</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Reduced motion and target size" data-lang="css">
+      <textarea class="src" hidden>@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.carousel button {
+  min-block-size: 24px;
+  min-inline-size: 24px;
+}
+
+html {
+  scroll-padding-top: var(--nav-height);
+}</textarea>
+      <ol class="code-explain"><li data-line="1">A global reset is one of the few fair uses of !important.</li><li data-line="10">The minimum in WCAG 2.2 AA. Larger is better for touch.</li><li data-line="15">Keeps a focused element clear of the sticky header.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e7-t4"><script type="application/json">{"questions": [{"q": "What is the minimum target size in WCAG 2.2 AA?", "options": ["44 by 44 CSS pixels, with no exceptions", "12 by 12 CSS pixels on touch screens", "24 by 24 CSS pixels, with some exceptions"], "answer": 2, "explain": "2.5.8 Target Size (Minimum)."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Text overlaps at 200%</td><td>Fixed heights</td><td>Use <code>min-height</code>.</td></tr>
+      <tr><td>Hero text unreadable</td><td>Image behind text</td><td>Add a scrim and test the worst case.</td></tr>
+      <tr><td>Controls hard to tap</td><td>Small targets</td><td>Increase size or spacing.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="testing-with-assistive-technology" data-level="3">
+  <h2>Testing with assistive technology</h2>
+  <div data-part="why"><p>A scan can say a tab has a name. Only using it can tell you whether the tab makes any sense.</p></div>
+  <div data-part="concept">
+    <p>Use a fixed script for each block, so the result does not depend on who is testing. Start with the keyboard alone. Then use a screen reader: VoiceOver with Safari on macOS and iOS, NVDA with Firefox or Chrome on Windows. Listen for each control&rsquo;s name, role and state, and for what changes when you act on it.</p>
+    <p>Try the block with real author content: long headings, missing images, one item, and a great many items. Check at 200% zoom, at 320 pixels wide, in Windows forced-colours mode, and with reduced motion. Record what you tested, including the tool and version, because results change over time.</p>
+    <p>Automated scans remain useful as a floor, particularly in pull requests. They find only a portion of issues, though, so include people with disabilities in testing wherever possible.</p>
+  </div>
+  <div data-part="visual">
+    <div data-component="stepper" data-title="A test script for one block"><div class="step" data-label="Keyboard"><p>Reach every control with Tab. Operate each with the expected keys. Focus is always visible and never trapped.</p></div><div class="step" data-label="Screen reader"><p>Move through by element. Each control announces its name, role and state.</p></div><div class="step" data-label="Change"><p>Operate it. The new state or result is announced, and focus lands somewhere sensible.</p></div><div class="step" data-label="Zoom"><p>At 200%, and at 320 px wide, nothing is cut off, and there is no sideways scroll.</p></div><div class="step" data-label="Preferences"><p>Reduced motion and forced colours are respected.</p></div><div class="step" data-label="Content"><p>Long text, no image, one item and many items all work.</p></div><div class="step" data-label="Record"><p>Note the tool, version, date and any defects, with an owner.</p></div></div>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Pairing</th><th>Platform</th></tr></thead>
+    <tbody>
+      <tr><td>VoiceOver with Safari</td><td>macOS and iOS</td></tr>
+      <tr><td>NVDA with Firefox or Chrome</td><td>Windows</td></tr>
+      <tr><td>TalkBack with Chrome</td><td>Android</td></tr>
+      <tr><td>JAWS with Chrome</td><td>Windows, often in enterprises</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e7-t5"><script type="application/json">{"questions": [{"q": "An automated scan shows zero issues on a new block. What can you conclude?", "options": ["Only that the problems it can detect were not found", "That the block conforms to WCAG 2.2 at Level AA", "That manual testing can be skipped for this block"], "answer": 0, "explain": "Scans find only part of what matters."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Different results by tester</td><td>No script</td><td>Use one fixed script.</td></tr>
+      <tr><td>Works only with short text</td><td>Tested with sample content</td><td>Try real and extreme content.</td></tr>
+      <tr><td>Regressions go unnoticed</td><td>No record</td><td>Log tool, version and result.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
 <section class="mpart" id="signature" data-toc="Signature interactive">
   <h2>Signature interactive: accessible tabs, accordion and carousel demos</h2>
   <p>Use only your keyboard. Then try a screen reader, if you have one.</p>
@@ -109,6 +343,7 @@
     <li><div><b>Check</b> focus visibility and contrast.</div></li>
     <li><div><b>Test</b> at 200% zoom.</div></li>
     <li><div><b>Test</b> with a screen reader.</div></li>
+    <li><div><b>Add</b> a disclosure menu and a native dialog, and run the test script on each.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
     <div><h3>Expected result</h3><p>A tabs block usable by keyboard and screen reader.</p></div>
@@ -158,12 +393,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e7-check"><script type="application/json">{"questions": [{"q": "Which native element suits accordions?", "options": ["details", "font", "marquee"], "answer": 0, "explain": "It brings keyboard support."}, {"q": "What role contains tabs?", "options": ["banner", "menu", "tablist"], "answer": 2, "explain": "See the tabs pattern."}, {"q": "Which attribute links a tab to its panel?", "options": ["aria-hidden", "alt", "aria-controls"], "answer": 2, "explain": "See the tabs pattern."}, {"q": "What must moving content for more than 5 seconds offer?", "options": ["A faster speed", "A way to pause, stop or hide", "A delay of at least 5 seconds between each movement"], "answer": 1, "explain": "WCAG 2.2.2."}, {"q": "Which key closes a modal dialog?", "options": ["Escape", "Space bar always", "F5"], "answer": 0, "explain": "See the dialog pattern."}, {"q": "Which keys move between tabs?", "options": ["Page Up only", "Arrow keys", "Number keys"], "answer": 1, "explain": "Tab moves into and out of the set."}, {"q": "Why is bad ARIA a problem?", "options": ["Browsers remove every ARIA attribute they cannot validate", "It makes the page fail the Lighthouse performance audit", "It can give false information to assistive technology"], "answer": 2, "explain": "Prefer native HTML."}, {"q": "A designer wants an auto-rotating hero carousel with six slides. What do you advise first?", "options": ["Build it as designed, with a slower rotation and a hidden pause control for screen reader users only", "Question the need, and if kept, no auto-rotation or provide pause", "Make slides change faster", "Hide it from screen readers entirely"], "answer": 1, "explain": "It also risks LCP and engagement.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e7-check"><script type="application/json">{"questions": [{"q": "Which native element suits accordions?", "options": ["details", "font", "marquee"], "answer": 0, "explain": "It brings keyboard support."}, {"q": "What role contains tabs?", "options": ["banner", "menu", "tablist"], "answer": 2, "explain": "See the tabs pattern."}, {"q": "Which attribute links a tab to its panel?", "options": ["aria-hidden", "alt", "aria-controls"], "answer": 2, "explain": "See the tabs pattern."}, {"q": "What must moving content for more than 5 seconds offer?", "options": ["A faster speed", "A way to pause, stop or hide", "A delay of at least 5 seconds between each movement"], "answer": 1, "explain": "WCAG 2.2.2."}, {"q": "Which key closes a modal dialog?", "options": ["Escape", "Space bar always", "F5"], "answer": 0, "explain": "See the dialog pattern."}, {"q": "Which keys move between tabs?", "options": ["Page Up only", "Arrow keys", "Number keys"], "answer": 1, "explain": "Tab moves into and out of the set."}, {"q": "Why is bad ARIA a problem?", "options": ["Browsers remove every ARIA attribute they cannot validate", "It makes the page fail the Lighthouse performance audit", "It can give false information to assistive technology"], "answer": 2, "explain": "Prefer native HTML."}, {"q": "A designer wants an auto-rotating hero carousel with six slides. What do you advise first?", "options": ["Build it as designed, with a slower rotation and a hidden pause control for screen reader users only", "Question the need, and if kept, no auto-rotation or provide pause", "Make slides change faster", "Hide it from screen readers entirely"], "answer": 1, "explain": "It also risks LCP and engagement.", "scenario": true}, {"q": "What should Escape do in an open disclosure menu?", "options": ["Move focus to the top of the page", "Close it and return focus to its button", "Open the next group in the menu"], "answer": 1, "explain": "Users must not lose their place."}, {"q": "Which native element traps focus for you when opened properly?", "options": ["dialog", "details", "section"], "answer": 0, "explain": "Use showModal()."}, {"q": "What contrast does normal-size text need?", "options": ["4.5:1", "7:1", "3:1"], "answer": 0, "explain": "Large text needs 3:1."}, {"q": "Which pairing is common for testing on Windows?", "options": ["TalkBack with Chrome", "NVDA with Firefox or Chrome", "VoiceOver with Safari"], "answer": 1, "explain": "VoiceOver is for Apple platforms, and TalkBack for Android."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e7-cards"><script type="application/json">{"cards": [["Roving tabindex", "One tab in the Tab order."], ["aria-controls", "Links tab to panel."], ["details", "Native disclosure."], ["Live region", "Announces changes."], ["WCAG 2.2.2", "Pause, stop, hide."], ["Bad ARIA", "Worse than none."], ["prefers-reduced-motion", "User asks for less motion."], ["200% zoom", "A required check."]]}</script></div>
+  <div data-component="flashcards" data-id="e7-cards"><script type="application/json">{"cards": [["Roving tabindex", "One tab in the Tab order."], ["aria-controls", "Links tab to panel."], ["details", "Native disclosure."], ["Live region", "Announces changes."], ["WCAG 2.2.2", "Pause, stop, hide."], ["Bad ARIA", "Worse than none."], ["prefers-reduced-motion", "User asks for less motion."], ["200% zoom", "A required check."], ["Disclosure", "A button that shows and hides related content."], ["showModal()", "Opens a dialog with an inert background."], ["prefers-reduced-motion", "User asks for less animation."], ["2.5.8", "Target Size (Minimum): 24 by 24 CSS pixels."], ["Live region", "Announces changes without moving focus."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -176,6 +411,10 @@
       <div><h4>Accordion</h4><ul><li>details</li><li>Heading structure</li></ul></div>
       <div><h4>Carousel</h4><ul><li>Real buttons</li><li>No auto-advance</li><li>Announce slide</li></ul></div>
       <div><h4>Test</h4><ul><li>Keyboard</li><li>Screen reader</li><li>Zoom</li></ul></div>
+      <div><h4>Patterns</h4><ul><li>Accordion: <code>details</code></li><li>Menu: disclosure button</li><li>Modal: <code>dialog</code></li><li>Tabs: roving tabindex</li></ul></div>
+      <div><h4>Focus</h4><ul><li>Open: heading or first control</li><li>Close: return to opener</li><li>Deleted item: next item</li><li>Sticky: <code>scroll-padding-top</code></li></ul></div>
+      <div><h4>Numbers</h4><ul><li>Text 4.5:1, large 3:1</li><li>UI and focus 3:1</li><li>Target 24 by 24 px</li><li>Reflow at 320 px</li><li>Zoom 200%</li></ul></div>
+      <div><h4>Test script</h4><ul><li>Keyboard</li><li>Screen reader</li><li>Zoom</li><li>Reduced motion</li><li>Real content</li><li>Record results</li></ul></div>
     </div>
   </div>
 </section>

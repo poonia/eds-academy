@@ -39,6 +39,8 @@
     <li>Choose the right kind of test.</li>
     <li>Combine automated and manual accessibility testing.</li>
     <li>Use branch URLs for visual comparison.</li>
+    <li>Run end-to-end tests against branch URLs.</li>
+    <li>Choose the right kind of load, performance or security test.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c10-ready" data-title="Ready for testing and code quality?">
     <script type="application/json">{"questions": [{"q": "What happens when code merges to main?", "options": ["It goes to production", "Nothing yet", "It is emailed"], "answer": 0, "explain": "Covered in C1."}, {"q": "Which tools does the boilerplate lint with?", "options": ["JSHint", "ESLint and Stylelint", "None"], "answer": 1, "explain": "Covered in C1."}, {"q": "Does PSI run on PRs?", "options": ["No", "Only on Friday", "Yes"], "answer": 2, "explain": "Covered in C6."}]}</script>
@@ -74,6 +76,16 @@
       <tr><td>Draft while in progress</td><td>Review of unfinished code</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="A pull request description that works" data-lang="markdown">
+      <textarea class="src" hidden>Fix uneven gap in the cards block on small screens.
+
+Fixes #142
+
+Test URLs:
+- Before: https://main--site--org.aem.page/en/products
+- After: https://fix-card-gap--site--org.aem.page/en/products</textarea>
+      <figcaption>The bot reads test URLs from here, and a reviewer can compare before and after in one click.</figcaption>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c10-t1"><script type="application/json">{"questions": [{"q": "Who should normally merge an approved PR?", "options": ["Anyone", "The first reviewer", "Its author"], "answer": 2, "explain": "Unless the author says otherwise."}]}</script></div>
@@ -151,6 +163,22 @@ test('calculates a monthly payment', () =&gt; {
       <tr><td>Penetration</td><td>Can it be exploited?</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Testing pure logic with Node&amp;rsquo;s built-in runner" data-lang="javascript">
+      <textarea class="src" hidden>// test/price.test.js
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { formatRate } from '../scripts/price.js';
+
+test('formats a rate to two decimal places', () =&gt; {
+  assert.equal(formatRate('4.5'), '4.50%');
+});
+
+test('returns an empty string for missing data', () =&gt; {
+  assert.equal(formatRate(''), '');
+});</textarea>
+      <figcaption>Add test/ to .hlxignore so that test files are not served.</figcaption>
+      <ol class="code-explain"><li data-line="2">Needs nothing installed, so it fits a buildless project.</li><li data-line="11">Test what happens when authors leave a cell empty.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c10-t3"><script type="application/json">{"questions": [{"q": "What does a raw HTTP flood mostly prove on EDS?", "options": ["That the CDN serves cached responses", "That your blocks and scripts hold up under real user load", "That SEO is good"], "answer": 0, "explain": "See aem.live’s testing guide."}]}</script></div>
@@ -178,6 +206,17 @@ test('calculates a monthly payment', () =&gt; {
       <tr><td>Keyboard</td><td>Traps and unreachable controls</td></tr>
       <tr><td>Screen reader</td><td>Confusing announcements</td></tr>
       <tr><td>Zoom</td><td>Overlaps and lost content</td></tr>
+    </tbody>
+  </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Check</th><th>How</th><th>Finds</th></tr></thead>
+    <tbody>
+      <tr><td>Keyboard only</td><td>Tab, Shift+Tab, Enter, Space, arrows</td><td>Traps and unreachable controls</td></tr>
+      <tr><td>Focus visible</td><td>Tab through in light and dark sections</td><td>Removed or low-contrast outlines</td></tr>
+      <tr><td>Screen reader</td><td>VoiceOver or NVDA on the changed block</td><td>Missing names and states</td></tr>
+      <tr><td>Zoom</td><td>200% and a 320 px width</td><td>Clipped text and overflow</td></tr>
+      <tr><td>Reduced motion</td><td>OS setting on</td><td>Animation that ignores it</td></tr>
+      <tr><td>Real content</td><td>Long titles, no image</td><td>Fragile layouts</td></tr>
     </tbody>
   </table></div>
   </div>
@@ -221,6 +260,21 @@ test('calculates a monthly payment', () =&gt; {
       <tr><td>Mobile and desktop</td><td>Animated content</td></tr>
     </tbody>
   </table></div>
+    <figure class="code" data-file="Comparing main with a branch" data-lang="javascript">
+      <textarea class="src" hidden>import { test, expect } from '@playwright/test';
+
+const BRANCH = process.env.BRANCH || 'main';
+const base = `https://${BRANCH}--site--org.aem.live`;
+
+for (const path of ['/en/products', '/en/rates']) {
+  test(`visual ${path}`, async ({ page }) =&gt; {
+    await page.goto(base + path);
+    await page.waitForFunction(() =&gt; document.querySelector('main .section[data-section-status="loaded"]'));
+    await expect(page).toHaveScreenshot({ fullPage: true, animations: 'disabled' });
+  });
+}</textarea>
+      <ol class="code-explain"><li data-line="3">Create baselines on main, then run the same test with a branch.</li><li data-line="9">Waits for decoration, rather than an arbitrary delay.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="c10-t5"><script type="application/json">{"questions": [{"q": "Which EDS feature makes visual comparison easy?", "options": ["Branch URLs", "Redirects", "Sitemaps"], "answer": 0, "explain": "Compare branch against main."}]}</script></div>
@@ -228,6 +282,101 @@ test('calculates a monthly payment', () =&gt; {
   <div data-part="pitfalls">
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>False failures</td><td>Dynamic content</td><td>Use stable test pages.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="browser-tests-on-branch-urls" data-level="2">
+  <h2>Browser tests on branch URLs</h2>
+  <div data-part="why"><p>Every branch already has a URL with real content, so end-to-end tests need no test environment.</p></div>
+  <div data-part="concept">
+    <p>Point your end-to-end suite at the branch URL. Cover a few journeys that would hurt if they broke: navigation, a key form, and search. Avoid testing every block this way, because browser tests are slow and fragile.</p>
+    <p>Wait for the state the page actually reports. <code>data-block-status</code> tells you when a block is finished, which is more reliable than a timer. Select elements by role and name rather than by generated structure, since that also exercises accessibility.</p>
+    <p>Run against stable test pages that authors will not edit, or your tests will fail for reasons that have nothing to do with code.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Push branch] --&gt; B[GitHub Action]
+  B --&gt; C[Wait for branch URL]
+  C --&gt; D[Playwright against that URL]
+  D --&gt; E{Pass?}
+  E -- Yes --&gt; F[Check is green]
+  E -- No --&gt; G[Report with trace]</pre>
+      <figcaption><b>What to notice:</b> The environment already exists. The workflow only has to compute its URL.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A push triggers a GitHub Action, which waits for the branch URL, then runs Playwright against that URL. The check is green on a pass, and a failure reports a trace.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="tests/nav.spec.js" data-lang="javascript">
+      <textarea class="src" hidden>import { test, expect } from '@playwright/test';
+
+test('menu opens with the keyboard', async ({ page }) =&gt; {
+  await page.goto('/en/test/navigation');
+  await page.waitForSelector('header [data-block-status="loaded"]');
+  const toggle = page.getByRole('button', { name: /menu/i });
+  await toggle.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('navigation')).toBeVisible();
+});</textarea>
+      <figcaption>Set baseURL to the branch URL in your Playwright configuration.</figcaption>
+      <ol class="code-explain"><li data-line="4">A stable test page that authors have agreed to leave alone.</li><li data-line="5">Waits for what the page reports, not for a fixed time.</li><li data-line="6">Finding it by role and name also checks that it is accessible.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c10-t6"><script type="application/json">{"questions": [{"q": "Why are tests that select by role and name better than ones that use div:nth-child?", "options": ["They run faster, because roles are cached by the browser", "They are the only selectors that Playwright supports", "They survive markup changes and also exercise accessibility"], "answer": 2, "explain": "Roles reflect what the user perceives."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Tests fail after an author edit</td><td>Using real content pages</td><td>Use dedicated test pages.</td></tr>
+      <tr><td>Flaky timing</td><td>Fixed waits</td><td>Wait for <code>data-block-status</code>.</td></tr>
+      <tr><td>Test files served publicly</td><td>Not ignored</td><td>Add them to <code>.hlxignore</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="load-performance-penetration-tests" data-level="3">
+  <h2>Load, performance and penetration tests</h2>
+  <div data-part="why"><p>Teams coming from traditional AEM often plan a load test by habit. On EDS, most such tests measure nothing useful and may get you blocked.</p></div>
+  <div data-part="concept">
+    <p><b>Load testing</b> asks whether the system sustains expected traffic. <b>Performance testing</b> asks whether the experience stays fast. <b>Penetration testing</b> asks whether it can be exploited. They need different tools, targets and interpretation.</p>
+    <p>aem.live does not require approval for reasonable tests, but it monitors them. A raw HTTP flood proves only that the CDN can serve cached responses. Unless your site is among the most visited in the world, aem.live suggests you can skip a load test. If you run one, test against your production CDN and not the <code>aem.page</code> or <code>aem.live</code> hosts. Use tools that render pages in real browsers, such as WebPageTest or a Playwright harness, and model realistic visits.</p>
+    <p>Stay near the 99th percentile of your actual traffic. Tests above 200 uncached requests per second from one IP may be rate limited or blocked. Use Operational Telemetry to find the pages that really receive traffic. For extreme scale, coordinate with Adobe first.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Avoid</th><th>Do this instead</th></tr></thead>
+    <tbody>
+      <tr><td>One URL requested thousands of times</td><td>Varied pages from real traffic</td></tr>
+      <tr><td><code>ab</code>, <code>wrk</code> or <code>vegeta</code></td><td>Tools that render in a browser</td></tr>
+      <tr><td>Testing <code>*.aem.live</code></td><td>Testing your production CDN</td></tr>
+      <tr><td>Arbitrary multiples of traffic</td><td>At or slightly above the 99th percentile</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A{What is the question?} --&gt; B[Can it sustain traffic?]
+  A --&gt; C[Does it stay fast?]
+  A --&gt; D[Can it be exploited?]
+  B --&gt; E[Real-browser test via production CDN]
+  C --&gt; F[PageSpeed Insights and Operational Telemetry]
+  D --&gt; G[Security test of your application and CDN]</pre>
+      <figcaption><b>What to notice:</b> Start from the question. The test you choose follows from it.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Three questions lead to three tests. Sustaining traffic needs a real-browser test through the production CDN. Staying fast uses PageSpeed Insights and Operational Telemetry. Exploitability needs a security test of the application and CDN.</p></details>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c10-t7"><script type="application/json">{"questions": [{"q": "A vendor proposes hitting one URL on aem.live 10,000 times a second. What should you say?", "options": ["It only proves the CDN serves cache, and it could get the IP blocked", "It is fine if it runs on a weekend, when traffic is lowest", "It is the recommended way to validate a site before launch"], "answer": 0, "explain": "It bypasses your CDN and validates nothing."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Excellent numbers, no insight</td><td>Testing a cached URL</td><td>Use varied, real journeys.</td></tr>
+      <tr><td>IP blocked in a test</td><td>Exceeded rate limits</td><td>Reduce volume, and coordinate with Adobe.</td></tr>
+      <tr><td>Results do not match production</td><td>Bypassed your CDN</td><td>Test through the CDN.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -304,12 +453,12 @@ test('calculates a monthly payment', () =&gt; {
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c10-check"><script type="application/json">{"questions": [{"q": "Which model does aem.live recommend?", "options": ["Long-lived release branches", "Scaled trunk-based development", "Direct push to main"], "answer": 1, "explain": "Small PRs, merged often."}, {"q": "What should a PR description include?", "options": ["A URL showing the change", "Nothing", "The Jira ticket number and nothing else"], "answer": 0, "explain": "So that reviewers can see it."}, {"q": "What is a draft PR for?", "options": ["Work in progress", "Production fixes", "Translations"], "answer": 0, "explain": "It prevents accidental merging."}, {"q": "Which are different test disciplines? Choose all that apply.", "options": ["Performance", "Load", "Penetration"], "answer": [0, 1, 2], "explain": "Each answers a different question."}, {"q": "Does a Lighthouse 100 guarantee accessibility?", "options": ["No", "Yes", "Only with ARIA"], "answer": 0, "explain": "Manual tests remain necessary."}, {"q": "Where do you exclude test files from serving?", "options": ["head.html", "robots.txt", ".hlxignore"], "answer": 2, "explain": "Repository files are otherwise served."}, {"q": "Which framework does EDS require?", "options": ["Cypress", "Jest", "None"], "answer": 2, "explain": "It is your choice."}, {"q": "An AI tool produced a 3,000-line refactor of all blocks. What do you do?", "options": ["Disable the reviews", "Merge it once lint passes and the Lighthouse score on one page stays at 100", "Discuss with maintainers and split into small, understood PRs", "Push it to main"], "answer": 2, "explain": "aem.live emphasizes communicating first.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c10-check"><script type="application/json">{"questions": [{"q": "Which model does aem.live recommend?", "options": ["Long-lived release branches", "Scaled trunk-based development", "Direct push to main"], "answer": 1, "explain": "Small PRs, merged often."}, {"q": "What should a PR description include?", "options": ["A URL showing the change", "Nothing", "The Jira ticket number and nothing else"], "answer": 0, "explain": "So that reviewers can see it."}, {"q": "What is a draft PR for?", "options": ["Work in progress", "Production fixes", "Translations"], "answer": 0, "explain": "It prevents accidental merging."}, {"q": "Which are different test disciplines? Choose all that apply.", "options": ["Performance", "Load", "Penetration"], "answer": [0, 1, 2], "explain": "Each answers a different question."}, {"q": "Does a Lighthouse 100 guarantee accessibility?", "options": ["No", "Yes", "Only with ARIA"], "answer": 0, "explain": "Manual tests remain necessary."}, {"q": "Where do you exclude test files from serving?", "options": ["head.html", "robots.txt", ".hlxignore"], "answer": 2, "explain": "Repository files are otherwise served."}, {"q": "Which framework does EDS require?", "options": ["Cypress", "Jest", "None"], "answer": 2, "explain": "It is your choice."}, {"q": "An AI tool produced a 3,000-line refactor of all blocks. What do you do?", "options": ["Disable the reviews", "Merge it once lint passes and the Lighthouse score on one page stays at 100", "Discuss with maintainers and split into small, understood PRs", "Push it to main"], "answer": 2, "explain": "aem.live emphasizes communicating first.", "scenario": true}, {"q": "Which host should a load test target?", "options": ["Your *.aem.live host", "Your production CDN", "Your *.aem.page host"], "answer": 1, "explain": "Visitors reach your CDN."}, {"q": "What volume does aem.live suggest for load tests?", "options": ["As high as the tool is able to generate", "Ten times the highest traffic ever seen", "Near the 99th percentile of real traffic"], "answer": 2, "explain": "Extreme volumes get blocked."}, {"q": "What should a browser test wait for?", "options": ["data-block-status", "A fixed 5-second delay", "The sitemap to change"], "answer": 0, "explain": "It reports real progress."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c10-cards"><script type="application/json">{"cards": [["Trunk-based", "Small, frequent merges."], ["Draft PR", "Not ready for review."], ["Branch protection", "Rules that guard main."], ["Test URL", "Page on your branch showing the change."], ["ESLint", "JavaScript linter."], ["Stylelint", "CSS linter."], ["Renovate", "Keeps dependencies updated."], ["E2E", "Tests a whole journey."], ["axe", "Automated accessibility checks."], ["Visual regression", "Compares screenshots."]]}</script></div>
+  <div data-component="flashcards" data-id="c10-cards"><script type="application/json">{"cards": [["Trunk-based", "Small, frequent merges."], ["Draft PR", "Not ready for review."], ["Branch protection", "Rules that guard main."], ["Test URL", "Page on your branch showing the change."], ["ESLint", "JavaScript linter."], ["Stylelint", "CSS linter."], ["Renovate", "Keeps dependencies updated."], ["E2E", "Tests a whole journey."], ["axe", "Automated accessibility checks."], ["Visual regression", "Compares screenshots."], ["Load test", "Can it sustain expected traffic?"], ["Performance test", "Does the experience stay fast?"], ["Penetration test", "Can it be exploited?"], ["node:test", "Built-in Node test runner."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -322,6 +471,9 @@ test('calculates a monthly payment', () =&gt; {
       <div><h4>Tests</h4><ul><li>Unit for logic</li><li>E2E for journeys</li><li>Exclude from serving</li></ul></div>
       <div><h4>Accessibility</h4><ul><li>Automated + manual</li><li>Keyboard</li><li>Zoom</li></ul></div>
       <div><h4>Visual</h4><ul><li>Main vs branch</li><li>Few stable pages</li></ul></div>
+      <div><h4>Test layers</h4><ul><li>Logic: <code>node:test</code></li><li>Journeys: Playwright on branch</li><li>Visual: main versus branch</li><li>Accessibility: manual too</li></ul></div>
+      <div><h4>Reliable browser tests</h4><ul><li>Dedicated test pages</li><li>Wait for <code>data-block-status</code></li><li>Select by role and name</li><li>Ignore test files in <code>.hlxignore</code></li></ul></div>
+      <div><h4>Load testing</h4><ul><li>Often unnecessary</li><li>Production CDN only</li><li>Real browsers</li><li>Near 99th percentile</li><li>200 uncached req/s per IP</li></ul></div>
     </div>
   </div>
 </section>

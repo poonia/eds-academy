@@ -40,6 +40,9 @@
     <li>Protect URLs and search value.</li>
     <li>Run parity QA and a staged cutover.</li>
     <li>Plan an AEM Sites to Universal Editor move.</li>
+    <li>Write import transformations.</li>
+    <li>Build and test a redirect map.</li>
+    <li>Estimate and sequence a migration.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="d6-ready" data-title="Ready for migration to EDS?">
     <script type="application/json">{"questions": [{"q": "What is a block?", "options": ["A user role", "A table-authored reusable piece with its own code", "A DNS entry"], "answer": 1, "explain": "Covered in B1 and C4."}, {"q": "What should the production CDN origin use?", "options": ["A personal branch", "main on aem.live", "aem.page"], "answer": 1, "explain": "Covered in D3."}, {"q": "Where do exact redirects go?", "options": ["head.html", "The redirects sheet", "A block"], "answer": 1, "explain": "Covered in D3."}]}</script>
@@ -64,6 +67,15 @@
       <tr><td>Owner</td><td>Someone must approve the content</td></tr>
       <tr><td>Decision</td><td>Keep, merge, retire or rebuild</td></tr>
       <tr><td>Integrations</td><td>Reveals hidden work</td></tr>
+    </tbody>
+  </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>URL group</th><th>Pages</th><th>Monthly views</th><th>Backlinks</th><th>Owner</th><th>Decision</th></tr></thead>
+    <tbody>
+      <tr><td>/products/*</td><td>140</td><td>410,000</td><td>2,100</td><td>Product marketing</td><td>Keep; rebuild template</td></tr>
+      <tr><td>/news/2016/*</td><td>900</td><td>1,200</td><td>35</td><td>Communications</td><td>Retire; redirect the top 30</td></tr>
+      <tr><td>/careers/*</td><td>60</td><td>22,000</td><td>90</td><td>HR</td><td>Keep; job widget</td></tr>
+      <tr><td>/promo/*</td><td>75</td><td>300</td><td>4</td><td>Marketing</td><td>Retire</td></tr>
     </tbody>
   </table></div>
   </div>
@@ -101,6 +113,18 @@
       <tr><td>Search app</td><td>Separate block or integration</td><td>Scope it apart</td></tr>
     </tbody>
   </table></div>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Old component] --&gt; B{Is it just text, images or links?}
+  B -- Yes --&gt; C[Default content]
+  B -- No --&gt; D{Boilerplate or collection block fits?}
+  D -- Yes --&gt; E[Reuse, perhaps with a variant]
+  D -- No --&gt; F{Is it application logic?}
+  F -- Yes --&gt; G[Widget]
+  F -- No --&gt; H[New block]</pre>
+      <figcaption><b>What to notice:</b> Each question tries to avoid building something new. Good migrations end with far fewer blocks than old components.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>For an old component, ask whether it is just text, images or links, which become default content. If not, ask whether a boilerplate or collection block fits. If not, application logic becomes a widget, and anything else becomes a new block.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <aside class="callout tip"><p>If a variant appears on under 1% of pages, ask whether it can be dropped.</p></aside>
@@ -217,6 +241,17 @@
       <figcaption><b>What to notice:</b> routing paths in groups lets you stop or reverse.</figcaption>
       <details class="describe"><summary>Describe this diagram</summary><p>A content freeze leads to parity sign-off, CDN routing of the first path group, monitoring, then the next group. A problem during monitoring routes back to the old origin.</p></details>
     </figure>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Time</th><th>Step</th><th>Rollback check</th></tr></thead>
+    <tbody>
+      <tr><td>T-14 days</td><td>Final import of the group, and parity QA</td><td>Old origin stays live</td></tr>
+      <tr><td>T-3 days</td><td>Content freeze, or start tracking changes for a delta</td><td>Freeze communicated</td></tr>
+      <tr><td>T-1 day</td><td>Delta import, redirects tested, robots verified</td><td>CDN change prepared</td></tr>
+      <tr><td>T-0</td><td>Switch the CDN path group to EDS</td><td>Revert is one CDN change</td></tr>
+      <tr><td>T+1 hour</td><td>Smoke tests, 404 report, telemetry</td><td>Agreed revert triggers</td></tr>
+      <tr><td>T+7 days</td><td>Review search, 404s and Core Web Vitals</td><td>Plan next group</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
@@ -264,6 +299,16 @@
   }
 }</textarea>
     </figure>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[HTL components] --&gt; B[Blocks]
+  C[Dialogs] --&gt; D[Component models]
+  E[Allowed components] --&gt; F[Filters]
+  G[clientlibs] --&gt; H[Block CSS and JS]
+  I[Dispatcher rules] --&gt; J[CDN and redirects]</pre>
+      <figcaption><b>What to notice:</b> Concepts carry across, but the code does not. Think of it as a translation, not a port.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>HTL components map to blocks, dialogs to component models, allowed components to filters, clientlibs to block CSS and JS, and Dispatcher rules to CDN settings and redirects.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <div class="table-wrap"><table class="t">
@@ -283,6 +328,172 @@
       <tr><td>Publish refused</td><td>Technical account lacks permission</td><td>Set the correct account in configuration.</td></tr>
       <tr><td>Page not published</td><td>Excluded or unmapped path</td><td>Check path mapping.</td></tr>
       <tr><td>Image is not optimized</td><td>Over 10,000 pixels</td><td>Resize it or use a rendition.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="topic" id="writing-import-transformations" data-level="3">
+  <h2>Writing import transformations</h2>
+  <div data-part="why"><p>The import script decides how much manual clean-up follows. A few careful rules can save weeks.</p></div>
+  <div data-part="concept">
+    <p>The importer takes the page DOM, applies your <code>import.js</code>, converts the result to Markdown, and writes docx, HTML or a JCR package. The Markdown tab shows that intermediate step, and is usually where a problem first becomes visible.</p>
+    <p>A script usually removes page furniture, such as headers, cookie banners and footers, then turns known components into block tables. <code>WebImporter.Blocks.createBlock</code> produces the table. <code>generateDocumentPath</code> controls where the document goes, and is where you normalize URLs. Metadata can be collected from the old page and added as a metadata block.</p>
+    <p>Build it up one page type at a time, using the Workbench. Import an example of each page type early and show authors, since that also lets content work proceed alongside block development. Start bulk runs only when the samples are right.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Old page DOM] --&gt; B[import.js: remove and transform]
+  B --&gt; C[Clean HTML]
+  C --&gt; D[Markdown]
+  D --&gt; E[docx, HTML or JCR package]</pre>
+      <figcaption><b>What to notice:</b> Check the Markdown step first. If it is wrong there, the output will be wrong as well.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The old page DOM passes through import.js, which removes and transforms elements. The clean HTML becomes Markdown, and then a docx, HTML file or JCR package.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="tools/importer/import.js" data-lang="javascript">
+      <textarea class="src" hidden>export default {
+  transformDOM: ({ document }) =&gt; {
+    const main = document.querySelector('main') || document.body;
+    WebImporter.DOMUtils.remove(main, ['nav', 'footer', '.cookie-banner', 'script', 'noscript']);
+
+    main.querySelectorAll('.old-hero').forEach((hero) =&gt; {
+      const image = hero.querySelector('img');
+      const heading = hero.querySelector('h1');
+      hero.replaceWith(WebImporter.Blocks.createBlock(document, {
+        name: 'Hero',
+        cells: [[image], [heading]],
+      }));
+    });
+
+    const meta = {
+      Title: document.title,
+      Description: document.querySelector('meta[name="description"]')?.content,
+    };
+    main.append(WebImporter.Blocks.getMetadataBlock(document, meta));
+    return main;
+  },
+
+  generateDocumentPath: ({ url }) =&gt; {
+    const path = new URL(url).pathname.replace(/\.html$/, '').replace(/\/$/, '');
+    return WebImporter.FileUtils.sanitizePath(path) || '/index';
+  },
+};</textarea>
+      <figcaption>Check helper names against your version of the importer.</figcaption>
+      <ol class="code-explain"><li data-line="4">Remove what will come from the header and footer blocks.</li><li data-line="9">Replaces the old component with a table that becomes a block.</li><li data-line="16">Carries titles and descriptions across.</li><li data-line="24">Removes .html and trailing slashes for the new URL.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t7"><script type="application/json">{"questions": [{"q": "The docx output for a page is wrong. Which tab should you look at first?", "options": ["The Markdown tab", "The Preview frame&rsquo;s console", "The asset-mapping file"], "answer": 0, "explain": "Markdown is the intermediate step that shows what the transformations produced."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Header appears in document</td><td>Not removed</td><td>Add it to the remove list.</td></tr>
+      <tr><td>Browser crashes on a bulk run</td><td>Heavy single-page app</td><td>Disable JavaScript if content is in the markup.</td></tr>
+      <tr><td>Wrong output folder</td><td>Path not normalized</td><td>Fix <code>generateDocumentPath</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="topic" id="redirect-mapping-workflow" data-level="3">
+  <h2>Building and testing a redirect map</h2>
+  <div data-part="why"><p>Redirects decide whether years of search equity survive the move. They deserve a real process, rather than a last-minute sheet.</p></div>
+  <div data-part="concept">
+    <p>Start with every old URL that has value: Search Console top pages and links, analytics, and internal links. Map each one to the most relevant new URL. Let URLs with no value return a 404. Redirecting thousands of unrelated URLs to the home page is treated as a soft 404, and helps nobody.</p>
+    <p>Normalize first. EDS URLs are lowercase, have no <code>.html</code>, and contain only letters, numbers and dashes. Pattern-based rules for whole sections belong at the CDN, as the redirects sheet does not support wildcards. A site can have up to 100,000 sheet redirects, but a smaller list is easier to review.</p>
+    <p>Test before launch. Every source must reach a 200 in one hop, with no chains or loops. After launch, watch the 404 report and Search Console, and add redirects for anything valuable that was missed.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Old URLs with value] --&gt; B[Map to most relevant new URL]
+  B --&gt; C[Sheet for specific URLs]
+  B --&gt; D[CDN for patterns]
+  C --&gt; E[Test: one hop to a 200]
+  D --&gt; E
+  E --&gt; F[Launch]
+  F --&gt; G[Watch 404s and Search Console]
+  G --&gt; B</pre>
+      <figcaption><b>What to notice:</b> Mapping continues after launch. The 404 report shows what the plan missed.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Old URLs with value are mapped to the most relevant new URL, with specific URLs in the sheet and patterns at the CDN. All are tested to reach a 200 in one hop. After launch, 404s and Search Console feed further mapping.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Testing a redirect list" data-lang="javascript">
+      <textarea class="src" hidden>import fs from 'node:fs';
+
+const rows = fs.readFileSync('redirects.csv', 'utf8').trim().split('\n').slice(1)
+  .map((line) =&gt; line.split(','));
+
+for (const [source, destination] of rows) {
+  const res = await fetch(`https://www.example.com${source}`, { redirect: 'manual' });
+  const location = new URL(res.headers.get('location') || '/', 'https://www.example.com').pathname;
+  const final = await fetch(`https://www.example.com${destination}`, { redirect: 'manual' });
+  if (res.status !== 301 || location !== destination || final.status !== 200) {
+    console.log('FAIL', source, res.status, location, final.status);
+  }
+}</textarea>
+      <figcaption>Run against the staging host, if it serves the same redirects.</figcaption>
+      <ol class="code-explain"><li data-line="7"><code>manual</code> lets you examine each hop rather than following it.</li><li data-line="9">A second request catches chains and targets that do not exist.</li><li data-line="10">Any issue is listed for a person to resolve.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t8"><script type="application/json">{"questions": [{"q": "A team plans to redirect 8,000 retired URLs to the home page. What should happen instead?", "options": ["Add one wildcard rule in the redirects sheet for all of them", "Map those with value to relevant pages, and let others 404", "Disallow all of those URLs in the production robots.txt"], "answer": 1, "explain": "Blanket redirects are treated as soft 404s."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Wildcards not working</td><td>Sheet does not support them</td><td>Use CDN rules.</td></tr>
+      <tr><td>Chains after launch</td><td>Old rules kept</td><td>Point straight to the final URL.</td></tr>
+      <tr><td>Valuable URL 404s</td><td>Not in source data</td><td>Monitor and add.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="topic" id="estimating-and-planning-a-migration" data-level="3">
+  <h2>Estimating and sequencing a migration</h2>
+  <div data-part="why"><p>Migrations are often estimated by page count. The real drivers are templates, integrations and the number of people who need to change how they work.</p></div>
+  <div data-part="concept">
+    <p>Estimate from the inventory. Count page types, distinct components after consolidation, integrations and forms. Then allow for design system work, author training, parity QA and the time people actually have. Treat bulk import as the cheap part: what costs time is the exceptions it leaves behind.</p>
+    <p>Sequence to reduce risk. Pick a pilot that is real but not critical, and that exercises your main templates. Finish it, measure it, then adjust the plan. Group the remaining URLs by path, so that each group can be routed at the CDN on its own and rolled back on its own.</p>
+    <p>Name the decisions that could derail the project, such as which authoring route to use, what happens with personalization, and who signs off on parity. Settle those before the pilot ends. Also plan for the old platform&rsquo;s retirement date and contract, since overlap is a real cost.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Inventory] --&gt; B[Pilot path group]
+  B --&gt; C[Measure and adjust]
+  C --&gt; D[Wave 2]
+  D --&gt; E[Wave 3]
+  E --&gt; F[Retire old platform]</pre>
+      <figcaption><b>What to notice:</b> The pilot exists to change the plan. If nothing changes after it, you did not learn from it.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>After inventory, a pilot path group is delivered, measured and used to adjust the plan. Waves two and three follow, and then the old platform is retired.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Driver</th><th>Effect on effort</th><th>How to reduce it</th></tr></thead>
+    <tbody>
+      <tr><td>Number of templates</td><td>High</td><td>Consolidate during discovery</td></tr>
+      <tr><td>Integrations and forms</td><td>High, often underestimated</td><td>List and prototype early</td></tr>
+      <tr><td>Content quality</td><td>Medium to high</td><td>Retire and clean before import</td></tr>
+      <tr><td>Number of authors</td><td>Medium</td><td>Train in waves</td></tr>
+      <tr><td>Page count</td><td>Low if templated</td><td>Automate</td></tr>
+      <tr><td>Stakeholder sign-off</td><td>Hidden</td><td>Name approvers early</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="d6-t9"><script type="application/json">{"questions": [{"q": "Which factor usually drives migration effort more than page count?", "options": ["The number of images in each page", "The number of redirects in each sheet", "The number of templates and integrations"], "answer": 2, "explain": "Well-templated pages can be automated."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Plan slips after import</td><td>Exceptions not counted</td><td>Sample each page type.</td></tr>
+      <tr><td>Pilot taught nothing</td><td>Too easy</td><td>Choose real templates.</td></tr>
+      <tr><td>Two platforms for years</td><td>No retirement date</td><td>Set one with the contract in mind.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -309,6 +520,8 @@
     <li><div><b>Bulk import</b> the rest.</div></li>
     <li><div><b>Create</b> redirects, and validate them.</div></li>
     <li><div><b>Compare</b> old and new against your parity list.</div></li>
+    <li><div><b>Write</b> transformations for one page type, and inspect the Markdown.</div></li>
+    <li><div><b>Test</b> 20 redirects with a script that reports any chains.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
     <div><h3>Expected result</h3><p>A sample migration with documented rules.</p></div>
@@ -358,12 +571,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="d6-check"><script type="application/json">{"questions": [{"q": "Which command starts the importer?", "options": ["aem migrate", "npm run import", "aem import"], "answer": 2, "explain": "See Importing Content."}, {"q": "Which browsers does the importer support?", "options": ["Safari only", "Chrome-based browsers", "Any browser, once the importer extension is installed"], "answer": 1, "explain": "See Importing Content."}, {"q": "Which file holds your transformation rules?", "options": ["fstab.yaml", "import.js", "head.html"], "answer": 1, "explain": "It reloads in the Workbench."}, {"q": "What should you check in a redirect list? Choose all that apply.", "options": ["Chains", "Font sizes", "Loops"], "answer": [0, 2], "explain": "Also check redirects into 404s."}, {"q": "Where do assets for a JCR package come from?", "options": ["asset-mapping.json and Import Helper", "A hidden binary folder inside the JCR package", "The CDN"], "answer": 0, "explain": "The package is binaryless."}, {"q": "When should Operational Telemetry be added to the old site?", "options": ["Never", "Only after launch, so that old numbers do not skew results", "As early as possible"], "answer": 2, "explain": "See Go-Live Checklist."}, {"q": "Which option lets part of a domain go to EDS while AEMaaCS serves the rest?", "options": ["Bulk metadata", "A Sidekick plugin", "Origin selectors"], "answer": 2, "explain": "See Adobe Managed CDN."}, {"q": "A stakeholder wants all 8,000 retired URLs to redirect to the home page. What should you advise?", "options": ["Redirect those with value to relevant pages, and let the rest 404", "Disallow them in robots.txt", "Add a wildcard to the sheet", "Do it, as every redirect to the home page keeps the old URL's search value intact for years"], "answer": 0, "explain": "Redirect based on actual usage.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="d6-check"><script type="application/json">{"questions": [{"q": "Which command starts the importer?", "options": ["aem migrate", "npm run import", "aem import"], "answer": 2, "explain": "See Importing Content."}, {"q": "Which browsers does the importer support?", "options": ["Safari only", "Chrome-based browsers", "Any browser, once the importer extension is installed"], "answer": 1, "explain": "See Importing Content."}, {"q": "Which file holds your transformation rules?", "options": ["fstab.yaml", "import.js", "head.html"], "answer": 1, "explain": "It reloads in the Workbench."}, {"q": "What should you check in a redirect list? Choose all that apply.", "options": ["Chains", "Font sizes", "Loops"], "answer": [0, 2], "explain": "Also check redirects into 404s."}, {"q": "Where do assets for a JCR package come from?", "options": ["asset-mapping.json and Import Helper", "A hidden binary folder inside the JCR package", "The CDN"], "answer": 0, "explain": "The package is binaryless."}, {"q": "When should Operational Telemetry be added to the old site?", "options": ["Never", "Only after launch, so that old numbers do not skew results", "As early as possible"], "answer": 2, "explain": "See Go-Live Checklist."}, {"q": "Which option lets part of a domain go to EDS while AEMaaCS serves the rest?", "options": ["Bulk metadata", "A Sidekick plugin", "Origin selectors"], "answer": 2, "explain": "See Adobe Managed CDN."}, {"q": "A stakeholder wants all 8,000 retired URLs to redirect to the home page. What should you advise?", "options": ["Redirect those with value to relevant pages, and let the rest 404", "Disallow them in robots.txt", "Add a wildcard to the sheet", "Do it, as every redirect to the home page keeps the old URL's search value intact for years"], "answer": 0, "explain": "Redirect based on actual usage.", "scenario": true}, {"q": "Where does a wildcard redirect belong?", "options": ["In a metadata block", "In the redirects sheet", "At the CDN"], "answer": 2, "explain": "The sheet does not support wildcards."}, {"q": "Which function controls an imported document&rsquo;s location?", "options": ["createBlock", "generateDocumentPath", "transformDOM"], "answer": 1, "explain": "It is where you normalize URLs."}, {"q": "What should a good redirect reach?", "options": ["A 404 at the old path", "A 200 in one hop", "A 301 in three hops"], "answer": 1, "explain": "No chains or loops."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="d6-cards"><script type="application/json">{"cards": [["Page type", "A group that shares structure."], ["Default content", "Text, headings, images and links."], ["aem import", "Starts the importer."], ["import.js", "Transformation rules."], ["JCR package", "Output for AEM authoring."], ["asset-mapping.json", "Maps assets for package imports."], ["Parity", "Agreed definition of equal."], ["Delta import", "Only what has changed."], ["Origin selector", "Routes paths to another origin."], ["Path mapping", "AEM paths to public URLs."]]}</script></div>
+  <div data-component="flashcards" data-id="d6-cards"><script type="application/json">{"cards": [["Page type", "A group that shares structure."], ["Default content", "Text, headings, images and links."], ["aem import", "Starts the importer."], ["import.js", "Transformation rules."], ["JCR package", "Output for AEM authoring."], ["asset-mapping.json", "Maps assets for package imports."], ["Parity", "Agreed definition of equal."], ["Delta import", "Only what has changed."], ["Origin selector", "Routes paths to another origin."], ["Path mapping", "AEM paths to public URLs."], ["transformDOM", "Cleans and changes the page before conversion."], ["generateDocumentPath", "Sets the output path."], ["createBlock", "Creates a block table in an import."], ["Soft 404", "A redirect to an irrelevant page."], ["Path group", "URLs moved and rolled back together."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -376,6 +589,10 @@
       <div><h4>Import</h4><ul><li>aem import</li><li>Workbench then bulk</li><li>docx, HTML, JCR</li></ul></div>
       <div><h4>URLs</h4><ul><li>Keep them</li><li>Exact redirects</li><li>No chains</li></ul></div>
       <div><h4>Cutover</h4><ul><li>Parity list</li><li>Path groups</li><li>Reverse at CDN</li></ul></div>
+      <div><h4>Import script</h4><ul><li><code>transformDOM</code></li><li><code>DOMUtils.remove</code></li><li><code>Blocks.createBlock</code></li><li><code>generateDocumentPath</code></li><li>Check Markdown tab</li></ul></div>
+      <div><h4>Redirects</h4><ul><li>Value only</li><li>Relevant target</li><li>Patterns at CDN</li><li>One hop to 200</li><li>Watch 404s</li></ul></div>
+      <div><h4>Estimate</h4><ul><li>Templates</li><li>Integrations and forms</li><li>Content quality</li><li>Author training</li><li>Sign-off</li></ul></div>
+      <div><h4>Cutover</h4><ul><li>Freeze or delta</li><li>Robots verified</li><li>CDN switch is the rollback</li><li>Review at 7 days</li></ul></div>
     </div>
   </div>
 </section>

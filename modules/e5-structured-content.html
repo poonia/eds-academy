@@ -38,6 +38,8 @@
     <li>Configure an overlay with json2html.</li>
     <li>Write a Mustache template.</li>
     <li>Plan data-driven pages at scale.</li>
+    <li>Write a Mustache template that produces a normal EDS page.</li>
+    <li>Keep generated pages in step with their source.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e5-ready" data-title="Ready for structured content?">
     <script type="application/json">{"questions": [{"q": "Which authoring uses component models?", "options": ["Excel", "Google Docs", "Universal Editor"], "answer": 2, "explain": "Covered in B7."}, {"q": "What can be used to query content?", "options": ["An index", "A role", "A CDN rule"], "answer": 0, "explain": "Covered in C8."}, {"q": "What does path mapping connect?", "options": ["Users and roles", "AEM paths and public URLs", "Git and DNS"], "answer": 1, "explain": "Covered in D6."}]}</script>
@@ -85,6 +87,27 @@
   }
 }</textarea>
     </figure>
+    <figure class="code" data-file="Path mapping and allow-listing a model" data-lang="bash">
+      <textarea class="src" hidden>curl --request POST \
+  --url https://admin.hlx.page/config/{org}/sites/{site}/public.json \
+  --header 'Content-Type: application/json' \
+  --header 'x-auth-token: ......' \
+  --data '{
+    "paths": {
+      "mappings": ["/content/dam/acme/press/:/press/"],
+      "includes": ["/content/dam/acme/"]
+    },
+    "xwalk": {
+      "content-fragment-overlay": {
+        "/content/dam/acme/press/**": {
+          "includes": ["/conf/acme/settings/dam/cfm/models/press-release"]
+        }
+      }
+    }
+  }'</textarea>
+      <figcaption>Adapted from aem.live&rsquo;s fragment overlay guide.</figcaption>
+      <ol class="code-explain"><li data-line="7">Fragments in this folder publish under <code>/press/</code>.</li><li data-line="13">Only this model is eligible.</li></ol>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="e5-t1"><script type="application/json">{"questions": [{"q": "Why does self-contained HTML help LLM agents?", "options": ["It lets agents skip the sitemap and robots.txt for that page", "The full content is available without JavaScript", "It removes the need for content"], "answer": 1, "explain": "References alone hide the content."}]}</script></div>
@@ -106,6 +129,8 @@
     <p><b>JSON2HTML</b> is a generic worker that converts JSON into pages through a Mustache template, with no service to deploy. One configuration can map a URL path to an endpoint using <code>{{id}}</code> and a <code>regex</code>. Another can read one large JSON array with <code>arrayKey</code> and <code>pathKey</code>, creating one page per record.</p>
     <p>After configuration, you <b>preview</b> a dynamic path to generate it. From then on it behaves like other Edge Delivery content. So plan for scale: bulk preview and publish through jobs, respect rate limits, and decide how updates and deletions in the source reach EDS.</p>
     <p>A webhook or scheduled job is a common way to do that synchronization. Be careful with the custom headers in the configuration: API keys belong in a protected configuration, never in a template. Consider the large-site limits, such as 50,000 pages per index and sitemap.</p>
+    <h3>Configuration options to know</h3>
+    <p><code>headers</code> are sent to the endpoint, and default to a JSON content type. <code>forwardHeaders</code> passes selected incoming headers, for instance so that an admin token can reach AEM. <code>relativeURLPrefix</code> adds a domain to relative <code>src</code> and <code>href</code> values, for the file types BYOM supports. <code>useAEMMapping</code> rewrites links using the site&rsquo;s path mapping. Without a <code>template</code>, you get a basic default structure.</p>
   </div>
   <div data-part="visual">
     <div class="table-wrap"><table class="t">
@@ -141,6 +166,112 @@
   </div>
 </section>
 
+<!-- 3 -->
+<section class="topic" id="writing-mustache-templates" data-level="3">
+  <h2>Writing templates for generated pages</h2>
+  <div data-part="why"><p>The template decides whether a generated page is a real EDS page, or a page of text that nothing can style.</p></div>
+  <div data-part="concept">
+    <p>A Mustache template outputs the same semantic HTML that any EDS page has: a <code>main</code>, a <code>div</code> for each section, default content, and block tables as nested <code>div</code> elements. Metadata goes in a metadata block or in meta tags, so that titles, descriptions and indexing all work.</p>
+    <p><code>{{name}}</code> inserts an escaped value. <code>{{{name}}}</code> inserts raw HTML, so use it only for content you trust and that is already clean. <code>{{#list}}...{{/list}}</code> repeats, and also hides a section when the value is empty, which is how you avoid empty blocks. <code>{{^name}}...{{/name}}</code> renders when a value is missing.</p>
+    <p>Remember that extra elements, spans, data attributes and styles are stripped on ingestion. Block class names may use only letters, digits and single dashes. Images must be reachable by EDS during preview, or the page ends up with broken media.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[JSON record] --&gt; B[Mustache template]
+  B --&gt; C[Semantic HTML]
+  C --&gt; D[Preview ingests it]
+  D --&gt; E[Normal EDS page: blocks, index, sitemap]</pre>
+      <figcaption><b>What to notice:</b> After ingestion nothing distinguishes this from an authored page.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A JSON record passes through a Mustache template to produce semantic HTML. Preview ingests it, resulting in a normal EDS page with blocks, index and sitemap.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="/templates/press-release.html" data-lang="html">
+      <textarea class="src" hidden>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;{{title}}&lt;/title&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;div&gt;
+        &lt;h1&gt;{{title}}&lt;/h1&gt;
+        {{#image}}&lt;p&gt;&lt;picture&gt;&lt;img src="{{image}}" alt="{{imageAlt}}"&gt;&lt;/picture&gt;&lt;/p&gt;{{/image}}
+        {{{bodyHtml}}}
+        &lt;div class="metadata"&gt;
+          &lt;div&gt;&lt;div&gt;&lt;p&gt;description&lt;/p&gt;&lt;/div&gt;&lt;div&gt;&lt;p&gt;{{summary}}&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;div&gt;&lt;p&gt;publication-date&lt;/p&gt;&lt;/div&gt;&lt;div&gt;&lt;p&gt;{{date}}&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</textarea>
+      <ol class="code-explain"><li data-line="8">The section is skipped when a record has no image.</li><li data-line="9">Three braces, because this is trusted HTML from the fragment.</li><li data-line="10">Normal metadata, so the page can be indexed.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e5-t3"><script type="application/json">{"questions": [{"q": "A source field can contain a visitor-submitted comment. How should the template output it?", "options": ["With three braces, so formatting is preserved", "Directly in the template&rsquo;s meta tags, unescaped", "With two braces, so the value is escaped"], "answer": 2, "explain": "Three braces insert raw HTML. Use them only for trusted content."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Empty block appears</td><td>No section around it</td><td>Wrap it in <code>{{#field}}</code>.</td></tr>
+      <tr><td>Broken images</td><td>Not reachable during preview</td><td>Use public URLs or <code>relativeURLPrefix</code>.</td></tr>
+      <tr><td>Block not recognized</td><td>Invalid class name</td><td>Use letters, digits and single dashes.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="keeping-generated-pages-in-sync" data-level="4">
+  <h2>Keeping generated pages in sync</h2>
+  <div data-part="why"><p>Generating pages is the easy part. A page that outlives its source record is a compliance problem waiting to be found.</p></div>
+  <div data-part="concept">
+    <p>Decide how each kind of change in the source reaches EDS. <b>Created</b> records need a preview and a publish. <b>Changed</b> records need the same, ideally only when something really changed, using a hash or a modified date. <b>Deleted</b> records need an unpublish, and perhaps a redirect. That last case is the one teams forget.</p>
+    <p>Trigger updates from the source where you can, using its webhooks, or run a scheduled job that compares records against what is published. Send work in bulk Admin API jobs, and back off when throttled. Keep a list of failures to retry, and alert someone when a run fails.</p>
+    <p>Set expectations on freshness with the business. Nightly is fine for a branch directory, but not for a rate that must be accurate within minutes. If data must be current to the second, render that part in the browser.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Scheduled job or source webhook] --&gt; B[Compare source against last run]
+  B --&gt; C[New or changed: bulk preview and publish]
+  B --&gt; D[Deleted: unpublish, consider a redirect]
+  C --&gt; E[Record success and failures]
+  D --&gt; E
+  E --&gt; F{Failures?}
+  F -- Yes --&gt; G[Retry with back-off, then alert]</pre>
+      <figcaption><b>What to notice:</b> Deletion has its own path. Without it, retired content stays live indefinitely.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A scheduled job or source webhook compares source records against the last run. New or changed records are bulk previewed and published. Deleted records are unpublished, with a redirect considered. Results are recorded, and failures are retried and then alerted.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Working out what to do" data-lang="javascript">
+      <textarea class="src" hidden>export function plan(source, lastRun) {
+  const work = { publish: [], remove: [] };
+  source.forEach((rec) =&gt; {
+    if (lastRun.get(rec.path) !== rec.hash) work.publish.push(rec.path);
+  });
+  const current = new Set(source.map((r) =&gt; r.path));
+  lastRun.forEach((_, path) =&gt; {
+    if (!current.has(path)) work.remove.push(path);
+  });
+  return work;
+}</textarea>
+      <figcaption>Pass work.publish and work.remove to bulk jobs, as in C11.</figcaption>
+      <ol class="code-explain"><li data-line="4">Only what has really changed, which keeps jobs small.</li><li data-line="8">Anything in the last run and no longer in the source has been deleted.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e5-t4"><script type="application/json">{"questions": [{"q": "A product is withdrawn in the source system, and its generated page stays online. What was missing?", "options": ["A step that unpublishes records deleted at source", "A shorter CDN cache time on all of the pages", "A larger sitemap with more frequent updates"], "answer": 0, "explain": "Deletion needs its own path."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Withdrawn items still live</td><td>No deletion handling</td><td>Compare runs, then unpublish.</td></tr>
+      <tr><td>Job hits rate limits</td><td>Everything republished nightly</td><td>Publish only what changed.</td></tr>
+      <tr><td>Silent failures</td><td>No alerts</td><td>Record outcomes and alert.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
 <section class="mpart" id="signature" data-toc="Signature interactive">
   <h2>Signature interactive: Content Fragment JSON to HTML simulator</h2>
   <p>Edit the JSON or template, and see the HTML. Try removing the h1, or using a missing field. This is a small subset of Mustache.</p>
@@ -162,6 +293,7 @@
     <li><div><b>Preview</b> one dynamic path.</div></li>
     <li><div><b>Check</b> the page source for full content.</div></li>
     <li><div><b>Write</b> how updates and deletions will sync.</div></li>
+    <li><div><b>Handle</b> a record deleted at source, and confirm that its page has gone.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
     <div><h3>Expected result</h3><p>A generated page and a sync plan.</p></div>
@@ -211,12 +343,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e5-check"><script type="application/json">{"questions": [{"q": "What does the Admin API check first when publishing with an overlay?", "options": ["The overlay", "The CDN", "The sitemap"], "answer": 0, "explain": "See Content Fragment overlay."}, {"q": "Which language does the template use?", "options": ["HTL", "XSLT", "Mustache"], "answer": 2, "explain": "See JSON2HTML."}, {"q": "Which key builds pages from one array?", "options": ["robots", "arrayKey with pathKey", "regex alone"], "answer": 1, "explain": "See JSON2HTML."}, {"q": "What is {{id}} used with?", "options": ["hreflang", "CSP", "regex"], "answer": 2, "explain": "The regex extracts the id from the URL."}, {"q": "What does relativeURLPrefix do?", "options": ["Adds a robots tag", "Prefixes relative URLs with a domain", "Adds a host name to the robots tag on each page"], "answer": 1, "explain": "It applies to src and href for supported file types."}, {"q": "Which prerequisite is needed for fragment overlays?", "options": ["A BYO CDN", "AEM as a Cloud Service", "A PDF library"], "answer": 1, "explain": "See Content Fragment overlay."}, {"q": "Where is the Mustache template stored?", "options": ["In your repository", "In a cookie", "In a metadata sheet"], "answer": 0, "explain": "It follows code."}, {"q": "50,000 records change nightly. What should you plan?", "options": ["Publish by hand", "Changed-record detection, jobs and back-off", "Copy each page to a document", "A single unthrottled loop that republishes all 50,000 each night"], "answer": 1, "explain": "Only publish what changed, within the limits.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e5-check"><script type="application/json">{"questions": [{"q": "What does the Admin API check first when publishing with an overlay?", "options": ["The overlay", "The CDN", "The sitemap"], "answer": 0, "explain": "See Content Fragment overlay."}, {"q": "Which language does the template use?", "options": ["HTL", "XSLT", "Mustache"], "answer": 2, "explain": "See JSON2HTML."}, {"q": "Which key builds pages from one array?", "options": ["robots", "arrayKey with pathKey", "regex alone"], "answer": 1, "explain": "See JSON2HTML."}, {"q": "What is {{id}} used with?", "options": ["hreflang", "CSP", "regex"], "answer": 2, "explain": "The regex extracts the id from the URL."}, {"q": "What does relativeURLPrefix do?", "options": ["Adds a robots tag", "Prefixes relative URLs with a domain", "Adds a host name to the robots tag on each page"], "answer": 1, "explain": "It applies to src and href for supported file types."}, {"q": "Which prerequisite is needed for fragment overlays?", "options": ["A BYO CDN", "AEM as a Cloud Service", "A PDF library"], "answer": 1, "explain": "See Content Fragment overlay."}, {"q": "Where is the Mustache template stored?", "options": ["In your repository", "In a cookie", "In a metadata sheet"], "answer": 0, "explain": "It follows code."}, {"q": "50,000 records change nightly. What should you plan?", "options": ["Publish by hand", "Changed-record detection, jobs and back-off", "Copy each page to a document", "A single unthrottled loop that republishes all 50,000 each night"], "answer": 1, "explain": "Only publish what changed, within the limits.", "scenario": true}, {"q": "What does {{{value}}} do in Mustache?", "options": ["Inserts unescaped HTML", "Repeats a list section", "Inserts an escaped string"], "answer": 0, "explain": "Use it only for trusted content."}, {"q": "How do you avoid an empty block when a value is missing?", "options": ["Set a CSS rule to hide empty cells", "Add a noindex robots rule to it", "Wrap it in a {{#value}} section"], "answer": 2, "explain": "A section renders only if the value exists."}, {"q": "Which source change is most often forgotten?", "options": ["Translation", "Creation", "Deletion"], "answer": 2, "explain": "Pages then outlive their records."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e5-cards"><script type="application/json">{"cards": [["Overlay", "Second source, checked first."], ["json2html", "Worker that turns JSON into HTML."], ["Mustache", "Simple template syntax."], ["{{id}}", "Value extracted from the URL."], ["arrayKey", "Records inside one JSON."], ["pathKey", "Field holding each URL."], ["relativeURLPrefix", "Makes asset URLs absolute."], ["Model allow list", "Which fragments publish."]]}</script></div>
+  <div data-component="flashcards" data-id="e5-cards"><script type="application/json">{"cards": [["Overlay", "Second source, checked first."], ["json2html", "Worker that turns JSON into HTML."], ["Mustache", "Simple template syntax."], ["{{id}}", "Value extracted from the URL."], ["arrayKey", "Records inside one JSON."], ["pathKey", "Field holding each URL."], ["relativeURLPrefix", "Makes asset URLs absolute."], ["Model allow list", "Which fragments publish."], ["{{#x}}", "Section: repeats, or hides when empty."], ["{{^x}}", "Renders when x is missing."], ["relativeURLPrefix", "Prefixes relative src and href values."], ["useAEMMapping", "Rewrites links using path mapping."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -228,6 +360,9 @@
       <div><h4>json2html</h4><ul><li>path + endpoint</li><li>regex for id</li><li>Template in repo</li></ul></div>
       <div><h4>Scale</h4><ul><li>Preview to generate</li><li>Jobs</li><li>Handle deletes</li></ul></div>
       <div><h4>Output</h4><ul><li>Semantic HTML</li><li>Has an h1</li><li>No client fetch</li></ul></div>
+      <div><h4>Mustache</h4><ul><li><code>{{x}}</code>: escaped</li><li><code>{{{x}}}</code>: raw HTML</li><li><code>{{#x}}</code>: section</li><li><code>{{^x}}</code>: if missing</li></ul></div>
+      <div><h4>Generated HTML</h4><ul><li><code>main</code>, sections as <code>div</code></li><li>Metadata block</li><li>Valid block classes</li><li>Reachable images</li></ul></div>
+      <div><h4>Sync</h4><ul><li>New or changed: publish</li><li>Deleted: unpublish</li><li>Bulk jobs with back-off</li><li>Alert on failure</li><li>Agree on freshness</li></ul></div>
     </div>
   </div>
 </section>

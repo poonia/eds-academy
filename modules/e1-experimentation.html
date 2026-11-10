@@ -38,6 +38,8 @@
     <li>Control the traffic split.</li>
     <li>Choose a primary metric and guardrails.</li>
     <li>Judge significance on sampled data.</li>
+    <li>Estimate whether an experiment can succeed before you build it.</li>
+    <li>Run and close an experiment cleanly.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e1-ready" data-title="Ready for experimentation?">
     <script type="application/json">{"questions": [{"q": "What is a challenger?", "options": ["A user role", "A CDN rule", "A variant that differs from the control"], "answer": 2, "explain": "Covered in B10."}, {"q": "What is the usual OpTel sampling rate?", "options": ["Every view", "1 in 100", "1 in 10 million"], "answer": 1, "explain": "Covered in D7."}, {"q": "What keeps a page out of search?", "options": ["noindex", "A longer title", "A larger image"], "answer": 0, "explain": "Covered in D8."}]}</script>
@@ -52,15 +54,36 @@
     <p>In an experiment, the existing page is the <b>control</b>, and a changed version is a <b>challenger</b>. Both are <b>variants</b>. Authors copy the page into a folder such as <code>/experiments/ccx0076/</code>, edit it, then add two metadata rows to the control: <code>Experiment</code> and <code>Experiment Variants</code>. Then they publish the control and each challenger.</p>
     <p>Traffic splits evenly by default. <code>Experiment Split</code> overrides it. For example, <code>10, 20, 30</code> gives the control the remaining 40%. A page has one page-level experiment, each section can run one, and fragment-level experiments use a manifest. Keep the same experiment ID across pages for a multi-page test.</p>
     <p><b>Check access first.</b> The plugin’s README says it is available to customers in collaboration with AEM Engineering through co-innovation VIP projects. It installs into <code>plugins/experimentation</code> with <code>git subtree</code>, and it needs a loader script and changes to <code>scripts.js</code>. Variants should be excluded from search with <code>noindex,nofollow</code>.</p>
+    <h3>Why this avoids the usual cost</h3>
+    <p>aem.live names three reasons experimentation programs fail: too little traffic, too slow, and too complex to set up. Here a challenger is just another page authored in the usual tools, so there is no separate login. Because the switch happens as part of page loading on your own origin, it does not add a third-party call before LCP.</p>
+    <p>In preview, a page with a running experiment shows an overlay that lets you switch between variants. Use it to check every variant before you publish the control. For an experiment across several pages, use the same experiment ID everywhere, and list challenger URLs in the same order on each page.</p>
   </div>
   <div data-part="visual">
     <div class="doc-page"><p>Control page ends with:</p><table class="blocktable"><tr><th colspan="2">Metadata</th></tr><tr><td>Experiment</td><td>CCX0076</td></tr><tr><td>Experiment Variants</td><td>https://main--site--org.aem.page/experiments/ccx0076/challenger-1</td></tr><tr><td>Experiment Split</td><td>30</td></tr></table></div>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  V[Visitor requests the control] --&gt; S{Assigned variant}
+  S -- Control --&gt; C[Original page]
+  S -- Challenger --&gt; D[Challenger content loaded on the same URL]
+  C --&gt; R[Operational Telemetry records the variant]
+  D --&gt; R</pre>
+      <figcaption><b>What to notice:</b> The URL stays the same for the visitor, and telemetry records which variant was shown.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A visitor requests the control page and is assigned a variant. The control shows the original page, and a challenger loads its content on the same URL. Operational Telemetry records the variant.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <figure class="code" data-file="Bulk metadata row" data-lang="text">
       <textarea class="src" hidden>URL               robots
 /experiments/**   noindex,nofollow</textarea>
       <figcaption><b>Note:</b> this keeps variants out of search results.</figcaption>
+    </figure>
+    <figure class="code" data-file="Page metadata on the control" data-lang="text">
+      <textarea class="src" hidden>Metadata
+Experiment            | ccx0076
+Experiment Variants   | https://main--site--org.aem.page/experiments/ccx0076/challenger-1
+                      | https://main--site--org.aem.page/experiments/ccx0076/challenger-2
+Experiment Split      | 25, 25</textarea>
+      <figcaption>With no split, traffic is shared evenly. Here each challenger gets 25%, and the control gets the remaining 50%.</figcaption>
     </figure>
   </div>
   <div data-part="try">
@@ -94,6 +117,15 @@
       <tr><td>Keep running</td><td>Too few samples, planned duration not reached</td></tr>
     </tbody>
   </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Reading</th><th>What it means</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td>Significant, on the planned date</td><td>The difference is unlikely to be luck</td><td>Check guardrails, then decide</td></tr>
+      <tr><td>Significant, before the planned date</td><td>May be an early spike</td><td>Keep running</td></tr>
+      <tr><td>Not significant, on the planned date</td><td>No detectable difference</td><td>Keep the simpler version</td></tr>
+      <tr><td>Better conversion, slower LCP</td><td>A trade-off</td><td>Fix the speed, then test again</td></tr>
+    </tbody>
+  </table></div>
   </div>
   <div data-part="show">
     <figure class="diagram">
@@ -114,6 +146,88 @@
       <tr><td>Result flips daily</td><td>Few samples</td><td>Keep running to the plan.</td></tr>
       <tr><td>Winner hurt speed</td><td>No guardrail</td><td>Check LCP.</td></tr>
       <tr><td>Conversions inflated</td><td>Every click counts</td><td>Define a specific conversion.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="planning-sample-size" data-level="3">
+  <h2>Planning sample size and duration</h2>
+  <div data-part="why"><p>Most experiments fail before they start, because the page could never collect enough data to detect the change being tested.</p></div>
+  <div data-part="concept">
+    <p>Before building anything, estimate how many samples you need. A common rule of thumb for 80% power at a 5% significance level is <code>n = 16 × p × (1 − p) ÷ d²</code> per variant. Here <code>p</code> is the current conversion rate, and <code>d</code> is the smallest absolute change that you care about.</p>
+    <p>For a 4% conversion rate and a target of 4.8%, <code>d</code> is 0.008, which gives about 9,600 per variant. Halving the effect you want to detect needs four times the data. That is why small tweaks on quiet pages cannot be tested. Test bigger changes, combine pages using a multi-page experiment, or accept that the question cannot be answered this way.</p>
+    <p>If results come from sampled data, the number that counts is the sampled count, not the estimate after weighting. Check what sampling applies to your experiment, then divide the sample you need by your daily sampled views. Round up to full weeks, so weekday and weekend behaviour are both included.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Current rate and smallest useful change] --&gt; B[Required sample per variant]
+  B --&gt; C[Divide by daily sampled views]
+  C --&gt; D{Under about 4 weeks?}
+  D -- Yes --&gt; E[Round up to full weeks and run]
+  D -- No --&gt; F[Bigger change, more pages, or do not test]</pre>
+      <figcaption><b>What to notice:</b> Sample size is worked out before the experiment, and it can tell you not to run one.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Start from the current rate and smallest useful change to get a required sample per variant. Divide by daily sampled views. If that is under about four weeks, round up to full weeks and run. Otherwise make a bigger change, use more pages, or do not test.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A quick estimate" data-lang="javascript">
+      <textarea class="src" hidden>function samplesPerVariant(rate, target) {
+  const d = Math.abs(target - rate);
+  return Math.ceil((16 * rate * (1 - rate)) / (d * d));
+}
+
+const need = samplesPerVariant(0.04, 0.048);  // 9600
+const dailySampled = 90;
+const days = Math.ceil(need / dailySampled);
+console.log(Math.ceil(days / 7) * 7, 'days per variant');</textarea>
+      <ol class="code-explain"><li data-line="3">A planning rule of thumb, not a replacement for your significance calculation.</li><li data-line="9">Round up to whole weeks. Here the result is too long to be practical.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e1-t3"><script type="application/json">{"questions": [{"q": "A page converts at 4%, and you want to detect a change to 4.8%. Roughly how many samples does each variant need?", "options": ["About 9,600", "About 96", "About 960,000"], "answer": 0, "explain": "16 × 0.04 × 0.96 ÷ 0.008² is about 9,600."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Never reaches significance</td><td>Too little traffic for the effect</td><td>Test a bigger change, or do not test.</td></tr>
+      <tr><td>Result reverses after launch</td><td>Stopped early</td><td>Fix the duration in advance.</td></tr>
+      <tr><td>Weekend skews results</td><td>Partial week</td><td>Run whole weeks.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="topic" id="experiment-quality-and-closure" data-level="3">
+  <h2>Experiment quality and closing a test</h2>
+  <div data-part="why"><p>A valid result can still be wasted if variants differ by accident, or if a winner never reaches production.</p></div>
+  <div data-part="concept">
+    <p><b>Before launch</b>, write the hypothesis, the primary metric and the planned end date. Check each variant with the preview overlay or the <code>experiment</code> query parameter. Confirm that challengers carry <code>noindex,nofollow</code>, and that each loads as fast as the control. A heavier challenger tests speed as well as your idea.</p>
+    <p><b>During the test</b>, do not edit variants, and avoid other changes to the same page. Watch guardrails such as LCP and errors, and stop only if something is broken.</p>
+    <p><b>Afterward</b>, make the decision and record it, including inconclusive results. Copy the winner into the control. Remove the metadata, then unpublish and remove challenger pages, adding a redirect if any were shared. A shared log stops teams from re-running settled questions.</p>
+  </div>
+  <div data-part="visual">
+    <div data-component="stepper" data-title="Life of an experiment"><div class="step" data-label="Plan"><p>Hypothesis, primary metric, guardrails, sample size and end date.</p></div><div class="step" data-label="Build"><p>Create challengers under <code>/experiments/&lt;id&gt;/</code>, marked noindex.</p></div><div class="step" data-label="Check"><p>Use the overlay or query parameter to view every variant. Compare their load times.</p></div><div class="step" data-label="Run"><p>Publish the control and all challengers. Leave them unchanged.</p></div><div class="step" data-label="Decide"><p>At the planned end, read the result and the guardrails.</p></div><div class="step" data-label="Close"><p>Apply the winner, remove metadata, unpublish challengers and log the outcome.</p></div></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="An experiment record" data-lang="markdown">
+      <textarea class="src" hidden>## CCX0076: Rate calculator above the fold
+Hypothesis: moving the calculator up increases applications by 20%.
+Primary metric: click on "Apply now"
+Guardrails: LCP at or below control, no new errors
+Sample needed: 9,600 per variant. Planned end: 28 days.
+Result: not significant (p = 0.21). LCP unchanged.
+Decision: keep control. Retest only with a larger design change.</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e1-t4"><script type="application/json">{"questions": [{"q": "An experiment has ended with no significant difference. What should you do?", "options": ["Keep the simpler version and record the result", "Treat the challenger as the winner by default", "Keep running it until it becomes significant"], "answer": 0, "explain": "Extending until something appears raises the risk of a false result."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Challenger appears in search</td><td>Missing noindex</td><td>Add <code>noindex,nofollow</code>.</td></tr>
+      <tr><td>Challenger is slower</td><td>Added heavy content</td><td>Match the control&rsquo;s weight.</td></tr>
+      <tr><td>Old challengers still live</td><td>No close-out step</td><td>Unpublish them when the test ends.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -139,6 +253,8 @@
     <li><div><b>Create</b> the challenger in an experiments folder.</div></li>
     <li><div><b>Add</b> metadata, and exclude variants from search.</div></li>
     <li><div><b>Write</b> the decision rule in advance.</div></li>
+    <li><div><b>Estimate</b> the sample size, and decide if the test is worth running.</div></li>
+    <li><div><b>Write</b> an experiment record before you publish.</div></li>
   </ol>
   <div class="lab-meta" style="margin-top:16px">
     <div><h3>Expected result</h3><p>A signed-off experiment plan.</p></div>
@@ -188,12 +304,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e1-check"><script type="application/json">{"questions": [{"q": "What are control and challenger together called?", "options": ["Sections", "Variants", "Blocks"], "answer": 1, "explain": "See Experimentation."}, {"q": "With Experiment Split 10, 20, 30, what does the control get?", "options": ["0%", "10%", "40%"], "answer": 2, "explain": "The remainder."}, {"q": "How many page-level experiments can a page have?", "options": ["Five", "One", "Unlimited"], "answer": 1, "explain": "Sections and fragments can have more."}, {"q": "What counts as a conversion by default?", "options": ["Any click", "A page view", "A purchase only"], "answer": 0, "explain": "Use a Conversion Name to narrow it."}, {"q": "Which query parameter simulates a variant?", "options": ["token", "experiment", "lang"], "answer": 1, "explain": "For example ?experiment=hero-test/challenger-1."}, {"q": "Which folder is recommended for challengers?", "options": ["/experiments/<id>/", "/blocks/", "/tools/"], "answer": 0, "explain": "Use the lowercase experiment ID."}, {"q": "What should you do about challengers and search?", "options": ["Exclude them", "Add them to the sitemap", "Disallow them only"], "answer": 0, "explain": "Use noindex,nofollow."}, {"q": "After six days the challenger is significantly ahead, but your plan said 14 days. What do you do?", "options": ["Delete the control", "Double the split", "Keep running to the planned duration", "Stop now and ship, since a significant result does not need more data"], "answer": 2, "explain": "Early stopping inflates false positives.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e1-check"><script type="application/json">{"questions": [{"q": "What are control and challenger together called?", "options": ["Sections", "Variants", "Blocks"], "answer": 1, "explain": "See Experimentation."}, {"q": "With Experiment Split 10, 20, 30, what does the control get?", "options": ["0%", "10%", "40%"], "answer": 2, "explain": "The remainder."}, {"q": "How many page-level experiments can a page have?", "options": ["Five", "One", "Unlimited"], "answer": 1, "explain": "Sections and fragments can have more."}, {"q": "What counts as a conversion by default?", "options": ["Any click", "A page view", "A purchase only"], "answer": 0, "explain": "Use a Conversion Name to narrow it."}, {"q": "Which query parameter simulates a variant?", "options": ["token", "experiment", "lang"], "answer": 1, "explain": "For example ?experiment=hero-test/challenger-1."}, {"q": "Which folder is recommended for challengers?", "options": ["/experiments/<id>/", "/blocks/", "/tools/"], "answer": 0, "explain": "Use the lowercase experiment ID."}, {"q": "What should you do about challengers and search?", "options": ["Exclude them", "Add them to the sitemap", "Disallow them only"], "answer": 0, "explain": "Use noindex,nofollow."}, {"q": "After six days the challenger is significantly ahead, but your plan said 14 days. What do you do?", "options": ["Delete the control", "Double the split", "Keep running to the planned duration", "Stop now and ship, since a significant result does not need more data"], "answer": 2, "explain": "Early stopping inflates false positives.", "scenario": true}, {"q": "Halving the effect you want to detect needs about how much data?", "options": ["Half as much", "Four times as much", "Twice as much"], "answer": 1, "explain": "The effect size is squared in the formula."}, {"q": "What is the last step in closing an experiment?", "options": ["Purge the CDN and restart the test", "Unpublish challengers and log the result", "Copy the challenger metadata to all pages"], "answer": 1, "explain": "Clean up, and keep a record."}, {"q": "When is it acceptable to end a test early?", "options": ["When the result looks good", "When something is broken", "When significance is first reached"], "answer": 1, "explain": "Stopping at the first significant result inflates false positives."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e1-cards"><script type="application/json">{"cards": [["Control", "The existing experience."], ["Challenger", "A changed variant."], ["Experiment Split", "Percentages for challengers."], ["Significance", "Whether it could be luck."], ["Weight", "Inverse of the sampling rate."], ["Conversion Name", "A specific goal."], ["Guardrail", "A metric that must not get worse."], ["?experiment=", "Simulates a variant."]]}</script></div>
+  <div data-component="flashcards" data-id="e1-cards"><script type="application/json">{"cards": [["Control", "The existing experience."], ["Challenger", "A changed variant."], ["Experiment Split", "Percentages for challengers."], ["Significance", "Whether it could be luck."], ["Weight", "Inverse of the sampling rate."], ["Conversion Name", "A specific goal."], ["Guardrail", "A metric that must not get worse."], ["?experiment=", "Simulates a variant."], ["Sample size", "16 × p × (1 − p) ÷ d² per variant."], ["Guardrail", "A metric that must not get worse."], ["Hypothesis", "What you change, and what you expect."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -205,6 +321,9 @@
       <div><h4>Split</h4><ul><li>Even by default</li><li>Split metadata</li><li>Control gets the rest</li></ul></div>
       <div><h4>Measure</h4><ul><li>One metric</li><li>Sampled counts</li><li>Guardrails</li></ul></div>
       <div><h4>Finish</h4><ul><li>Planned duration</li><li>Record</li><li>Clean up</li></ul></div>
+      <div><h4>Plan</h4><ul><li>Hypothesis</li><li>One primary metric</li><li>Guardrails</li><li>End date in whole weeks</li></ul></div>
+      <div><h4>Sample size</h4><ul><li><code>16 × p × (1 − p) ÷ d²</code></li><li>Half the effect: four times the data</li><li>Count sampled views</li></ul></div>
+      <div><h4>Close</h4><ul><li>Decide on planned date</li><li>Apply the winner</li><li>Remove metadata</li><li>Unpublish challengers</li><li>Log it</li></ul></div>
     </div>
   </div>
 </section>

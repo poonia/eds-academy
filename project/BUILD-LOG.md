@@ -201,6 +201,11 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
   `tools/check-quiz-quality.py` keeps the rate between 15 and 40%. Rewritten options have not been tried by learners.
 - Still open: expert modules are thin (E3, E7, E8, E9), and most "Try it" checks remain multiple choice.
 
+## Depth expansion (9 Nov 2026)
+- Category C (C1 to C11), Category E (E1 to E10) and D6 expanded: 54 new topics (199 to 253), deeper existing topics, more worked code and diagrams, and fuller cheat sheets, questions and flashcards.
+- Content checked against aem.live and Adobe's Commerce storefront docs on 9 Nov 2026. Code samples are illustrative and have not been run on a real project. Items labelled as shapes or sketches must be checked against current references.
+- Re-scanned all 64 pages with axe, and for overflow, diagrams, console and failed requests in light and dark: clear.
+
 ## Next run
 
 All planned phases are complete. Remaining work is listed in `COVERAGE-REPORT.md`: real-project lab runs, assistive technology

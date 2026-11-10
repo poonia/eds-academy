@@ -38,6 +38,9 @@
     <li>Replace the consent gate with a CMP.</li>
     <li>Choose a runtime for an API integration.</li>
     <li>Explain the cost of Target.</li>
+    <li>Connect a real CMP.</li>
+    <li>Separate blocks from vendors using events.</li>
+    <li>Build a narrow proxy for a protected API.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="c9-ready" data-title="Ready for integrations?">
     <script type="application/json">{"questions": [{"q": "Where do third parties load?", "options": ["Eager phase", "Delayed phase", "head.html"], "answer": 1, "explain": "Covered in C6."}, {"q": "Which file holds consent-dependent code?", "options": ["styles.css", "aem.js", "consented.js"], "answer": 2, "explain": "Covered in C2."}, {"q": "Is client code public?", "options": ["Only on main", "No", "Yes"], "answer": 2, "explain": "Covered in C1."}]}</script>
@@ -51,6 +54,8 @@
   <div data-part="concept">
     <p>aem.live documents two main routes: the <b>Adobe Experience Cloud</b> stack (Web SDK, Analytics, Target or AJO, Client Data Layer and Tags), and <b>Google Analytics with Tag Manager</b>.</p>
     <p>Load them in the delayed phase, after consent. Avoid <code>head.html</code>. EDS’s Operational Telemetry already covers operational performance data, so check whether an extra tool is needed before adding one.</p>
+    <h3>What Adobe&rsquo;s tested integration does differently</h3>
+    <p>The table above comes from Adobe&rsquo;s own testing of its integration. It is a baseline, and complex modifications or custom scripts in rules add to it. An all-in-one setup through Tags alone either hurts initial load, or causes flicker if it is delayed. Adobe&rsquo;s approach separates a top-of-page event, for early personalization, from a bottom-of-page event sent once the page has finished rendering.</p>
   </div>
   <div data-part="visual">
     <div class="table-wrap"><table class="t">
@@ -60,6 +65,13 @@
       <tr><td>Tags</td><td>Experience Platform Tags</td><td>Tag Manager</td></tr>
       <tr><td>Personalization</td><td>Target or AJO</td><td>Limited through GTM</td></tr>
       <tr><td>Data layer</td><td>Adobe Client Data Layer</td><td>Google data layer</td></tr>
+    </tbody>
+  </table></div>
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Adobe stack, mobile</th><th>LCP</th><th>TBT</th><th>PageSpeed</th></tr></thead>
+    <tbody>
+      <tr><td>Without page modifications</td><td>+0.2 s</td><td>0 to 10 ms</td><td>0 to 1 points</td></tr>
+      <tr><td>With page modifications</td><td>+1.2 s</td><td>0 to 10 ms</td><td>1 to 5 points</td></tr>
     </tbody>
   </table></div>
   </div>
@@ -89,6 +101,8 @@ loadScript('https://www.googletagmanager.com/gtag/js?id=G-XXXX', { async: '' });
   <div data-part="concept">
     <p>In the current boilerplate, <code>consent-check.js</code> determines consent, dispatches a <code>consent.update</code> event, and imports <code>consented.js</code> once it is granted. It ships as a dummy that declines by default.</p>
     <p>Replace it with your CMP; aem.live has worked examples for OneTrust and Cookiebot. The <code>?consent=accept</code> parameter exists for testing only, and should go when a real CMP is added.</p>
+    <h3>When the banner appears</h3>
+    <p>Since <code>consent-check.js</code> runs in the delayed phase, the banner typically appears a few seconds after load. aem.live calls this intentional. If legal requirements mean the banner must show immediately, load the CMP&rsquo;s banner script earlier, from <code>loadEager()</code>, while keeping the tracking code itself inside <code>consented.js</code>. That is a decision to make with your privacy team, and you should measure its cost.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -118,6 +132,29 @@ function onConsentUpdate() {
   window.dispatchEvent(new CustomEvent('consent.update', { detail: { consented } }));
   if (consented) loadConsented();
 }</textarea>
+    </figure>
+    <figure class="code" data-file="Connecting OneTrust" data-lang="javascript">
+      <textarea class="src" hidden>let consentedLoaded = false;
+
+function loadConsented() {
+  if (consentedLoaded) return;
+  consentedLoaded = true;
+  import('./consented.js');
+}
+
+window.OptanonWrapper = () =&gt; {
+  const groups = window.OnetrustActiveGroups || '';
+  const consented = groups.includes('C0004');
+  window.dispatchEvent(new CustomEvent('consent.update', { detail: { consented } }));
+  if (consented) loadConsented();
+};
+
+const script = document.createElement('script');
+script.src = 'https://cdn.cookielaw.org/scripttemplates/otSDKStub.js';
+script.dataset.domainScript = 'your-onetrust-domain-id';
+document.head.append(script);</textarea>
+      <figcaption>Abridged from aem.live&rsquo;s CMP guide. Check your CMP&rsquo;s own documentation.</figcaption>
+      <ol class="code-explain"><li data-line="4">The callback runs more than once, so guard against double loading.</li><li data-line="9">OneTrust calls this when its banner starts and when preferences change.</li><li data-line="11">Choose the categories that your own tags require.</li><li data-line="16">Injected from here, not in head.html, so it stays off the critical path.</li></ol>
     </figure>
   </div>
   <div data-part="try">
@@ -177,6 +214,8 @@ function onConsentUpdate() {
   <div data-part="concept">
     <p>Target can be integrated through the Experience Platform Web SDK, which is the recommended route, or the legacy at.js. Modifications apply to the final markup, after blocks are decorated.</p>
     <p>The call to Target happens in the eager phase and affects LCP. Applying changes can cause flicker, and code reacting to Target changes needs a <code>MutationObserver</code>. aem.live suggests checking its native experimentation first.</p>
+    <h3>Limiting the cost</h3>
+    <p>Enable Target only on the pages that run an activity, for example from a metadata flag. Pages with no activity then pay nothing. Keep rules simple, since custom JavaScript in a rule runs on your visitors&rsquo; devices. E2 covers this in depth.</p>
   </div>
   <div data-part="visual">
     <figure class="diagram">
@@ -207,6 +246,106 @@ function onConsentUpdate() {
     <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
       <tr><td>Flicker</td><td>Modifications after display</td><td>Reduce the complexity, and measure.</td></tr>
       <tr><td>Block ignores Target change</td><td>Change came after decorate</td><td>Use a <code>MutationObserver</code>.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="topic" id="data-layer-and-events" data-level="3">
+  <h2>Data layers and tracking events</h2>
+  <div data-part="why"><p>A tag can only report what the page tells it. A small, deliberate set of events keeps analytics useful, and blocks free of vendor code.</p></div>
+  <div data-part="concept">
+    <p>Blocks should announce what happened, without knowing who is listening. Dispatch a custom event or push to a data layer, and let <code>consented.js</code> connect those to your analytics vendor. Then replacing a vendor means changing one file.</p>
+    <p>Name a small set of business events, such as form started, form submitted and CTA clicked, and write them down with their properties. Do not send personal data. Remember that events fired before the tag has loaded are lost unless you queue them. A data layer array handles this naturally, since it can be read later.</p>
+    <p>Adobe&rsquo;s stack uses the Adobe Client Data Layer for this, and Google&rsquo;s uses <code>window.dataLayer</code>. Operational Telemetry already records page views and performance, so tracking those twice has little value.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Block] --&gt;|push event| B[Data layer array]
+  C[consented.js] --&gt;|reads later| B
+  C --&gt; D[Analytics vendor]</pre>
+      <figcaption><b>What to notice:</b> The block never references the vendor, and events queued before consent can still be processed afterward.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A block pushes an event to a data layer array. consented.js reads the array later, and sends events to the analytics vendor.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="Vendor-free tracking" data-lang="javascript">
+      <textarea class="src" hidden>// In a block
+export function track(name, detail = {}) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  window.adobeDataLayer.push({ event: name, ...detail });
+}
+
+track('cta-clicked', { block: 'hero', label: 'Open an account' });</textarea>
+      <figcaption>The same pattern works with window.dataLayer.</figcaption>
+      <ol class="code-explain"><li data-line="3">The array can exist before any vendor script does.</li><li data-line="7">Describes the action, with no personal data.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c9-t5"><script type="application/json">{"questions": [{"q": "A team hard-codes vendor calls in 30 blocks. What is the main risk?", "options": ["Changing vendor or consent logic means editing every block", "Vendor calls prevent those blocks from being cached by the CDN", "Blocks cannot call any function defined outside their folder"], "answer": 0, "explain": "Blocks should publish events, with one integration file handling the vendor."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>First events are missing</td><td>Fired before the tag loaded</td><td>Queue them in a data layer.</td></tr>
+      <tr><td>Personal data in reports</td><td>Sent in event details</td><td>Remove it, and document the event properties.</td></tr>
+      <tr><td>Page views counted twice</td><td>Tag and manual call</td><td>Keep one source.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="topic" id="protected-api-proxy-pattern" data-level="4">
+  <h2>The protected API proxy pattern</h2>
+  <div data-part="why"><p>Anything shipped to a browser is public. When an API needs a key, something trusted has to sit in between.</p></div>
+  <div data-part="concept">
+    <p>Put a small proxy on your CDN&rsquo;s edge workers, or on a serverless platform such as App Builder. The browser calls your own origin, and the proxy adds the secret and calls the API. Because the path is on your own domain, you avoid cross-origin setup.</p>
+    <p>Do not make it a general passthrough. Allow only the specific paths and methods that the front end needs. Validate inputs, set a timeout, and return a safe error. Cache a response only if it is identical for every visitor, and never cache anything personal in a shared cache.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">sequenceDiagram
+  participant B as Browser
+  participant E as Edge worker on your domain
+  participant A as Partner API
+  B-&gt;&gt;E: GET /api/rates
+  E-&gt;&gt;E: Allowlist the path, add the secret
+  E-&gt;&gt;A: GET /v2/rates with key
+  A--&gt;&gt;E: JSON
+  E--&gt;&gt;B: JSON, cacheable if not personal</pre>
+      <figcaption><b>What to notice:</b> The secret exists only on the edge worker. The browser only knows your own path.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>The browser asks an edge worker on your domain for /api/rates. The worker checks the path against an allowlist, adds the secret and calls the partner API. It then returns the JSON to the browser.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A narrow proxy as a Cloudflare Worker" data-lang="javascript">
+      <textarea class="src" hidden>export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (request.method !== 'GET' || url.pathname !== '/api/rates') {
+      return new Response('Not found', { status: 404 });
+    }
+    const upstream = await fetch('https://partner.example.com/v2/rates', {
+      headers: { 'X-API-Key': env.PARTNER_KEY },
+      signal: AbortSignal.timeout(3000),
+    });
+    return new Response(upstream.body, {
+      status: upstream.status,
+      headers: { 'content-type': 'application/json', 'cache-control': 'max-age=300' },
+    });
+  },
+};</textarea>
+      <ol class="code-explain"><li data-line="4">An allowlist. This cannot be turned into a way of reaching other endpoints.</li><li data-line="8">The secret is a worker setting, not in your repository.</li><li data-line="9">A slow partner cannot hold the request open.</li><li data-line="13">Only because rates are the same for every visitor.</li></ol>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="c9-t6"><script type="application/json">{"questions": [{"q": "A proxy for a logged-in user&rsquo;s balance has a max-age of 300. What is the risk?", "options": ["One visitor could be served another visitor&rsquo;s balance", "The API key is exposed in the cached response headers", "Browsers ignore max-age for requests on the same origin"], "answer": 0, "explain": "Personal data must not be stored in a shared cache."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Key visible in the Network panel</td><td>Called from the browser</td><td>Move the call to a proxy.</td></tr>
+      <tr><td>Open relay abuse</td><td>Proxy accepts any URL</td><td>Allowlist paths and methods.</td></tr>
+      <tr><td>Page waits on a partner</td><td>No timeout</td><td>Set one, and handle failure.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -291,12 +430,12 @@ function onConsentUpdate() {
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="c9-check"><script type="application/json">{"questions": [{"q": "What does consent-check.js dispatch?", "options": ["page.ready", "tag.load", "consent.update"], "answer": 2, "explain": "Other code can listen for it."}, {"q": "What is ?consent=accept for?", "options": ["Analytics", "Production consent", "Testing"], "answer": 2, "explain": "It is a test override."}, {"q": "Which runtime suits author-side operations?", "options": ["Edge workers or App Builder", "head.html", "The browser only, using a fetch from delayed.js"], "answer": 0, "explain": "See aem.live."}, {"q": "Which CMPs have worked examples? Choose all that apply.", "options": ["Cookiebot", "Sidekick", "OneTrust"], "answer": [0, 2], "explain": "See the CMP guide."}, {"q": "Which pair is part of Google’s route?", "options": ["GA4 and Tag Manager", "AJO and Tags", "Target and at.js"], "answer": 0, "explain": "Compare the routes."}, {"q": "Target modifies?", "options": ["The CDN", "The original Word file, through its connection to SharePoint", "Final markup after decoration"], "answer": 2, "explain": "So timing matters."}, {"q": "Where does Target’s call happen?", "options": ["Delayed phase", "After footer", "Eager phase"], "answer": 2, "explain": "It impacts LCP."}, {"q": "Marketing asks for personalization on the hero, but LCP is already marginal. What do you do first?", "options": ["Check native experimentation or campaigns, then measure any Target impact", "Add at.js in the head", "Add at.js to the head, and hide the hero until Target responds so there is no visible flicker", "Ignore LCP"], "answer": 0, "explain": "aem.live suggests native capabilities first.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="c9-check"><script type="application/json">{"questions": [{"q": "What does consent-check.js dispatch?", "options": ["page.ready", "tag.load", "consent.update"], "answer": 2, "explain": "Other code can listen for it."}, {"q": "What is ?consent=accept for?", "options": ["Analytics", "Production consent", "Testing"], "answer": 2, "explain": "It is a test override."}, {"q": "Which runtime suits author-side operations?", "options": ["Edge workers or App Builder", "head.html", "The browser only, using a fetch from delayed.js"], "answer": 0, "explain": "See aem.live."}, {"q": "Which CMPs have worked examples? Choose all that apply.", "options": ["Cookiebot", "Sidekick", "OneTrust"], "answer": [0, 2], "explain": "See the CMP guide."}, {"q": "Which pair is part of Google’s route?", "options": ["GA4 and Tag Manager", "AJO and Tags", "Target and at.js"], "answer": 0, "explain": "Compare the routes."}, {"q": "Target modifies?", "options": ["The CDN", "The original Word file, through its connection to SharePoint", "Final markup after decoration"], "answer": 2, "explain": "So timing matters."}, {"q": "Where does Target’s call happen?", "options": ["Delayed phase", "After footer", "Eager phase"], "answer": 2, "explain": "It impacts LCP."}, {"q": "Marketing asks for personalization on the hero, but LCP is already marginal. What do you do first?", "options": ["Check native experimentation or campaigns, then measure any Target impact", "Add at.js in the head", "Add at.js to the head, and hide the hero until Target responds so there is no visible flicker", "Ignore LCP"], "answer": 0, "explain": "aem.live suggests native capabilities first.", "scenario": true}, {"q": "Where should the CMP script be injected by default?", "options": ["From aem.js", "From head.html", "From consent-check.js"], "answer": 2, "explain": "That keeps it off the critical path."}, {"q": "What did Adobe measure for mobile LCP with Target page modifications?", "options": ["About 12 s added", "About 1.2 s added", "About 0.02 s added"], "answer": 1, "explain": "Without modifications it was about 0.2 s."}, {"q": "Why should an API proxy allowlist its paths?", "options": ["So that CDN caching is turned off for it", "So it cannot be used to reach other endpoints", "So browsers can skip the CORS preflight"], "answer": 1, "explain": "A general passthrough is an open relay."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="c9-cards"><script type="application/json">{"cards": [["Web SDK", "Adobe’s recommended client library."], ["Client Data Layer", "Adobe’s event and data layer."], ["CMP", "Consent management platform."], ["consent.update", "Event with consent state."], ["consented.js", "Loaded once with consent."], ["App Builder", "Adobe’s serverless runtime."], ["Edge worker", "Code on your CDN."], ["at.js", "Legacy Target library."], ["MutationObserver", "Reacts to DOM changes."], ["CSP", "Content Security Policy."]]}</script></div>
+  <div data-component="flashcards" data-id="c9-cards"><script type="application/json">{"cards": [["Web SDK", "Adobe’s recommended client library."], ["Client Data Layer", "Adobe’s event and data layer."], ["CMP", "Consent management platform."], ["consent.update", "Event with consent state."], ["consented.js", "Loaded once with consent."], ["App Builder", "Adobe’s serverless runtime."], ["Edge worker", "Code on your CDN."], ["at.js", "Legacy Target library."], ["MutationObserver", "Reacts to DOM changes."], ["CSP", "Content Security Policy."], ["consent.update", "Event other code can react to."], ["OptanonWrapper", "OneTrust&rsquo;s preferences callback."], ["Data layer", "A queue of events tags read later."], ["Allowlist", "Only named paths are proxied."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -309,6 +448,10 @@ function onConsentUpdate() {
       <div><h4>APIs</h4><ul><li>Live: front end or edge</li><li>Author: edge or App Builder</li><li>Dynamic: BYOM</li></ul></div>
       <div><h4>Secrets</h4><ul><li>Never in client code</li><li>Rotate if exposed</li></ul></div>
       <div><h4>Target</h4><ul><li>Web SDK preferred</li><li>Costs LCP</li><li>Flicker risk</li></ul></div>
+      <div><h4>Consent</h4><ul><li><code>consent-check.js</code> gates</li><li><code>consented.js</code> holds tags</li><li>Guard double loading</li><li>Banner timing: privacy decision</li></ul></div>
+      <div><h4>Tracking</h4><ul><li>Blocks push events</li><li>One file knows the vendor</li><li>No personal data</li><li>Do not duplicate page views</li></ul></div>
+      <div><h4>Adobe stack cost, mobile</h4><ul><li>LCP +0.2 s, no changes</li><li>LCP +1.2 s, with changes</li><li>Enable per page</li></ul></div>
+      <div><h4>API proxy</h4><ul><li>Secrets on the worker</li><li>Allowlist path and method</li><li>Set a timeout</li><li>Never cache personal data</li></ul></div>
     </div>
   </div>
 </section>

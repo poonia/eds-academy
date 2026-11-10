@@ -37,6 +37,8 @@
     <li>Evaluate a block against collection principles.</li>
     <li>Tell a block from a widget.</li>
     <li>Contribute to an open source project responsibly.</li>
+    <li>Write a contribution that maintainers can merge.</li>
+    <li>Set up inner source for blocks.</li>
   </ul>
   <div data-component="quiz" data-variant="ready" data-id="e10-ready" data-title="Ready for community and contribution?">
     <script type="application/json">{"questions": [{"q": "Where does the Block Collection live?", "options": ["Inside Word", "A private CDN", "A public GitHub repository"], "answer": 2, "explain": "Covered in C4."}, {"q": "What should a pull request include?", "options": ["A zip of the site", "A test URL", "A password"], "answer": 1, "explain": "Covered in D9."}, {"q": "What should you do before large changes?", "options": ["Merge first", "Delete tests", "Talk to maintainers"], "answer": 2, "explain": "Covered in D9."}]}</script>
@@ -65,9 +67,27 @@
       <tr><td>SEO and accessibility</td><td>Is it friendly to both?</td></tr>
     </tbody>
   </table></div>
+    <figure class="diagram">
+      <pre class="mermaid">flowchart LR
+  A[Find existing issue or PR] --&gt; B[Talk to maintainers]
+  B --&gt; C[Fork and branch]
+  C --&gt; D[Small change with tests or demo]
+  D --&gt; E[Pull request with intent]
+  E --&gt; F[Sign CLA once]
+  F --&gt; G[Review and merge]</pre>
+      <figcaption><b>What to notice:</b> The conversation comes first. A surprise pull request is the most likely to be declined.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>Find an existing issue or pull request, talk to maintainers, fork and branch, make a small change with a test or demo, open a pull request explaining the intent, sign the CLA once, then go through review and merge.</p></details>
+    </figure>
   </div>
   <div data-part="show">
     <div data-component="match" data-title="Block or widget?"><script type="application/json">{"prompt": "Is it a block or a widget?", "pairs": [["Three cards an author writes", "Block"], ["Dealer locator with a single link", "Widget"], ["Accordion of authored questions", "Block"], ["Mortgage calculator", "Widget"]], "explain": "A block adds form and function to authored content."}</script></div>
+    <figure class="code" data-file="Before opening a pull request" data-lang="bash">
+      <textarea class="src" hidden>git switch -c fix-carousel-motion
+npm run lint
+git push -u origin fix-carousel-motion
+# Open the test URL on the branch and try every variant
+# Then open a pull request that starts with the issue number</textarea>
+    </figure>
   </div>
   <div data-part="try">
     <div data-component="quiz" data-variant="inline" data-id="e10-t1"><script type="application/json">{"questions": [{"q": "What is the main value of a Block Collection block?", "options": ["Its colours", "Its content structure", "Its exact CSS"], "answer": 1, "explain": "You will likely adapt the code."}]}</script></div>
@@ -77,6 +97,96 @@
       <tr><td>Pull request ignored</td><td>No prior discussion</td><td>Open an issue first.</td></tr>
       <tr><td>Blocked by license check</td><td>CLA not signed</td><td>Sign the Adobe CLA.</td></tr>
       <tr><td>Block rejected as too specific</td><td>Client-specific</td><td>Generalize it, or keep it private.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="topic" id="writing-a-strong-contribution" data-level="4">
+  <h2>Writing a strong contribution</h2>
+  <div data-part="why"><p>Maintainers review many changes in limited time. A good pull request respects that, and gets merged faster.</p></div>
+  <div data-part="concept">
+    <p>Check the repository&rsquo;s <code>CONTRIBUTING.md</code> and its pull request template. Adobe&rsquo;s projects ask you to search for an existing issue and for overlapping pull requests. Your description should state what the change intends, how it changes the code, and whether anything breaks. Start it with the issue number.</p>
+    <p>Keep the change small and focused. For a block, include a test URL showing it in action, with content that demonstrates each variant. Hold it to the Block Collection&rsquo;s principles: intuitive, no dependencies, responsive, context-aware, localizable, fast, SEO-friendly and accessible.</p>
+    <p>Remove anything belonging to your client or employer. Confirm that you are allowed to contribute it, as a company may need to approve this. Disclose substantial AI assistance if the project asks for that, and be ready to explain every line.</p>
+  </div>
+  <div data-part="visual">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Before opening</th><th>Check</th></tr></thead>
+    <tbody>
+      <tr><td>Scope</td><td>One problem, one pull request</td></tr>
+      <tr><td>Content</td><td>No client names, brand or secrets</td></tr>
+      <tr><td>Rights</td><td>You can contribute it, and the CLA is signed</td></tr>
+      <tr><td>Quality</td><td>Lint clean, PageSpeed green</td></tr>
+      <tr><td>Demo</td><td>Test URL with realistic content</td></tr>
+      <tr><td>Description</td><td>Issue number, intent, change and breakage</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="show">
+    <figure class="code" data-file="A pull request description" data-lang="markdown">
+      <textarea class="src" hidden>#123 Add reduced-motion support to the carousel block
+
+**Intent:** The carousel ignores the prefers-reduced-motion setting.
+**Change:** Slide transitions are disabled when the setting is on.
+**Breaking:** None. Default behaviour is the same.
+
+Test URL: https://fix-carousel--aem-block-collection--your-org.aem.live/block-collection/carousel</textarea>
+    </figure>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e10-t2"><script type="application/json">{"questions": [{"q": "A block you built for a client is ready to share. What comes first?", "options": ["Open the pull request, and sign the CLA after review", "Remove client material and confirm you have the rights", "Rename the client in the code and share the block as is"], "answer": 1, "explain": "Rights and client material come before everything else."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Pull request stalls</td><td>Too large</td><td>Split it up.</td></tr>
+      <tr><td>Declined as duplicate</td><td>Did not search first</td><td>Check issues and pull requests.</td></tr>
+      <tr><td>CLA check fails</td><td>Not signed</td><td>Sign it once.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="topic" id="inner-source-across-teams" data-level="4">
+  <h2>Inner source across your organization</h2>
+  <div data-part="why"><p>Many large companies duplicate blocks across teams. Open-source habits fix that, inside the firewall.</p></div>
+  <div data-part="concept">
+    <p>Treat shared blocks as an internal open-source project. Give it a home repository, a README, named maintainers, a contribution guide and a changelog. Let any team propose a change by pull request, and keep review time short so that people do not fork instead.</p>
+    <p>Remember how EDS reuses code. Copying a block creates a fork, and repoless shares code at runtime, so a merge reaches every site at once. Choose deliberately: copy for autonomy, or repoless for consistency. If several brands share code, use design tokens for their differences, and test changes on a sample of sites first.</p>
+    <p>Reward contribution. Count reuse, recognize contributors, and allow time for it in sprint planning, or the work will never be prioritized.</p>
+  </div>
+  <div data-part="visual">
+    <figure class="diagram">
+      <pre class="mermaid">flowchart TD
+  A[Team needs a block] --&gt; B{Exists in catalog?}
+  B -- Yes --&gt; C[Reuse it]
+  B -- No --&gt; D{Useful to others?}
+  D -- Yes --&gt; E[Build with maintainers and contribute]
+  D -- No --&gt; F[Build locally and document]
+  C --&gt; G{Missing something?}
+  G -- Yes --&gt; E</pre>
+      <figcaption><b>What to notice:</b> The catalog is checked first, and missing features are contributed back rather than forked.</figcaption>
+      <details class="describe"><summary>Describe this diagram</summary><p>A team needing a block checks the catalog. If it exists, reuse it, and contribute back anything missing. If not and it is useful to others, build with maintainers. Otherwise build it locally and document it.</p></details>
+    </figure>
+  </div>
+  <div data-part="show">
+    <div class="table-wrap"><table class="t">
+    <thead><tr><th>Way of sharing</th><th>Team autonomy</th><th>Consistency</th><th>Blast radius</th></tr></thead>
+    <tbody>
+      <tr><td>Copy a block</td><td>High</td><td>Drifts</td><td>One site</td></tr>
+      <tr><td>Repoless</td><td>Lower</td><td>High</td><td>All sites using it</td></tr>
+      <tr><td>Inner-source catalog, then copy</td><td>Medium</td><td>Medium</td><td>One site at a time</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+  <div data-part="try">
+    <div data-component="quiz" data-variant="inline" data-id="e10-t3"><script type="application/json">{"questions": [{"q": "Teams keep forking the shared block catalog. Which is the most likely cause?", "options": ["Pull requests take too long to be reviewed", "Repositories can only have one contributor", "The catalog&rsquo;s repository was made private"], "answer": 0, "explain": "Slow reviews push teams to work around the process."}]}</script></div>
+  </div>
+  <div data-part="pitfalls">
+    <div class="table-wrap"><table class="t sfc"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody>
+      <tr><td>Same block built three times</td><td>Catalog not discoverable</td><td>Publish and promote it.</td></tr>
+      <tr><td>Change breaks other brands</td><td>Shared code, no sample test</td><td>Test on several sites.</td></tr>
+      <tr><td>Nobody contributes</td><td>No time or recognition</td><td>Plan for it, and count reuse.</td></tr>
     </tbody></table></div>
   </div>
 </section>
@@ -151,12 +261,12 @@
 
 <section class="mpart" id="knowledge-check" data-toc="Knowledge check">
   <h2>Knowledge check</h2>
-  <div data-component="quiz" data-id="e10-check"><script type="application/json">{"questions": [{"q": "Which is a Block Collection principle?", "options": ["Must use React", "Hard-coded copy", "No dependencies"], "answer": 2, "explain": "Usable means no dependencies."}, {"q": "Where do widgets live?", "options": ["/widgets", "/config", "/blocks only"], "answer": 0, "explain": "See Exploring Blocks."}, {"q": "What may happen to blocks not used enough?", "options": ["Removal", "Licensing fees", "Automatic promotion"], "answer": 0, "explain": "See Block Collection."}, {"q": "What must third-party contributors sign?", "options": ["Adobe’s Contributor License Agreement", "An NDA with each user", "A separate NDA with Adobe"], "answer": 0, "explain": "See CONTRIBUTING.md."}, {"q": "What should you check before contributing?", "options": ["The current Lighthouse score of your site", "Existing issues and pull requests", "Your project's GitHub star count"], "answer": 1, "explain": "See CONTRIBUTING.md."}, {"q": "Is a calculator a block or widget?", "options": ["Block", "Widget", "Section metadata"], "answer": 1, "explain": "It has no authored content."}, {"q": "Should a collection block depend on extra libraries?", "options": ["Only frameworks", "Yes, always", "No"], "answer": 2, "explain": "Compatible with boilerplate, no dependencies."}, {"q": "Your block includes a client’s logo and copy. You want to contribute it. What is first?", "options": ["Rename the client in the code and submit it as a draft", "Submit as is", "Remove client material, and confirm your rights", "Make the repository private"], "answer": 2, "explain": "Generalize and check permissions first.", "scenario": true}]}</script></div>
+  <div data-component="quiz" data-id="e10-check"><script type="application/json">{"questions": [{"q": "Which is a Block Collection principle?", "options": ["Must use React", "Hard-coded copy", "No dependencies"], "answer": 2, "explain": "Usable means no dependencies."}, {"q": "Where do widgets live?", "options": ["/widgets", "/config", "/blocks only"], "answer": 0, "explain": "See Exploring Blocks."}, {"q": "What may happen to blocks not used enough?", "options": ["Removal", "Licensing fees", "Automatic promotion"], "answer": 0, "explain": "See Block Collection."}, {"q": "What must third-party contributors sign?", "options": ["Adobe’s Contributor License Agreement", "An NDA with each user", "A separate NDA with Adobe"], "answer": 0, "explain": "See CONTRIBUTING.md."}, {"q": "What should you check before contributing?", "options": ["The current Lighthouse score of your site", "Existing issues and pull requests", "Your project's GitHub star count"], "answer": 1, "explain": "See CONTRIBUTING.md."}, {"q": "Is a calculator a block or widget?", "options": ["Block", "Widget", "Section metadata"], "answer": 1, "explain": "It has no authored content."}, {"q": "Should a collection block depend on extra libraries?", "options": ["Only frameworks", "Yes, always", "No"], "answer": 2, "explain": "Compatible with boilerplate, no dependencies."}, {"q": "Your block includes a client’s logo and copy. You want to contribute it. What is first?", "options": ["Rename the client in the code and submit it as a draft", "Submit as is", "Remove client material, and confirm your rights", "Make the repository private"], "answer": 2, "explain": "Generalize and check permissions first.", "scenario": true}, {"q": "What should start a pull request description in Adobe&rsquo;s projects?", "options": ["The GitHub issue ID", "The date of the change", "The author&rsquo;s employer"], "answer": 0, "explain": "As in #123."}, {"q": "What is the blast radius of a repoless code change?", "options": ["Only the first site", "Only preview hosts", "All sites using that code"], "answer": 2, "explain": "A merge reaches every site at once."}, {"q": "How often must you sign Adobe&rsquo;s CLA?", "options": ["Each calendar year", "Once", "For every pull request"], "answer": 1, "explain": "You only need to sign it one time."}]}</script></div>
 </section>
 
 <section class="mpart" id="flashcards" data-toc="Flashcards">
   <h2>Flashcards</h2>
-  <div data-component="flashcards" data-id="e10-cards"><script type="application/json">{"cards": [["Block Collection", "Reusable content block blueprints."], ["Widget", "Application-like feature."], ["/widgets", "Where widgets live."], ["CLA", "Contributor License Agreement."], ["Fork", "Your copy of a repository."], ["Issue first", "Discuss before coding."], ["Context aware", "Inherits text and colours."], ["Localizable", "No hard-coded content."]]}</script></div>
+  <div data-component="flashcards" data-id="e10-cards"><script type="application/json">{"cards": [["Block Collection", "Reusable content block blueprints."], ["Widget", "Application-like feature."], ["/widgets", "Where widgets live."], ["CLA", "Contributor License Agreement."], ["Fork", "Your copy of a repository."], ["Issue first", "Discuss before coding."], ["Context aware", "Inherits text and colours."], ["Localizable", "No hard-coded content."], ["CLA", "Lets Adobe redistribute your contribution."], ["Inner source", "Open-source practices within a company."], ["Blast radius", "How much a single change can affect."]]}</script></div>
 </section>
 
 <section class="mpart" id="cheat-sheet" data-toc="Cheat sheet">
@@ -168,6 +278,10 @@
       <div><h4>Block or widget</h4><ul><li>Authored: block</li><li>Application: widget</li></ul></div>
       <div><h4>Contribute</h4><ul><li>Issue first</li><li>Sign CLA</li><li>Small PR</li></ul></div>
       <div><h4>Respect</h4><ul><li>Client data out</li><li>Maintainers first</li><li>Test evidence</li></ul></div>
+      <div><h4>Contribution</h4><ul><li>Search issues and PRs</li><li>Talk first</li><li>Small and focused</li><li>Test URL</li><li>CLA once</li></ul></div>
+      <div><h4>Description</h4><ul><li>Issue ID</li><li>Intent</li><li>Change</li><li>What breaks</li></ul></div>
+      <div><h4>Inner source</h4><ul><li>Named maintainers</li><li>Contribution guide</li><li>Fast reviews</li><li>Count reuse</li></ul></div>
+      <div><h4>Copy or share</h4><ul><li>Copy: autonomy</li><li>Repoless: consistency</li><li>Tokens for brand differences</li></ul></div>
     </div>
   </div>
 </section>
