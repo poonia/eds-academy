@@ -55,7 +55,7 @@ Node and Playwright are used for these checks only. The published site has no de
 | `start-here.html` | How the course works, tracks, levels, tool setup |
 | `modules/<id>-<slug>.html` | One page per module (content only) |
 | `reference/components.html` | Live showcase of every component and its markup |
-| `assets/css/academy.css` | Design tokens, light and dark themes, all component styles |
+| `assets/css/academy.css` | Design tokens (transit theme: Archivo, Public Sans, IBM Plex Mono, one colour per line), light and dark themes, all component styles |
 | `assets/js/academy.js` | Shared runtime: chrome, module layout, progress, code, diagrams, glossary, search |
 | `assets/js/components/*.js` | One ES module per interactive component, loaded only when used |
 | `data/syllabus.json` | Modules, topics, levels, tracks, prerequisites, hours, paths, gates, exams |
@@ -156,6 +156,7 @@ All are driven by markup and inline JSON (`<script type="application/json">`). S
 | `filter-list` | Text and category filter over server-rendered items | `data-cats`, `data-print`, `[data-item]` |
 | `path-progress` | Live progress on a learning path page | `data-path` |
 | `capstone` | Requirements, rubric, evidence and a review pack | `level`, `title`, `requirements[]`, `rubric[]` |
+| `metro-map` | Home page network map: each learning path is a line, modules are stations, capstone gates are interchanges. Arrow keys move along the active line | Reads the syllabus and progress |
 | `course-map`, `dashboard`, `progress-panel` | Home page widgets | Read the syllabus and progress |
 
 Other enhancements: `figure.code` (highlighting, file label, `data-lines` highlights, copy,

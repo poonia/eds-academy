@@ -212,6 +212,11 @@ theme switch re-renders diagrams; glossary tooltip; order, match, scorer; phase 
 - A browser test runs every lab's solution against its checks. Wide tables are now keyboard-scrollable on small screens, site-wide.
 - Not done: a starter and solution repository on GitHub, which needs a decision about creating a public repo.
 
+## Transit redesign (10 Nov 2026)
+- Replaced the generic card-and-pill look with a transit-map identity: new tokens, Archivo, Public Sans and IBM Plex Mono, line colours, square corners, tricolour header rule, signage-style labels.
+- Added `assets/js/components/metro-map.js`. Home page rebuilt around it; path pages renamed to lines with their line colour; module pages gained a line strip and a station-style contents list.
+- Fixed an escaped apostrophe in the C4 and C10 topic names.
+
 ## Next run
 
 All planned phases are complete. Remaining work is listed in `COVERAGE-REPORT.md`: real-project lab runs, assistive technology

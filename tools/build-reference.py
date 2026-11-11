@@ -9,7 +9,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent.parent
-FONT = 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap'
+FONT = 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..900&family=IBM+Plex+Mono:wght@500;600&family=Public+Sans:ital,wght@0,400;0,700;1,400&display=swap'
 META = re.compile(r'<!-- site-meta -->.*?<!-- /site-meta -->\n?', re.S)
 AS_OF = '9 November 2026'
 syl = json.loads((ROOT / 'data/syllabus.json').read_text())
@@ -57,7 +57,8 @@ def band(body, title='', sub=''):
     return f'<section class="band"><div class="wrap">{head}{body}</div></section>'
 
 
-# Learning paths
+# Learning paths (shown as lines on the network map)
+LINE_VAR = {'author': 'au', 'developer': 'dev', 'lead': 'imp'}
 for path in syl['paths']:
     flat = path['phases']
     ids = [i for ph in flat for i in ph]
@@ -81,10 +82,11 @@ for path in syl['paths']:
     final = next(x for x in syl['exams'] if x['scope'] == 'final')
     parts.append(f'<section class="pp-phase"><h2>Finish</h2><ol class="pp-list"><li data-exam="final" class="pp-gate"><span class="pp-main"><a href="../{final["page"]}">{esc(final["title"])}</a></span></li></ol></section>')
     missing = sum(1 for i in ids for p in modules[i]['pre'] if p not in ids)
-    note = f'<aside class="callout tip" data-label="Prerequisites"><p>This path is a suggested order. {missing} prerequisites sit outside it and are flagged where they apply. Read them first if the topic is new to you.</p></aside>'
-    body = hero('Learning paths', '../index.html#paths', f'{path["name"]} path', f'{esc(path["who"])}. {len(ids)} modules and about {hours} hours, with a capstone and an exam at each level.')
+    note = f'<aside class="callout tip" data-label="Prerequisites"><p>This line is a suggested order. {missing} prerequisites sit outside it and are flagged where they apply. Read them first if the topic is new to you.</p></aside>'
+    body = hero('Lines', '../index.html#paths', f'{path["name"]} line', f'{esc(path["who"])}. {len(ids)} modules and about {hours} hours, with a capstone and an exam at each level.')
     body += band(f'{note}<div data-component="path-progress" data-path="{path["id"]}">{"".join(parts)}</div>')
-    shell(path['page'], f'{path["name"]} path', f'The {path["name"].lower()} path through EDS Academy: {len(ids)} modules in four levels, with capstones and exams.', 'paths', body)
+    body = body.replace('<section class="page-hero">', f'<section class="page-hero line-hero" style="--lc:var(--{LINE_VAR[path["id"]]}-line)">', 1)
+    shell(path['page'], f'{path["name"]} line', f'The {path["name"].lower()} line through EDS Academy: {len(ids)} modules in four levels, with capstones and exams.', 'paths', body)
 
 # Glossary
 groups = {}

@@ -396,3 +396,19 @@ test('a missing URL at any depth shows the styled 404 page', async ({ page }) =>
   expect(await page.evaluate(() => getComputedStyle(document.querySelector('.btn.primary')).borderRadius)).not.toBe('0px');
   expect(problems).toEqual([]);
 });
+
+test('the network map switches lines, moves with the keyboard and sets the line on module pages', async ({ page }) => {
+  await open(page, 'index.html');
+  const map = page.locator('[data-component="metro-map"]');
+  await map.getByRole('button', { name: 'Author line', exact: true }).click();
+  await expect(map.locator('.mm-detail')).toContainText('Author line · stop 1 of 27');
+  await map.locator('.mm-st[tabindex="0"]').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(map.locator('.mm-detail h3')).toContainText('A2');
+  await expect(map.locator('.mm-detail')).toContainText('stop 2 of 27');
+  await page.keyboard.press('End');
+  await expect(map.locator('.mm-detail h3')).toContainText('G4');
+  await open(page, 'modules/b1-page-structure.html');
+  await expect(page.locator('.mod-line')).toContainText('Author line · stop 5 of 23');
+  await expect(page.locator('.mod-line .next')).toContainText('B2');
+});

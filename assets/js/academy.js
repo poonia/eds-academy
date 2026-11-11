@@ -26,7 +26,7 @@ const COMPONENTS = {
   'experiment-results': 'experiment-results.js', 'flicker-timeline': 'flicker-timeline.js', 'form-rules': 'form-rules.js', 'cf-html': 'cf-html.js',
   'a11y-demos': 'a11y-demos.js', 'portfolio-dash': 'portfolio-dash.js', exam: 'exam.js', capstone: 'capstone.js',
   'filter-list': 'filter-list.js', 'path-progress': 'path-progress.js',
-  'code-lab': 'code-lab.js', 'debug-lab': 'debug-lab.js', 'practice-hub': 'practice-hub.js',
+  'code-lab': 'code-lab.js', 'debug-lab': 'debug-lab.js', 'practice-hub': 'practice-hub.js', 'metro-map': 'metro-map.js',
 };
 
 /* ---------- small helpers ---------- */
@@ -147,7 +147,7 @@ const ICON = {
   update: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>',
 };
 const CALLOUT_LABEL = { tip: 'Tip', warning: 'Warning', enterprise: 'Enterprise note', performance: 'Performance note', accessibility: 'Accessibility note', verify: 'Verify', update: 'Update' };
-const BRAND_SVG = '<svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="8" fill="var(--accent)"/><path d="M9 10h14M9 16h9M9 22h14" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round"/><circle cx="23" cy="16" r="2.4" fill="var(--accent-ink)"/></svg>';
+const BRAND_SVG = '<svg class="brand-mark" viewBox="0 0 34 26" aria-hidden="true"><path d="M0 6.5h34" stroke="var(--au-line)" stroke-width="4"/><path d="M0 13h34" stroke="var(--dev-line)" stroke-width="4"/><path d="M0 19.5h34" stroke="var(--imp-line)" stroke-width="4"/><rect x="11.5" y="1.5" width="11" height="23" rx="5.5" fill="var(--bg)" stroke="var(--ink)" stroke-width="3"/></svg>';
 
 /* ---------- theme ---------- */
 function currentTheme() { try { return localStorage.getItem(THEME_KEY) || 'system'; } catch (e) { return 'system'; } }
@@ -175,7 +175,7 @@ function ring(pct) {
 }
 function buildHeader(syl) {
   const page = document.body.dataset.page || '';
-  const links = [['index.html', 'Home', 'home'], ['start-here.html', 'Start here', 'start'], ['index.html#course-map', 'Course map', 'map'], ['index.html#paths', 'Paths', 'paths'], ['practice/index.html', 'Practice', 'practice'], ['reference/index.html', 'Reference', 'reference']];
+  const links = [['index.html', 'Home', 'home'], ['start-here.html', 'Start here', 'start'], ['index.html#map', 'Network map', 'map'], ['index.html#paths', 'Lines', 'paths'], ['practice/index.html', 'Practice', 'practice'], ['reference/index.html', 'Reference', 'reference']];
   const nav = h('nav', { class: 'primary-nav', 'aria-label': 'Primary' });
   const mnav = h('nav', { class: 'mobile-nav wrap', 'aria-label': 'Primary (mobile)', id: 'mobile-nav' });
   links.forEach(([u, t, k]) => {
@@ -229,11 +229,27 @@ function buildModule(syl) {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && toc.classList.contains('open')) { closeToc(); tocBtn.focus(); } });
   const pre = h('div', { class: 'prereq' }, h('span', { class: 'muted' }, m.pre.length ? 'Before this:' : 'Prerequisites: none, start here.'));
   m.pre.forEach((p) => { const pm = syl.byId[p]; pre.append(pm.built ? h('a', { href: href(pm.page) }, h('code', {}, pm.id), pm.name) : h('span', { class: 'planned', title: 'Not built yet' }, h('code', {}, pm.id), pm.name)); });
+  const LINE_VAR = { author: 'au', developer: 'dev', lead: 'imp' };
+  const onLine = (p) => p.phases.flat().includes(m.id);
+  const line = syl.paths.find((p) => p.id === store.data.line && onLine(p)) || syl.paths.find(onLine);
+  let lineStrip = null;
+  if (line) {
+    const flat = line.phases.flat(); const i = flat.indexOf(m.id);
+    const stop = (id, dir) => {
+      const x = syl.byId[id]; if (!x) return null;
+      const label = dir < 0 ? [h('span', { 'aria-hidden': 'true' }, '← '), h('span', { class: 'sr-only' }, 'Previous stop: '), `${x.id} ${x.name}`] : [h('span', {}, 'Next stop: '), `${x.id} ${x.name}`, h('span', { 'aria-hidden': 'true' }, ' →')];
+      return x.built ? h('a', { href: href(x.page), class: dir < 0 ? 'prev' : 'next' }, ...label) : h('span', { class: dir < 0 ? 'prev' : 'next' }, ...label);
+    };
+    lineStrip = h('nav', { class: 'mod-line', 'aria-label': `Position on the ${line.name} line`, style: `--lc:var(--${LINE_VAR[line.id]}-line)` },
+      h('span', { class: 'mod-line-name' }, h('span', { class: 'mm-bullet', 'aria-hidden': 'true' }), `${line.name} line · stop ${i + 1} of ${flat.length}`),
+      stop(flat[i - 1], -1), stop(flat[i + 1], 1));
+  }
   const meterSpan = h('span');
   const progText = h('span', { class: 'muted', style: 'font-size:14px' });
   const hero = h('header', { class: 'mod-hero' },
     tocBtn,
     h('nav', { class: 'crumbs', 'aria-label': 'Breadcrumb' }, h('a', { href: href('index.html') }, 'Home'), h('span', { 'aria-hidden': 'true' }, '/'), h('a', { href: href('index.html#course-map') }, `Category ${m.cat}: ${cat.name}`), h('span', { 'aria-hidden': 'true' }, '/'), h('span', { 'aria-current': 'page' }, m.id)),
+    lineStrip,
     h('h1', {}, h('span', { class: 'mid' }, m.id), m.name),
     h('div', { class: 'mod-meta' }, h('span', { class: 'badges' }, levelBadges(m.levels, syl)), h('span', { class: 'badges' }, trackTags(m.tracks, syl)), h('span', { class: 'sep', 'aria-hidden': 'true' }), h('span', {}, `About ${m.hours} hours`), h('span', {}, `${m.topics.length} topics`)),
     pre,
@@ -280,7 +296,7 @@ function buildModule(syl) {
   parts.forEach((sec) => addToc(sec.id, sec.dataset.toc || ($('h2', sec) || {}).textContent || sec.id, '·'));
 
   const paintToc = () => {
-    tocLinks.forEach((a) => { if (a.dataset.key) $('.ck', a).textContent = store.get('topics', a.dataset.key) ? '✓' : ''; });
+    tocLinks.forEach((a) => { if (a.dataset.key) { const on = !!store.get('topics', a.dataset.key); $('.ck', a).textContent = on ? '✓' : ''; a.classList.toggle('done', on); } });
     const p = moduleProgress(m); tocMeter.style.width = `${(p.done / p.total) * 100}%`; tocTxt.textContent = `${p.done}/${p.total} topics done`;
     paintProg();
   };

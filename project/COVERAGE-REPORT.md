@@ -16,7 +16,7 @@ The course is complete against its syllabus: **45 of 45 modules** and **253 of 2
 | Learning paths | 3 of 3 |
 | Reference pages | Hub, glossary (102 terms), cheat sheets (45), resources (161 sources), components |
 | Diagrams | 172 |
-| Interactive component instances in modules | 462, built from 52 components |
+| Interactive component instances in modules | 462, built from 53 components |
 | Graded questions in modules | 811 |
 | Lab steps | 328 |
 | Practice | 9 code labs with automatic checks, 10 debug cases, and a practice hub |
@@ -127,3 +127,10 @@ Confirm with Adobe, or for the specific contract, before relying on these. Detai
 | E8 Authoring tool extensions | 4/4 | 9/9 | 3 | 8 | 18 | 7 | 9 Nov 2026 |
 | E9 Performance at scale | 4/4 | 9/9 | 4 | 8 | 18 | 8 | 9 Nov 2026 |
 | E10 Community and contribution | 3/3 | 9/9 | 2 | 9 | 17 | 7 | 9 Nov 2026 |
+
+## Transit redesign (10 Nov 2026)
+- New visual identity: a transit network. Learning paths are lines (Author green, Developer violet, Implementation lead orange), modules are stations, capstone gates are interchanges. Warm paper and night-map themes, Archivo display type, square corners, no pills or uppercase labels.
+- New `metro-map` component on the home page, with a vertical layout on phones. Module pages show the learner's line with previous and next stops, and the contents list is drawn as stations on a line.
+- Home page rebuilt: a "You are here" ticket, one card per line, the network map, the four stops of every module, gates, and the station index.
+- Re-ran checks, the 151-test browser suite and the 65-page axe, overflow, diagram, console and request sweep in light and dark.
+
