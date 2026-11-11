@@ -217,7 +217,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 @media (max-width: 1060px) { .toc-scrim.open { display: block; position: fixed; inset: 0; z-index: 44; background: rgb(0 0 0 / 30%); } }
 
 /* ---------- Module sections ---------- */
-.module-content > section, main > section.mpart { padding: 36px 0 8px; scroll-margin-top: calc(var(--head-h) + 12px); }
+.module-content > section, .module-content > main > section, main > section.mpart { padding: 36px 0 8px; scroll-margin-top: calc(var(--head-h) + 12px); }
 .module-content section + section { border-top: 1px solid var(--line); }
 .mpart > h2, .intro > h2 { margin-bottom: 16px; }
 .topic-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 14px; align-items: start; margin-bottom: 18px; }
